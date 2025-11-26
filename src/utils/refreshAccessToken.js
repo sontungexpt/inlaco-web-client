@@ -1,6 +1,6 @@
-import publicRequest from './publicRequest';
-import { localStorage, sessionStorage, StorageKey} from './storageUtils';
-import AuthEndpoints from '../api/authEndpoints';
+import publicRequest from "./publicRequest";
+import { localStorage, sessionStorage, StorageKey } from "./storageUtils";
+import AuthEndpoints from "../endpoints/authEndpoints";
 
 const refreshTokenFn = async () => {
   const rememberMe = await localStorage.getItem(StorageKey.REMEMBER_ME);
@@ -23,7 +23,7 @@ const refreshTokenFn = async () => {
     const response = await publicRequest.post(
       AuthEndpoints.REFRESH_TOKEN,
       null,
-      config
+      config,
     );
 
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
@@ -39,11 +39,17 @@ const refreshTokenFn = async () => {
     return newAccessToken;
   } catch (error) {
     if (rememberMe) {
-      console.log("Error when remove items from localStorage when refresh access token", error);
+      console.log(
+        "Error when remove items from localStorage when refresh access token",
+        error,
+      );
       localStorage.removeItem(StorageKey.REFRESH_TOKEN);
       localStorage.removeItem(StorageKey.ACCESS_TOKEN);
     } else {
-            console.log("Error when remove items from sessionStorage when refresh access token", error);
+      console.log(
+        "Error when remove items from sessionStorage when refresh access token",
+        error,
+      );
 
       sessionStorage.removeItem(StorageKey.REFRESH_TOKEN);
       sessionStorage.removeItem(StorageKey.ACCESS_TOKEN);

@@ -6,13 +6,13 @@ import {
   Button,
   Typography,
   TextField,
+  Grid,
   MenuItem,
   CircularProgress,
   InputAdornment,
 } from "@mui/material";
 import { COLOR } from "../assets/Color";
 import SaveIcon from "@mui/icons-material/Save";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams } from "react-router";
@@ -128,7 +128,7 @@ const CreateCrewContract = () => {
           function (value) {
             const { endDate } = this.parent; // Access sibling field endDate
             return !endDate || value < endDate;
-          }
+          },
         ),
 
       endDate: yup
@@ -140,7 +140,7 @@ const CreateCrewContract = () => {
           function (value) {
             const { startDate } = this.parent; // Access sibling field startDate
             return !startDate || value > startDate;
-          }
+          },
         ),
 
       workingLocation: yup
@@ -162,9 +162,7 @@ const CreateCrewContract = () => {
         .string()
         .required("Hình thức trả lương không được để trống"),
 
-      payday: yup
-        .string()
-        .required("Thời hạn trả lương không được để trống"),
+      payday: yup.string().required("Thời hạn trả lương không được để trống"),
 
       salaryReviewPeriod: yup
         .string()
@@ -349,10 +347,9 @@ const CreateCrewContract = () => {
       //   ],
       // };
 
-      
       console.log("Response: ", values);
 
-      if(response.status === HttpStatusCodes.CREATED){
+      if (response.status === HttpStatusCodes.CREATED) {
         resetForm();
         navigate("/crew-contracts");
       }
@@ -449,20 +446,19 @@ const CreateCrewContract = () => {
                   fullWidth
                   name="title"
                   value={values.title}
-                  error={
-                    !!touched.title && !!errors.title
-                  }
+                  error={!!touched.title && !!errors.title}
                   helperText={
-                    touched.title && errors.title
-                      ? errors.title
-                      : " "
+                    touched.title && errors.title ? errors.title : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
               </Grid>
             </Grid>
-            <SectionDivider sx={{ marginTop: 1, }} sectionName="Người sử dụng lao động (Bên A)*: " />
+            <SectionDivider
+              sx={{ marginTop: 1 }}
+              sectionName="Người sử dụng lao động (Bên A)*: "
+            />
             <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
               <Grid size={4}>
                 <InfoTextField

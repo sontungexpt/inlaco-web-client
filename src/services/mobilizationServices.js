@@ -1,10 +1,10 @@
 import privateRequest from "../utils/privateRequest";
-import MobilizationEndpoints from "../api/mobilizationEndpoints";
+import MobilizationEndpoints from "../endpoints/mobilizationEndpoints";
 
 export const getMyMobilizationAPI = async (cardID) => {
   try {
     const response = await privateRequest.get(
-      `${MobilizationEndpoints.CURRENT_MOBILIZATION}/${cardID}`
+      `${MobilizationEndpoints.CURRENT_MOBILIZATION}/${cardID}`,
     );
     return response;
   } catch (err) {
@@ -15,7 +15,7 @@ export const getMyMobilizationAPI = async (cardID) => {
 export const getAllMobilizationsAPI = async (page, size, status) => {
   try {
     const response = await privateRequest.get(
-      `${MobilizationEndpoints.GENERAL}/pagination?page=${page}&size=${size}&status=${status}`
+      `${MobilizationEndpoints.GENERAL}/pagination?page=${page}&size=${size}&status=${status}`,
     );
     return response;
   } catch (err) {
@@ -26,7 +26,7 @@ export const getAllMobilizationsAPI = async (page, size, status) => {
 export const getMobilizationByID_API = async (mobilizationID) => {
   try {
     const response = await privateRequest.get(
-      `${MobilizationEndpoints.GENERAL}/${mobilizationID}`
+      `${MobilizationEndpoints.GENERAL}/${mobilizationID}`,
     );
     return response;
   } catch (err) {
@@ -38,7 +38,7 @@ export const createMobilizationAPI = async (mobilizationInfo) => {
   try {
     const response = await privateRequest.post(
       `${MobilizationEndpoints.GENERAL}`,
-      mobilizationInfo
+      mobilizationInfo,
     );
     return response;
   } catch (err) {
@@ -50,7 +50,7 @@ export const editMobilizationAPI = async (mobilizationID, mobilizationInfo) => {
   try {
     const response = await privateRequest.patch(
       `${MobilizationEndpoints.GENERAL}/${mobilizationID}`,
-      mobilizationInfo
+      mobilizationInfo,
     );
     return response;
   } catch (err) {

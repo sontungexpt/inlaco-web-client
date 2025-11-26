@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {
-  PageTitle,
-  SectionDivider,
-  InfoTextField,
-} from "../components/global";
+import { PageTitle, SectionDivider, InfoTextField } from "../components/global";
 import {
   Box,
   Button,
+  Grid,
   Typography,
   CircularProgress,
   InputAdornment,
@@ -15,11 +12,10 @@ import { COLOR } from "../assets/Color";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import EventBusyRoundedIcon from "@mui/icons-material/EventBusyRounded";
-import Grid from "@mui/material/Grid2";
 import { useNavigate, useParams } from "react-router";
 import { useAppContext } from "../contexts/AppContext";
 import HttpStatusCodes from "../assets/constants/httpStatusCodes";
-import { getPostByID_API, } from "../services/postServices";
+import { getPostByID_API } from "../services/postServices";
 import { isoStringToDateString } from "../utils/ValueConverter";
 
 const RecruitmentDetail = () => {
@@ -214,7 +210,11 @@ const RecruitmentDetail = () => {
             disabled={true}
             fullWidth
             name="recruitmentStartDate"
-            value={postInfo.recruitmentStartDate ? isoStringToDateString(postInfo.recruitmentStartDate) : ""}
+            value={
+              postInfo.recruitmentStartDate
+                ? isoStringToDateString(postInfo.recruitmentStartDate)
+                : ""
+            }
             mx={2}
             sx={{
               width: "40%",

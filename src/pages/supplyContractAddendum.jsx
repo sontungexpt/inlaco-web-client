@@ -6,13 +6,13 @@ import {
   Button,
   Typography,
   TextField,
+  Grid,
   MenuItem,
   CircularProgress,
   InputAdornment,
 } from "@mui/material";
 import { COLOR } from "../assets/Color";
 import SaveIcon from "@mui/icons-material/Save";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams } from "react-router";
@@ -49,59 +49,59 @@ const AddendumContractAddendum = () => {
       .required("Bạn phải tải lên tệp phụ lục hợp đồng"),
 
     contractInfo: yup.object().shape({
-          startDate: yup
-            .date()
-            .max(new Date(), "Ngày bắt đầu không hợp lệ")
-            .required("Ngày bắt đầu không được để trống")
-            .test(
-              "is-before-end-date",
-              "Ngày bắt đầu phải trước ngày kết thúc",
-              function (value) {
-                const { endDate } = this.parent; // Access sibling field endDate
-                return !endDate || value < endDate;
-              }
-            ),
-    
-          endDate: yup
-            .date()
-            .required("Ngày kết thúc không được để trống")
-            .test(
-              "is-after-start-date",
-              "Ngày kết thúc phải sau ngày bắt đầu",
-              function (value) {
-                const { startDate } = this.parent; // Access sibling field startDate
-                return !startDate || value > startDate;
-              }
-            ),
-    
-          numOfCrewMember: yup
-            .number()
-            .min(1, "Tổng số nhân lực cần cung ứng không hợp lệ")
-            .required("Tổng số nhân lực cần cung ứng không được để trống"),
-    
-          timeOfDeparture: yup
-            .date()
-            .max(new Date(), "Thời gian khởi hành không hợp lệ")
-            .test(
-              "is-before-end-datetime",
-              "Thời gian khởi hành phải trước thời gian đến nơi dự kiến",
-              function (value) {
-                const { estimatedTimeOfArrival } = this.parent; // Access sibling field estimatedTimeOfArrival
-                return !estimatedTimeOfArrival || value < estimatedTimeOfArrival;
-              }
-            ),
-    
-          estimatedTimeOfArrival: yup
-            .date()
-            .test(
-              "is-after-start-datetime",
-              "Thời gian đến nơi dự kiến phải sau thời gian khởi hành",
-              function (value) {
-                const { timeOfDeparture } = this.parent; // Access sibling field timeOfDeparture
-                return !timeOfDeparture || value > timeOfDeparture;
-              }
-            ),
-        }),
+      startDate: yup
+        .date()
+        .max(new Date(), "Ngày bắt đầu không hợp lệ")
+        .required("Ngày bắt đầu không được để trống")
+        .test(
+          "is-before-end-date",
+          "Ngày bắt đầu phải trước ngày kết thúc",
+          function (value) {
+            const { endDate } = this.parent; // Access sibling field endDate
+            return !endDate || value < endDate;
+          },
+        ),
+
+      endDate: yup
+        .date()
+        .required("Ngày kết thúc không được để trống")
+        .test(
+          "is-after-start-date",
+          "Ngày kết thúc phải sau ngày bắt đầu",
+          function (value) {
+            const { startDate } = this.parent; // Access sibling field startDate
+            return !startDate || value > startDate;
+          },
+        ),
+
+      numOfCrewMember: yup
+        .number()
+        .min(1, "Tổng số nhân lực cần cung ứng không hợp lệ")
+        .required("Tổng số nhân lực cần cung ứng không được để trống"),
+
+      timeOfDeparture: yup
+        .date()
+        .max(new Date(), "Thời gian khởi hành không hợp lệ")
+        .test(
+          "is-before-end-datetime",
+          "Thời gian khởi hành phải trước thời gian đến nơi dự kiến",
+          function (value) {
+            const { estimatedTimeOfArrival } = this.parent; // Access sibling field estimatedTimeOfArrival
+            return !estimatedTimeOfArrival || value < estimatedTimeOfArrival;
+          },
+        ),
+
+      estimatedTimeOfArrival: yup
+        .date()
+        .test(
+          "is-after-start-datetime",
+          "Thời gian đến nơi dự kiến phải sau thời gian khởi hành",
+          function (value) {
+            const { timeOfDeparture } = this.parent; // Access sibling field timeOfDeparture
+            return !timeOfDeparture || value > timeOfDeparture;
+          },
+        ),
+    }),
   });
 
   const [createAddendumLoading, setCreateAddendumLoading] = useState(false);

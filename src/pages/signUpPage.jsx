@@ -20,7 +20,6 @@ import * as yup from "yup";
 import HttpStatusCodes from "../assets/constants/httpStatusCodes";
 import { signUpAPI } from "../services/authServices";
 
-
 const SignUpPage = () => {
   const navigate = useNavigate();
   const [isShowPass, setIsShowPass] = useState(false);
@@ -47,7 +46,7 @@ const SignUpPage = () => {
       .string()
       .matches(
         passwordRegex,
-        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm 1 chữ hoa và 1 chữ thường" //no need to add \n cuz this one already takes 2 lines
+        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm 1 chữ hoa và 1 chữ thường", //no need to add \n cuz this one already takes 2 lines
       )
       .required("Vui lòng nhập mật khẩu"), //"\n" is to make sure the error message will be displayed in 2 lines for fixed height
 
@@ -61,15 +60,18 @@ const SignUpPage = () => {
     setSignUpLoading(true);
     try {
       //Calling API to sign up
-      const response = await signUpAPI(values.fullName, values.email, values.password, values.confirmPassword);
+      const response = await signUpAPI(
+        values.fullName,
+        values.email,
+        values.password,
+        values.confirmPassword,
+      );
 
       if (response.status === HttpStatusCodes.ACCEPTED) {
         navigate("/verify-email-confirmation");
-
-
-      } else if(response.status === HttpStatusCodes.CONFLICT) {
+      } else if (response.status === HttpStatusCodes.CONFLICT) {
         setErrors({ email: "Email này đã được sử dụng để tạo tài khoản" });
-      } else{
+      } else {
         setErrors({
           fullName: "Đã có lỗi xảy ra, vui lòng thử lại sau",
           email: "Đã có lỗi xảy ra, vui lòng thử lại sau",

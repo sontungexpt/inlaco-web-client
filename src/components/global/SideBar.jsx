@@ -162,7 +162,7 @@ const SideBar = () => {
               setSelected={setSelected}
             />
             {(isAdmin || isCrewMember) && ( //only show these items if user is admin or crew member
-              <>
+              (<>
                 <Typography
                   variant="h6"
                   color={COLOR.primary_gold}
@@ -242,7 +242,7 @@ const SideBar = () => {
                     />
                   </>
                 )}
-              </>
+              </>)
             )}
             <Typography
               variant="h6"
@@ -255,7 +255,7 @@ const SideBar = () => {
               Khác
             </Typography>
             {(isAdmin || (isGeneralUser && !isCrewMember)) && ( //only show these items if user is admin or general user
-              <>
+              (<>
                 <Item
                   title="Yêu cầu Cung ứng"
                   to="/supply-requests"
@@ -270,10 +270,10 @@ const SideBar = () => {
                   selected={selected}
                   setSelected={setSelected}
                 />
-              </>
+              </>)
             )}
             {(isAdmin || isCrewMember) && ( //only show this item if user is admin or crew member
-              <>
+              (<>
                 <Item
                   title="Đào tạo"
                   to="/courses"
@@ -281,7 +281,7 @@ const SideBar = () => {
                   selected={selected}
                   setSelected={setSelected}
                 />
-              </>
+              </>)
             )}
           </Box>
         </Menu>

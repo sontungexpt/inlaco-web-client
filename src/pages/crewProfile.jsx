@@ -10,6 +10,7 @@ import {
   Box,
   Button,
   Typography,
+  Grid,
   TextField,
   MenuItem,
   CircularProgress,
@@ -19,7 +20,6 @@ import {
 // import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 // import SaveIcon from "@mui/icons-material/Save";
 import { COLOR } from "../assets/Color";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 // import * as yup from "yup";
 // import { useNavigate, useParams } from "react-router";
@@ -67,16 +67,13 @@ const CrewProfile = () => {
   const initialValues = {
     cardPhoto: "",
     fullName: profile?.fullName || "",
-    dob: profile?.birthDate
-      ? isoStringToDateString(profile?.birthDate)
-      : "",
+    dob: profile?.birthDate ? isoStringToDateString(profile?.birthDate) : "",
     gender: profile?.gender || "OTHER",
     address: profile?.address || "",
     phoneNumber: profile?.phoneNumber || "",
     email: profile?.email || "",
     languageSkills:
-      profile?.languageSkills &&
-      profile?.languageSkills[0] !== null
+      profile?.languageSkills && profile?.languageSkills[0] !== null
         ? profile?.languageSkills[0]
         : "",
 
@@ -87,8 +84,7 @@ const CrewProfile = () => {
           ? profile?.experience[0]
           : "",
       expertiseLevels:
-        profile?.expertiseLevels &&
-        profile?.expertiseLevels[0] !== null
+        profile?.expertiseLevels && profile?.expertiseLevels[0] !== null
           ? profile?.expertiseLevels[0]
           : "",
     },

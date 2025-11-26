@@ -56,7 +56,13 @@ const HomePage = () => {
         </Typography>
         <Grid container spacing={3}>
           {newsData.map((news) => (
-            <Grid item xs={12} sm={6} md={4} key={news.id}>
+            <Grid
+              key={news.id}
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 4
+              }}>
               <Card sx={{ boxShadow: 3 }}>
                 <CardMedia
                   component="img"

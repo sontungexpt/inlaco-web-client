@@ -14,20 +14,20 @@ import {
   Typography,
   TextField,
   MenuItem,
+  Grid,
   CircularProgress,
   InputAdornment,
 } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import { COLOR } from "../assets/Color";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import { useNavigate, useParams } from "react-router";
 
 const UserCandidateDetail = () => {
   const navigate = useNavigate();
 
-  const { id, } = useParams();
+  const { id } = useParams();
   const status = "Chấp thuận"; //Change this to the status of the candidate
   //"Chấp thuận", "Từ chối", "Đang chờ xác nhận", "Đã ký hợp đồng"
 

@@ -84,7 +84,9 @@ const CrewMyMobilization = () => {
   }, [cardID]);
 
   const onMobilizationDetailClick = (id, position) => {
-    navigate(`/mobilizations/${id}`, { state: { isAdmin: false, position: position } });
+    navigate(`/mobilizations/${id}`, {
+      state: { isAdmin: false, position: position },
+    });
   };
 
   const columns = [
@@ -177,7 +179,12 @@ const CrewMyMobilization = () => {
             <Button
               variant="contained"
               size="small"
-              onClick={() => onMobilizationDetailClick(params?.id, params?.row?.scheduleInfo?.position)}
+              onClick={() =>
+                onMobilizationDetailClick(
+                  params?.id,
+                  params?.row?.scheduleInfo?.position,
+                )
+              }
               sx={{
                 backgroundColor: COLOR.primary_green,
                 color: COLOR.primary_black,

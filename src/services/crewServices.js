@@ -1,11 +1,11 @@
 import privateRequest from "../utils/privateRequest";
-import CrewEndpoints from "../api/crewEndpoints";
+import CrewEndpoints from "../endpoints/crewEndpoints";
 import { dateStringToISOString } from "../utils/ValueConverter";
 
 export const getAllCrewMemberAPI = async (page, size, official) => {
   try {
     const response = await privateRequest.get(
-      `${CrewEndpoints.GENERAL}?page=${page}&size=${size}&official=${official}`
+      `${CrewEndpoints.GENERAL}?page=${page}&size=${size}&official=${official}`,
     );
     return response;
   } catch (err) {
@@ -16,7 +16,7 @@ export const getAllCrewMemberAPI = async (page, size, official) => {
 export const getCrewMemberByID_API = async (crewMemberID) => {
   try {
     const response = await privateRequest.get(
-      `${CrewEndpoints.GENERAL}/${crewMemberID}`
+      `${CrewEndpoints.GENERAL}/${crewMemberID}`,
     );
     return response;
   } catch (err) {
@@ -27,7 +27,7 @@ export const getCrewMemberByID_API = async (crewMemberID) => {
 export const getProfileCurrentCrewMemberAPI = async () => {
   try {
     const response = await privateRequest.get(
-      `${CrewEndpoints.CURRENT_PROFILE}`
+      `${CrewEndpoints.CURRENT_PROFILE}`,
     );
     return response;
   } catch (err) {
@@ -37,7 +37,7 @@ export const getProfileCurrentCrewMemberAPI = async () => {
 
 export const editCrewMemberProfileAPI = async (
   crewMemberID,
-  crewMemberInfo
+  crewMemberInfo,
 ) => {
   try {
     const response = await privateRequest.patch(
@@ -88,7 +88,7 @@ export const editCrewMemberProfileAPI = async (
 
 export const createCrMemberFrCandidateAPI = async (
   candidateID,
-  candidateInfo
+  candidateInfo,
 ) => {
   try {
     const response = await privateRequest.post(
@@ -131,7 +131,7 @@ export const createCrMemberFrCandidateAPI = async (
             type: "",
           },
         ],
-      }
+      },
     );
     return response;
   } catch (err) {

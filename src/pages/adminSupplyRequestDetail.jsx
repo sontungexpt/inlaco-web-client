@@ -13,6 +13,7 @@ import {
   Box,
   Button,
   Typography,
+  Grid,
   TextField,
   CircularProgress,
 } from "@mui/material";
@@ -20,7 +21,6 @@ import NoteAddRoundedIcon from "@mui/icons-material/NoteAddRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import { COLOR } from "../assets/Color";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import { useNavigate, useParams } from "react-router";
 import HttpStatusCodes from "../assets/constants/httpStatusCodes";
@@ -309,7 +309,9 @@ const AdminSupplyRequestDetail = () => {
                           <NoteAddRoundedIcon
                             sx={{ marginRight: "5px", marginBottom: "1px" }}
                           />
-                          <Typography sx={{ fontWeight: 700 }}>Tạo hợp đồng</Typography>
+                          <Typography sx={{ fontWeight: 700 }}>
+                            Tạo hợp đồng
+                          </Typography>
                         </Box>
                       </Button>
                       <FileUploadField

@@ -1,19 +1,13 @@
-import privateRequest from "../utils/privateRequest";
 import publicRequest from "../utils/publicRequest";
-import {
-  sessionStorage,
-  localStorage,
-  StorageKey,
-} from "../utils/storageUtils";
-import AuthEndpoints from "../api/authEndpoints";
-import axios from "axios";
-import AppProperty from "../assets/constants/appProperty";
+import AuthEndpoints from "../endpoints/authEndpoints";
 
 export const loginAPI = async (email, password) => {
   try {
-    const response = await publicRequest.post(AuthEndpoints.LOGIN, {username: email, password: password});
+    const response = await publicRequest.post(AuthEndpoints.LOGIN, {
+      username: email,
+      password: password,
+    });
     return response;
-
   } catch (err) {
     return err.response;
   }

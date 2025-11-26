@@ -1,12 +1,10 @@
 import privateRequest from "../utils/privateRequest";
-import publicRequest from "../utils/publicRequest";
-import ContractEndpoints from "../api/contractEndpoints";
-import { dateStringToISOString } from "../utils/ValueConverter";
+import ContractEndpoints from "../endpoints/contractEndpoints";
 
 export const getCrewContractsAPI = async (page, size, signed) => {
   try {
     const response = await privateRequest.get(
-      `${ContractEndpoints.GENERAL}?page=${page}&size=${size}&type=LABOR_CONTRACT&signed=${signed}`
+      `${ContractEndpoints.GENERAL}?page=${page}&size=${size}&type=LABOR_CONTRACT&signed=${signed}`,
     );
     return response;
   } catch (err) {
@@ -17,7 +15,7 @@ export const getCrewContractsAPI = async (page, size, signed) => {
 export const getCrewContractByID_API = async (contractID) => {
   try {
     const response = await privateRequest.get(
-      `${ContractEndpoints.GENERAL}/${contractID}`
+      `${ContractEndpoints.GENERAL}/${contractID}`,
     );
     return response;
   } catch (err) {
@@ -28,7 +26,7 @@ export const getCrewContractByID_API = async (contractID) => {
 export const getSupplyContractsAPI = async (page, size, signed) => {
   try {
     const response = await privateRequest.get(
-      `${ContractEndpoints.GENERAL}?page=${page}&size=${size}&type=SUPPLY_CONTRACT&signed=${signed}`
+      `${ContractEndpoints.GENERAL}?page=${page}&size=${size}&type=SUPPLY_CONTRACT&signed=${signed}`,
     );
     return response;
   } catch (err) {
@@ -39,7 +37,7 @@ export const getSupplyContractsAPI = async (page, size, signed) => {
 export const getSupplyContractByID_API = async (contractID) => {
   try {
     const response = await privateRequest.get(
-      `${ContractEndpoints.GENERAL}/${contractID}`
+      `${ContractEndpoints.GENERAL}/${contractID}`,
     );
     return response;
   } catch (err) {
@@ -55,12 +53,12 @@ export const createCrewContractAPI = async (crewMemberID, crewContractInfo) => {
         title: crewContractInfo.title,
         initiator: crewContractInfo.initiator,
         signedPartners: crewContractInfo.signedPartners,
-        terms: ["Terms 1", ],
+        terms: ["Terms 1"],
         activationDate: crewContractInfo.activationDate,
         expiredDate: crewContractInfo.expiredDate,
         type: "LABOR_CONTRACT",
         customAttributes: crewContractInfo.customAttributes,
-      }
+      },
     );
     return response;
   } catch (err) {
@@ -68,7 +66,10 @@ export const createCrewContractAPI = async (crewMemberID, crewContractInfo) => {
   }
 };
 
-export const createSupplyContractAPI = async (supplyReqID, supplyContractInfo) => {
+export const createSupplyContractAPI = async (
+  supplyReqID,
+  supplyContractInfo,
+) => {
   try {
     const response = await privateRequest.post(
       `${ContractEndpoints.SUPPLY_GENERAL}/${supplyReqID}`,
@@ -81,7 +82,7 @@ export const createSupplyContractAPI = async (supplyReqID, supplyContractInfo) =
         expiredDate: supplyContractInfo.expiredDate,
         type: "SUPPLY_CONTRACT",
         customAttributes: supplyContractInfo.customAttributes,
-      }
+      },
     );
     return response;
   } catch (err) {
@@ -97,12 +98,12 @@ export const editCrewContractAPI = async (contractID, contractInfo) => {
         title: contractInfo.title,
         initiator: contractInfo.initiator,
         signedPartners: contractInfo.signedPartners,
-        terms: ["Terms 1", ],
+        terms: ["Terms 1"],
         activationDate: contractInfo.activationDate,
         expiredDate: contractInfo.expiredDate,
         type: "LABOR_CONTRACT",
         customAttributes: contractInfo.customAttributes,
-      }
+      },
     );
     return response;
   } catch (err) {
@@ -123,7 +124,7 @@ export const editSupplyContractAPI = async (contractID, contractInfo) => {
         expiredDate: contractInfo.expiredDate,
         type: "SUPPLY_CONTRACT",
         customAttributes: contractInfo.customAttributes,
-      }
+      },
     );
     return response;
   } catch (err) {
@@ -134,7 +135,7 @@ export const editSupplyContractAPI = async (contractID, contractInfo) => {
 export const activeContractByID_API = async (contractID) => {
   try {
     const response = await privateRequest.post(
-      `${ContractEndpoints.ACTIVE}/${contractID}`
+      `${ContractEndpoints.ACTIVE}/${contractID}`,
     );
     return response;
   } catch (err) {

@@ -11,6 +11,7 @@ import {
   Button,
   Typography,
   TextField,
+  Grid,
   MenuItem,
   CircularProgress,
   IconButton,
@@ -23,7 +24,6 @@ import SaveIcon from "@mui/icons-material/Save";
 import DifferenceRoundedIcon from "@mui/icons-material/DifferenceRounded";
 import GetAppRoundedIcon from "@mui/icons-material/GetAppRounded";
 import HandshakeRoundedIcon from "@mui/icons-material/HandshakeRounded";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams, useLocation } from "react-router";
@@ -36,9 +36,12 @@ import HttpStatusCodes from "../assets/constants/httpStatusCodes";
 import {
   getCrewContractByID_API,
   editCrewContractAPI,
-  activeContractByID_API
+  activeContractByID_API,
 } from "../services/contractServices";
-import { isoStringToDateString, dateStringToISOString } from "../utils/ValueConverter";
+import {
+  isoStringToDateString,
+  dateStringToISOString,
+} from "../utils/ValueConverter";
 
 const CrewContractDetail = () => {
   const navigate = useNavigate();
@@ -89,7 +92,7 @@ const CrewContractDetail = () => {
         : "",
       dob: contractInfo.signedPartners
         ? isoStringToDateString(
-            contractInfo.signedPartners[0]?.customAttributes[0]?.value
+            contractInfo.signedPartners[0]?.customAttributes[0]?.value,
           )
         : "", //dob
       birthplace: contractInfo.signedPartners
@@ -109,7 +112,7 @@ const CrewContractDetail = () => {
         : "", //ciNumber
       ciIssueDate: contractInfo.signedPartners
         ? isoStringToDateString(
-            contractInfo.signedPartners[0]?.customAttributes[5]?.value
+            contractInfo.signedPartners[0]?.customAttributes[5]?.value,
           )
         : "", //ciIssueDate
       ciIssuePlace: contractInfo.signedPartners
@@ -216,7 +219,7 @@ const CrewContractDetail = () => {
           function (value) {
             const { endDate } = this.parent; // Access sibling field endDate
             return !endDate || value < endDate;
-          }
+          },
         ),
 
       endDate: yup
@@ -228,7 +231,7 @@ const CrewContractDetail = () => {
           function (value) {
             const { startDate } = this.parent; // Access sibling field startDate
             return !startDate || value > startDate;
-          }
+          },
         ),
 
       workingLocation: yup
@@ -362,11 +365,10 @@ const CrewContractDetail = () => {
         ],
       });
       await new Promise((resolve) => setTimeout(resolve, 200)); //Delay UI for 200ms
-      if(response.status === HttpStatusCodes.OK){
+      if (response.status === HttpStatusCodes.OK) {
         console.log("Successfully updating: ", values);
         setIsEditable(false);
       }
-
     } catch (err) {
       console.log("Error when updating crew contract: ", err);
     } finally {
@@ -375,12 +377,12 @@ const CrewContractDetail = () => {
   };
 
   const handleApproveContract = async () => {
-    try{
+    try {
       const response = await activeContractByID_API(id);
-      if(response.status === HttpStatusCodes.OK){
+      if (response.status === HttpStatusCodes.OK) {
         navigate("/crew-contracts");
       }
-    } catch(err){
+    } catch (err) {
       console.log("Error when approving contract: ", err);
     }
   };
@@ -454,7 +456,7 @@ const CrewContractDetail = () => {
         } catch (error) {
           console.error("Error generating document:", error);
         }
-      }
+      },
     );
   };
 

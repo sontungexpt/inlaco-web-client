@@ -13,13 +13,13 @@ import {
   Button,
   Typography,
   TextField,
+  Grid,
   CircularProgress,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import SaveIcon from "@mui/icons-material/Save";
 import { COLOR } from "../assets/Color";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams } from "react-router";
@@ -100,7 +100,7 @@ const UserSupplyRequestDetail = () => {
           function (value) {
             const { estimatedTimeOfArrival } = this.parent; // Access sibling field estimatedTimeOfArrival
             return !estimatedTimeOfArrival || value < estimatedTimeOfArrival;
-          }
+          },
         ),
       UN_LOCODE_DepartureLocation: yup
         .string()
@@ -118,7 +118,7 @@ const UserSupplyRequestDetail = () => {
           function (value) {
             const { timeOfDeparture } = this.parent; // Access sibling field timeOfDeparture
             return !timeOfDeparture || value > timeOfDeparture;
-          }
+          },
         ),
       UN_LOCODE_ArrivalLocation: yup
         .string()
@@ -282,7 +282,13 @@ const UserSupplyRequestDetail = () => {
                       </Button>
                     </Box>
                   ) : status === "Đang chờ xác nhận" && !isEditable ? (
-                    <Box sx={{ display: "flex", width: "50%", alignItems: "center", }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        width: "50%",
+                        alignItems: "center",
+                      }}
+                    >
                       <Button
                         variant="contained"
                         type={"button"}

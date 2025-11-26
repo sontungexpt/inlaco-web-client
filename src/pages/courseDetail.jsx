@@ -5,7 +5,7 @@ import {
   InfoTextField,
   HorizontalImageInput,
   SwitchBar,
-  NoValuesOverlay
+  NoValuesOverlay,
 } from "../components/global";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
@@ -20,13 +20,13 @@ import {
   Box,
   Button,
   Typography,
+  Grid,
   TextField,
   MenuItem,
   CircularProgress,
   InputAdornment,
 } from "@mui/material";
 import { COLOR } from "../assets/Color";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams, useLocation } from "react-router";
@@ -38,7 +38,7 @@ const CourseDetail = () => {
   const { id } = useParams();
   const location = useLocation();
   const isAdmin = location.state?.isAdmin;
-  const isAlreadyEnrolled = false; //this should be replace 
+  const isAlreadyEnrolled = false; //this should be replace
 
   //   useEffect(() => {
   //     fetchCourseDetail(id);
@@ -178,7 +178,7 @@ const CourseDetail = () => {
         function (value) {
           const { endDate } = this.parent; // Access sibling field endDate
           return !endDate || value < endDate;
-        }
+        },
       ),
 
     endDate: yup
@@ -190,7 +190,7 @@ const CourseDetail = () => {
         function (value) {
           const { startDate } = this.parent; // Access sibling field startDate
           return !startDate || value > startDate;
-        }
+        },
       ),
     description: yup.string().required("Mô tả khóa học không được để trống"),
     estimatedCourseDuration: yup
@@ -209,7 +209,6 @@ const CourseDetail = () => {
   const handleTabChange = (newValue) => {
     setTabValue(newValue);
   };
-
 
   const handleEditClick = () => {
     setIsEditable(true);
@@ -240,11 +239,10 @@ const CourseDetail = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000)); //Mock API call
 
       console.log("Successfully enroll a course");
-
     } catch (err) {
       console.log("Error when enrolling a course: ", err);
     } finally {
-        setEnrollLoading(false);
+      setEnrollLoading(false);
     }
   };
 

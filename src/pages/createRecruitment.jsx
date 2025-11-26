@@ -5,11 +5,11 @@ import {
   Button,
   Typography,
   CircularProgress,
+  Grid,
   InputAdornment,
 } from "@mui/material";
 import { COLOR } from "../assets/Color";
 import SaveIcon from "@mui/icons-material/Save";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { createRecruitmentPostAPI } from "../services/postServices";
@@ -52,7 +52,7 @@ const CreateRecruitment = () => {
         function (value) {
           const { recruitmentEndDate } = this.parent; // Access sibling field recruitmentEndDate
           return !recruitmentEndDate || value < recruitmentEndDate;
-        }
+        },
       ),
 
     recruitmentEndDate: yup
@@ -63,7 +63,7 @@ const CreateRecruitment = () => {
         function (value) {
           const { recruitmentStartDate } = this.parent; // Access sibling field recruitmentStartDate
           return !recruitmentStartDate || value > recruitmentStartDate;
-        }
+        },
       ),
   });
 

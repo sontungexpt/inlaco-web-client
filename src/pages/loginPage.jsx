@@ -52,7 +52,7 @@ const LoginPage = () => {
       .string()
       .matches(
         passwordRegex,
-        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm 1 chữ hoa và 1 chữ thường"
+        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm 1 chữ hoa và 1 chữ thường",
       )
       .required("Vui lòng nhập mật khẩu"), //"\n" is to make sure the error message will be displayed in 2 lines for fixed height
   });
@@ -245,9 +245,7 @@ const LoginPage = () => {
                 value={values.password}
                 error={!!touched.password && !!errors.password}
                 helperText={
-                  touched.password && errors.password
-                    ? errors.password
-                    : " "
+                  touched.password && errors.password ? errors.password : " "
                 }
                 onChange={handleChange}
                 onBlur={handleBlur}

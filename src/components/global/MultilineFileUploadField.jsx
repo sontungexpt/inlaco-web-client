@@ -3,7 +3,7 @@ import { Button, IconButton, Box } from "@mui/material";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { COLOR } from "../../assets/Color";
 import { useField, useFormikContext } from "formik";
-import Grid from "@mui/material/Grid2";
+import { Grid } from "@mui/material";
 
 const MultilineFileUploadField = ({
   name,

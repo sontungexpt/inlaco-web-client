@@ -13,13 +13,13 @@ import {
   Typography,
   TextField,
   MenuItem,
+  Grid,
   CircularProgress,
   InputAdornment,
 } from "@mui/material";
 import { COLOR } from "../assets/Color";
 import SaveIcon from "@mui/icons-material/Save";
 import ScheduleSendRoundedIcon from "@mui/icons-material/ScheduleSendRounded";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
 // import { useNavigate } from "react-router";
@@ -40,10 +40,7 @@ const CreateCourse = () => {
     courseWallpaper: "",
   };
 
-  const isCertificatedCourseOption = [
-    "Có",
-    "Không",
-  ];
+  const isCertificatedCourseOption = ["Có", "Không"];
 
   const courseSchema = yup.object().shape({
     instructorName: yup.string(),
@@ -61,7 +58,7 @@ const CreateCourse = () => {
         function (value) {
           const { endDate } = this.parent; // Access sibling field endDate
           return !endDate || value < endDate;
-        }
+        },
       ),
 
     endDate: yup
@@ -73,7 +70,7 @@ const CreateCourse = () => {
         function (value) {
           const { startDate } = this.parent; // Access sibling field startDate
           return !startDate || value > startDate;
-        }
+        },
       ),
     description: yup.string().required("Mô tả khóa học không được để trống"),
     estimatedCourseDuration: yup

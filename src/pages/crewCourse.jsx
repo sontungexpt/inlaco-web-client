@@ -1,7 +1,6 @@
 import React from "react";
-import { PageTitle, } from "../components/global";
-import { Box, Button, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+import { PageTitle } from "../components/global";
+import { Grid, Box, Button, Typography } from "@mui/material";
 import { COLOR } from "../assets/Color";
 import { CourseCard } from "../components/other";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";

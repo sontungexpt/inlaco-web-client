@@ -47,7 +47,9 @@ const CrewInfos = () => {
   }, []);
 
   const onMemberDetailClick = (id) => {
-    navigate(`/crews/${id}`, { state: { official: tabValue === 0 ? true : false } });
+    navigate(`/crews/${id}`, {
+      state: { official: tabValue === 0 ? true : false },
+    });
   };
 
   const fetchCrewMemberTabChange = async (official) => {
@@ -66,17 +68,17 @@ const CrewInfos = () => {
     } finally {
       setSectionLoading(false);
     }
-  }
+  };
 
   const onCreateCrewContractClick = async (id) => {
     navigate(`/crew-contracts/create/${id}`);
-  }
-    
+  };
+
   const handleTabChange = async (newValue) => {
-    if(newValue === 1){
+    if (newValue === 1) {
       await fetchCrewMemberTabChange(false);
       setTabValue(newValue);
-    } else{
+    } else {
       await fetchCrewMemberTabChange(true);
       setTabValue(newValue);
     }
@@ -124,8 +126,8 @@ const CrewInfos = () => {
             {params.value === "MALE"
               ? "Nam"
               : params.value === "FEMALE"
-              ? "Nữ"
-              : "Khác"}
+                ? "Nữ"
+                : "Khác"}
           </Box>
         );
       },

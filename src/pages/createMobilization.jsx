@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { PageTitle, SectionDivider, InfoTextField, HorizontalImageInput, EditableDataGrid } from "../components/global";
+import {
+  PageTitle,
+  SectionDivider,
+  InfoTextField,
+  HorizontalImageInput,
+  EditableDataGrid,
+} from "../components/global";
 import { NationalityTextField } from "../components/mobilization";
 import { FileUploadField } from "../components/contract";
-import {
-  Box,
-  Button,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
+import { Grid, Box, Button, Typography, CircularProgress } from "@mui/material";
 import { COLOR } from "../assets/Color";
 import SaveIcon from "@mui/icons-material/Save";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router";
@@ -35,7 +35,7 @@ const CreateMobilization = () => {
       shipImage: "",
       shipIMO: "",
       shipName: "",
-      shipNationality: "",  
+      shipNationality: "",
       shipType: "",
     },
 
@@ -59,7 +59,7 @@ const CreateMobilization = () => {
           function (value) {
             const { estimatedTimeOfArrival } = this.parent; // Access sibling field estimatedTimeOfArrival
             return !estimatedTimeOfArrival || value < estimatedTimeOfArrival;
-          }
+          },
         ),
       UN_LOCODE_DepartureLocation: yup
         .string()
@@ -77,7 +77,7 @@ const CreateMobilization = () => {
           function (value) {
             const { timeOfDeparture } = this.parent; // Access sibling field timeOfDeparture
             return !timeOfDeparture || value > timeOfDeparture;
-          }
+          },
         ),
       UN_LOCODE_ArrivalLocation: yup
         .string()
@@ -88,7 +88,8 @@ const CreateMobilization = () => {
     }),
   });
 
-  const [createMobilizationLoading, setCreateMobilizationLoading] = useState(false);
+  const [createMobilizationLoading, setCreateMobilizationLoading] =
+    useState(false);
 
   const handleCreateMobilizationSubmit = async (values, { resetForm }) => {
     setCreateMobilizationLoading(true);
@@ -102,11 +103,15 @@ const CreateMobilization = () => {
 
         partnerName: values.compName,
         // totalSailors: values.numOfMobilizedCrew,
-        startDate: dateTimeStringToISOString(values.mobilizationInfo.timeOfDeparture),
+        startDate: dateTimeStringToISOString(
+          values.mobilizationInfo.timeOfDeparture,
+        ),
         departurePoint: values.mobilizationInfo.departureLocation,
         departureUNLOCODE: values.mobilizationInfo.UN_LOCODE_DepartureLocation,
 
-        estimatedEndDate: dateTimeStringToISOString(values.mobilizationInfo.estimatedTimeOfArrival),
+        estimatedEndDate: dateTimeStringToISOString(
+          values.mobilizationInfo.estimatedTimeOfArrival,
+        ),
         arrivalPoint: values.mobilizationInfo.arrivalLocation,
         arrivalUNLOCODE: values.mobilizationInfo.UN_LOCODE_ArrivalLocation,
 
@@ -132,7 +137,7 @@ const CreateMobilization = () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-      if(response.status === HttpStatusCodes.CREATED) {
+      if (response.status === HttpStatusCodes.CREATED) {
         console.log("Successfully submitted: ", values);
         resetForm();
         navigate("/mobilizations");
@@ -577,7 +582,10 @@ const CreateMobilization = () => {
             <SectionDivider sectionName="Danh sách thuyền viên được điều động*: " />
             <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
               <Grid size={12}>
-                <EditableDataGrid name="mobilizedCrewMembers" initialIsEditable={false} />
+                <EditableDataGrid
+                  name="mobilizedCrewMembers"
+                  initialIsEditable={false}
+                />
               </Grid>
             </Grid>
           </Box>

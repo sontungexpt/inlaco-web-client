@@ -4,12 +4,12 @@ import {
   Typography,
   CardMedia,
   IconButton,
+  Grid,
   Box,
 } from "@mui/material";
 import { COLOR } from "../../assets/Color";
 import { useState } from "react";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
-import Grid from "@mui/material/Grid2";
 
 const TemplateContractCard = ({
   image,
@@ -20,11 +20,14 @@ const TemplateContractCard = ({
   sx = [],
   onClick,
 }) => {
-
   const [imageError, setImageError] = useState(false);
 
   return (
-    <Grid onClick={onClick} size={gridSize} sx={[...(Array.isArray(sx) ? sx : [sx])]}>
+    <Grid
+      onClick={onClick}
+      size={gridSize}
+      sx={[...(Array.isArray(sx) ? sx : [sx])]}
+    >
       <Card
         sx={{
           position: "relative",

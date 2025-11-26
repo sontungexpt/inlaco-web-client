@@ -1,10 +1,16 @@
-import { Card, CardContent, Typography, CardMedia, Box } from "@mui/material";
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  CardMedia,
+  Box,
+} from "@mui/material";
 import { COLOR } from "../../assets/Color";
 import { useState } from "react";
-import Grid from "@mui/material/Grid2";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
+import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 
 const CourseCard = ({
   name,

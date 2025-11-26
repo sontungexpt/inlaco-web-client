@@ -27,15 +27,16 @@ const VerifyEmailConfirmation = () => {
 
   return (
     <div className="login">
-      <div style={{ alignItems: "center", textAlign: "center", padding: 50, }}>
+      <div style={{ alignItems: "center", textAlign: "center", padding: 50 }}>
         <h2 style={textStyle}>
           Chúng tôi đã gửi cho bạn một liên kết để xác minh email, vui lòng kiểm
-          tra email và bấm vào đường link xác thực được gửi kèm để xác minh tài khoản của
-          bạn!!
+          tra email và bấm vào đường link xác thực được gửi kèm để xác minh tài
+          khoản của bạn!!
         </h2>
         <div style={{ marginTop: 50 }}>
           <p style={textStyle}>
-            Nếu bạn đã bấm vào đường link xác thực được gửi qua email đăng ký của bạn, hãy bấm vào{" "}
+            Nếu bạn đã bấm vào đường link xác thực được gửi qua email đăng ký
+            của bạn, hãy bấm vào{" "}
             <Link
               to="/login"
               style={{
@@ -48,7 +49,8 @@ const VerifyEmailConfirmation = () => {
             để trở lại màn hình Đăng nhập
           </p>
           <p style={textStyle}>
-            Nếu bạn không nhận được email xác thực hoặc đường link xác thực đã hết hạn, hãy bấm vào{" "}
+            Nếu bạn không nhận được email xác thực hoặc đường link xác thực đã
+            hết hạn, hãy bấm vào{" "}
             <span
               onClick={handleResendVerifyLink}
               style={{

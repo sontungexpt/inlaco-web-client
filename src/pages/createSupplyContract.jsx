@@ -1,21 +1,19 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { PageTitle, SectionDivider, InfoTextField } from "../components/global";
 import { FileUploadField } from "../components/contract";
 import {
   Box,
   Button,
   Typography,
-  TextField,
-  MenuItem,
+  Grid,
   CircularProgress,
   InputAdornment,
 } from "@mui/material";
 import { COLOR } from "../assets/Color";
 import SaveIcon from "@mui/icons-material/Save";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { useNavigate, useParams, } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { createSupplyContractAPI } from "../services/contractServices";
 import HttpStatusCodes from "../assets/constants/httpStatusCodes";
 import { dateStringToISOString } from "../utils/ValueConverter";
@@ -108,7 +106,7 @@ const CreateSupplyContract = () => {
           function (value) {
             const { endDate } = this.parent; // Access sibling field endDate
             return !endDate || value < endDate;
-          }
+          },
         ),
 
       endDate: yup
@@ -120,7 +118,7 @@ const CreateSupplyContract = () => {
           function (value) {
             const { startDate } = this.parent; // Access sibling field startDate
             return !startDate || value > startDate;
-          }
+          },
         ),
 
       numOfCrewMember: yup
@@ -137,7 +135,7 @@ const CreateSupplyContract = () => {
           function (value) {
             const { estimatedTimeOfArrival } = this.parent; // Access sibling field estimatedTimeOfArrival
             return !estimatedTimeOfArrival || value < estimatedTimeOfArrival;
-          }
+          },
         ),
 
       estimatedTimeOfArrival: yup
@@ -148,7 +146,7 @@ const CreateSupplyContract = () => {
           function (value) {
             const { timeOfDeparture } = this.parent; // Access sibling field timeOfDeparture
             return !timeOfDeparture || value > timeOfDeparture;
-          }
+          },
         ),
     }),
   });
@@ -206,7 +204,7 @@ const CreateSupplyContract = () => {
           {
             key: "estimatedTimeOfArrival",
             value: dateStringToISOString(
-              values.contractInfo.estimatedTimeOfArrival
+              values.contractInfo.estimatedTimeOfArrival,
             ),
           },
           {
@@ -327,7 +325,10 @@ const CreateSupplyContract = () => {
                 />
               </Grid>
             </Grid>
-            <SectionDivider sx={{ marginTop: 1, }} sectionName="Công ty Cung ứng lao động (Bên A)*: " />
+            <SectionDivider
+              sx={{ marginTop: 1 }}
+              sectionName="Công ty Cung ứng lao động (Bên A)*: "
+            />
             <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
               <Grid size={4}>
                 <InfoTextField

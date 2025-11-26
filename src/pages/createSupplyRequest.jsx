@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   PageTitle,
   SectionDivider,
@@ -7,22 +7,14 @@ import {
 } from "../components/global";
 import { NationalityTextField } from "../components/mobilization";
 import { FileUploadField } from "../components/contract";
-import {
-  Box,
-  Button,
-  Typography,
-  TextField,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Button, Typography, Grid, CircularProgress } from "@mui/material";
 import ScheduleSendRoundedIcon from "@mui/icons-material/ScheduleSendRounded";
 import { COLOR } from "../assets/Color";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import HttpStatusCodes from "../assets/constants/httpStatusCodes";
 import { createSupplyRequestAPI } from "../services/supplyReqServices";
-import { dateTimeStringToISOString } from "../utils/ValueConverter";
 
 const CreateSupplyRequest = () => {
   const navigate = useNavigate();
@@ -95,7 +87,7 @@ const CreateSupplyRequest = () => {
           function (value) {
             const { estimatedTimeOfArrival } = this.parent; // Access sibling field estimatedTimeOfArrival
             return !estimatedTimeOfArrival || value < estimatedTimeOfArrival;
-          }
+          },
         ),
       UN_LOCODE_DepartureLocation: yup
         .string()
@@ -113,7 +105,7 @@ const CreateSupplyRequest = () => {
           function (value) {
             const { timeOfDeparture } = this.parent; // Access sibling field timeOfDeparture
             return !timeOfDeparture || value > timeOfDeparture;
-          }
+          },
         ),
       UN_LOCODE_ArrivalLocation: yup
         .string()
@@ -132,11 +124,11 @@ const CreateSupplyRequest = () => {
       //Calling API to create a new crew member
       const response = await createSupplyRequestAPI(values);
       await new Promise((resolve) => setTimeout(resolve, 200)); // Delay 0.2s
-      
+
       if (response.status === HttpStatusCodes.CREATED) {
         resetForm();
         navigate("/supply-requests");
-      } else{
+      } else {
         console.log("Failed to create supply request");
       }
     } catch (err) {

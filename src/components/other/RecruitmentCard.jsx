@@ -1,12 +1,25 @@
 import React from "react";
-import { Card, Box, Typography, Button } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+import { Grid, Card, Box, Typography, Button } from "@mui/material";
 import { COLOR } from "../../assets/Color";
 import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
 
-const RecruitmentCard = ({ isAdmin, title, description, location, gridSize = 12, sx = [], onClick, ...props }) => {
+const RecruitmentCard = ({
+  isAdmin,
+  title,
+  description,
+  location,
+  gridSize = 12,
+  sx = [],
+  onClick,
+  ...props
+}) => {
   return (
-    <Grid {...props} onClick={onClick} size={gridSize} sx={[...(Array.isArray(sx) ? sx : [sx])]}>
+    <Grid
+      {...props}
+      onClick={onClick}
+      size={gridSize}
+      sx={[...(Array.isArray(sx) ? sx : [sx])]}
+    >
       <Card
         sx={{
           borderRadius: 5,

@@ -11,17 +11,20 @@ import {
   Button,
   Typography,
   MenuItem,
+  Grid,
   CircularProgress,
 } from "@mui/material";
 import { COLOR } from "../assets/Color";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams, useLocation } from "react-router";
 import HttpStatusCodes from "../assets/constants/httpStatusCodes";
 import { createCrMemberFrCandidateAPI } from "../services/crewServices";
-import { dateStringToISOString, isoStringToDateString } from "../utils/ValueConverter";
+import {
+  dateStringToISOString,
+  isoStringToDateString,
+} from "../utils/ValueConverter";
 
 const AddCrewMember = () => {
   const navigate = useNavigate();
@@ -39,12 +42,16 @@ const AddCrewMember = () => {
   const initialValues = {
     cardPhoto: "",
     fullName: candidateInfo?.fullName || "",
-    dob: candidateInfo?.birthDate ? isoStringToDateString(candidateInfo?.birthDate) : "",
+    dob: candidateInfo?.birthDate
+      ? isoStringToDateString(candidateInfo?.birthDate)
+      : "",
     gender: candidateInfo?.gender || "OTHER",
     address: candidateInfo?.address || "",
     phoneNumber: candidateInfo?.phoneNumber || "",
     email: candidateInfo?.email || "",
-    languageSkills: candidateInfo?.languageSkills ? candidateInfo?.languageSkills[0] : "",
+    languageSkills: candidateInfo?.languageSkills
+      ? candidateInfo?.languageSkills[0]
+      : "",
 
     insuranceInfo: {
       socialInsID: "",
@@ -107,7 +114,7 @@ const AddCrewMember = () => {
         console.log("Successfully adding new crew member");
         resetForm();
         navigate("/crews");
-      } else{
+      } else {
         console.log("Failed to adding new crew member");
       }
     } catch (err) {

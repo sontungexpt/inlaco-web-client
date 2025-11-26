@@ -7,6 +7,7 @@ import {
   Typography,
   InputAdornment,
   CircularProgress,
+  Grid,
   IconButton,
 } from "@mui/material";
 import { COLOR } from "../assets/Color";
@@ -16,7 +17,6 @@ import SaveIcon from "@mui/icons-material/Save";
 import DifferenceRoundedIcon from "@mui/icons-material/DifferenceRounded";
 import GetAppRoundedIcon from "@mui/icons-material/GetAppRounded";
 import HandshakeRoundedIcon from "@mui/icons-material/HandshakeRounded";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams, useLocation } from "react-router";
@@ -183,7 +183,7 @@ const SupplyContractDetail = () => {
           function (value) {
             const { endDate } = this.parent; // Access sibling field endDate
             return !endDate || value < endDate;
-          }
+          },
         ),
 
       endDate: yup
@@ -195,7 +195,7 @@ const SupplyContractDetail = () => {
           function (value) {
             const { startDate } = this.parent; // Access sibling field startDate
             return !startDate || value > startDate;
-          }
+          },
         ),
 
       numOfCrewMember: yup
@@ -212,7 +212,7 @@ const SupplyContractDetail = () => {
           function (value) {
             const { estimatedTimeOfArrival } = this.parent; // Access sibling field estimatedTimeOfArrival
             return !estimatedTimeOfArrival || value < estimatedTimeOfArrival;
-          }
+          },
         ),
 
       estimatedTimeOfArrival: yup
@@ -223,7 +223,7 @@ const SupplyContractDetail = () => {
           function (value) {
             const { timeOfDeparture } = this.parent; // Access sibling field timeOfDeparture
             return !timeOfDeparture || value > timeOfDeparture;
-          }
+          },
         ),
     }),
   });
@@ -307,7 +307,7 @@ const SupplyContractDetail = () => {
         } catch (error) {
           console.error("Error generating document:", error);
         }
-      }
+      },
     );
   };
 
@@ -362,7 +362,7 @@ const SupplyContractDetail = () => {
           {
             key: "estimatedTimeOfArrival",
             value: dateStringToISOString(
-              values.contractInfo.estimatedTimeOfArrival
+              values.contractInfo.estimatedTimeOfArrival,
             ),
           },
           {
@@ -385,7 +385,7 @@ const SupplyContractDetail = () => {
     } catch (err) {
       console.log("Error when updating supply contract: ", err);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 

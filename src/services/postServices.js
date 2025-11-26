@@ -1,11 +1,11 @@
 import privateRequest from "../utils/privateRequest";
 import publicRequest from "../utils/publicRequest";
-import PostEndpoints from "../api/postEndpoints";
+import PostEndpoints from "../endpoints/postEndpoints";
 
 export const getAllPostAPI = async (page, size) => {
   try {
     const response = await publicRequest.get(
-      `${PostEndpoints.GET_ALL}?page=${page}&size=${size}`
+      `${PostEndpoints.GET_ALL}?page=${page}&size=${size}`,
     );
     return response;
   } catch (err) {
@@ -16,7 +16,7 @@ export const getAllPostAPI = async (page, size) => {
 export const getPostByID_API = async (postID) => {
   try {
     const response = await publicRequest.get(
-      `${PostEndpoints.GENERAL}/${postID}`
+      `${PostEndpoints.GENERAL}/${postID}`,
     );
     return response;
   } catch (err) {
@@ -27,7 +27,7 @@ export const getPostByID_API = async (postID) => {
 export const getAllCandidatesAPI = async (page, size, status) => {
   try {
     const response = await privateRequest.get(
-      `${PostEndpoints.GET_ALL_CANDIDATES}?status=${status}&page=${page}&size=${size}`
+      `${PostEndpoints.GET_ALL_CANDIDATES}?status=${status}&page=${page}&size=${size}`,
     );
     return response;
   } catch (err) {
@@ -38,7 +38,7 @@ export const getAllCandidatesAPI = async (page, size, status) => {
 export const getCandidateByID_API = async (candidateID) => {
   try {
     const response = await privateRequest.get(
-      `${PostEndpoints.CANDIDATE_GENERAL}/${candidateID}`
+      `${PostEndpoints.CANDIDATE_GENERAL}/${candidateID}`,
     );
     return response;
   } catch (err) {
@@ -77,7 +77,7 @@ export const applyRecruitmentAPI = async (postID, candidateInfo) => {
         address: candidateInfo.address,
         languageSkills: candidateInfo.languageSkills,
         resume: candidateInfo.resume,
-      }
+      },
     );
     return response;
   } catch (err) {
@@ -88,7 +88,7 @@ export const applyRecruitmentAPI = async (postID, candidateInfo) => {
 export const candidate_GetApplicationAPI = async () => {
   try {
     const response = await privateRequest.get(
-      `${PostEndpoints.CANDIDATE_APPLICATION}?`
+      `${PostEndpoints.CANDIDATE_APPLICATION}?`,
     );
     return response;
   } catch (err) {
@@ -99,7 +99,7 @@ export const candidate_GetApplicationAPI = async () => {
 export const approveCandidateApplicationAPI = async (candidateID) => {
   try {
     const response = await privateRequest.post(
-      `${PostEndpoints.REVIEW_CANDIDATE}/${candidateID}?autoEmail=true&status=WAIT_FOR_INTERVIEW`
+      `${PostEndpoints.REVIEW_CANDIDATE}/${candidateID}?autoEmail=true&status=WAIT_FOR_INTERVIEW`,
     );
     return response;
   } catch (err) {
@@ -110,10 +110,11 @@ export const approveCandidateApplicationAPI = async (candidateID) => {
 export const rejectCandidateApplicationAPI = async (candidateID) => {
   try {
     const response = await privateRequest.post(
-      `${PostEndpoints.REVIEW_CANDIDATE}/${candidateID}?autoEmail=true&status=REJECTED`
+      `${PostEndpoints.REVIEW_CANDIDATE}/${candidateID}?autoEmail=true&status=REJECTED`,
     );
     return response;
   } catch (err) {
     return err.response;
   }
 };
+

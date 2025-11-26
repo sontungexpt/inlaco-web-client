@@ -3,12 +3,12 @@ import {
   Pagination,
   Box,
   Typography,
+  Grid,
   Button,
   Select,
   MenuItem,
   CircularProgress,
 } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 import { PageTitle, SwitchBar, NoValuesOverlay } from "../components/global";
 import { DataGrid } from "@mui/x-data-grid";
 import { RecruitmentCard } from "../components/other";
@@ -20,9 +20,7 @@ import { useAppContext } from "../contexts/AppContext";
 import HttpStatusCodes from "../assets/constants/httpStatusCodes";
 import { getAllPostAPI, getAllCandidatesAPI } from "../services/postServices";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
-import {
-  isoStringToAppDateString,
-} from "../utils/ValueConverter";
+import { isoStringToAppDateString } from "../utils/ValueConverter";
 
 const CrewRecruitment = () => {
   const navigate = useNavigate();
@@ -72,7 +70,7 @@ const CrewRecruitment = () => {
     navigate(`/crews/add/${candidateID}`, {
       state: { candidateInfo: candidateInfo },
     });
-  }
+  };
 
   const statusFilters = [
     { label: "Đã nộp", value: "APPLIED" },
@@ -123,8 +121,8 @@ const CrewRecruitment = () => {
             {params.value === "MALE"
               ? "Nam"
               : params.value === "FEMALE"
-              ? "Nữ"
-              : "Khác"}
+                ? "Nữ"
+                : "Khác"}
           </Box>
         );
       },
@@ -262,7 +260,9 @@ const CrewRecruitment = () => {
   const [page, setPage] = useState(1);
   const [tabValue, setTabValue] = useState(location.state?.tabValue || 0);
   const [candidateList, setCandidateList] = useState([]);
-  const [candidateStatus, setCandidateStatus] = useState(location.state?.candidateStatus || "APPLIED");
+  const [candidateStatus, setCandidateStatus] = useState(
+    location.state?.candidateStatus || "APPLIED",
+  );
 
   useEffect(() => {
     const fetchCandidates = async () => {
@@ -284,10 +284,10 @@ const CrewRecruitment = () => {
       }
     };
 
-    if(isAdmin){
+    if (isAdmin) {
       fetchCandidates();
     }
-  }, [candidateStatus])
+  }, [candidateStatus]);
 
   const handleStatusChange = (event) => {
     setCandidateStatus(event.target.value);
@@ -295,8 +295,8 @@ const CrewRecruitment = () => {
 
   const handleTabChange = async (newValue) => {
     setSectionLoading(true);
-    if(newValue === 1){
-      try{
+    if (newValue === 1) {
+      try {
         const response = await getAllCandidatesAPI(0, 20, candidateStatus);
         await new Promise((resolve) => setTimeout(resolve, 200)); //Delay the UI for 200ms
 
@@ -312,13 +312,12 @@ const CrewRecruitment = () => {
       } finally {
         setSectionLoading(false);
       }
-
-    } else{
+    } else {
       setSectionLoading(true);
       try {
         const response = await getAllPostAPI(0, 10);
         await new Promise((resolve) => setTimeout(resolve, 200)); //Delay the UI for 200ms
-        
+
         if (response.status === HttpStatusCodes.OK) {
           setPosts(response.data);
           setTabValue(newValue);
@@ -385,7 +384,7 @@ const CrewRecruitment = () => {
                 value={candidateStatus}
                 size="small"
                 onChange={handleStatusChange}
-                sx={{ marginTop: 1, }}
+                sx={{ marginTop: 1 }}
               >
                 {statusFilters.map((status) => (
                   <MenuItem key={status.value} value={status.value}>
@@ -574,4 +573,3 @@ const CrewRecruitment = () => {
 };
 
 export default CrewRecruitment;
-

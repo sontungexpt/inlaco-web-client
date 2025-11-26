@@ -12,13 +12,13 @@ import {
   Button,
   Typography,
   TextField,
+  Grid,
   MenuItem,
   CircularProgress,
   InputAdornment,
 } from "@mui/material";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import { COLOR } from "../assets/Color";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams } from "react-router";
@@ -58,18 +58,19 @@ const ApplyRecruitment = () => {
       .date()
       .max(new Date(), "Ngày sinh không hợp lệ")
       .required("Ngày sinh không được để trống"),
-    
+
     gender: yup.string().required("Giới tính không được để trống"),
     phoneNumber: yup
       .string()
       .matches(phoneRegex, "Số điện thoại không hợp lệ")
       .required("Số điện thoại không được để trống"),
-    email: yup.string().email("Email không hợp lệ").required("Email không được để trống"),
-
-    permanentAddr: yup
+    email: yup
       .string()
-      .required("Địa chỉ không được để trống"),
-    
+      .email("Email không hợp lệ")
+      .required("Email không được để trống"),
+
+    permanentAddr: yup.string().required("Địa chỉ không được để trống"),
+
     // cvFile: yup
     //   .mixed()
     //   .required("Vui lòng tải lên CV")
@@ -97,8 +98,8 @@ const ApplyRecruitment = () => {
         // resume: tempFile,
       });
       await new Promise((resolve) => setTimeout(resolve, 400)); //Delay for 0.4s to simulate API call
-      
-      if(response.status === HttpStatusCodes.CREATED) {
+
+      if (response.status === HttpStatusCodes.CREATED) {
         resetForm();
         navigate("/recruitment");
       }
@@ -354,7 +355,9 @@ const ApplyRecruitment = () => {
                   value={values.languageSkills}
                   error={!!touched.languageSkills && !!errors.languageSkills}
                   helperText={
-                    touched.languageSkills && errors.languageSkills ? errors.languageSkills : " "
+                    touched.languageSkills && errors.languageSkills
+                      ? errors.languageSkills
+                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}

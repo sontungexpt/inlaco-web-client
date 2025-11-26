@@ -224,14 +224,14 @@ function App() {
           </Route>
         ) : (
           /* Login Route without Sidebar + TopBar */
-          <>
+          (<>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/sign-Up" element={<SignUpPage />} />
             <Route
               path="/verify-email-confirmation"
               element={<VerifyEmailConfirmation />}
             />
-          </>
+          </>)
         )}
       </Routes>
     </>

@@ -9,6 +9,7 @@ import { CardPhotoInput } from "../components/contract";
 import {
   Box,
   Button,
+  Grid,
   Typography,
   TextField,
   MenuItem,
@@ -19,7 +20,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import SaveIcon from "@mui/icons-material/Save";
 import { COLOR } from "../assets/Color";
-import Grid from "@mui/material/Grid2";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams, useLocation } from "react-router";
@@ -39,7 +39,7 @@ const CrewMemberDetail = () => {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const official = location.state?.official;
-// 
+  //
   const [crewMemberInfo, setCrewMemberInfo] = useState({});
 
   const fetchCrewMemberInfos = async (crewMemberID) => {
@@ -90,8 +90,7 @@ const CrewMemberDetail = () => {
     jobInfo: {
       position: crewMemberInfo?.professionalPosition || "",
       experience:
-        crewMemberInfo?.experience &&
-        crewMemberInfo?.experience[0] !== null
+        crewMemberInfo?.experience && crewMemberInfo?.experience[0] !== null
           ? crewMemberInfo?.experience[0]
           : "",
       expertiseLevels:
