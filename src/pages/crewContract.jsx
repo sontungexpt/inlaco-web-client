@@ -14,7 +14,7 @@ import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useNavigate } from "react-router";
 import { getCrewContractsAPI } from "../services/contractServices";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { isoStringToAppDateString } from "../utils/ValueConverter";
 
 const CrewContract = () => {
@@ -29,7 +29,7 @@ const CrewContract = () => {
       const response = await getCrewContractsAPI(0, 10, signed);
       await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         console.log("Crew contracts: ", response.data.content);
         setCrewContracts(response.data.content);
       }

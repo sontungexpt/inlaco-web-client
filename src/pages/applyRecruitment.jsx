@@ -23,7 +23,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams } from "react-router";
 import { applyRecruitmentAPI } from "../services/postServices";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { dateStringToISOString } from "../utils/ValueConverter";
 
 const ApplyRecruitment = () => {
@@ -99,7 +99,7 @@ const ApplyRecruitment = () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 400)); //Delay for 0.4s to simulate API call
 
-      if (response.status === HttpStatusCodes.CREATED) {
+      if (response.status === HttpStatusCode.CREATED) {
         resetForm();
         navigate("/recruitment");
       }

@@ -20,7 +20,7 @@ import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import { COLOR } from "../assets/Color";
 import { Formik } from "formik";
 import { useNavigate, useParams } from "react-router";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import {
   getCandidateByID_API,
   approveCandidateApplicationAPI,
@@ -48,7 +48,7 @@ const AdminCandidateDetail = () => {
       const response = await getCandidateByID_API(candidateID);
       await new Promise((resolve) => setTimeout(resolve, 200)); //Delay the UI for 200ms
 
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         setCandidateInfo(response.data);
       } else {
         console.log("Failed to fetch candidate profile");
@@ -95,7 +95,7 @@ const AdminCandidateDetail = () => {
       const response = await approveCandidateApplicationAPI(candidateID);
       await new Promise((resolve) => setTimeout(resolve, 200)); //Delay UI for 200ms
 
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         await fetchCandidateProfile();
       } else {
         console.log("Failed to approve request");
@@ -115,7 +115,7 @@ const AdminCandidateDetail = () => {
       const response = await rejectCandidateApplicationAPI(candidateID);
       await new Promise((resolve) => setTimeout(resolve, 200)); //Delay UI for 200ms
 
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         await fetchCandidateProfile();
       } else {
         console.log("Failed to decline request");

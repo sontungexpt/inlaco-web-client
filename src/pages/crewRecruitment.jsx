@@ -17,7 +17,7 @@ import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import { useNavigate, useLocation } from "react-router";
 import { useAppContext } from "../contexts/AppContext";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { getAllPostAPI, getAllCandidatesAPI } from "../services/postServices";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { isoStringToAppDateString } from "../utils/ValueConverter";
@@ -39,7 +39,7 @@ const CrewRecruitment = () => {
         const response = await getAllPostAPI(0, 10);
         await new Promise((resolve) => setTimeout(resolve, 200)); //Delay the UI for 200ms
 
-        if (response.status === HttpStatusCodes.OK) {
+        if (response.status === HttpStatusCode.OK) {
           setPosts(response.data);
         } else {
           console.error("Error when fetching posts: ", response);
@@ -271,7 +271,7 @@ const CrewRecruitment = () => {
         const response = await getAllCandidatesAPI(0, 20, candidateStatus);
         await new Promise((resolve) => setTimeout(resolve, 200)); //Delay the UI for 200ms
 
-        if (response.status === HttpStatusCodes.OK) {
+        if (response.status === HttpStatusCode.OK) {
           console.log("Candidates: ", response.data.content);
           setCandidateList(response.data.content);
         } else {
@@ -300,7 +300,7 @@ const CrewRecruitment = () => {
         const response = await getAllCandidatesAPI(0, 20, candidateStatus);
         await new Promise((resolve) => setTimeout(resolve, 200)); //Delay the UI for 200ms
 
-        if (response.status === HttpStatusCodes.OK) {
+        if (response.status === HttpStatusCode.OK) {
           console.log("Candidates: ", response.data.content);
           setCandidateList(response.data.content);
           setTabValue(newValue);
@@ -318,7 +318,7 @@ const CrewRecruitment = () => {
         const response = await getAllPostAPI(0, 10);
         await new Promise((resolve) => setTimeout(resolve, 200)); //Delay the UI for 200ms
 
-        if (response.status === HttpStatusCodes.OK) {
+        if (response.status === HttpStatusCode.OK) {
           setPosts(response.data);
           setTabValue(newValue);
         } else {

@@ -13,7 +13,7 @@ import { COLOR } from "../assets/Color";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { createSupplyRequestAPI } from "../services/supplyReqServices";
 
 const CreateSupplyRequest = () => {
@@ -125,7 +125,7 @@ const CreateSupplyRequest = () => {
       const response = await createSupplyRequestAPI(values);
       await new Promise((resolve) => setTimeout(resolve, 200)); // Delay 0.2s
 
-      if (response.status === HttpStatusCodes.CREATED) {
+      if (response.status === HttpStatusCode.CREATED) {
         resetForm();
         navigate("/supply-requests");
       } else {

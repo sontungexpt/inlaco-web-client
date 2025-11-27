@@ -14,7 +14,7 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import EventBusyRoundedIcon from "@mui/icons-material/EventBusyRounded";
 import { useNavigate, useParams } from "react-router";
 import { useAppContext } from "../contexts/AppContext";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { getPostByID_API } from "../services/postServices";
 import { isoStringToDateString } from "../utils/ValueConverter";
 
@@ -37,7 +37,7 @@ const RecruitmentDetail = () => {
         const response = await getPostByID_API(id);
         await new Promise((resolve) => setTimeout(resolve, 200)); //Delay 200ms to simulate API call
 
-        if (response.status === HttpStatusCodes.OK) {
+        if (response.status === HttpStatusCode.OK) {
           setPostInfo(response.data);
           setIsActive(!response.date?.isActive);
         } else {

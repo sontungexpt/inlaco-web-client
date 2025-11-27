@@ -17,7 +17,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Formik } from "formik";
 import * as yup from "yup";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { signUpAPI } from "../services/authServices";
 
 const SignUpPage = () => {
@@ -67,9 +67,9 @@ const SignUpPage = () => {
         values.confirmPassword,
       );
 
-      if (response.status === HttpStatusCodes.ACCEPTED) {
+      if (response.status === HttpStatusCode.ACCEPTED) {
         navigate("/verify-email-confirmation");
-      } else if (response.status === HttpStatusCodes.CONFLICT) {
+      } else if (response.status === HttpStatusCode.CONFLICT) {
         setErrors({ email: "Email này đã được sử dụng để tạo tài khoản" });
       } else {
         setErrors({

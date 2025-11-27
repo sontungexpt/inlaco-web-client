@@ -1,9 +1,9 @@
 import publicRequest from "../utils/publicRequest";
-import AuthEndpoints from "../endpoints/authEndpoints";
+import AuthEndpoint from "../endpoints/AuthEndpoint";
 
 export const loginAPI = async (email, password) => {
   try {
-    const response = await publicRequest.post(AuthEndpoints.LOGIN, {
+    const response = await publicRequest.post(AuthEndpoint.LOGIN, {
       username: email,
       password: password,
     });
@@ -15,11 +15,11 @@ export const loginAPI = async (email, password) => {
 
 export const signUpAPI = async (fullName, email, password, confirmPassword) => {
   try {
-    const response = await publicRequest.post(AuthEndpoints.REGISTER, {
+    const response = await publicRequest.post(AuthEndpoint.REGISTER, {
       name: fullName,
       username: email,
       password: password,
-      confirmPassowrd: confirmPassword, //Tung typo here, fix later
+      confirmPassword: confirmPassword,
     });
     return response;
   } catch (err) {

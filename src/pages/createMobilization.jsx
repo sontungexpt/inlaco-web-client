@@ -15,7 +15,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router";
 import { createMobilizationAPI } from "../services/mobilizationServices";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { dateTimeStringToISOString } from "../utils/ValueConverter";
 
 const CreateMobilization = () => {
@@ -137,7 +137,7 @@ const CreateMobilization = () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-      if (response.status === HttpStatusCodes.CREATED) {
+      if (response.status === HttpStatusCode.CREATED) {
         console.log("Successfully submitted: ", values);
         resetForm();
         navigate("/mobilizations");

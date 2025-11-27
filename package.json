@@ -16,7 +16,9 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
-    "axios": "^1.7.9",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.1",
+    "axios": "^1.13.2",
     "docxtemplater": "^3.67.5",
     "file-saver": "^2.0.5",
     "formik": "^2.4.9",
@@ -28,15 +30,16 @@
     "react-router": "^7.9.6",
     "react-scripts": "^5.0.1",
     "styled-components": "^6.1.19",
+    "typescript": "^5.9.3",
     "web-vitals": "^5.1.0",
     "xlsx": "^0.18.5",
     "yup": "^1.7.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-app-rewired eject"
   },
   "eslintConfig": {
     "extends": [
@@ -57,7 +60,11 @@
     ]
   },
   "devDependencies": {
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0"
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.2.1"
   }
 }

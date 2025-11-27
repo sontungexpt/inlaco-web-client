@@ -1,11 +1,15 @@
-import React, { useState } from "react";
-import { Button, IconButton, Box, } from "@mui/material";
+import { Button, IconButton, Box } from "@mui/material";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { COLOR } from "../../assets/Color";
 import { useField, useFormikContext } from "formik";
 
-const FileUploadField = ({ name, label = "File hợp đồng", disabled, sx = [], ...props }) => {
-  
+const FileUploadField = ({
+  name,
+  label = "File hợp đồng",
+  disabled,
+  sx = [],
+  ...props
+}) => {
   const { setFieldValue } = useFormikContext();
   const [field, meta] = useField(name);
 
@@ -58,7 +62,7 @@ const FileUploadField = ({ name, label = "File hợp đồng", disabled, sx = []
           </Button>
         </label>
       ) : (
-        <Box sx={{ display: "flex", alignItems: "center"}}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <a
             href={URL.createObjectURL(field.value)}
             download={field.value.name}
@@ -75,7 +79,7 @@ const FileUploadField = ({ name, label = "File hợp đồng", disabled, sx = []
           </a>
           <IconButton
             onClick={handleDelete}
-            sx={{ color: COLOR.primary_orange,}}
+            sx={{ color: COLOR.primary_orange }}
           >
             {!disabled && (
               <DeleteForeverRoundedIcon sx={{ width: 24, height: 24 }} />

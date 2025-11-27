@@ -46,22 +46,28 @@ import CrewCourse from "./pages/crewCourse";
 import CreateCourse from "./pages/createCourse";
 import CourseDetail from "./pages/courseDetail";
 
-
 import { MainLayout } from "./components/global";
 import { useAppContext } from "./contexts/AppContext";
 import { useEffect } from "react";
-import { localStorage, sessionStorage, StorageKey } from "./utils/storageUtils";
+import { localStorage, sessionStorage } from "./utils/storage";
+import StorageKey from "./constants/StorageKey";
 
 function App() {
-
   let navigate = useNavigate();
-  const { accessToken, roles, setAccessToken, setRefreshToken, setAccountName, setRoles } = useAppContext();
+  const {
+    accessToken,
+    roles,
+    setAccessToken,
+    setRefreshToken,
+    setAccountName,
+    setRoles,
+  } = useAppContext();
 
-    const testRoles = ["ADMIN", "USER"];
+  const testRoles = ["ADMIN", "USER"];
 
-    const isAdmin = roles.includes("ADMIN");
-    const isCrewMember = roles.includes("SAILOR");
-    const isGeneralUser = roles.includes("USER");
+  const isAdmin = roles.includes("ADMIN");
+  const isCrewMember = roles.includes("SAILOR");
+  const isGeneralUser = roles.includes("USER");
 
   useEffect(() => {
     const fetchUserInfos = async () => {
@@ -71,17 +77,15 @@ function App() {
 
         if (rememberMe) {
           const accessToken = await localStorage.getItem(
-            StorageKey.ACCESS_TOKEN
+            StorageKey.ACCESS_TOKEN,
           );
           const refreshToken = await localStorage.getItem(
-            StorageKey.REFRESH_TOKEN
+            StorageKey.REFRESH_TOKEN,
           );
           const accountName = await localStorage.getItem(
-            StorageKey.ACCOUNT_NAME
+            StorageKey.ACCOUNT_NAME,
           );
-          const roles = await localStorage.getItem(
-            StorageKey.ROLES
-          );
+          const roles = await localStorage.getItem(StorageKey.ROLES);
 
           if (accessToken && refreshToken && accountName && roles) {
             setAccessToken(accessToken);
@@ -95,13 +99,13 @@ function App() {
           }
         } else {
           const accessToken = await sessionStorage.getItem(
-            StorageKey.ACCESS_TOKEN
+            StorageKey.ACCESS_TOKEN,
           );
           const refreshToken = await sessionStorage.getItem(
-            StorageKey.REFRESH_TOKEN
+            StorageKey.REFRESH_TOKEN,
           );
           const accountName = await sessionStorage.getItem(
-            StorageKey.ACCOUNT_NAME
+            StorageKey.ACCOUNT_NAME,
           );
           const roles = await sessionStorage.getItem(StorageKey.ROLES);
 
@@ -121,7 +125,7 @@ function App() {
     };
 
     fetchUserInfos();
-  }, [])
+  }, []);
 
   return (
     <>
@@ -145,7 +149,10 @@ function App() {
                   <Route index element={<CrewMobilization />} />
                   <Route path="create" element={<CreateMobilization />} />
                   <Route path=":id" element={<MobilizationDetail />} />
-                  <Route path="my-mobilizations" element={<CrewMyMobilization />} />
+                  <Route
+                    path="my-mobilizations"
+                    element={<CrewMyMobilization />}
+                  />
                 </Route>
 
                 <Route path="/crew-contracts">
@@ -224,14 +231,14 @@ function App() {
           </Route>
         ) : (
           /* Login Route without Sidebar + TopBar */
-          (<>
+          <>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/sign-Up" element={<SignUpPage />} />
             <Route
               path="/verify-email-confirmation"
               element={<VerifyEmailConfirmation />}
             />
-          </>)
+          </>
         )}
       </Routes>
     </>

@@ -16,7 +16,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams } from "react-router";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { createCrewContractAPI } from "../services/contractServices";
 import { dateStringToISOString } from "../utils/ValueConverter";
 
@@ -349,7 +349,7 @@ const CreateCrewContract = () => {
 
       console.log("Response: ", values);
 
-      if (response.status === HttpStatusCodes.CREATED) {
+      if (response.status === HttpStatusCode.CREATED) {
         resetForm();
         navigate("/crew-contracts");
       }

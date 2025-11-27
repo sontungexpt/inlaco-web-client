@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, CardMedia, IconButton } from "@mui/material";
 import { useField, useFormikContext } from "formik";
 import { styled } from "@mui/system";
@@ -70,7 +69,9 @@ const CardPhotoInput = ({
       <CardMedia
         component="img"
         image={
-          field.value ? field.value : require("../../assets/images/placeholder-3x4.gif")
+          field.value
+            ? field.value
+            : require("../../assets/images/placeholder-3x4.gif")
         }
         alt="Selected Card Photo"
         sx={{

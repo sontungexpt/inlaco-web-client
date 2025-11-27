@@ -13,7 +13,7 @@ import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRound
 import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined";
 import { useNavigate } from "react-router";
 import { getAllCrewMemberAPI } from "../services/crewServices";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { isoStringToAppDateString } from "../utils/ValueConverter";
 
 const CrewInfos = () => {
@@ -30,7 +30,7 @@ const CrewInfos = () => {
         const response = await getAllCrewMemberAPI(0, 10, official);
         await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-        if (response.status === HttpStatusCodes.OK) {
+        if (response.status === HttpStatusCode.OK) {
           console.log(response.data.content);
           setCrewMembers(response.data.content);
         } else {
@@ -58,7 +58,7 @@ const CrewInfos = () => {
       const response = await getAllCrewMemberAPI(0, 10, official);
       await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         setCrewMembers(response.data.content);
       } else {
         console.log("Error when fetching crew members: ", response);

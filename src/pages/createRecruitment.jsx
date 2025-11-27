@@ -13,7 +13,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { createRecruitmentPostAPI } from "../services/postServices";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { dateStringToISOString } from "../utils/ValueConverter";
 import { useNavigate } from "react-router";
 
@@ -85,7 +85,7 @@ const CreateRecruitment = () => {
         expectedSalary: [1000, values.salary], // Changed to double[2] which is the salary range
         workLocation: values.workLocation,
       });
-      if (response.status === HttpStatusCodes.CREATED) {
+      if (response.status === HttpStatusCode.CREATED) {
         resetForm();
         navigate("/recruitment");
       } else {

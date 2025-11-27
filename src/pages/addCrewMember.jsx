@@ -19,7 +19,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams, useLocation } from "react-router";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { createCrMemberFrCandidateAPI } from "../services/crewServices";
 import {
   dateStringToISOString,
@@ -110,7 +110,7 @@ const AddCrewMember = () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 200)); //Delay for 200ms
 
-      if (response.status === HttpStatusCodes.CREATED) {
+      if (response.status === HttpStatusCode.CREATED) {
         console.log("Successfully adding new crew member");
         resetForm();
         navigate("/crews");

@@ -8,7 +8,7 @@ import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRound
 import { useNavigate } from "react-router";
 import { getMyMobilizationAPI } from "../services/mobilizationServices";
 import { getProfileCurrentCrewMemberAPI } from "../services/crewServices";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { formatDateTime } from "../utils/ValueConverter";
 
 const CrewMyMobilization = () => {
@@ -25,7 +25,7 @@ const CrewMyMobilization = () => {
         const response = await getProfileCurrentCrewMemberAPI();
         await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-        if (response.status === HttpStatusCodes.OK) {
+        if (response.status === HttpStatusCode.OK) {
           setCardID(response.data.cardId);
         }
       } catch (err) {
@@ -43,7 +43,7 @@ const CrewMyMobilization = () => {
         const response = await getMyMobilizationAPI(cardID);
         await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-        if (response.status === HttpStatusCodes.OK) {
+        if (response.status === HttpStatusCode.OK) {
           const mobilizations = response.data;
 
           const formattedMobilizations = mobilizations.map((mobilization) => ({

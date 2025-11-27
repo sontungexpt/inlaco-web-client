@@ -23,7 +23,7 @@ import { COLOR } from "../assets/Color";
 import { Formik } from "formik";
 // import * as yup from "yup";
 // import { useNavigate, useParams } from "react-router";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { getProfileCurrentCrewMemberAPI } from "../services/crewServices";
 import { isoStringToDateString } from "../utils/ValueConverter";
 
@@ -40,7 +40,7 @@ const CrewProfile = () => {
         const response = await getProfileCurrentCrewMemberAPI();
         await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-        if (response.status === HttpStatusCodes.OK) {
+        if (response.status === HttpStatusCode.OK) {
           console.log("Current profile: ", response.data);
           setProfile(response.data);
         } else {

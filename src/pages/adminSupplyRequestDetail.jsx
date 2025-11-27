@@ -23,7 +23,7 @@ import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import { COLOR } from "../assets/Color";
 import { Formik } from "formik";
 import { useNavigate, useParams } from "react-router";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import {
   getSupplyReqByID_API,
   reviewSupplyReqAPI,
@@ -43,7 +43,7 @@ const AdminSupplyRequestDetail = () => {
       const response = await getSupplyReqByID_API(supplyReqID);
       await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         setRequestInfos(response.data);
       } else {
         console.log("Error fetching request infos");
@@ -110,7 +110,7 @@ const AdminSupplyRequestDetail = () => {
       const response = await reviewSupplyReqAPI(id, true);
       await new Promise((resolve) => setTimeout(resolve, 200)); //Delay for 200ms
 
-      if (response.status === HttpStatusCodes.NO_CONTENT) {
+      if (response.status === HttpStatusCode.NO_CONTENT) {
         console.log("Successfully approved request");
         await fetchRequestInfos(id);
       } else {
@@ -129,7 +129,7 @@ const AdminSupplyRequestDetail = () => {
       const response = await reviewSupplyReqAPI(id, false);
       await new Promise((resolve) => setTimeout(resolve, 200)); //Delay for 200ms
 
-      if (response.status === HttpStatusCodes.NO_CONTENT) {
+      if (response.status === HttpStatusCode.NO_CONTENT) {
         console.log("Successfully declined request");
         await fetchRequestInfos(id);
       } else {

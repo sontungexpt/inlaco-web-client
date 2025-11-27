@@ -1,4 +1,4 @@
-const HttpStatusCodes = {
+const HttpStatusCode = {
   OK: 200,
   CREATED: 201,
   ACCEPTED: 202,
@@ -13,4 +13,4 @@ const HttpStatusCodes = {
   INTERNAL_SERVER_ERROR: 500,
 };
 
-export default HttpStatusCodes;
+export default HttpStatusCode;

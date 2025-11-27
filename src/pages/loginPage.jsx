@@ -17,15 +17,12 @@ import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useAppContext } from "../contexts/AppContext";
-import {
-  localStorage,
-  sessionStorage,
-  StorageKey,
-} from "../utils/storageUtils";
+import { localStorage, sessionStorage } from "../utils/storage";
+import StorageKey from "@/constants/StorageKey";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { loginAPI } from "../services/authServices";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 
 const LoginPage = () => {
   const { setAccessToken, setRefreshToken, setAccountName, setRoles } =
@@ -62,7 +59,7 @@ const LoginPage = () => {
     try {
       // validate login inputs and calling API to login
       const response = await loginAPI(values.email, values.password);
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         localStorage.setItem(StorageKey.REMEMBER_ME, rememberMe);
         const { jwt, name, roles } = response.data;
 
@@ -87,12 +84,12 @@ const LoginPage = () => {
         setRoles(roles);
 
         navigate("/", { replace: true });
-      } else if (response.status === HttpStatusCodes.NOT_FOUND) {
+      } else if (response.status === HttpStatusCode.NOT_FOUND) {
         setErrors({
           email: "Tên đăng nhập hoặc mật khẩu không chính xác",
           password: "Tên đăng nhập hoặc mật khẩu không chính xác",
         });
-      } else if (response.status === HttpStatusCodes.FORBIDDEN) {
+      } else if (response.status === HttpStatusCode.FORBIDDEN) {
         setErrors({
           email: "Email chưa được xác thực, vui lòng kiểm tra email của bạn",
         });

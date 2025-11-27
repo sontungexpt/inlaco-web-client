@@ -8,7 +8,7 @@ import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useNavigate } from "react-router";
 import { useAppContext } from "../contexts/AppContext";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { getAllSupplyRequestAPI } from "../services/supplyReqServices";
 import { formatDateTime } from "../utils/ValueConverter";
 
@@ -27,7 +27,7 @@ const SupplyRequest = () => {
         const response = await getAllSupplyRequestAPI(0, 10, "");
         await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-        if (response.status === HttpStatusCodes.OK) {
+        if (response.status === HttpStatusCode.OK) {
           console.log(response.data.content);
           const requests = response.data.content;
 

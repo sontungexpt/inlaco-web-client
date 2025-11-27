@@ -23,7 +23,7 @@ import { COLOR } from "../assets/Color";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams, useLocation } from "react-router";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import {
   getCrewMemberByID_API,
   editCrewMemberProfileAPI,
@@ -48,7 +48,7 @@ const CrewMemberDetail = () => {
       const response = await getCrewMemberByID_API(crewMemberID);
       await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         console.log("Successfully fetching crew member info: ", response.data);
         setCrewMemberInfo(response.data);
       } else {
@@ -153,7 +153,7 @@ const CrewMemberDetail = () => {
       const response = await editCrewMemberProfileAPI(id, values);
       // await new Promise((resolve) => setTimeout(resolve, 2000)); //Mock API call
       console.log(response);
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         await fetchCrewMemberInfos(id);
         setIsEditable(false);
         // console.log("Successfully saving update: ", values);

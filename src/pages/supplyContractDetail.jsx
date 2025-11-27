@@ -29,7 +29,7 @@ import {
   activeContractByID_API,
   editSupplyContractAPI,
 } from "../services/contractServices";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import {
   isoStringToDateString,
   isoStringToMUIDateTime,
@@ -55,7 +55,7 @@ const SupplyContractDetail = () => {
       const response = await getCrewContractByID_API(id);
       await new Promise((resolve) => setTimeout(resolve, 200)); //delay 200ms
 
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         console.log("Successfully fetched contract info");
         console.log("Contract info: ", response.data);
         setContractInfo(response.data);
@@ -246,7 +246,7 @@ const SupplyContractDetail = () => {
   const handleApproveContract = async () => {
     try {
       const response = await activeContractByID_API(id);
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         navigate("/supply-contracts");
       }
     } catch (err) {
@@ -377,7 +377,7 @@ const SupplyContractDetail = () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 2000)); //Mock API call
 
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         // console.log("Successfully submitted: ", values);
         setIsEditable(false);
         await fetchContractInfo(id);

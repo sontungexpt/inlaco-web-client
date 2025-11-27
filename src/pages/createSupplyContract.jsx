@@ -15,7 +15,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams } from "react-router";
 import { createSupplyContractAPI } from "../services/contractServices";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import { dateStringToISOString } from "../utils/ValueConverter";
 
 const CreateSupplyContract = () => {
@@ -219,7 +219,7 @@ const CreateSupplyContract = () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-      if (response.status === HttpStatusCodes.CREATED) {
+      if (response.status === HttpStatusCode.CREATED) {
         console.log("Successfully submitted: ", values);
         resetForm();
         navigate("/supply-contracts");

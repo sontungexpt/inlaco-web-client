@@ -5,4 +5,3 @@ const AppProperty = {
 };
 
 export default AppProperty;
-

@@ -30,7 +30,7 @@ import {
   getMobilizationByID_API,
   editMobilizationAPI,
 } from "../services/mobilizationServices";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import {
   isoStringToMUIDateTime,
   dateTimeStringToISOString,
@@ -51,7 +51,7 @@ const MobilizationDetail = () => {
     setLoading(true);
     try {
       const response = await getMobilizationByID_API(id);
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         setMobilizationInfos(response.data);
         setCrewMembers(response.data.crewMembers);
       }
@@ -238,7 +238,7 @@ const MobilizationDetail = () => {
         crewMembers: values.mobilizedCrewMembers,
       });
 
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         setIsEditable(false);
       }
     } catch (err) {

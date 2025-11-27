@@ -32,7 +32,7 @@ import Docxtemplater from "docxtemplater";
 import { saveAs } from "file-saver";
 import JSZipUtils from "jszip-utils";
 import { formatDateString } from "../utils/ValueConverter";
-import HttpStatusCodes from "../assets/constants/httpStatusCodes";
+import HttpStatusCode from "../constants/HttpStatusCode";
 import {
   getCrewContractByID_API,
   editCrewContractAPI,
@@ -59,7 +59,7 @@ const CrewContractDetail = () => {
       const response = await getCrewContractByID_API(id);
       await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         console.log("Crew contract info: ", response.data);
         setContractInfo(response.data);
       }
@@ -365,7 +365,7 @@ const CrewContractDetail = () => {
         ],
       });
       await new Promise((resolve) => setTimeout(resolve, 200)); //Delay UI for 200ms
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         console.log("Successfully updating: ", values);
         setIsEditable(false);
       }
@@ -379,7 +379,7 @@ const CrewContractDetail = () => {
   const handleApproveContract = async () => {
     try {
       const response = await activeContractByID_API(id);
-      if (response.status === HttpStatusCodes.OK) {
+      if (response.status === HttpStatusCode.OK) {
         navigate("/crew-contracts");
       }
     } catch (err) {
