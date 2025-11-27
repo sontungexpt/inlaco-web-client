@@ -1,23 +1,20 @@
-export class TokenMutex<T = any> {
-  private _locked: boolean;
-  private _waiting: Array<(value: T | null) => void>;
-
+export class TokenMutex {
   constructor() {
     this._locked = false;
     this._waiting = [];
   }
 
-  isLocked(): boolean {
+  isLocked() {
     return this._locked;
   }
 
-  private wait(): Promise<T | null> {
+  wait() {
     return new Promise((resolve) => {
       this._waiting.push(resolve);
     });
   }
 
-  async run(fn: () => Promise<T> | T): Promise<T | null> {
+  async run(fn) {
     if (this._locked) {
       return this.wait();
     }
@@ -27,11 +24,13 @@ export class TokenMutex<T = any> {
     const result = await fn();
     this._resolveAll(result);
     this._locked = false;
+
+    return result ?? null;
   }
 
-  private _resolveAll(value: T | null) {
+  _resolveAll(value) {
     for (const resolve of this._waiting) {
-      resolve(value);
+      resolve(value ?? null);
     }
     this._waiting = [];
   }
