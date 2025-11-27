@@ -1,6 +1,6 @@
 import { Typography, Box } from "@mui/material";
-import { COLOR } from "../../assets/Color";
 import TableRowsOutlinedIcon from "@mui/icons-material/TableRowsOutlined";
+import Color from "@constants/Color";
 
 const NoValuesOverlay = ({ text = "KHÔNG CÓ DỮ LIỆU" }) => {
   return (
@@ -17,7 +17,7 @@ const NoValuesOverlay = ({ text = "KHÔNG CÓ DỮ LIỆU" }) => {
       <Typography
         mt={1}
         variant="h6"
-        color={COLOR.PrimaryBlack}
+        color={Color.PrimaryBlack}
         fontWeight="bold"
         fontStyle="italic"
       >

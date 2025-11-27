@@ -655,7 +655,7 @@ const CrewProfile = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: COLOR.PrimaryBlackPlaceHolder,
               }}
             >
               1. Bảo hiểm Xã hội:
@@ -691,7 +691,7 @@ const CrewProfile = () => {
                   <Typography
                     mr={2}
                     sx={{
-                      color: COLOR.primary_black_placeholder,
+                      color: COLOR.PrimaryBlackPlaceHolder,
                       fontWeight: 700,
                     }}
                   >
@@ -716,7 +716,7 @@ const CrewProfile = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: COLOR.PrimaryBlackPlaceHolder,
               }}
             >
               2. Bảo hiểm Tai nạn:
@@ -752,7 +752,7 @@ const CrewProfile = () => {
                   <Typography
                     mr={2}
                     sx={{
-                      color: COLOR.primary_black_placeholder,
+                      color: COLOR.PrimaryBlackPlaceHolder,
                       fontWeight: 700,
                     }}
                   >
@@ -777,7 +777,7 @@ const CrewProfile = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: COLOR.PrimaryBlackPlaceHolder,
               }}
             >
               3. Bảo hiểm Y tế:
@@ -836,7 +836,7 @@ const CrewProfile = () => {
                   <Typography
                     mr={2}
                     sx={{
-                      color: COLOR.primary_black_placeholder,
+                      color: COLOR.PrimaryBlackPlaceHolder,
                       fontWeight: 700,
                     }}
                   >

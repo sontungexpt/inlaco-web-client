@@ -203,7 +203,7 @@ const EditableDataGrid = ({
               icon={<SaveIcon />}
               label="Save"
               sx={{
-                color: COLOR.primary_black_placeholder,
+                color: COLOR.PrimaryBlackPlaceHolder,
               }}
               onClick={handleSaveClick(id)}
             />,
@@ -245,7 +245,7 @@ const EditableDataGrid = ({
         {
           width: "100%",
           "& .actions": {
-            color: COLOR.primary_black_placeholder,
+            color: COLOR.PrimaryBlackPlaceHolder,
           },
           "& .MuiDataGrid-columnHeader": {
             backgroundColor: COLOR.SecondaryBlue,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   PageTitle,
   SectionDivider,
@@ -7,22 +7,11 @@ import {
   HorizontalImageInput,
   MultilineFileUploadField,
 } from "../components/global";
-import { CardPhotoInput, FileUploadField } from "../components/contract";
-import {
-  Box,
-  Button,
-  Typography,
-  TextField,
-  MenuItem,
-  Grid,
-  CircularProgress,
-  InputAdornment,
-} from "@mui/material";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
-import { COLOR } from "../assets/Color";
+import { CardPhotoInput } from "../components/contract";
+import { Box, Typography, Grid } from "@mui/material";
 import { Formik } from "formik";
 import { useNavigate, useParams } from "react-router";
+import Color from "@constants/Color";
 
 const UserCandidateDetail = () => {
   const navigate = useNavigate();
@@ -88,19 +77,19 @@ const UserCandidateDetail = () => {
                   {status === "Chấp thuận" ? (
                     <StatusLabel
                       label="Chấp thuận"
-                      color={COLOR.PrimaryGreen}
+                      color={Color.PrimaryGreen}
                     />
                   ) : status === "Từ chối" ? (
-                    <StatusLabel label="Từ chối" color={COLOR.PrimaryOrgange} />
+                    <StatusLabel label="Từ chối" color={Color.PrimaryOrgange} />
                   ) : status === "Đang chờ xác nhận" ? (
                     <StatusLabel
                       label="Đang chờ xác nhận"
-                      color={COLOR.primary_black_placeholder}
+                      color={Color.PrimaryBlackPlaceHolder}
                     />
                   ) : (
                     <StatusLabel
                       label="Đã ký hợp đồng"
-                      color={COLOR.SecondaryGold}
+                      color={Color.SecondaryGold}
                     />
                   )}
                 </Box>
@@ -167,10 +156,10 @@ const UserCandidateDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -193,10 +182,10 @@ const UserCandidateDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -230,10 +219,10 @@ const UserCandidateDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -256,10 +245,10 @@ const UserCandidateDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -284,10 +273,10 @@ const UserCandidateDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -313,10 +302,10 @@ const UserCandidateDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -342,10 +331,10 @@ const UserCandidateDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -371,10 +360,10 @@ const UserCandidateDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -398,10 +387,10 @@ const UserCandidateDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -428,10 +417,10 @@ const UserCandidateDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -465,10 +454,10 @@ const UserCandidateDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -494,7 +483,7 @@ const UserCandidateDetail = () => {
                   <Typography
                     mt={1}
                     sx={{
-                      color: COLOR.primary_black_placeholder,
+                      color: Color.PrimaryBlackPlaceHolder,
                       fontWeight: 700,
                     }}
                   >
@@ -523,7 +512,7 @@ const UserCandidateDetail = () => {
                   <Typography
                     mt={1}
                     sx={{
-                      color: COLOR.primary_black_placeholder,
+                      color: Color.PrimaryBlackPlaceHolder,
                       fontWeight: 700,
                     }}
                   >

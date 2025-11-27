@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
-import { COLOR } from "../assets/Color";
+import Color from "@constants/Color";
 
 const VerifyEmailConfirmation = () => {
   const [isAllowGetNewVerifyLink, setIsAllowGetNewVerifyLink] = useState(true);
@@ -14,7 +14,7 @@ const VerifyEmailConfirmation = () => {
   }, [isAllowGetNewVerifyLink]);
 
   const textStyle = {
-    color: COLOR.PrimaryWhite,
+    color: Color.PrimaryWhite,
   };
 
   const handleResendVerifyLink = async () => {
@@ -41,7 +41,7 @@ const VerifyEmailConfirmation = () => {
               to="/login"
               style={{
                 textDecoration: "underline",
-                color: COLOR.PrimaryGold,
+                color: Color.PrimaryGold,
               }}
             >
               đây
@@ -56,8 +56,8 @@ const VerifyEmailConfirmation = () => {
               style={{
                 textDecoration: "underline",
                 color: isAllowGetNewVerifyLink
-                  ? COLOR.PrimaryGold
-                  : COLOR.SecondaryGold,
+                  ? Color.PrimaryGold
+                  : Color.SecondaryGold,
                 cursor: isAllowGetNewVerifyLink ? "pointer" : "default",
               }}
             >

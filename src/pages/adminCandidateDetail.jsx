@@ -177,7 +177,7 @@ const AdminCandidateDetail = () => {
                   {status === "Đã nộp" ? (
                     <StatusLabel
                       label="Đã nộp"
-                      color={COLOR.primary_black_placeholder}
+                      color={COLOR.PrimaryBlackPlaceHolder}
                     />
                   ) : status === "Từ chối" ? (
                     <StatusLabel label="Từ chối" color={COLOR.PrimaryOrgange} />

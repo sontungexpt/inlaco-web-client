@@ -1123,7 +1123,7 @@ const SupplyContractDetail = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: COLOR.PrimaryBlackPlaceHolder,
               }}
             >
               Lịch trình dự kiến:

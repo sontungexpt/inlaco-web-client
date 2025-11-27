@@ -38,7 +38,7 @@ const FileUploadField = ({
         style={{
           marginRight: 4,
           fontSize: 16,
-          color: COLOR.primary_black_placeholder,
+          color: COLOR.PrimaryBlackPlaceHolder,
         }}
       >
         {label}:{" "}

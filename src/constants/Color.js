@@ -2,7 +2,7 @@
 const Color = {
   //Main color
   PrimaryBlue: "#195CAC",
-  primary_hover_blue: "#3374C5",
+  PrimaryHoverBlue: "#3374C5",
   SecondaryBlue: "#4D85D8",
   tertiary_blue: "#133E80 ",
 
@@ -20,9 +20,9 @@ const Color = {
   //Text color
   PrimaryBlack: "#1A1A1A",
   SecondaryBlack: "#333333",
-  primary_black_placeholder: "#4F4F4F",
+  PrimaryBlackPlaceHolder: "#4F4F4F",
   PrimaryGray: "#383e45", //footer color
-  secondary_gray: "#4D5C70",
+  SecondaryGray: "#4D5C70",
 };
 
 export default Color;

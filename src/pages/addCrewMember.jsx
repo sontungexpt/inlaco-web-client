@@ -14,17 +14,17 @@ import {
   Grid,
   CircularProgress,
 } from "@mui/material";
-import { COLOR } from "../assets/Color";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams, useLocation } from "react-router";
-import HttpStatusCode from "../constants/HttpStatusCode";
+import Color from "@constants/Color";
 import { createCrMemberFrCandidateAPI } from "../services/crewServices";
 import {
   dateStringToISOString,
   isoStringToDateString,
 } from "../utils/converter";
+import { HttpStatusCode } from "axios";
 
 const AddCrewMember = () => {
   const navigate = useNavigate();
@@ -110,7 +110,7 @@ const AddCrewMember = () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 200)); //Delay for 200ms
 
-      if (response.status === HttpStatusCode.CREATED) {
+      if (response.status === HttpStatusCode.Created) {
         console.log("Successfully adding new crew member");
         resetForm();
         navigate("/crews");
@@ -163,13 +163,13 @@ const AddCrewMember = () => {
                   sx={{
                     width: "10%",
                     padding: 1,
-                    color: COLOR.PrimaryBlack,
-                    backgroundColor: COLOR.PrimaryGold,
+                    color: Color.PrimaryBlack,
+                    backgroundColor: Color.PrimaryGold,
                     minWidth: 130,
                   }}
                 >
                   {addCrewLoading ? (
-                    <CircularProgress size={24} color={COLOR.PrimaryBlack} />
+                    <CircularProgress size={24} color={Color.PrimaryBlack} />
                   ) : (
                     <Box sx={{ display: "flex", alignItems: "end" }}>
                       <PersonAddIcon
@@ -306,12 +306,12 @@ const AddCrewMember = () => {
             <SectionDivider sectionName="Thông tin công việc: " />
             <Box sx={{ padding: 4 }}>
               <Typography
-                sx={{ textAlign: "center", color: COLOR.PrimaryBlack }}
+                sx={{ textAlign: "center", color: Color.PrimaryBlack }}
               >
                 <span
                   style={{
                     fontStyle: "italic",
-                    color: COLOR.PrimaryGray,
+                    color: Color.PrimaryGray,
                     textDecoration: "underline",
                   }}
                 >
@@ -321,7 +321,7 @@ const AddCrewMember = () => {
                 <span
                   style={{
                     fontStyle: "italic",
-                    color: COLOR.PrimaryGray,
+                    color: Color.PrimaryGray,
                     textDecoration: "underline",
                   }}
                 >
@@ -338,7 +338,7 @@ const AddCrewMember = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: Color.PrimaryBlackPlaceHolder,
               }}
             >
               1. Bảo hiểm Xã hội:
@@ -373,7 +373,7 @@ const AddCrewMember = () => {
                   <Typography
                     mr={2}
                     sx={{
-                      color: COLOR.primary_black_placeholder,
+                      color: Color.PrimaryBlackPlaceHolder,
                       fontWeight: 700,
                     }}
                   >
@@ -397,7 +397,7 @@ const AddCrewMember = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: Color.PrimaryBlackPlaceHolder,
               }}
             >
               2. Bảo hiểm Tai nạn:
@@ -432,7 +432,7 @@ const AddCrewMember = () => {
                   <Typography
                     mr={2}
                     sx={{
-                      color: COLOR.primary_black_placeholder,
+                      color: Color.PrimaryBlackPlaceHolder,
                       fontWeight: 700,
                     }}
                   >
@@ -456,7 +456,7 @@ const AddCrewMember = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: Color.PrimaryBlackPlaceHolder,
               }}
             >
               3. Bảo hiểm Y tế:
@@ -491,7 +491,7 @@ const AddCrewMember = () => {
                   <Typography
                     mr={2}
                     sx={{
-                      color: COLOR.primary_black_placeholder,
+                      color: Color.PrimaryBlackPlaceHolder,
                       fontWeight: 700,
                     }}
                   >

@@ -168,7 +168,7 @@ const ReqEditableDataGrid = ({
               icon={<SaveIcon />}
               label="Save"
               sx={{
-                color: COLOR.primary_black_placeholder,
+                color: COLOR.PrimaryBlackPlaceHolder,
               }}
               onClick={handleSaveClick(id)}
             />,
@@ -210,7 +210,7 @@ const ReqEditableDataGrid = ({
         {
           width: "100%",
           "& .actions": {
-            color: COLOR.primary_black_placeholder,
+            color: COLOR.PrimaryBlackPlaceHolder,
           },
           "& .MuiDataGrid-columnHeader": {
             backgroundColor: COLOR.SecondaryBlue,

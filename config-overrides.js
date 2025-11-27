@@ -11,7 +11,7 @@ module.exports = function override(config, env) {
     "@endpoints": path.resolve(__dirname, "src/endpoints"),
     "@pages": path.resolve(__dirname, "src/pages"),
     "@utils": path.resolve(__dirname, "src/utils"),
-    "@assets": path.resolve(__dirname, "assets"),
+    "@assets": path.resolve(__dirname, "src/assets"),
     "@types": path.resolve(__dirname, "types"),
   };
 

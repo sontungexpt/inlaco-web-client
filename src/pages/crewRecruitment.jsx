@@ -468,7 +468,7 @@ const CrewRecruitment = () => {
                   <Typography
                     sx={{
                       fontSize: 16,
-                      color: COLOR.primary_black_placeholder,
+                      color: COLOR.PrimaryBlackPlaceHolder,
                       fontStyle: "italic",
                     }}
                   >

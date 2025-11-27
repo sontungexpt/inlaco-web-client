@@ -1,15 +1,13 @@
 import React from "react";
 import { PageTitle, SearchBar } from "../components/global";
-import { Box, Button, Typography } from "@mui/material";
-import { Grid } from "@mui/material";
-import { COLOR } from "../assets/Color";
+import { Grid, Box } from "@mui/material";
 import { TemplateContractCard } from "../components/contract";
-import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { mockTemplateContracts } from "../data/mockData";
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { saveAs } from "file-saver";
 import JSZipUtils from "jszip-utils";
+import Color from "@constants/Color";
 
 const TemplateContract = () => {
   const generateDocument = async () => {
@@ -124,8 +122,8 @@ const TemplateContract = () => {
             placeholder={
               "Nhập thông tin template hợp đồng (VD: Tên hợp đồng, Loại hợp đồng)"
             }
-            color={COLOR.PrimaryBlack}
-            backgroundColor={COLOR.SecondaryWhite}
+            color={Color.PrimaryBlack}
+            backgroundColor={Color.SecondaryWhite}
             sx={{
               width: "40%",
             }}

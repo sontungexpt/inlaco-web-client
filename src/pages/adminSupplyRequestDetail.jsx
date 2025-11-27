@@ -202,7 +202,7 @@ const AdminSupplyRequestDetail = () => {
                   ) : status === "Đang chờ xác nhận" ? (
                     <StatusLabel
                       label="Đang chờ xác nhận"
-                      color={COLOR.primary_black_placeholder}
+                      color={COLOR.PrimaryBlackPlaceHolder}
                     />
                   ) : (
                     <StatusLabel
@@ -529,7 +529,7 @@ const AdminSupplyRequestDetail = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: COLOR.PrimaryBlackPlaceHolder,
               }}
             >
               Lịch trình dự kiến:
@@ -752,7 +752,7 @@ const AdminSupplyRequestDetail = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: COLOR.PrimaryBlackPlaceHolder,
               }}
             >
               Thông tin Tàu:

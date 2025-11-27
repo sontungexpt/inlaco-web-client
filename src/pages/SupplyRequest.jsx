@@ -3,14 +3,14 @@ import { PageTitle, NoValuesOverlay } from "../components/global";
 import { Box, Button, Typography, CircularProgress } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { ScheduleCell, ShipInfoCell } from "../components/mobilization";
-import { COLOR } from "../assets/Color";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useNavigate } from "react-router";
 import { useAuthContext } from "../contexts/AuthContext";
-import HttpStatusCode from "../constants/HttpStatusCode";
 import { getAllSupplyRequestAPI } from "../services/supplyReqServices";
 import { formatDateTime } from "../utils/converter";
+import Color from "@constants/Color";
+import { HttpStatusCode } from "axios";
 
 const SupplyRequest = () => {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ const SupplyRequest = () => {
         const response = await getAllSupplyRequestAPI(0, 10, "");
         await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-        if (response.status === HttpStatusCode.OK) {
+        if (response.status === HttpStatusCode.Ok) {
           console.log(response.data.content);
           const requests = response.data.content;
 
@@ -187,8 +187,8 @@ const SupplyRequest = () => {
               size="small"
               onClick={() => onRequestDetailClick(params?.id)}
               sx={{
-                backgroundColor: COLOR.PrimaryGreen,
-                color: COLOR.PrimaryBlack,
+                backgroundColor: Color.PrimaryGreen,
+                color: Color.PrimaryBlack,
                 fontWeight: 700,
                 textTransform: "capitalize",
               }}
@@ -235,8 +235,8 @@ const SupplyRequest = () => {
             <Button
               variant="contained"
               sx={{
-                backgroundColor: COLOR.PrimaryGold,
-                color: COLOR.PrimaryBlack,
+                backgroundColor: Color.PrimaryGold,
+                color: Color.PrimaryBlack,
                 borderRadius: 2,
                 margin: 0,
                 marginLeft: "auto",
@@ -263,12 +263,12 @@ const SupplyRequest = () => {
           maxWidth={1600}
           sx={{
             "& .MuiDataGrid-columnHeader": {
-              backgroundColor: COLOR.SecondaryBlue,
-              color: COLOR.PrimaryWhite,
+              backgroundColor: Color.SecondaryBlue,
+              color: Color.PrimaryWhite,
             },
             "& .MuiTablePagination-root": {
-              backgroundColor: COLOR.SecondaryBlue,
-              color: COLOR.PrimaryWhite,
+              backgroundColor: Color.SecondaryBlue,
+              color: Color.PrimaryWhite,
             },
           }}
         >

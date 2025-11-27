@@ -1,9 +1,9 @@
 import { CssBaseline } from "@mui/material";
 import { Routes, Route, useNavigate } from "react-router";
 
-import LoginPage from "./pages/loginPage";
-import SignUpPage from "./pages/signUpPage";
-import VerifyEmailConfirmation from "./pages/verifyEmailConfirmation";
+import LoginPage from "./pages/auth/LoginPage";
+import SignUpPage from "./pages/auth/SignUpPage";
+import VerifyEmailConfirmation from "./pages/auth/VerifyEmailConfirmation";
 
 import HomePage from "./pages/homePage";
 import BlankPage from "./pages/blankPage";
@@ -25,21 +25,21 @@ import CrewContractAddendum from "./pages/crewContractAddendum";
 
 import SupplyContract from "./pages/supplyContract";
 import CreateSupplyContract from "./pages/createSupplyContract";
-import SupplyContractDetail from "./pages/supplyContractDetail";
+import SupplyContractDetail from "./pages/SupplyContractDetail";
 import SupplyContractAddendum from "./pages/supplyContractAddendum";
 
-import TemplateContract from "./pages/templateContract";
+import TemplateContract from "./pages/TemplateContract";
 
-import SupplyRequest from "./pages/supplyRequest";
+import SupplyRequest from "./pages/SupplyRequest";
 import AdminSupplyRequestDetail from "./pages/adminSupplyRequestDetail";
-import UserSupplyRequestDetail from "./pages/userSupplyRequestDetail";
+import UserSupplyRequestDetail from "./pages/UserSupplyRequestDetail";
 import CreateSupplyRequest from "./pages/createSupplyRequest";
 
 import CrewRecruitment from "./pages/crewRecruitment";
 import CreateRecruitment from "./pages/createRecruitment";
 import RecruitmentDetail from "./pages/recruitmentDetail";
 import AdminCandidateDetail from "./pages/adminCandidateDetail";
-import UserCandidateDetail from "./pages/userCandidateDetail";
+import UserCandidateDetail from "./pages/UserCandidateDetail";
 import ApplyRecruitment from "./pages/applyRecruitment";
 
 import CrewCourse from "./pages/courses/CrewCourse";

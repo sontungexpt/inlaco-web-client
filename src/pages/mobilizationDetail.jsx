@@ -543,7 +543,7 @@ const MobilizationDetail = () => {
                     fontSize: 18,
                     textDecoration: "underline",
                     fontStyle: "italic",
-                    color: COLOR.primary_black_placeholder,
+                    color: COLOR.PrimaryBlackPlaceHolder,
                   }}
                 >
                   Công việc:
@@ -594,7 +594,7 @@ const MobilizationDetail = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: COLOR.PrimaryBlackPlaceHolder,
                 marginTop: 4,
               }}
             >
@@ -770,7 +770,7 @@ const MobilizationDetail = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: COLOR.PrimaryBlackPlaceHolder,
                 marginTop: 4,
               }}
             >
@@ -935,7 +935,7 @@ const MobilizationDetail = () => {
                         {
                           width: "100%",
                           "& .actions": {
-                            color: COLOR.primary_black_placeholder,
+                            color: COLOR.PrimaryBlackPlaceHolder,
                           },
                           "& .MuiDataGrid-columnHeader": {
                             backgroundColor: COLOR.SecondaryBlue,

@@ -6,119 +6,83 @@ import {
   Typography,
   InputAdornment,
   IconButton,
-  Checkbox,
   Divider,
   CircularProgress,
 } from "@mui/material";
 import { NavLink, useNavigate } from "react-router";
-import { COLOR } from "../assets/Color";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { useAuthContext } from "../contexts/AuthContext";
-import { localStorage, sessionStorage } from "../utils/storage";
-import StorageKey from "@/constants/StorageKey";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { loginAPI } from "../services/authServices";
-import HttpStatusCode from "../constants/HttpStatusCode";
+import Color from "@constants/Color";
+import { HttpStatusCode } from "axios";
+import { signUpAPI } from "@/services/authServices";
 
-const LoginPage = () => {
-  const { setAccessToken, setRefreshToken, setAccountName, setRoles } =
-    useAuthContext();
+const SignUpPage = () => {
   const navigate = useNavigate();
   const [isShowPass, setIsShowPass] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const [loginLoading, setLoginLoading] = useState(false);
+  const [isShowConfirmPass, setIsShowConfirmPass] = useState(false);
+  const [signUpLoading, setSignUpLoading] = useState(false);
 
   const initialValues = {
+    fullName: "",
     email: "",
     password: "",
+    confirmPassword: "",
   };
 
   const passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])[A-Za-z\\d@$!%*?&]{8,}$";
 
-  const loginSchema = yup.object().shape({
+  const signUpSchema = yup.object().shape({
+    fullName: yup.string().required("Họ tên không được để trống"), //"\n" is to make sure the error message will be displayed in 2 lines for fixed height
     email: yup
       .string()
       .email("Email không hợp lệ")
-      .required("Vui lòng nhập email"),
+      .required("Vui lòng nhập email"), //"\n" is to make sure the error message will be displayed in 2 lines for fixed height
 
     password: yup
       .string()
       .matches(
         passwordRegex,
-        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm 1 chữ hoa và 1 chữ thường",
+        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm 1 chữ hoa và 1 chữ thường", //no need to add \n cuz this one already takes 2 lines
       )
       .required("Vui lòng nhập mật khẩu"), //"\n" is to make sure the error message will be displayed in 2 lines for fixed height
+
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref("password"), null], "Mật khẩu đã nhập không trùng khớp")
+      .required("Vui lòng nhập lại mật khẩu"), //"\n" is to make sure the error message will be displayed in 2 lines for fixed height
   });
 
-  const handleLoginClick = async (values, { setErrors }) => {
-    setLoginLoading(true);
+  const handleSignUpClick = async (values, { setErrors }) => {
+    setSignUpLoading(true);
     try {
-      // validate login inputs and calling API to login
-      const response = await loginAPI(values.email, values.password);
-      if (response.status === HttpStatusCode.OK) {
-        localStorage.setItem(StorageKey.REMEMBER_ME, rememberMe);
-        const { jwt, name, roles } = response.data;
+      //Calling API to sign up
+      const response = await signUpAPI(
+        values.fullName,
+        values.email,
+        values.password,
+        values.confirmPassword,
+      );
 
-        const accessToken = jwt.accessToken;
-        const refreshToken = jwt.refreshToken;
-
-        if (rememberMe) {
-          localStorage.setItem(StorageKey.ACCESS_TOKEN, accessToken);
-          localStorage.setItem(StorageKey.REFRESH_TOKEN, refreshToken);
-          localStorage.setItem(StorageKey.ACCOUNT_NAME, name);
-          localStorage.setItem(StorageKey.ROLES, roles);
-        } else {
-          sessionStorage.setItem(StorageKey.ACCESS_TOKEN, accessToken);
-          sessionStorage.setItem(StorageKey.REFRESH_TOKEN, refreshToken);
-          sessionStorage.setItem(StorageKey.ACCOUNT_NAME, name);
-          sessionStorage.setItem(StorageKey.ROLES, roles);
-        }
-
-        setAccessToken(accessToken);
-        setRefreshToken(refreshToken);
-        setAccountName(name);
-        setRoles(roles);
-
-        navigate("/", { replace: true });
-      } else if (response.status === HttpStatusCode.NOT_FOUND) {
-        setErrors({
-          email: "Tên đăng nhập hoặc mật khẩu không chính xác",
-          password: "Tên đăng nhập hoặc mật khẩu không chính xác",
-        });
-      } else if (response.status === HttpStatusCode.FORBIDDEN) {
-        setErrors({
-          email: "Email chưa được xác thực, vui lòng kiểm tra email của bạn",
-        });
+      if (response.status === HttpStatusCode.Accepted) {
+        navigate("/verify-email-confirmation");
+      } else if (response.status === HttpStatusCode.Conflict) {
+        setErrors({ email: "Email này đã được sử dụng để tạo tài khoản" });
       } else {
         setErrors({
+          fullName: "Đã có lỗi xảy ra, vui lòng thử lại sau",
           email: "Đã có lỗi xảy ra, vui lòng thử lại sau",
           password: "Đã có lỗi xảy ra, vui lòng thử lại sau",
+          confirmPassword: "Đã có lỗi xảy ra, vui lòng thử lại sau",
         });
       }
-      // const mockAccessToken = "ashdajsikdnasd"; //Mock access token
-      // localStorage.setItem(StorageKey.REMEMBER_ME, rememberMe);
-
-      // if (rememberMe) {
-      //   localStorage.setItem(StorageKey.ACCESS_TOKEN, mockAccessToken);
-      // } else {
-      //   sessionStorage.setItem(StorageKey.ACCESS_TOKEN, mockAccessToken);
-      // }
-
-      // console.log("Login successfully: ", values);
-      // setAccessToken(mockAccessToken);
-      // navigate("/", { replace: true });
     } catch (err) {
-      console.log("Error when login: ", err);
-      setErrors({
-        email: "Đã có lỗi xảy ra, vui lòng thử lại sau",
-        password: "Đã có lỗi xảy ra, vui lòng thử lại sau",
-      });
+      console.log("Error when sign up: ", err);
     } finally {
-      setLoginLoading(false);
+      setSignUpLoading(false);
     }
   };
 
@@ -129,14 +93,14 @@ const LoginPage = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          backgroundColor: COLOR.PrimaryWhite,
+          backgroundColor: Color.PrimaryWhite,
           width: 500,
           height: 650,
           borderRadius: 4,
         }}
       >
         <Box
-          backgroundColor={COLOR.PrimaryBlue}
+          backgroundColor={Color.PrimaryBlue}
           height="10%"
           width="100%"
           sx={{
@@ -150,23 +114,23 @@ const LoginPage = () => {
             alt="inlaco-logo"
             width="54"
             height="54"
-            src={require("../assets/images/inlaco-logo.png")}
+            src={require("@assets/images/inlaco-logo.png")}
             style={{ cursor: "pointer" }}
           />
         </Box>
         <Formik
           initialValues={initialValues}
-          validationSchema={loginSchema}
-          onSubmit={handleLoginClick}
+          validationSchema={signUpSchema}
+          onSubmit={handleSignUpClick}
         >
           {({
             values,
             errors,
             touched,
-            isValid,
             dirty,
-            handleBlur,
+            isValid,
             handleChange,
+            handleBlur,
             handleSubmit,
           }) => (
             <Box
@@ -185,23 +149,64 @@ const LoginPage = () => {
               }}
             >
               <Typography
-                mb={4}
+                mb={2}
                 sx={{
                   fontSize: 28,
                   fontWeight: 700,
-                  color: COLOR.PrimaryBlue,
+                  color: Color.PrimaryBlue,
                 }}
               >
-                Đăng nhập
+                Đăng ký
               </Typography>
               <TextField
                 size="small"
-                margin="normal"
+                margin="none"
+                required
+                autoFocus
+                fullWidth
+                label="Họ tên"
+                id="fullName"
+                name="fullName"
+                value={values.fullName}
+                error={!!touched.fullName && !!errors.fullName}
+                helperText={
+                  touched.fullName && errors.fullName ? errors.fullName : " "
+                }
+                onChange={handleChange}
+                onBlur={handleBlur}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AccountCircleIcon />
+                      </InputAdornment>
+                    ),
+                  },
+                  formHelperText: {
+                    sx: {
+                      backgroundColor: Color.PrimaryWhite,
+                      margin: 0,
+                      paddingRight: 1,
+                      paddingLeft: 1,
+                      letterSpacing: 0.3,
+                      lineHeight: 1.4,
+                      fontSize: 11,
+                      whiteSpace: "pre-line",
+                    },
+                  },
+                }}
+                sx={{
+                  backgroundColor: Color.SecondaryWhite,
+                  marginBottom: 3,
+                }}
+              />
+              <TextField
+                size="small"
+                margin="none"
                 required
                 fullWidth
                 label="Email"
                 id="email"
-                autoFocus
                 name="email"
                 value={values.email}
                 error={!!touched.email && !!errors.email}
@@ -218,21 +223,25 @@ const LoginPage = () => {
                   },
                   formHelperText: {
                     sx: {
-                      backgroundColor: COLOR.PrimaryWhite,
+                      backgroundColor: Color.PrimaryWhite,
                       margin: 0,
                       paddingRight: 1,
                       paddingLeft: 1,
+                      letterSpacing: 0.3,
+                      lineHeight: 1.4,
                       fontSize: 11,
+                      whiteSpace: "pre-line",
                     },
                   },
                 }}
                 sx={{
-                  backgroundColor: COLOR.SecondaryWhite,
+                  backgroundColor: Color.SecondaryWhite,
+                  marginBottom: 3,
                 }}
               />
               <TextField
                 size="small"
-                margin="normal"
+                margin="none"
                 required
                 fullWidth
                 label="Mật khẩu"
@@ -271,7 +280,7 @@ const LoginPage = () => {
                   },
                   formHelperText: {
                     sx: {
-                      backgroundColor: COLOR.PrimaryWhite,
+                      backgroundColor: Color.PrimaryWhite,
                       margin: 0,
                       paddingRight: 1,
                       paddingLeft: 1,
@@ -283,71 +292,92 @@ const LoginPage = () => {
                   },
                 }}
                 sx={{
-                  backgroundColor: COLOR.SecondaryWhite,
+                  backgroundColor: Color.SecondaryWhite,
+                  marginBottom: 3,
                 }}
               />
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  marginBottom: 1,
+              <TextField
+                size="small"
+                margin="none"
+                required
+                fullWidth
+                label="Xác nhận mật khẩu"
+                type={isShowConfirmPass ? "text" : "password"}
+                id="confirm_password"
+                name="confirmPassword"
+                value={values.confirmPassword}
+                error={!!touched.confirmPassword && !!errors.confirmPassword}
+                helperText={
+                  touched.confirmPassword && errors.confirmPassword
+                    ? errors.confirmPassword
+                    : " "
+                }
+                onChange={handleChange}
+                onBlur={handleBlur}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <VpnKeyIcon />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <IconButton
+                        onClick={() => {
+                          isShowConfirmPass
+                            ? setIsShowConfirmPass(false)
+                            : setIsShowConfirmPass(true);
+                        }}
+                      >
+                        {isShowConfirmPass ? (
+                          <VisibilityIcon />
+                        ) : (
+                          <VisibilityOffIcon />
+                        )}
+                      </IconButton>
+                    ),
+                  },
+                  formHelperText: {
+                    sx: {
+                      backgroundColor: Color.PrimaryWhite,
+                      margin: 0,
+                      paddingRight: 1,
+                      paddingLeft: 1,
+                      letterSpacing: 0.3,
+                      lineHeight: 1.4,
+                      fontSize: 11,
+                      whiteSpace: "pre-line",
+                    },
+                  },
                 }}
-              >
-                <Box sx={{ display: "flex" }}>
-                  <Checkbox
-                    size="small"
-                    checked={rememberMe}
-                    onChange={(e) => {
-                      setRememberMe(e.target.checked);
-                    }}
-                    sx={{
-                      padding: 0,
-                      marginRight: "4px",
-                      color: COLOR.PrimaryGray,
-                      "&.Mui-checked": {
-                        color: COLOR.PrimaryGray,
-                      },
-                    }}
-                  />
-                  <Typography sx={{ color: COLOR.PrimaryGray, fontSize: 14 }}>
-                    Lưu đăng nhập
-                  </Typography>
-                </Box>
-                <NavLink
-                  style={({ isActive }) => ({
-                    fontSize: 14,
-                    color: isActive ? COLOR.PrimaryGray : COLOR.PrimaryGray, //adjust this if needed
-                  })}
-                >
-                  Quên mật khẩu
-                </NavLink>
-              </Box>
-              <Button
-                variant="contained"
-                type="submit"
                 sx={{
-                  position: "relative",
+                  backgroundColor: Color.SecondaryWhite,
+                }}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={!isValid || !dirty}
+                sx={{
                   pt: 1,
                   pb: 1,
-                  mt: 3,
-                  backgroundColor: COLOR.PrimaryBlue,
-                  color: COLOR.PrimaryWhite,
+                  backgroundColor: Color.PrimaryBlue,
+                  color: Color.PrimaryWhite,
                   minWidth: 120,
+                  marginTop: 1,
                 }}
-                disabled={!isValid || !dirty}
+                // disabled={loading}
               >
-                {loginLoading ? (
-                  <CircularProgress color={COLOR.PrimaryWhite} size={24} />
+                {signUpLoading ? (
+                  <CircularProgress color={Color.PrimaryWhite} size={24} />
                 ) : (
-                  "Đăng nhập"
+                  "Đăng ký"
                 )}
               </Button>
               <Divider
                 sx={{
                   borderWidth: 1,
-                  borderColor: COLOR.PrimaryGray,
+                  borderColor: Color.PrimaryGray,
                   width: "100%",
                   marginTop: 2,
                   marginBottom: 1,
@@ -360,21 +390,21 @@ const LoginPage = () => {
                   alignItems: "center",
                 }}
               >
-                <Typography>Chưa có tài khoản?&nbsp;</Typography>
+                <Typography>Đã có tài khoản?&nbsp;</Typography>
                 <NavLink
                   style={({ isActive }) => ({
-                    color: isActive ? COLOR.SecondaryGold : COLOR.SecondaryGold, //adjust this if needed
+                    color: isActive ? Color.SecondaryGold : Color.SecondaryGold, //adjust this if needed
                   })}
-                  to="/sign-up"
+                  to="/login"
                 >
-                  Tạo ở đây
+                  Đăng nhập
                 </NavLink>
               </Box>
             </Box>
           )}
         </Formik>
         <Box
-          backgroundColor={COLOR.PrimaryGray}
+          backgroundColor={Color.PrimaryGray}
           height="12%"
           width="100%"
           sx={{
@@ -387,7 +417,7 @@ const LoginPage = () => {
           }}
         >
           <Typography
-            color={COLOR.PrimaryWhite}
+            color={Color.PrimaryWhite}
             sx={{
               fontSize: 12,
               fontWeight: 700,
@@ -398,7 +428,7 @@ const LoginPage = () => {
             CÔNG TY CỔ PHẦN HỢP TÁC LAO ĐỘNG VỚI NƯỚC NGOÀI
           </Typography>
           <Typography
-            color={COLOR.PrimaryWhite}
+            color={Color.PrimaryWhite}
             sx={{ fontSize: 8, textAlign: "center" }}
           >
             INTERNATIONAL LABOUR AND SERVICES STOCK COMPANY (INLACO - HP)
@@ -409,4 +439,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignUpPage;

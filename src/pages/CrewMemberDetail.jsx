@@ -598,7 +598,7 @@ const CrewMemberDetail = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: COLOR.PrimaryBlackPlaceHolder,
               }}
             >
               1. Bảo hiểm Xã hội:
@@ -634,7 +634,7 @@ const CrewMemberDetail = () => {
                   <Typography
                     mr={2}
                     sx={{
-                      color: COLOR.primary_black_placeholder,
+                      color: COLOR.PrimaryBlackPlaceHolder,
                       fontWeight: 700,
                     }}
                   >
@@ -659,7 +659,7 @@ const CrewMemberDetail = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: COLOR.PrimaryBlackPlaceHolder,
               }}
             >
               2. Bảo hiểm Tai nạn:
@@ -695,7 +695,7 @@ const CrewMemberDetail = () => {
                   <Typography
                     mr={2}
                     sx={{
-                      color: COLOR.primary_black_placeholder,
+                      color: COLOR.PrimaryBlackPlaceHolder,
                       fontWeight: 700,
                     }}
                   >
@@ -720,7 +720,7 @@ const CrewMemberDetail = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.primary_black_placeholder,
+                color: COLOR.PrimaryBlackPlaceHolder,
               }}
             >
               3. Bảo hiểm Y tế:
@@ -779,7 +779,7 @@ const CrewMemberDetail = () => {
                   <Typography
                     mr={2}
                     sx={{
-                      color: COLOR.primary_black_placeholder,
+                      color: COLOR.PrimaryBlackPlaceHolder,
                       fontWeight: 700,
                     }}
                   >
