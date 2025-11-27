@@ -7,14 +7,14 @@ import { COLOR } from "../assets/Color";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useNavigate } from "react-router";
-import { useAppContext } from "../contexts/AppContext";
+import { useAuthContext } from "../contexts/AuthContext";
 import HttpStatusCode from "../constants/HttpStatusCode";
 import { getAllSupplyRequestAPI } from "../services/supplyReqServices";
 import { formatDateTime } from "../utils/ValueConverter";
 
 const SupplyRequest = () => {
   const navigate = useNavigate();
-  const { roles } = useAppContext();
+  const { roles } = useAuthContext();
 
   const isAdmin = roles.includes("ADMIN");
   const [loading, setLoading] = useState(false);

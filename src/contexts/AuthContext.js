@@ -1,9 +1,8 @@
 import { createContext, useState, useContext } from "react";
 
-export const AppContext = createContext({});
+export const AuthContext = createContext({});
 
-export const AppProvider = ({ children }) => {
-
+export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
   const [roles, setRoles] = useState([]);
@@ -20,15 +19,13 @@ export const AppProvider = ({ children }) => {
     setAccountName,
   };
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const useAppContext = () => {
-    const appContext = useContext(AppContext);
-
-    if(!appContext){
-        console.log("useAppContext can only been used within AppProvider")
-    }
-
-    return appContext;
-}
+export const useAuthContext = () => {
+  const appContext = useContext(AuthContext);
+  if (!appContext) {
+    console.error("useAuthContext must be used within an AuthProvider");
+  }
+  return appContext;
+};

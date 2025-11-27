@@ -1,25 +1,22 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   PageTitle,
   SectionDivider,
   InfoTextField,
   HorizontalImageInput,
-} from "../components/global";
-import { FileUploadField, CardPhotoInput } from "../components/contract";
-import { LogoInput } from "../components/other";
+} from "../../components/global";
+import { LogoInput } from "../../components/other";
 import {
   Box,
   Button,
   Typography,
-  TextField,
   MenuItem,
   Grid,
   CircularProgress,
   InputAdornment,
 } from "@mui/material";
-import { COLOR } from "../assets/Color";
+import { COLOR } from "../../assets/Color";
 import SaveIcon from "@mui/icons-material/Save";
-import ScheduleSendRoundedIcon from "@mui/icons-material/ScheduleSendRounded";
 import { Formik } from "formik";
 import * as yup from "yup";
 // import { useNavigate } from "react-router";

@@ -16,7 +16,7 @@ import { COLOR } from "../assets/Color";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import { useNavigate, useLocation } from "react-router";
-import { useAppContext } from "../contexts/AppContext";
+import { useAuthContext } from "../contexts/AuthContext";
 import HttpStatusCode from "../constants/HttpStatusCode";
 import { getAllPostAPI, getAllCandidatesAPI } from "../services/postServices";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
@@ -24,7 +24,7 @@ import { isoStringToAppDateString } from "../utils/ValueConverter";
 
 const CrewRecruitment = () => {
   const navigate = useNavigate();
-  const { roles } = useAppContext();
+  const { roles } = useAuthContext();
   const isAdmin = roles.includes("ADMIN");
   const location = useLocation();
 

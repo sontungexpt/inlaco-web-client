@@ -16,7 +16,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { useAppContext } from "../contexts/AppContext";
+import { useAuthContext } from "../contexts/AuthContext";
 import { localStorage, sessionStorage } from "../utils/storage";
 import StorageKey from "@/constants/StorageKey";
 import { Formik } from "formik";
@@ -26,7 +26,7 @@ import HttpStatusCode from "../constants/HttpStatusCode";
 
 const LoginPage = () => {
   const { setAccessToken, setRefreshToken, setAccountName, setRoles } =
-    useAppContext();
+    useAuthContext();
   const navigate = useNavigate();
   const [isShowPass, setIsShowPass] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);

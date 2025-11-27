@@ -1,4 +1,4 @@
-const PostEndpoints = {
+const PostEndpoint = {
   GENERAL: "/v1/posts",
   GET_ALL: "/v1/posts/web",
   CANDIDATE_GENERAL: "/v1/candidates",
@@ -8,4 +8,4 @@ const PostEndpoints = {
   REVIEW_CANDIDATE: "/v1/candidates/review",
 };
 
-export default PostEndpoints;
+export default PostEndpoint;

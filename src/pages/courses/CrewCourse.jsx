@@ -1,15 +1,18 @@
-import React from "react";
-import { PageTitle } from "../components/global";
+import { PageTitle } from "../../components/global";
 import { Grid, Box, Button, Typography } from "@mui/material";
-import { COLOR } from "../assets/Color";
-import { CourseCard } from "../components/other";
+import { COLOR } from "../../assets/Color";
+import { CourseCard } from "../../components/other";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
-import { mockCourses } from "../data/mockData";
 import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
 
 const CrewCourse = () => {
   const navigate = useNavigate();
   const isAdmin = true; //this should be replace by account actual role
+
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {});
 
   return (
     <div>
@@ -53,7 +56,7 @@ const CrewCourse = () => {
           </Box>
         )}
         <Grid container spacing={4}>
-          {mockCourses.map((item) => {
+          {courses.map((item) => {
             return (
               <CourseCard
                 key={item?.id}

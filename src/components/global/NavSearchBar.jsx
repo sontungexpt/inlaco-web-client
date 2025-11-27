@@ -1,14 +1,9 @@
-import {
-  Box,
-  IconButton,
-  Autocomplete,
-  TextField,
-} from "@mui/material";
+import { Box, IconButton, Autocomplete, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { COLOR } from "../../assets/Color";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import { useAppContext } from "../../contexts/AppContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 const NavSearchBar = ({
   placeholder,
@@ -21,7 +16,7 @@ const NavSearchBar = ({
 }) => {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
-  const { roles } = useAppContext();
+  const { roles } = useAuthContext();
 
   const isAdmin = roles.includes("ADMIN");
   const isCrewMember = roles.includes("SAILOR");
@@ -40,18 +35,18 @@ const NavSearchBar = ({
         { label: "Đào tạo", path: "/courses" },
       ]
     : isCrewMember
-    ? [
-        { label: "Trang chủ", path: "/" },
-        { label: "Hồ sơ cá nhân", path: "/my-profile" },
-        { label: "Lịch điều động", path: "/mobilizations" },
-        { label: "Hợp đồng thuyền viên", path: "/crew-contracts" },
-        { label: "Đào tạo", path: "/courses" },
-      ]
-    : [
-        { label: "Trang chủ", path: "/" },
-        { label: "Yêu cầu cung ứng", path: "/supply-requests" },
-        { label: "Tuyển dụng", path: "/recruitment" },
-      ];
+      ? [
+          { label: "Trang chủ", path: "/" },
+          { label: "Hồ sơ cá nhân", path: "/my-profile" },
+          { label: "Lịch điều động", path: "/mobilizations" },
+          { label: "Hợp đồng thuyền viên", path: "/crew-contracts" },
+          { label: "Đào tạo", path: "/courses" },
+        ]
+      : [
+          { label: "Trang chủ", path: "/" },
+          { label: "Yêu cầu cung ứng", path: "/supply-requests" },
+          { label: "Tuyển dụng", path: "/recruitment" },
+        ];
 
   const handleInputChange = (event, value) => {
     setInputValue(value);

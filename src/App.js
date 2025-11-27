@@ -42,12 +42,12 @@ import AdminCandidateDetail from "./pages/adminCandidateDetail";
 import UserCandidateDetail from "./pages/userCandidateDetail";
 import ApplyRecruitment from "./pages/applyRecruitment";
 
-import CrewCourse from "./pages/crewCourse";
-import CreateCourse from "./pages/createCourse";
+import CrewCourse from "./pages/courses/CrewCourse";
+import CreateCourse from "./pages/courses/CreateCourse";
 import CourseDetail from "./pages/courseDetail";
 
 import { MainLayout } from "./components/global";
-import { useAppContext } from "./contexts/AppContext";
+import { useAuthContext } from "./contexts/AuthContext";
 import { useEffect } from "react";
 import { localStorage, sessionStorage } from "./utils/storage";
 import StorageKey from "./constants/StorageKey";
@@ -61,7 +61,7 @@ function App() {
     setRefreshToken,
     setAccountName,
     setRoles,
-  } = useAppContext();
+  } = useAuthContext();
 
   const testRoles = ["ADMIN", "USER"];
 

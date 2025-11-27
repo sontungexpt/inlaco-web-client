@@ -4,7 +4,7 @@ import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { COLOR } from "../../assets/Color";
 import NavSearchBar from "./NavSearchBar";
-import { useAppContext } from "../../contexts/AppContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { localStorage, sessionStorage, StorageKey } from "../../utils/storage";
 import { useNavigate } from "react-router";
 import { Menu, MenuItem } from "@mui/material";
@@ -13,7 +13,7 @@ import { useState } from "react";
 const TopBar = () => {
   const navigate = useNavigate();
   const { setAccessToken, setRefreshToken, setAccountName, setRoles } =
-    useAppContext();
+    useAuthContext();
 
   const handleLogoutClick = async () => {
     //Perform something and calling logout API to invalid the refresh token

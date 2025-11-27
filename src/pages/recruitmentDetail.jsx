@@ -13,7 +13,7 @@ import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRound
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import EventBusyRoundedIcon from "@mui/icons-material/EventBusyRounded";
 import { useNavigate, useParams } from "react-router";
-import { useAppContext } from "../contexts/AppContext";
+import { useAuthContext } from "../contexts/AuthContext";
 import HttpStatusCode from "../constants/HttpStatusCode";
 import { getPostByID_API } from "../services/postServices";
 import { isoStringToDateString } from "../utils/ValueConverter";
@@ -22,7 +22,7 @@ const RecruitmentDetail = () => {
   const navigate = useNavigate();
 
   const { id } = useParams();
-  const { roles } = useAppContext();
+  const { roles } = useAuthContext();
   const isAdmin = roles.includes("ADMIN");
   const isAlreadyApplied = false; //this later will be replaced by the actual applied status of the user when fetching API
 
