@@ -129,14 +129,14 @@ const LoginPage = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          backgroundColor: COLOR.primary_white,
+          backgroundColor: COLOR.PrimaryWhite,
           width: 500,
           height: 650,
           borderRadius: 4,
         }}
       >
         <Box
-          backgroundColor={COLOR.primary_blue}
+          backgroundColor={COLOR.PrimaryBlue}
           height="10%"
           width="100%"
           sx={{
@@ -189,7 +189,7 @@ const LoginPage = () => {
                 sx={{
                   fontSize: 28,
                   fontWeight: 700,
-                  color: COLOR.primary_blue,
+                  color: COLOR.PrimaryBlue,
                 }}
               >
                 Đăng nhập
@@ -218,7 +218,7 @@ const LoginPage = () => {
                   },
                   formHelperText: {
                     sx: {
-                      backgroundColor: COLOR.primary_white,
+                      backgroundColor: COLOR.PrimaryWhite,
                       margin: 0,
                       paddingRight: 1,
                       paddingLeft: 1,
@@ -227,7 +227,7 @@ const LoginPage = () => {
                   },
                 }}
                 sx={{
-                  backgroundColor: COLOR.secondary_white,
+                  backgroundColor: COLOR.SecondaryWhite,
                 }}
               />
               <TextField
@@ -271,7 +271,7 @@ const LoginPage = () => {
                   },
                   formHelperText: {
                     sx: {
-                      backgroundColor: COLOR.primary_white,
+                      backgroundColor: COLOR.PrimaryWhite,
                       margin: 0,
                       paddingRight: 1,
                       paddingLeft: 1,
@@ -283,7 +283,7 @@ const LoginPage = () => {
                   },
                 }}
                 sx={{
-                  backgroundColor: COLOR.secondary_white,
+                  backgroundColor: COLOR.SecondaryWhite,
                 }}
               />
               <Box
@@ -305,20 +305,20 @@ const LoginPage = () => {
                     sx={{
                       padding: 0,
                       marginRight: "4px",
-                      color: COLOR.primary_gray,
+                      color: COLOR.PrimaryGray,
                       "&.Mui-checked": {
-                        color: COLOR.primary_gray,
+                        color: COLOR.PrimaryGray,
                       },
                     }}
                   />
-                  <Typography sx={{ color: COLOR.primary_gray, fontSize: 14 }}>
+                  <Typography sx={{ color: COLOR.PrimaryGray, fontSize: 14 }}>
                     Lưu đăng nhập
                   </Typography>
                 </Box>
                 <NavLink
                   style={({ isActive }) => ({
                     fontSize: 14,
-                    color: isActive ? COLOR.primary_gray : COLOR.primary_gray, //adjust this if needed
+                    color: isActive ? COLOR.PrimaryGray : COLOR.PrimaryGray, //adjust this if needed
                   })}
                 >
                   Quên mật khẩu
@@ -332,14 +332,14 @@ const LoginPage = () => {
                   pt: 1,
                   pb: 1,
                   mt: 3,
-                  backgroundColor: COLOR.primary_blue,
-                  color: COLOR.primary_white,
+                  backgroundColor: COLOR.PrimaryBlue,
+                  color: COLOR.PrimaryWhite,
                   minWidth: 120,
                 }}
                 disabled={!isValid || !dirty}
               >
                 {loginLoading ? (
-                  <CircularProgress color={COLOR.primary_white} size={24} />
+                  <CircularProgress color={COLOR.PrimaryWhite} size={24} />
                 ) : (
                   "Đăng nhập"
                 )}
@@ -347,7 +347,7 @@ const LoginPage = () => {
               <Divider
                 sx={{
                   borderWidth: 1,
-                  borderColor: COLOR.primary_gray,
+                  borderColor: COLOR.PrimaryGray,
                   width: "100%",
                   marginTop: 2,
                   marginBottom: 1,
@@ -363,9 +363,7 @@ const LoginPage = () => {
                 <Typography>Chưa có tài khoản?&nbsp;</Typography>
                 <NavLink
                   style={({ isActive }) => ({
-                    color: isActive
-                      ? COLOR.secondary_gold
-                      : COLOR.secondary_gold, //adjust this if needed
+                    color: isActive ? COLOR.SecondaryGold : COLOR.SecondaryGold, //adjust this if needed
                   })}
                   to="/sign-up"
                 >
@@ -376,7 +374,7 @@ const LoginPage = () => {
           )}
         </Formik>
         <Box
-          backgroundColor={COLOR.primary_gray}
+          backgroundColor={COLOR.PrimaryGray}
           height="12%"
           width="100%"
           sx={{
@@ -389,7 +387,7 @@ const LoginPage = () => {
           }}
         >
           <Typography
-            color={COLOR.primary_white}
+            color={COLOR.PrimaryWhite}
             sx={{
               fontSize: 12,
               fontWeight: 700,
@@ -400,7 +398,7 @@ const LoginPage = () => {
             CÔNG TY CỔ PHẦN HỢP TÁC LAO ĐỘNG VỚI NƯỚC NGOÀI
           </Typography>
           <Typography
-            color={COLOR.primary_white}
+            color={COLOR.PrimaryWhite}
             sx={{ fontSize: 8, textAlign: "center" }}
           >
             INTERNATIONAL LABOUR AND SERVICES STOCK COMPANY (INLACO - HP)

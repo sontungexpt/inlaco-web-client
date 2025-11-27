@@ -90,13 +90,13 @@ const NationalityTextField = ({
         ...(Array.isArray(sx) ? sx : [sx]),
         {
           "& .MuiInputBase-input.Mui-disabled": {
-            WebkitTextFillColor: COLOR.primary_black,
+            WebkitTextFillColor: COLOR.PrimaryBlack,
           },
           "& .MuiOutlinedInput-root.Mui-disabled": {
-            WebkitTextFillColor: COLOR.primary_black,
+            WebkitTextFillColor: COLOR.PrimaryBlack,
           },
           "& .MuiInputLabel-root.Mui-disabled": {
-            WebkitTextFillColor: COLOR.primary_black,
+            WebkitTextFillColor: COLOR.PrimaryBlack,
           },
         },
       ]} // Merging styles with spread operator
@@ -106,7 +106,7 @@ const NationalityTextField = ({
             margin: 0,
             paddingRight: 1,
             paddingLeft: 1,
-            backgroundColor: COLOR.primary_white,
+            backgroundColor: COLOR.PrimaryWhite,
           },
         },
         ...slotProps, // Merging slotProps with spread operator

@@ -14,7 +14,7 @@ const VerifyEmailConfirmation = () => {
   }, [isAllowGetNewVerifyLink]);
 
   const textStyle = {
-    color: COLOR.primary_white,
+    color: COLOR.PrimaryWhite,
   };
 
   const handleResendVerifyLink = async () => {
@@ -41,7 +41,7 @@ const VerifyEmailConfirmation = () => {
               to="/login"
               style={{
                 textDecoration: "underline",
-                color: COLOR.primary_gold,
+                color: COLOR.PrimaryGold,
               }}
             >
               đây
@@ -56,8 +56,8 @@ const VerifyEmailConfirmation = () => {
               style={{
                 textDecoration: "underline",
                 color: isAllowGetNewVerifyLink
-                  ? COLOR.primary_gold
-                  : COLOR.secondary_gold,
+                  ? COLOR.PrimaryGold
+                  : COLOR.SecondaryGold,
                 cursor: isAllowGetNewVerifyLink ? "pointer" : "default",
               }}
             >

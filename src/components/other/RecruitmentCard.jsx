@@ -1,7 +1,6 @@
 import React from "react";
 import { Grid, Card, Box, Typography, Button } from "@mui/material";
-import { COLOR } from "../../assets/Color";
-import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
+import Color from "@constants/Color";
 
 const RecruitmentCard = ({
   isAdmin,
@@ -58,7 +57,7 @@ const RecruitmentCard = ({
               variant="h5"
               sx={{
                 fontWeight: "600",
-                color: COLOR.primary_black,
+                color: Color.PrimaryBlack,
                 display: "-webkit-box",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -78,7 +77,7 @@ const RecruitmentCard = ({
                 textOverflow: "ellipsis",
                 WebkitBoxOrient: "vertical",
                 WebkitLineClamp: 3,
-                color: COLOR.secondary_black,
+                color: Color.SecondaryBlack,
               }}
             >
               {description}
@@ -94,7 +93,7 @@ const RecruitmentCard = ({
           >
             <Button
               variant="contained"
-              sx={{ backgroundColor: COLOR.secondary_blue }}
+              sx={{ backgroundColor: Color.SecondaryBlue }}
             >
               {isAdmin ? "Xem chi tiết" : "Ứng tuyển ngay"}
             </Button>

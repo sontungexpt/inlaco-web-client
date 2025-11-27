@@ -17,11 +17,11 @@ const NoValuesOverlay = ({ text = "KHÔNG CÓ DỮ LIỆU" }) => {
       <Typography
         mt={1}
         variant="h6"
-        color={COLOR.primary_black}
+        color={COLOR.PrimaryBlack}
         fontWeight="bold"
         fontStyle="italic"
       >
-        { text }
+        {text}
       </Typography>
     </Box>
   );

@@ -8,9 +8,9 @@ import VerifyEmailConfirmation from "./pages/verifyEmailConfirmation";
 import HomePage from "./pages/homePage";
 import BlankPage from "./pages/blankPage";
 
-import CrewInfos from "./pages/crewInfos";
+import CrewInfos from "./pages/CrewInfos";
 import AddCrewMember from "./pages/addCrewMember";
-import CrewMemberDetail from "./pages/crewMemberDetail";
+import CrewMemberDetail from "./pages/CrewMemberDetail";
 import CrewProfile from "./pages/crewProfile";
 import CrewMyMobilization from "./pages/crewMyMobilization";
 

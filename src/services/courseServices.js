@@ -1,15 +1,34 @@
-import { publicRequest } from "@utils/request";
+import { privateRequest } from "@utils/request";
 import CourseEndpoint from "../endpoints/CourseEndpoint";
 
-export const getAllCoursesAPI = async (page, size) => {
+export const fetchCourses = async ({
+  nonExpired = true,
+  page = 1,
+  size = 20,
+  sort = null,
+}) => {
   try {
-    const response = await publicRequest.get(CourseEndpoint.GET_ALL_COURSES, {
+    const response = await privateRequest.get(CourseEndpoint.GET_ALL_COURSES, {
       params: {
+        nonExpired,
+        sort,
         page,
         size,
       },
     });
-    return response;
+    return response.data;
+  } catch (err) {
+    return err.response;
+  }
+};
+
+export const createCourse = async (payload) => {
+  try {
+    const res = await privateRequest.post(
+      CourseEndpoint.CREATE_COURSE,
+      payload,
+    );
+    return res.data;
   } catch (err) {
     return err.response;
   }

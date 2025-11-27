@@ -79,7 +79,7 @@ const FileUploadField = ({
           </a>
           <IconButton
             onClick={handleDelete}
-            sx={{ color: COLOR.primary_orange }}
+            sx={{ color: COLOR.PrimaryOrgange }}
           >
             {!disabled && (
               <DeleteForeverRoundedIcon sx={{ width: 24, height: 24 }} />

@@ -8,8 +8,8 @@ import { useAuthContext } from "../../contexts/AuthContext";
 const NavSearchBar = ({
   placeholder,
   value,
-  backgroundColor = COLOR.primary_white,
-  color = COLOR.primary_black,
+  backgroundColor = COLOR.PrimaryWhite,
+  color = COLOR.PrimaryBlack,
   sx = [],
   onChange,
   onSearchClick,

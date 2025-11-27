@@ -16,7 +16,7 @@ import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRound
 import { useNavigate } from "react-router";
 import HttpStatusCode from "../constants/HttpStatusCode";
 import { getSupplyContractsAPI } from "../services/contractServices";
-import { isoStringToAppDateString } from "../utils/ValueConverter";
+import { isoStringToAppDateString } from "../utils/converter";
 
 const SupplyContract = () => {
   const navigate = useNavigate();
@@ -106,8 +106,8 @@ const SupplyContract = () => {
             size="small"
             onClick={() => onContractDetailClick(params?.id)}
             sx={{
-              backgroundColor: COLOR.primary_green,
-              color: COLOR.primary_black,
+              backgroundColor: COLOR.PrimaryGreen,
+              color: COLOR.PrimaryBlack,
               fontWeight: 700,
               textTransform: "capitalize",
             }}
@@ -142,12 +142,12 @@ const SupplyContract = () => {
           maxWidth={1600}
           sx={{
             "& .MuiDataGrid-columnHeader": {
-              backgroundColor: COLOR.secondary_blue,
-              color: COLOR.primary_white,
+              backgroundColor: COLOR.SecondaryBlue,
+              color: COLOR.PrimaryWhite,
             },
             "& .MuiTablePagination-root": {
-              backgroundColor: COLOR.secondary_blue,
-              color: COLOR.primary_white,
+              backgroundColor: COLOR.SecondaryBlue,
+              color: COLOR.PrimaryWhite,
             },
           }}
         >
@@ -164,8 +164,8 @@ const SupplyContract = () => {
               placeholder={
                 "Nhập tên hoặc mã thuyền viên cần tìm kiếm (VD: Nguyễn Văn A,...)"
               }
-              color={COLOR.primary_black}
-              backgroundColor={COLOR.secondary_white}
+              color={COLOR.PrimaryBlack}
+              backgroundColor={COLOR.SecondaryWhite}
               sx={{
                 width: "40%",
               }}

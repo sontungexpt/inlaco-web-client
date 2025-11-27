@@ -1,4 +1,4 @@
-import { Box, } from "@mui/material";
+import { Box } from "@mui/material";
 import { COLOR } from "../../assets/Color";
 import { useState } from "react";
 
@@ -9,7 +9,7 @@ const ShipInfoCell = ({
   type,
   imageUrl,
   backgroundColor,
-  color = COLOR.primary_black,
+  color = COLOR.PrimaryBlack,
   sx = [],
 }) => {
   //   console.log(IMONumber);
@@ -62,7 +62,7 @@ const ShipInfoCell = ({
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          color: COLOR.primary_black
+          color: COLOR.PrimaryBlack,
         }}
       >
         <p style={{ margin: 0, textAlign: "left", overflow: "hidden" }}>

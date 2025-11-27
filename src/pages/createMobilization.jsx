@@ -16,7 +16,7 @@ import * as yup from "yup";
 import { useNavigate } from "react-router";
 import { createMobilizationAPI } from "../services/mobilizationServices";
 import HttpStatusCode from "../constants/HttpStatusCode";
-import { dateTimeStringToISOString } from "../utils/ValueConverter";
+import { dateTimeStringToISOString } from "../utils/converter";
 
 const CreateMobilization = () => {
   const navigate = useNavigate();
@@ -195,13 +195,13 @@ const CreateMobilization = () => {
                     sx={{
                       width: "10%",
                       padding: 1,
-                      color: COLOR.primary_black,
-                      backgroundColor: COLOR.primary_gold,
+                      color: COLOR.PrimaryBlack,
+                      backgroundColor: COLOR.PrimaryGold,
                       minWidth: 130,
                     }}
                   >
                     {createMobilizationLoading ? (
-                      <CircularProgress size={24} color={COLOR.primary_black} />
+                      <CircularProgress size={24} color={COLOR.PrimaryBlack} />
                     ) : (
                       <Box sx={{ display: "flex", alignItems: "end" }}>
                         <SaveIcon
@@ -252,10 +252,10 @@ const CreateMobilization = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -280,10 +280,10 @@ const CreateMobilization = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />

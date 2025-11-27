@@ -28,7 +28,7 @@ import {
   getSupplyReqByID_API,
   reviewSupplyReqAPI,
 } from "../services/supplyReqServices";
-import { isoStringToMUIDateTime } from "../utils/ValueConverter";
+import { isoStringToMUIDateTime } from "../utils/converter";
 
 const AdminSupplyRequestDetail = () => {
   const navigate = useNavigate();
@@ -195,10 +195,10 @@ const AdminSupplyRequestDetail = () => {
                   {status === "Chấp thuận" ? (
                     <StatusLabel
                       label="Chấp thuận"
-                      color={COLOR.primary_green}
+                      color={COLOR.PrimaryGreen}
                     />
                   ) : status === "Từ chối" ? (
-                    <StatusLabel label="Từ chối" color={COLOR.primary_orange} />
+                    <StatusLabel label="Từ chối" color={COLOR.PrimaryOrgange} />
                   ) : status === "Đang chờ xác nhận" ? (
                     <StatusLabel
                       label="Đang chờ xác nhận"
@@ -207,7 +207,7 @@ const AdminSupplyRequestDetail = () => {
                   ) : (
                     <StatusLabel
                       label="Đã ký hợp đồng"
-                      color={COLOR.secondary_gold}
+                      color={COLOR.SecondaryGold}
                     />
                   )}
                 </Box>
@@ -237,8 +237,8 @@ const AdminSupplyRequestDetail = () => {
                         sx={{
                           width: "30%",
                           padding: 1,
-                          color: COLOR.primary_white,
-                          backgroundColor: COLOR.primary_blue,
+                          color: COLOR.PrimaryWhite,
+                          backgroundColor: COLOR.PrimaryBlue,
                           minWidth: 130,
                           marginRight: 2,
                           marginTop: 2,
@@ -248,7 +248,7 @@ const AdminSupplyRequestDetail = () => {
                         {buttonLoading ? (
                           <CircularProgress
                             size={24}
-                            color={COLOR.primary_black}
+                            color={COLOR.PrimaryBlack}
                           />
                         ) : (
                           <Box sx={{ display: "flex", alignItems: "end" }}>
@@ -268,8 +268,8 @@ const AdminSupplyRequestDetail = () => {
                         sx={{
                           width: "30%",
                           padding: 1,
-                          color: COLOR.primary_white,
-                          backgroundColor: COLOR.primary_orange,
+                          color: COLOR.PrimaryWhite,
+                          backgroundColor: COLOR.PrimaryOrgange,
                           minWidth: 130,
                           marginTop: 2,
                           marginBottom: 2,
@@ -278,7 +278,7 @@ const AdminSupplyRequestDetail = () => {
                         {buttonLoading ? (
                           <CircularProgress
                             size={24}
-                            color={COLOR.primary_black}
+                            color={COLOR.PrimaryBlack}
                           />
                         ) : (
                           <Box sx={{ display: "flex", alignItems: "end" }}>
@@ -299,8 +299,8 @@ const AdminSupplyRequestDetail = () => {
                         sx={{
                           width: "16%",
                           padding: 1,
-                          color: COLOR.primary_black,
-                          backgroundColor: COLOR.primary_gold,
+                          color: COLOR.PrimaryBlack,
+                          backgroundColor: COLOR.PrimaryGold,
                           minWidth: 130,
                         }}
                         onClick={() => handleCreateSupplyContractClick()}
@@ -351,10 +351,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -384,10 +384,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -415,10 +415,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -447,10 +447,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -480,10 +480,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -513,10 +513,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -561,10 +561,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -599,10 +599,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -632,10 +632,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -666,10 +666,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -704,10 +704,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -737,10 +737,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -797,10 +797,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -829,10 +829,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -861,10 +861,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -893,10 +893,10 @@ const AdminSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />

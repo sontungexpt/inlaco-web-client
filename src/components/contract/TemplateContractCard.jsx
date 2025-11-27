@@ -16,7 +16,7 @@ const TemplateContractCard = ({
   title,
   type,
   gridSize = 4,
-  color = COLOR.primary_black,
+  color = COLOR.PrimaryBlack,
   sx = [],
   onClick,
 }) => {
@@ -46,7 +46,7 @@ const TemplateContractCard = ({
             sx={{ position: "absolute", top: 5, right: 5, zIndex: 1 }}
           >
             <DownloadForOfflineRoundedIcon
-              sx={{ width: 32, height: 32, color: COLOR.primary_gray }}
+              sx={{ width: 32, height: 32, color: COLOR.PrimaryGray }}
             />
           </IconButton>
           <CardMedia
@@ -72,7 +72,7 @@ const TemplateContractCard = ({
                 textOverflow: "ellipsis",
                 WebkitBoxOrient: "vertical",
                 WebkitLineClamp: 1, // Set the number of lines to show
-                color: COLOR.primary_black,
+                color: COLOR.PrimaryBlack,
                 fontWeight: 700,
               }}
             >
@@ -80,7 +80,7 @@ const TemplateContractCard = ({
             </Typography>
             <Typography
               variant="body1"
-              sx={{ margin: 0, color: COLOR.secondary_black }}
+              sx={{ margin: 0, color: COLOR.SecondaryBlack }}
             >
               <strong>Loại:</strong> {type}
             </Typography>

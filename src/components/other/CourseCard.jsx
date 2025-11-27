@@ -6,11 +6,11 @@ import {
   CardMedia,
   Box,
 } from "@mui/material";
-import { COLOR } from "../../assets/Color";
 import { useState } from "react";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
+import Color from "@/constants/Color";
 
 const CourseCard = ({
   name,
@@ -20,7 +20,7 @@ const CourseCard = ({
   trainingPartnerLogo,
   limitStudent,
   gridSize = 4,
-  color = COLOR.primary_black,
+  color = Color.PrimaryBlack,
   sx = [],
   isCertificateCourse,
   onClick,
@@ -87,7 +87,7 @@ const CourseCard = ({
                     textOverflow: "ellipsis",
                     WebkitBoxOrient: "vertical",
                     WebkitLineClamp: 1, // Set the number of lines to show
-                    color: COLOR.secondary_black,
+                    color: Color.SecondaryBlack,
                     fontSize: 16,
                     fontWeight: 600,
                     marginLeft: "10px",
@@ -103,7 +103,7 @@ const CourseCard = ({
                   textOverflow: "ellipsis",
                   WebkitBoxOrient: "vertical",
                   WebkitLineClamp: 1, // Set the number of lines to show
-                  color: COLOR.primary_black,
+                  color: Color.PrimaryBlack,
                   fontSize: 18,
                   fontWeight: 700,
                 }}
@@ -125,8 +125,8 @@ const CourseCard = ({
                         width: 20,
                         height: 20,
                         color: isCertificateCourse
-                          ? COLOR.primary_green
-                          : COLOR.secondary_gold,
+                          ? Color.PrimaryGreen
+                          : Color.SecondaryGold,
                       }}
                     />
                   ) : (
@@ -135,8 +135,8 @@ const CourseCard = ({
                         width: 20,
                         height: 20,
                         color: isCertificateCourse
-                          ? COLOR.primary_green
-                          : COLOR.secondary_gold,
+                          ? Color.PrimaryGreen
+                          : Color.SecondaryGold,
                       }}
                     />
                   )}
@@ -145,8 +145,8 @@ const CourseCard = ({
                       fontSize: 14,
                       marginLeft: "4px",
                       color: isCertificateCourse
-                        ? COLOR.primary_green
-                        : COLOR.secondary_gold,
+                        ? Color.PrimaryGreen
+                        : Color.SecondaryGold,
                     }}
                   >
                     {isCertificateCourse ? "Có cấp chứng chỉ" : "Khóa học"}
@@ -161,12 +161,12 @@ const CourseCard = ({
                   }}
                 >
                   <PersonRoundedIcon
-                    sx={{ width: 20, height: 20, color: COLOR.primary_gray }}
+                    sx={{ width: 20, height: 20, color: Color.PrimaryGray }}
                   />
                   <Typography
                     sx={{
                       fontSize: 14,
-                      color: COLOR.primary_gray,
+                      color: Color.PrimaryGray,
                     }}
                   >
                     {limitStudent}

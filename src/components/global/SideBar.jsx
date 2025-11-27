@@ -43,7 +43,7 @@ const Item = ({ title, to, navigateState, icon, selected, setSelected }) => {
     <MenuItem
       active={selected === title}
       style={{
-        color: COLOR.primary_white,
+        color: COLOR.PrimaryWhite,
       }}
       onClick={() => {
         setSelected(title);
@@ -66,22 +66,19 @@ const Item = ({ title, to, navigateState, icon, selected, setSelected }) => {
 };
 
 const SideBar = () => {
-  const { accountName, roles } = useAuthContext();
-
+  const { accountName, hasRole } = useAuthContext();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Trang chủ");
-
   const testRoles = ["ADMIN", "USER"];
-
-  const isAdmin = roles.includes("ADMIN");
-  const isCrewMember = roles.includes("SAILOR");
-  const isGeneralUser = roles.includes("USER");
+  const isAdmin = hasRole("ADMIN");
+  const isCrewMember = hasRole("SAILOR");
+  const isGeneralUser = hasRole("USER");
 
   return (
     <Box>
       <Sidebar
         collapsed={isCollapsed}
-        backgroundColor={COLOR.primary_blue}
+        backgroundColor={COLOR.PrimaryBlue}
         style={{ height: "100%" }}
       >
         <Menu
@@ -91,7 +88,7 @@ const SideBar = () => {
               // only apply styles on first level elements of the tree
               if (level === 0)
                 return {
-                  backgroundColor: active ? COLOR.secondary_blue : undefined,
+                  backgroundColor: active ? COLOR.SecondaryBlue : undefined,
                   "&:hover": {
                     backgroundColor: COLOR.primary_hover_blue,
                   },
@@ -105,7 +102,7 @@ const SideBar = () => {
             icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
             style={{
               margin: "10px 0 20px 0",
-              color: COLOR.primary_white,
+              color: COLOR.PrimaryWhite,
             }}
           >
             {!isCollapsed && (
@@ -120,7 +117,7 @@ const SideBar = () => {
                   style={{ width: 60, height: 48 }}
                 />
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
-                  <MenuOutlinedIcon sx={{ color: COLOR.primary_white }} />
+                  <MenuOutlinedIcon sx={{ color: COLOR.PrimaryWhite }} />
                 </IconButton>
               </Box>
             )}
@@ -140,13 +137,13 @@ const SideBar = () => {
               <Box textAlign="center">
                 <Typography
                   variant="h5"
-                  color={COLOR.primary_white}
+                  color={COLOR.PrimaryWhite}
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
                   {accountName}
                 </Typography>
-                <Typography variant="h6" color={COLOR.primary_gold}>
+                <Typography variant="h6" color={COLOR.PrimaryGold}>
                   {isAdmin ? "Admin" : isCrewMember ? "Crew Member" : "User"}
                 </Typography>
               </Box>
@@ -165,7 +162,7 @@ const SideBar = () => {
               <>
                 <Typography
                   variant="h6"
-                  color={COLOR.primary_gold}
+                  color={COLOR.PrimaryGold}
                   sx={{
                     m: isCollapsed ? "15px 0 5px 0" : "15px 0 5px 20px",
                     textAlign: isCollapsed ? "center" : "left",
@@ -201,7 +198,7 @@ const SideBar = () => {
 
                     <Typography
                       variant="h6"
-                      color={COLOR.primary_gold}
+                      color={COLOR.PrimaryGold}
                       sx={{
                         m: isCollapsed ? "15px 0 5px 0" : "15px 0 5px 20px",
                         textAlign: isCollapsed ? "center" : "left",
@@ -246,7 +243,7 @@ const SideBar = () => {
             )}
             <Typography
               variant="h6"
-              color={COLOR.primary_gold}
+              color={COLOR.PrimaryGold}
               sx={{
                 m: isCollapsed ? "15px 0 5px 0" : "15px 0 5px 20px",
                 textAlign: isCollapsed ? "center" : "left",

@@ -20,7 +20,7 @@ import { useAuthContext } from "../contexts/AuthContext";
 import HttpStatusCode from "../constants/HttpStatusCode";
 import { getAllPostAPI, getAllCandidatesAPI } from "../services/postServices";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
-import { isoStringToAppDateString } from "../utils/ValueConverter";
+import { isoStringToAppDateString } from "../utils/converter";
 
 const CrewRecruitment = () => {
   const navigate = useNavigate();
@@ -214,8 +214,8 @@ const CrewRecruitment = () => {
                 size="small"
                 onClick={() => onCreateCrewMemberClick(params?.id, params?.row)}
                 sx={{
-                  backgroundColor: COLOR.primary_gold,
-                  color: COLOR.primary_black,
+                  backgroundColor: COLOR.PrimaryGold,
+                  color: COLOR.PrimaryBlack,
                   fontWeight: 700,
                   textTransform: "capitalize",
                   marginRight: "8px",
@@ -236,8 +236,8 @@ const CrewRecruitment = () => {
               size="small"
               onClick={() => onAdminMemberDetailClick(params?.id)}
               sx={{
-                backgroundColor: COLOR.primary_green,
-                color: COLOR.primary_black,
+                backgroundColor: COLOR.PrimaryGreen,
+                color: COLOR.PrimaryBlack,
                 fontWeight: 700,
                 textTransform: "capitalize",
               }}
@@ -368,9 +368,9 @@ const CrewRecruitment = () => {
             variant={"fullWidth"}
             initialTab={tabValue}
             onChange={(newValue) => handleTabChange(newValue)}
-            color={COLOR.secondary_blue}
+            color={COLOR.SecondaryBlue}
             sx={{
-              backgroundColor: COLOR.secondary_white,
+              backgroundColor: COLOR.SecondaryWhite,
               marginTop: 4,
               marginBottom: 2,
             }}
@@ -400,12 +400,12 @@ const CrewRecruitment = () => {
               maxWidth={1600}
               sx={{
                 "& .MuiDataGrid-columnHeader": {
-                  backgroundColor: COLOR.secondary_blue,
-                  color: COLOR.primary_white,
+                  backgroundColor: COLOR.SecondaryBlue,
+                  color: COLOR.PrimaryWhite,
                 },
                 "& .MuiTablePagination-root": {
-                  backgroundColor: COLOR.secondary_blue,
-                  color: COLOR.primary_white,
+                  backgroundColor: COLOR.SecondaryBlue,
+                  color: COLOR.PrimaryWhite,
                 },
               }}
             >
@@ -459,7 +459,7 @@ const CrewRecruitment = () => {
                       fontSize: 16,
                       fontStyle: "italic",
                       fontWeight: "700",
-                      color: COLOR.primary_green,
+                      color: COLOR.PrimaryGreen,
                     }}
                   >
                     {posts.numberOfElements ? posts.numberOfElements : "0"}
@@ -481,8 +481,8 @@ const CrewRecruitment = () => {
                     variant="contained"
                     onClick={handleCreateRecruitmentClick}
                     sx={{
-                      backgroundColor: COLOR.primary_gold,
-                      color: COLOR.primary_black,
+                      backgroundColor: COLOR.PrimaryGold,
+                      color: COLOR.PrimaryBlack,
                       borderRadius: 2,
                     }}
                   >
@@ -543,11 +543,11 @@ const CrewRecruitment = () => {
                   sx={{
                     "& .MuiPaginationItem-root": {
                       "&.Mui-selected": {
-                        backgroundColor: COLOR.primary_gold,
-                        color: COLOR.primary_black,
+                        backgroundColor: COLOR.PrimaryGold,
+                        color: COLOR.PrimaryBlack,
                       },
                       "&:hover": {
-                        backgroundColor: COLOR.secondary_gold,
+                        backgroundColor: COLOR.SecondaryGold,
                       },
                     },
                   }}

@@ -18,7 +18,7 @@ import * as yup from "yup";
 import { useNavigate, useParams } from "react-router";
 import HttpStatusCode from "../constants/HttpStatusCode";
 import { createCrewContractAPI } from "../services/contractServices";
-import { dateStringToISOString } from "../utils/ValueConverter";
+import { dateStringToISOString } from "../utils/converter";
 
 const CreateCrewContract = () => {
   const navigate = useNavigate();
@@ -407,13 +407,13 @@ const CreateCrewContract = () => {
                     sx={{
                       width: "10%",
                       padding: 1,
-                      color: COLOR.primary_black,
-                      backgroundColor: COLOR.primary_gold,
+                      color: COLOR.PrimaryBlack,
+                      backgroundColor: COLOR.PrimaryGold,
                       minWidth: 130,
                     }}
                   >
                     {createContractLoading ? (
-                      <CircularProgress size={24} color={COLOR.primary_black} />
+                      <CircularProgress size={24} color={COLOR.PrimaryBlack} />
                     ) : (
                       <Box sx={{ display: "flex", alignItems: "end" }}>
                         <SaveIcon

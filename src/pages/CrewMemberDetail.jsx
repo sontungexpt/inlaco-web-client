@@ -31,7 +31,7 @@ import {
 import {
   isoStringToDateString,
   dateStringToISOString,
-} from "../utils/ValueConverter";
+} from "../utils/converter";
 
 const CrewMemberDetail = () => {
   // const navigate = useNavigate();
@@ -228,10 +228,10 @@ const CrewMemberDetail = () => {
                       <Button
                         variant="outlined"
                         sx={{
-                          color: COLOR.primary_orange,
+                          color: COLOR.PrimaryOrgange,
                           padding: "8px",
                           marginRight: 2,
-                          borderColor: COLOR.primary_orange,
+                          borderColor: COLOR.PrimaryOrgange,
                         }}
                         onClick={handleCancelClick}
                       >
@@ -259,8 +259,8 @@ const CrewMemberDetail = () => {
                         type={"submit"}
                         disabled={!isValid || !dirty}
                         sx={{
-                          color: COLOR.primary_white,
-                          backgroundColor: COLOR.primary_blue,
+                          color: COLOR.PrimaryWhite,
+                          backgroundColor: COLOR.PrimaryBlue,
                           padding: "10px",
                           marginTop: "1px",
                           marginBottom: "1px",
@@ -291,8 +291,8 @@ const CrewMemberDetail = () => {
                       variant="contained"
                       type={"button"}
                       sx={{
-                        color: COLOR.primary_black,
-                        backgroundColor: COLOR.primary_gold,
+                        color: COLOR.PrimaryBlack,
+                        backgroundColor: COLOR.PrimaryGold,
                         padding: "10px",
                         marginTop: "1px",
                         marginBottom: "1px",
@@ -312,7 +312,7 @@ const CrewMemberDetail = () => {
                           sx={{
                             fontWeight: 700,
                             fontSize: 14,
-                            color: COLOR.primary_black,
+                            color: COLOR.PrimaryBlack,
                           }}
                         >
                           Chỉnh sửa
@@ -564,12 +564,12 @@ const CrewMemberDetail = () => {
               ) : (
                 <Grid sx={{ padding: 4 }} size={12}>
                   <Typography
-                    sx={{ textAlign: "center", color: COLOR.primary_black }}
+                    sx={{ textAlign: "center", color: COLOR.PrimaryBlack }}
                   >
                     <span
                       style={{
                         fontStyle: "italic",
-                        color: COLOR.primary_gray,
+                        color: COLOR.PrimaryGray,
                         textDecoration: "underline",
                       }}
                     >
@@ -579,7 +579,7 @@ const CrewMemberDetail = () => {
                     <span
                       style={{
                         fontStyle: "italic",
-                        color: COLOR.primary_gray,
+                        color: COLOR.PrimaryGray,
                         textDecoration: "underline",
                       }}
                     >

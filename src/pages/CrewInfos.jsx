@@ -7,14 +7,14 @@ import {
 } from "../components/global";
 import { Box, Button, Typography, CircularProgress } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { COLOR } from "../assets/Color";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined";
 import { useNavigate } from "react-router";
 import { getAllCrewMemberAPI } from "../services/crewServices";
 import HttpStatusCode from "../constants/HttpStatusCode";
-import { isoStringToAppDateString } from "../utils/ValueConverter";
+import { isoStringToAppDateString } from "../utils/converter";
+import Color from "@constants/Color";
 
 const CrewInfos = () => {
   const navigate = useNavigate();
@@ -219,8 +219,8 @@ const CrewInfos = () => {
                 size="small"
                 onClick={() => onCreateCrewContractClick(params?.id)}
                 sx={{
-                  backgroundColor: COLOR.primary_gold,
-                  color: COLOR.primary_black,
+                  backgroundColor: Color.PrimaryGold,
+                  color: Color.PrimaryBlack,
                   fontWeight: 700,
                   textTransform: "capitalize",
                   marginRight: "8px",
@@ -241,8 +241,8 @@ const CrewInfos = () => {
               size="small"
               onClick={() => onMemberDetailClick(params?.id)}
               sx={{
-                backgroundColor: COLOR.primary_green,
-                color: COLOR.primary_black,
+                backgroundColor: Color.PrimaryGreen,
+                color: Color.PrimaryBlack,
                 fontWeight: 700,
                 textTransform: "capitalize",
               }}
@@ -291,9 +291,9 @@ const CrewInfos = () => {
           tabLabel2={"Danh sách Thuyền viên chưa chính thức"}
           variant={"fullWidth"}
           onChange={(newValue) => handleTabChange(newValue)}
-          color={COLOR.secondary_blue}
+          color={Color.SecondaryBlue}
           sx={{
-            backgroundColor: COLOR.secondary_white,
+            backgroundColor: Color.SecondaryWhite,
             marginTop: 4,
           }}
         />
@@ -305,12 +305,12 @@ const CrewInfos = () => {
             maxWidth={1600}
             sx={{
               "& .MuiDataGrid-columnHeader": {
-                backgroundColor: COLOR.secondary_blue,
-                color: COLOR.primary_white,
+                backgroundColor: Color.SecondaryBlue,
+                color: Color.PrimaryWhite,
               },
               "& .MuiTablePagination-root": {
-                backgroundColor: COLOR.secondary_blue,
-                color: COLOR.primary_white,
+                backgroundColor: Color.SecondaryBlue,
+                color: Color.PrimaryWhite,
               },
             }}
           >
@@ -327,8 +327,8 @@ const CrewInfos = () => {
                 placeholder={
                   "Nhập thông tin thuyền viên cần tìm kiếm (VD: Tên thuyền viên, Chức vụ,...)"
                 }
-                color={COLOR.primary_black}
-                backgroundColor={COLOR.secondary_white}
+                color={Color.PrimaryBlack}
+                backgroundColor={Color.SecondaryWhite}
                 sx={{
                   width: "40%",
                 }}
@@ -336,8 +336,8 @@ const CrewInfos = () => {
               <Button
                 variant="contained"
                 sx={{
-                  backgroundColor: COLOR.primary_gold,
-                  color: COLOR.primary_black,
+                  backgroundColor: Color.PrimaryGold,
+                  color: Color.PrimaryBlack,
                   borderRadius: 2,
                 }}
                 onClick={() =>

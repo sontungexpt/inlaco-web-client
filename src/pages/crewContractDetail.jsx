@@ -10,14 +10,13 @@ import {
   Box,
   Button,
   Typography,
-  TextField,
   Grid,
   MenuItem,
   CircularProgress,
   IconButton,
   InputAdornment,
 } from "@mui/material";
-import { COLOR } from "../assets/Color";
+import Color from "@constants/Color";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import SaveIcon from "@mui/icons-material/Save";
@@ -31,8 +30,7 @@ import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { saveAs } from "file-saver";
 import JSZipUtils from "jszip-utils";
-import { formatDateString } from "../utils/ValueConverter";
-import HttpStatusCode from "../constants/HttpStatusCode";
+import { formatDateString } from "../utils/converter";
 import {
   getCrewContractByID_API,
   editCrewContractAPI,
@@ -41,7 +39,8 @@ import {
 import {
   isoStringToDateString,
   dateStringToISOString,
-} from "../utils/ValueConverter";
+} from "../utils/converter";
+import { HttpStatusCode } from "axios";
 
 const CrewContractDetail = () => {
   const navigate = useNavigate();
@@ -59,7 +58,7 @@ const CrewContractDetail = () => {
       const response = await getCrewContractByID_API(id);
       await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-      if (response.status === HttpStatusCode.OK) {
+      if (response.status === HttpStatusCode.Ok) {
         console.log("Crew contract info: ", response.data);
         setContractInfo(response.data);
       }
@@ -365,7 +364,7 @@ const CrewContractDetail = () => {
         ],
       });
       await new Promise((resolve) => setTimeout(resolve, 200)); //Delay UI for 200ms
-      if (response.status === HttpStatusCode.OK) {
+      if (response.status === HttpStatusCode.Ok) {
         console.log("Successfully updating: ", values);
         setIsEditable(false);
       }
@@ -379,7 +378,7 @@ const CrewContractDetail = () => {
   const handleApproveContract = async () => {
     try {
       const response = await activeContractByID_API(id);
-      if (response.status === HttpStatusCode.OK) {
+      if (response.status === HttpStatusCode.Ok) {
         navigate("/crew-contracts");
       }
     } catch (err) {
@@ -521,9 +520,9 @@ const CrewContractDetail = () => {
                   {!isEditable && !isOfficialContract && (
                     <IconButton
                       sx={{
-                        backgroundColor: COLOR.primary_blue,
-                        color: COLOR.primary_white,
-                        "&:hover": { backgroundColor: COLOR.secondary_blue },
+                        backgroundColor: Color.PrimaryBlue,
+                        color: Color.PrimaryWhite,
+                        "&:hover": { backgroundColor: Color.SecondaryBlue },
                       }}
                       onClick={() => handleDownloadPaperContractClick(values)}
                     >
@@ -575,10 +574,10 @@ const CrewContractDetail = () => {
                           <Button
                             variant="outlined"
                             sx={{
-                              color: COLOR.primary_orange,
+                              color: Color.PrimaryOrgange,
                               padding: "8px",
                               marginRight: 2,
-                              borderColor: COLOR.primary_orange,
+                              borderColor: Color.PrimaryOrgange,
                             }}
                             onClick={handleCancelClick}
                           >
@@ -606,8 +605,8 @@ const CrewContractDetail = () => {
                             type={"submit"}
                             disabled={!isValid || !dirty}
                             sx={{
-                              color: COLOR.primary_white,
-                              backgroundColor: COLOR.primary_blue,
+                              color: Color.PrimaryWhite,
+                              backgroundColor: Color.PrimaryBlue,
                               padding: "10px",
                               marginTop: "1px",
                               marginBottom: "1px",
@@ -639,8 +638,8 @@ const CrewContractDetail = () => {
                             variant="contained"
                             type={"button"}
                             sx={{
-                              color: COLOR.primary_black,
-                              backgroundColor: COLOR.primary_gold,
+                              color: Color.PrimaryBlack,
+                              backgroundColor: Color.PrimaryGold,
                               padding: "10px",
                               marginTop: "1px",
                               marginBottom: "1px",
@@ -661,7 +660,7 @@ const CrewContractDetail = () => {
                                 sx={{
                                   fontWeight: 700,
                                   fontSize: 14,
-                                  color: COLOR.primary_black,
+                                  color: Color.PrimaryBlack,
                                 }}
                               >
                                 Chỉnh sửa
@@ -673,8 +672,8 @@ const CrewContractDetail = () => {
                             sx={{
                               width: "35%",
                               padding: 1,
-                              color: COLOR.primary_white,
-                              backgroundColor: COLOR.primary_green,
+                              color: Color.PrimaryWhite,
+                              backgroundColor: Color.PrimaryGreen,
                               minWidth: 130,
                             }}
                             onClick={() => handleApproveContract()}
@@ -704,8 +703,8 @@ const CrewContractDetail = () => {
                       sx={{
                         width: "15%",
                         padding: 1,
-                        color: COLOR.primary_black,
-                        backgroundColor: COLOR.primary_gold,
+                        color: Color.PrimaryBlack,
+                        backgroundColor: Color.PrimaryGold,
                         minWidth: 130,
                       }}
                     >
@@ -781,10 +780,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -813,10 +812,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -844,10 +843,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -877,10 +876,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -910,10 +909,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -944,10 +943,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -974,10 +973,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -1013,10 +1012,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1045,10 +1044,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1078,10 +1077,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1111,10 +1110,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1142,10 +1141,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1175,10 +1174,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -1215,10 +1214,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1250,10 +1249,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -1290,10 +1289,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -1331,10 +1330,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1362,10 +1361,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1397,10 +1396,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1434,10 +1433,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                     "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
                       {
@@ -1481,10 +1480,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                     "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
                       {
@@ -1529,10 +1528,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 >
@@ -1566,10 +1565,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1599,10 +1598,10 @@ const CrewContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />

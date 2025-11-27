@@ -14,7 +14,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { createRecruitmentPostAPI } from "../services/postServices";
 import HttpStatusCode from "../constants/HttpStatusCode";
-import { dateStringToISOString } from "../utils/ValueConverter";
+import { dateStringToISOString } from "../utils/converter";
 import { useNavigate } from "react-router";
 
 const CreateRecruitment = () => {
@@ -144,13 +144,13 @@ const CreateRecruitment = () => {
                     sx={{
                       width: "10%",
                       padding: 1,
-                      color: COLOR.primary_black,
-                      backgroundColor: COLOR.primary_gold,
+                      color: COLOR.PrimaryBlack,
+                      backgroundColor: COLOR.PrimaryGold,
                       minWidth: 130,
                     }}
                   >
                     {createCourseLoading ? (
-                      <CircularProgress size={24} color={COLOR.primary_black} />
+                      <CircularProgress size={24} color={COLOR.PrimaryBlack} />
                     ) : (
                       <Box sx={{ display: "flex", alignItems: "end" }}>
                         <SaveIcon
@@ -212,7 +212,7 @@ const CreateRecruitment = () => {
               >
                 <Box
                   sx={{
-                    borderBottom: `2px solid ${COLOR.primary_black}`,
+                    borderBottom: `2px solid ${COLOR.PrimaryBlack}`,
                     width: "40%",
                   }}
                 />

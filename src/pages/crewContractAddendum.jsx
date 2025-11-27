@@ -166,13 +166,13 @@ const CrewContractAddendum = () => {
                     sx={{
                       width: "16%",
                       padding: 1,
-                      color: COLOR.primary_black,
-                      backgroundColor: COLOR.primary_gold,
+                      color: COLOR.PrimaryBlack,
+                      backgroundColor: COLOR.PrimaryGold,
                       minWidth: 130,
                     }}
                   >
                     {createAddendumLoading ? (
-                      <CircularProgress size={24} color={COLOR.primary_black} />
+                      <CircularProgress size={24} color={COLOR.PrimaryBlack} />
                     ) : (
                       <Box sx={{ display: "flex", alignItems: "end" }}>
                         <SaveIcon
@@ -216,10 +216,10 @@ const CrewContractAddendum = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -255,10 +255,10 @@ const CrewContractAddendum = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -295,10 +295,10 @@ const CrewContractAddendum = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -325,10 +325,10 @@ const CrewContractAddendum = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -359,10 +359,10 @@ const CrewContractAddendum = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -395,10 +395,10 @@ const CrewContractAddendum = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                     "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
                       {
@@ -441,10 +441,10 @@ const CrewContractAddendum = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                     "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
                       {
@@ -488,10 +488,10 @@ const CrewContractAddendum = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 >
@@ -524,10 +524,10 @@ const CrewContractAddendum = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -556,10 +556,10 @@ const CrewContractAddendum = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />

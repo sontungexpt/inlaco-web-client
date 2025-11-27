@@ -6,8 +6,8 @@ import { COLOR } from "../../assets/Color";
 const SearchBar = ({
   placeholder,
   value,
-  backgroundColor = COLOR.primary_white,
-  color = COLOR.primary_black,
+  backgroundColor = COLOR.PrimaryWhite,
+  color = COLOR.PrimaryBlack,
   sx = [],
   onChange,
   onSearchClick,

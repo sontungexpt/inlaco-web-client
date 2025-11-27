@@ -17,6 +17,9 @@ export const AuthProvider = ({ children }) => {
     setRoles,
     accountName,
     setAccountName,
+    hasRole: (required_role) => roles.includes(required_role),
+    hasRoles: (required_roles) =>
+      required_roles.every((role) => this.roles.includes(role)),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

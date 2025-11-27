@@ -86,7 +86,7 @@ const MultilineFileUploadField = ({
                   </a>
                   <IconButton
                     onClick={() => handleDelete(index)}
-                    sx={{ color: COLOR.primary_orange }}
+                    sx={{ color: COLOR.PrimaryOrgange }}
                   >
                     {!disabled && (
                       <DeleteForeverRoundedIcon

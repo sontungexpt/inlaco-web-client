@@ -3,13 +3,13 @@ import { PageTitle, NoValuesOverlay } from "../components/global";
 import { Box, Button, Typography, CircularProgress } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { ShipInfoCell, ScheduleCell } from "../components/mobilization";
-import { COLOR } from "../assets/Color";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useNavigate } from "react-router";
 import { getAllMobilizationsAPI } from "../services/mobilizationServices";
-import HttpStatusCode from "../constants/HttpStatusCode";
-import { formatDateTime } from "../utils/ValueConverter";
+import { formatDateTime } from "../utils/converter";
+import { HttpStatusCode } from "axios";
+import Color from "@constants/Color";
 
 const CrewMobilization = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const CrewMobilization = () => {
         const response = await getAllMobilizationsAPI(0, 10, "");
         await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-        if (response.status === HttpStatusCode.OK) {
+        if (response.status === HttpStatusCode.Ok) {
           console.log(response.data.content);
           const mobilizations = response.data.content;
 
@@ -157,8 +157,8 @@ const CrewMobilization = () => {
               size="small"
               onClick={() => onMobilizationDetailClick(params?.id)}
               sx={{
-                backgroundColor: COLOR.primary_green,
-                color: COLOR.primary_black,
+                backgroundColor: Color.PrimaryGreen,
+                color: Color.PrimaryBlack,
                 fontWeight: 700,
                 textTransform: "capitalize",
               }}
@@ -302,12 +302,12 @@ const CrewMobilization = () => {
           maxWidth={1600}
           sx={{
             "& .MuiDataGrid-columnHeader": {
-              backgroundColor: COLOR.secondary_blue,
-              color: COLOR.primary_white,
+              backgroundColor: Color.SecondaryBlue,
+              color: Color.PrimaryWhite,
             },
             "& .MuiTablePagination-root": {
-              backgroundColor: COLOR.secondary_blue,
-              color: COLOR.primary_white,
+              backgroundColor: Color.SecondaryBlue,
+              color: Color.PrimaryWhite,
             },
           }}
         >
@@ -323,8 +323,8 @@ const CrewMobilization = () => {
             <Button
               variant="contained"
               sx={{
-                backgroundColor: COLOR.primary_gold,
-                color: COLOR.primary_black,
+                backgroundColor: Color.PrimaryGold,
+                color: Color.PrimaryBlack,
                 borderRadius: 2,
               }}
               onClick={() => navigate("/mobilizations/create")}

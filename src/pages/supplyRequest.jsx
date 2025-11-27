@@ -10,7 +10,7 @@ import { useNavigate } from "react-router";
 import { useAuthContext } from "../contexts/AuthContext";
 import HttpStatusCode from "../constants/HttpStatusCode";
 import { getAllSupplyRequestAPI } from "../services/supplyReqServices";
-import { formatDateTime } from "../utils/ValueConverter";
+import { formatDateTime } from "../utils/converter";
 
 const SupplyRequest = () => {
   const navigate = useNavigate();
@@ -187,8 +187,8 @@ const SupplyRequest = () => {
               size="small"
               onClick={() => onRequestDetailClick(params?.id)}
               sx={{
-                backgroundColor: COLOR.primary_green,
-                color: COLOR.primary_black,
+                backgroundColor: COLOR.PrimaryGreen,
+                color: COLOR.PrimaryBlack,
                 fontWeight: 700,
                 textTransform: "capitalize",
               }}
@@ -235,8 +235,8 @@ const SupplyRequest = () => {
             <Button
               variant="contained"
               sx={{
-                backgroundColor: COLOR.primary_gold,
-                color: COLOR.primary_black,
+                backgroundColor: COLOR.PrimaryGold,
+                color: COLOR.PrimaryBlack,
                 borderRadius: 2,
                 margin: 0,
                 marginLeft: "auto",
@@ -263,12 +263,12 @@ const SupplyRequest = () => {
           maxWidth={1600}
           sx={{
             "& .MuiDataGrid-columnHeader": {
-              backgroundColor: COLOR.secondary_blue,
-              color: COLOR.primary_white,
+              backgroundColor: COLOR.SecondaryBlue,
+              color: COLOR.PrimaryWhite,
             },
             "& .MuiTablePagination-root": {
-              backgroundColor: COLOR.secondary_blue,
-              color: COLOR.primary_white,
+              backgroundColor: COLOR.SecondaryBlue,
+              color: COLOR.PrimaryWhite,
             },
           }}
         >

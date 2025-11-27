@@ -30,7 +30,7 @@ import { COLOR } from "../assets/Color";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams, useLocation } from "react-router";
-import { formatDateTime } from "../utils/ValueConverter";
+import { formatDateTime } from "../utils/converter";
 
 const CourseDetail = () => {
   const navigate = useNavigate();
@@ -302,15 +302,15 @@ const CourseDetail = () => {
                         sx={{
                           width: "12%",
                           padding: 1,
-                          color: COLOR.primary_black,
-                          backgroundColor: COLOR.primary_gold,
+                          color: COLOR.PrimaryBlack,
+                          backgroundColor: COLOR.PrimaryGold,
                           minWidth: 130,
                         }}
                       >
                         {enrollLoading ? (
                           <CircularProgress
                             size={24}
-                            color={COLOR.primary_black}
+                            color={COLOR.PrimaryBlack}
                           />
                         ) : (
                           <Box sx={{ display: "flex", alignItems: "end" }}>
@@ -345,10 +345,10 @@ const CourseDetail = () => {
                           <Button
                             variant="outlined"
                             sx={{
-                              color: COLOR.primary_orange,
+                              color: COLOR.PrimaryOrgange,
                               padding: "8px",
                               marginRight: 2,
-                              borderColor: COLOR.primary_orange,
+                              borderColor: COLOR.PrimaryOrgange,
                             }}
                             onClick={handleCancelClick}
                           >
@@ -376,8 +376,8 @@ const CourseDetail = () => {
                             type={"submit"}
                             disabled={!isValid || !dirty}
                             sx={{
-                              color: COLOR.primary_white,
-                              backgroundColor: COLOR.primary_blue,
+                              color: COLOR.PrimaryWhite,
+                              backgroundColor: COLOR.PrimaryBlue,
                               padding: "10px",
                               marginTop: "1px",
                               marginBottom: "1px",
@@ -409,8 +409,8 @@ const CourseDetail = () => {
                           type={"button"}
                           disabled={!isClosed}
                           sx={{
-                            color: COLOR.primary_black,
-                            backgroundColor: COLOR.primary_gold,
+                            color: COLOR.PrimaryBlack,
+                            backgroundColor: COLOR.PrimaryGold,
                             padding: "10px",
                             marginTop: "1px",
                             marginBottom: "1px",
@@ -430,7 +430,7 @@ const CourseDetail = () => {
                               sx={{
                                 fontWeight: 700,
                                 fontSize: 14,
-                                color: COLOR.primary_black,
+                                color: COLOR.PrimaryBlack,
                               }}
                             >
                               Chỉnh sửa
@@ -446,17 +446,17 @@ const CourseDetail = () => {
                       sx={{
                         width: "15%",
                         padding: 1,
-                        color: COLOR.primary_white,
+                        color: COLOR.PrimaryWhite,
                         backgroundColor: isClosed
-                          ? COLOR.primary_blue
-                          : COLOR.primary_orange,
+                          ? COLOR.PrimaryBlue
+                          : COLOR.PrimaryOrgange,
                         minWidth: 110,
                       }}
                     >
                       {openClosedLoading ? (
                         <CircularProgress
                           size={24}
-                          color={COLOR.primary_black}
+                          color={COLOR.PrimaryBlack}
                         />
                       ) : (
                         <Box sx={{ display: "flex", alignItems: "end" }}>
@@ -498,9 +498,9 @@ const CourseDetail = () => {
                   tabLabel2={"Danh sách ứng viên"}
                   variant={"fullWidth"}
                   onChange={(newValue) => handleTabChange(newValue)}
-                  color={COLOR.secondary_blue}
+                  color={COLOR.SecondaryBlue}
                   sx={{
-                    backgroundColor: COLOR.secondary_white,
+                    backgroundColor: COLOR.SecondaryWhite,
                     marginTop: 2,
                   }}
                 />
@@ -513,12 +513,12 @@ const CourseDetail = () => {
                   maxWidth={1600}
                   sx={{
                     "& .MuiDataGrid-columnHeader": {
-                      backgroundColor: COLOR.secondary_blue,
-                      color: COLOR.primary_white,
+                      backgroundColor: COLOR.SecondaryBlue,
+                      color: COLOR.PrimaryWhite,
                     },
                     "& .MuiTablePagination-root": {
-                      backgroundColor: COLOR.secondary_blue,
-                      color: COLOR.primary_white,
+                      backgroundColor: COLOR.SecondaryBlue,
+                      color: COLOR.PrimaryWhite,
                     },
                   }}
                 >
@@ -587,10 +587,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.primary_black,
+                            color: COLOR.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.primary_black,
+                            borderColor: COLOR.PrimaryBlack,
                           },
                           marginTop: 2,
                         }}
@@ -618,10 +618,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.primary_black,
+                            color: COLOR.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.primary_black,
+                            borderColor: COLOR.PrimaryBlack,
                           },
                           marginTop: 2,
                         }}
@@ -651,10 +651,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.primary_black,
+                            color: COLOR.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.primary_black,
+                            borderColor: COLOR.PrimaryBlack,
                           },
                         }}
                       />
@@ -681,10 +681,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.primary_black,
+                            color: COLOR.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.primary_black,
+                            borderColor: COLOR.PrimaryBlack,
                           },
                         }}
                         slotProps={{
@@ -716,10 +716,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.primary_black,
+                            color: COLOR.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.primary_black,
+                            borderColor: COLOR.PrimaryBlack,
                           },
                         }}
                         slotProps={{
@@ -771,10 +771,10 @@ const CourseDetail = () => {
                             MozAppearance: "textfield",
                           },
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.primary_black,
+                            color: COLOR.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.primary_black,
+                            borderColor: COLOR.PrimaryBlack,
                           },
                         }}
                       />
@@ -803,10 +803,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.primary_black,
+                            color: COLOR.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.primary_black,
+                            borderColor: COLOR.PrimaryBlack,
                           },
                         }}
                       >
@@ -840,10 +840,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.primary_black,
+                            color: COLOR.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.primary_black,
+                            borderColor: COLOR.PrimaryBlack,
                           },
                         }}
                       />

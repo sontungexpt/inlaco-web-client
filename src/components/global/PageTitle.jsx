@@ -4,14 +4,14 @@ import { COLOR } from "../../assets/Color";
 const PageTitle = ({ title, subtitle }) => {
   return (
     <Box mb="30px">
-      <Typography
-        variant="h5"
-        color={COLOR.primary_black}
-        fontWeight="bold"
-      >
+      <Typography variant="h5" color={COLOR.PrimaryBlack} fontWeight="bold">
         {title}
       </Typography>
-      <Typography variant="h7" color={COLOR.secondary_black} sx={{ fontStyle: "italic" }}>
+      <Typography
+        variant="h7"
+        color={COLOR.SecondaryBlack}
+        sx={{ fontStyle: "italic" }}
+      >
         {subtitle}
       </Typography>
     </Box>

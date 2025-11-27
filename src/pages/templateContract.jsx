@@ -124,8 +124,8 @@ const TemplateContract = () => {
             placeholder={
               "Nhập thông tin template hợp đồng (VD: Tên hợp đồng, Loại hợp đồng)"
             }
-            color={COLOR.primary_black}
-            backgroundColor={COLOR.secondary_white}
+            color={COLOR.PrimaryBlack}
+            backgroundColor={COLOR.SecondaryWhite}
             sx={{
               width: "40%",
             }}

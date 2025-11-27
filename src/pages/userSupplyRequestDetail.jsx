@@ -187,10 +187,10 @@ const UserSupplyRequestDetail = () => {
                   {status === "Chấp thuận" ? (
                     <StatusLabel
                       label="Chấp thuận"
-                      color={COLOR.primary_green}
+                      color={COLOR.PrimaryGreen}
                     />
                   ) : status === "Từ chối" ? (
-                    <StatusLabel label="Từ chối" color={COLOR.primary_orange} />
+                    <StatusLabel label="Từ chối" color={COLOR.PrimaryOrgange} />
                   ) : status === "Đang chờ xác nhận" ? (
                     <StatusLabel
                       label="Đang chờ xác nhận"
@@ -199,7 +199,7 @@ const UserSupplyRequestDetail = () => {
                   ) : (
                     <StatusLabel
                       label="Đã ký hợp đồng"
-                      color={COLOR.secondary_gold}
+                      color={COLOR.SecondaryGold}
                     />
                   )}
                 </Box>
@@ -221,10 +221,10 @@ const UserSupplyRequestDetail = () => {
                       <Button
                         variant="outlined"
                         sx={{
-                          color: COLOR.primary_orange,
+                          color: COLOR.PrimaryOrgange,
                           padding: "8px",
                           marginRight: 2,
-                          borderColor: COLOR.primary_orange,
+                          borderColor: COLOR.PrimaryOrgange,
                           width: "12%",
                         }}
                         onClick={handleCancelClick}
@@ -253,8 +253,8 @@ const UserSupplyRequestDetail = () => {
                         type={"submit"}
                         disabled={!isValid || !dirty}
                         sx={{
-                          color: COLOR.primary_white,
-                          backgroundColor: COLOR.primary_blue,
+                          color: COLOR.PrimaryWhite,
+                          backgroundColor: COLOR.PrimaryBlue,
                           padding: "10px",
                           marginTop: "1px",
                           marginBottom: "1px",
@@ -293,8 +293,8 @@ const UserSupplyRequestDetail = () => {
                         variant="contained"
                         type={"button"}
                         sx={{
-                          color: COLOR.primary_black,
-                          backgroundColor: COLOR.primary_gold,
+                          color: COLOR.PrimaryBlack,
+                          backgroundColor: COLOR.PrimaryGold,
                           padding: "10px",
                           width: "22%",
                         }}
@@ -313,7 +313,7 @@ const UserSupplyRequestDetail = () => {
                             sx={{
                               fontWeight: 700,
                               fontSize: 14,
-                              color: COLOR.primary_black,
+                              color: COLOR.PrimaryBlack,
                             }}
                           >
                             Chỉnh sửa
@@ -357,10 +357,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -390,10 +390,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -421,10 +421,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -453,10 +453,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -486,10 +486,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -519,10 +519,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -567,10 +567,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -605,10 +605,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -638,10 +638,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -672,10 +672,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -710,10 +710,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -743,10 +743,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -803,10 +803,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -835,10 +835,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -867,10 +867,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -899,10 +899,10 @@ const UserSupplyRequestDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />

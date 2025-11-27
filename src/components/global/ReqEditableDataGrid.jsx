@@ -119,7 +119,7 @@ const ReqEditableDataGrid = ({
 
   const isAnyRowInEditMode = () => {
     return Object.values(rowModesModel).some(
-      (mode) => mode.mode === GridRowModes.Edit
+      (mode) => mode.mode === GridRowModes.Edit,
     );
   };
 
@@ -177,7 +177,7 @@ const ReqEditableDataGrid = ({
               label="Cancel"
               className="textPrimary"
               onClick={handleCancelClick(id)}
-              sx={{ color: COLOR.primary_orange }}
+              sx={{ color: COLOR.PrimaryOrgange }}
             />,
           ];
         }
@@ -196,7 +196,7 @@ const ReqEditableDataGrid = ({
             label="Delete"
             disabled={!isEditable}
             onClick={handleDeleteClick(id)}
-            sx={{ color: COLOR.primary_orange }}
+            sx={{ color: COLOR.PrimaryOrgange }}
           />,
         ];
       },
@@ -213,12 +213,12 @@ const ReqEditableDataGrid = ({
             color: COLOR.primary_black_placeholder,
           },
           "& .MuiDataGrid-columnHeader": {
-            backgroundColor: COLOR.secondary_blue,
-            color: COLOR.primary_white,
+            backgroundColor: COLOR.SecondaryBlue,
+            color: COLOR.PrimaryWhite,
           },
           "& .MuiTablePagination-root": {
-            backgroundColor: COLOR.secondary_blue,
-            color: COLOR.primary_white,
+            backgroundColor: COLOR.SecondaryBlue,
+            color: COLOR.PrimaryWhite,
           },
         },
         ...(Array.isArray(sx) ? sx : [sx]),
@@ -231,8 +231,8 @@ const ReqEditableDataGrid = ({
             sx={{
               width: "12%",
               padding: 1,
-              color: COLOR.primary_black,
-              backgroundColor: COLOR.primary_gold,
+              color: COLOR.PrimaryBlack,
+              backgroundColor: COLOR.PrimaryGold,
               minWidth: 130,
               marginBottom: 2,
               marginRight: 2,
@@ -259,10 +259,10 @@ const ReqEditableDataGrid = ({
             sx={{
               width: "12%",
               padding: 1,
-              color: isEditable ? COLOR.primary_white : COLOR.primary_black,
+              color: isEditable ? COLOR.PrimaryWhite : COLOR.PrimaryBlack,
               backgroundColor: isEditable
-                ? COLOR.primary_blue
-                : COLOR.primary_gold,
+                ? COLOR.PrimaryBlue
+                : COLOR.PrimaryGold,
               minWidth: 130,
               marginBottom: 2,
             }}
@@ -277,7 +277,7 @@ const ReqEditableDataGrid = ({
                     height: 20,
                     marginRight: "5px",
                     marginBottom: "2px",
-                    color: COLOR.primary_white,
+                    color: COLOR.PrimaryWhite,
                   }}
                 />
               ) : (
@@ -316,7 +316,9 @@ const ReqEditableDataGrid = ({
         pageSizeOptions={[5, 10, { value: -1, label: "All" }]}
         slots={{ noRowsOverlay: NoValuesOverlay }}
         slotProps={{
-          noRowsOverlay: { text: "CHƯA CÓ SỐ LƯỢNG CẦN CUNG ỨNG NÀO ĐƯỢC THÊM" },
+          noRowsOverlay: {
+            text: "CHƯA CÓ SỐ LƯỢNG CẦN CUNG ỨNG NÀO ĐƯỢC THÊM",
+          },
         }}
         initialState={{
           pagination: {

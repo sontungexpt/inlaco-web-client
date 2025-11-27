@@ -1,4 +1,4 @@
-import { Box, } from "@mui/material";
+import { Box } from "@mui/material";
 import { COLOR } from "../../assets/Color";
 
 const ScheduleCell = ({
@@ -7,7 +7,7 @@ const ScheduleCell = ({
   startLocation,
   endLocation,
   backgroundColor,
-  color = COLOR.primary_black,
+  color = COLOR.PrimaryBlack,
   sx = [],
 }) => {
   return (
@@ -24,13 +24,37 @@ const ScheduleCell = ({
       ]}
     >
       <Box>
-        <p style={{ margin: 0, fontSize: 18, fontWeight: 700, color: COLOR.primary_black }}>{startLocation}</p>
-        <p style={{ margin: 0, fontSize: 13, color: COLOR.secondary_black }}>{startDate}</p>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 18,
+            fontWeight: 700,
+            color: COLOR.PrimaryBlack,
+          }}
+        >
+          {startLocation}
+        </p>
+        <p style={{ margin: 0, fontSize: 13, color: COLOR.SecondaryBlack }}>
+          {startDate}
+        </p>
       </Box>
-      <strong style={{ marginLeft: 20, marginRight: 20, fontSize: 24, }}>-</strong>
+      <strong style={{ marginLeft: 20, marginRight: 20, fontSize: 24 }}>
+        -
+      </strong>
       <Box>
-        <p style={{ margin: 0, fontSize: 18, fontWeight: 700, color: COLOR.primary_black }}>{endLocation}</p>
-        <p style={{ margin: 0, fontSize: 13, color: COLOR.secondary_black }}>{estimatedEndTime}</p>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 18,
+            fontWeight: 700,
+            color: COLOR.PrimaryBlack,
+          }}
+        >
+          {endLocation}
+        </p>
+        <p style={{ margin: 0, fontSize: 13, color: COLOR.SecondaryBlack }}>
+          {estimatedEndTime}
+        </p>
       </Box>
     </Box>
   );

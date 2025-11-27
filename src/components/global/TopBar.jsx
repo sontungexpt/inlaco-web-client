@@ -64,8 +64,8 @@ const TopBar = () => {
       {/* SEARCH BAR */}
       <NavSearchBar
         placeholder={"Tìm kiếm trang......"}
-        backgroundColor={COLOR.secondary_blue}
-        color={COLOR.primary_white}
+        backgroundColor={COLOR.SecondaryBlue}
+        color={COLOR.PrimaryWhite}
         sx={{ width: "20%" }}
       />
 
@@ -95,7 +95,7 @@ const TopBar = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                color: COLOR.primary_orange,
+                color: COLOR.PrimaryOrgange,
               }}
             >
               <LogoutRoundedIcon

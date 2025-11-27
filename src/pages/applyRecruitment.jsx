@@ -24,7 +24,7 @@ import * as yup from "yup";
 import { useNavigate, useParams } from "react-router";
 import { applyRecruitmentAPI } from "../services/postServices";
 import HttpStatusCode from "../constants/HttpStatusCode";
-import { dateStringToISOString } from "../utils/ValueConverter";
+import { dateStringToISOString } from "../utils/converter";
 
 const ApplyRecruitment = () => {
   const navigate = useNavigate();
@@ -157,13 +157,13 @@ const ApplyRecruitment = () => {
                     sx={{
                       width: "12%",
                       padding: 1,
-                      color: COLOR.primary_black,
-                      backgroundColor: COLOR.primary_gold,
+                      color: COLOR.PrimaryBlack,
+                      backgroundColor: COLOR.PrimaryGold,
                       minWidth: 130,
                     }}
                   >
                     {loading ? (
-                      <CircularProgress size={24} color={COLOR.primary_black} />
+                      <CircularProgress size={24} color={COLOR.PrimaryBlack} />
                     ) : (
                       <Box sx={{ display: "flex", alignItems: "end" }}>
                         <SendRoundedIcon
@@ -198,10 +198,10 @@ const ApplyRecruitment = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -223,10 +223,10 @@ const ApplyRecruitment = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -259,10 +259,10 @@ const ApplyRecruitment = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -287,10 +287,10 @@ const ApplyRecruitment = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -336,10 +336,10 @@ const ApplyRecruitment = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />
@@ -363,10 +363,10 @@ const ApplyRecruitment = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.primary_black,
+                      color: COLOR.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.primary_black,
+                      borderColor: COLOR.PrimaryBlack,
                     },
                   }}
                 />

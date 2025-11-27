@@ -109,7 +109,8 @@ export function formatDate(value) {
   }
 }
 
-export function dateStringToISOString(dateString) { //convert "yyyy-mm-dd" to "yyyy-mm-ddT00:00:00.000Z"
+export function dateStringToISOString(dateString) {
+  //convert "yyyy-mm-dd" to "yyyy-mm-ddT00:00:00.000Z"
   try {
     // Create a new Date object using the date string
     const date = new Date(dateString);
@@ -174,7 +175,8 @@ export function isoStringToMUIDateTime(isoString) {
   }
 }
 
-export function isoStringToDateString(isoString) { //convert "yyyy-mm-ddT00:00:00.000Z" to "yyyy-mm-dd"
+export function isoStringToDateString(isoString) {
+  //convert "yyyy-mm-ddT00:00:00.000Z" to "yyyy-mm-dd"
   try {
     // Create a new Date object using the ISO string
     const date = new Date(isoString);
@@ -197,7 +199,8 @@ export function isoStringToDateString(isoString) { //convert "yyyy-mm-ddT00:00:0
   }
 }
 
-export function isoStringToAppDateString(isoString) { //convert "yyyy-mm-ddT00:00:00.000Z" to "dd-mm-yyyy"
+export function isoStringToAppDateString(isoString) {
+  //convert "yyyy-mm-ddT00:00:00.000Z" to "dd-mm-yyyy"
   try {
     // Create a new Date object using the ISO string
     const date = new Date(isoString);

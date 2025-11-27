@@ -46,7 +46,7 @@ const EditableDataGrid = ({
 
   const { setFieldValue } = useFormikContext();
   const [field, meta] = useField(name);
-  console.log("Field: ", field)
+  console.log("Field: ", field);
 
   const handleEditButtonClick = () => {
     setIsEditable(true);
@@ -128,7 +128,7 @@ const EditableDataGrid = ({
 
   const isAnyRowInEditMode = () => {
     return Object.values(rowModesModel).some(
-      (mode) => mode.mode === GridRowModes.Edit
+      (mode) => mode.mode === GridRowModes.Edit,
     );
   };
 
@@ -212,7 +212,7 @@ const EditableDataGrid = ({
               label="Cancel"
               className="textPrimary"
               onClick={handleCancelClick(id)}
-              sx={{ color: COLOR.primary_orange }}
+              sx={{ color: COLOR.PrimaryOrgange }}
             />,
           ];
         }
@@ -231,7 +231,7 @@ const EditableDataGrid = ({
             label="Delete"
             disabled={!isEditable}
             onClick={handleDeleteClick(id)}
-            sx={{ color: COLOR.primary_orange }}
+            sx={{ color: COLOR.PrimaryOrgange }}
           />,
         ];
       },
@@ -248,12 +248,12 @@ const EditableDataGrid = ({
             color: COLOR.primary_black_placeholder,
           },
           "& .MuiDataGrid-columnHeader": {
-            backgroundColor: COLOR.secondary_blue,
-            color: COLOR.primary_white,
+            backgroundColor: COLOR.SecondaryBlue,
+            color: COLOR.PrimaryWhite,
           },
           "& .MuiTablePagination-root": {
-            backgroundColor: COLOR.secondary_blue,
-            color: COLOR.primary_white,
+            backgroundColor: COLOR.SecondaryBlue,
+            color: COLOR.PrimaryWhite,
           },
         },
         ...(Array.isArray(sx) ? sx : [sx]),
@@ -266,8 +266,8 @@ const EditableDataGrid = ({
             sx={{
               width: "16%",
               padding: 1,
-              color: COLOR.primary_black,
-              backgroundColor: COLOR.primary_gold,
+              color: COLOR.PrimaryBlack,
+              backgroundColor: COLOR.PrimaryGold,
               minWidth: 130,
               marginBottom: 2,
               marginRight: 2,
@@ -294,10 +294,10 @@ const EditableDataGrid = ({
             sx={{
               width: "12%",
               padding: 1,
-              color: isEditable ? COLOR.primary_white : COLOR.primary_black,
+              color: isEditable ? COLOR.PrimaryWhite : COLOR.PrimaryBlack,
               backgroundColor: isEditable
-                ? COLOR.primary_blue
-                : COLOR.primary_gold,
+                ? COLOR.PrimaryBlue
+                : COLOR.PrimaryGold,
               minWidth: 130,
               marginBottom: 2,
             }}
@@ -312,7 +312,7 @@ const EditableDataGrid = ({
                     height: 20,
                     marginRight: "5px",
                     marginBottom: "2px",
-                    color: COLOR.primary_white,
+                    color: COLOR.PrimaryWhite,
                   }}
                 />
               ) : (

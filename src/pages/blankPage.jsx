@@ -9,7 +9,7 @@ const BlankPage = () => {
       alignItems: "center",
       height: "100vh",
       backgroundColor: "#FFFFFF",
-      color: COLOR.primary_white,
+      color: COLOR.PrimaryWhite,
       flexDirection: "column",
     },
     heading: {

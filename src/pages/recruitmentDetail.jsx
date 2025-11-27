@@ -16,7 +16,7 @@ import { useNavigate, useParams } from "react-router";
 import { useAuthContext } from "../contexts/AuthContext";
 import HttpStatusCode from "../constants/HttpStatusCode";
 import { getPostByID_API } from "../services/postServices";
-import { isoStringToDateString } from "../utils/ValueConverter";
+import { isoStringToDateString } from "../utils/converter";
 
 const RecruitmentDetail = () => {
   const navigate = useNavigate();
@@ -132,15 +132,15 @@ const RecruitmentDetail = () => {
                   sx={{
                     width: "15%",
                     padding: 1,
-                    color: COLOR.primary_white,
+                    color: COLOR.PrimaryWhite,
                     backgroundColor: !isActive
-                      ? COLOR.primary_blue
-                      : COLOR.primary_orange,
+                      ? COLOR.PrimaryBlue
+                      : COLOR.PrimaryOrgange,
                     minWidth: 110,
                   }}
                 >
                   {openClosedLoading ? (
-                    <CircularProgress size={24} color={COLOR.primary_black} />
+                    <CircularProgress size={24} color={COLOR.PrimaryBlack} />
                   ) : (
                     <Box sx={{ display: "flex", alignItems: "end" }}>
                       {!isActive ? (
@@ -173,8 +173,8 @@ const RecruitmentDetail = () => {
                   variant="contained"
                   onClick={() => handleUserApplicationClick(id)}
                   sx={{
-                    backgroundColor: COLOR.primary_gold,
-                    color: COLOR.primary_black,
+                    backgroundColor: COLOR.PrimaryGold,
+                    color: COLOR.PrimaryBlack,
                     borderRadius: 2,
                   }}
                 >
@@ -236,7 +236,7 @@ const RecruitmentDetail = () => {
           >
             <Box
               sx={{
-                borderBottom: `2px solid ${COLOR.primary_black}`,
+                borderBottom: `2px solid ${COLOR.PrimaryBlack}`,
                 width: "40%",
               }}
             />

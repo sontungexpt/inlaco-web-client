@@ -93,14 +93,14 @@ const SignUpPage = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          backgroundColor: COLOR.primary_white,
+          backgroundColor: COLOR.PrimaryWhite,
           width: 500,
           height: 650,
           borderRadius: 4,
         }}
       >
         <Box
-          backgroundColor={COLOR.primary_blue}
+          backgroundColor={COLOR.PrimaryBlue}
           height="10%"
           width="100%"
           sx={{
@@ -153,7 +153,7 @@ const SignUpPage = () => {
                 sx={{
                   fontSize: 28,
                   fontWeight: 700,
-                  color: COLOR.primary_blue,
+                  color: COLOR.PrimaryBlue,
                 }}
               >
                 Đăng ký
@@ -184,7 +184,7 @@ const SignUpPage = () => {
                   },
                   formHelperText: {
                     sx: {
-                      backgroundColor: COLOR.primary_white,
+                      backgroundColor: COLOR.PrimaryWhite,
                       margin: 0,
                       paddingRight: 1,
                       paddingLeft: 1,
@@ -196,7 +196,7 @@ const SignUpPage = () => {
                   },
                 }}
                 sx={{
-                  backgroundColor: COLOR.secondary_white,
+                  backgroundColor: COLOR.SecondaryWhite,
                   marginBottom: 3,
                 }}
               />
@@ -223,7 +223,7 @@ const SignUpPage = () => {
                   },
                   formHelperText: {
                     sx: {
-                      backgroundColor: COLOR.primary_white,
+                      backgroundColor: COLOR.PrimaryWhite,
                       margin: 0,
                       paddingRight: 1,
                       paddingLeft: 1,
@@ -235,7 +235,7 @@ const SignUpPage = () => {
                   },
                 }}
                 sx={{
-                  backgroundColor: COLOR.secondary_white,
+                  backgroundColor: COLOR.SecondaryWhite,
                   marginBottom: 3,
                 }}
               />
@@ -280,7 +280,7 @@ const SignUpPage = () => {
                   },
                   formHelperText: {
                     sx: {
-                      backgroundColor: COLOR.primary_white,
+                      backgroundColor: COLOR.PrimaryWhite,
                       margin: 0,
                       paddingRight: 1,
                       paddingLeft: 1,
@@ -292,7 +292,7 @@ const SignUpPage = () => {
                   },
                 }}
                 sx={{
-                  backgroundColor: COLOR.secondary_white,
+                  backgroundColor: COLOR.SecondaryWhite,
                   marginBottom: 3,
                 }}
               />
@@ -339,7 +339,7 @@ const SignUpPage = () => {
                   },
                   formHelperText: {
                     sx: {
-                      backgroundColor: COLOR.primary_white,
+                      backgroundColor: COLOR.PrimaryWhite,
                       margin: 0,
                       paddingRight: 1,
                       paddingLeft: 1,
@@ -351,7 +351,7 @@ const SignUpPage = () => {
                   },
                 }}
                 sx={{
-                  backgroundColor: COLOR.secondary_white,
+                  backgroundColor: COLOR.SecondaryWhite,
                 }}
               />
               <Button
@@ -361,15 +361,15 @@ const SignUpPage = () => {
                 sx={{
                   pt: 1,
                   pb: 1,
-                  backgroundColor: COLOR.primary_blue,
-                  color: COLOR.primary_white,
+                  backgroundColor: COLOR.PrimaryBlue,
+                  color: COLOR.PrimaryWhite,
                   minWidth: 120,
                   marginTop: 1,
                 }}
                 // disabled={loading}
               >
                 {signUpLoading ? (
-                  <CircularProgress color={COLOR.primary_white} size={24} />
+                  <CircularProgress color={COLOR.PrimaryWhite} size={24} />
                 ) : (
                   "Đăng ký"
                 )}
@@ -377,7 +377,7 @@ const SignUpPage = () => {
               <Divider
                 sx={{
                   borderWidth: 1,
-                  borderColor: COLOR.primary_gray,
+                  borderColor: COLOR.PrimaryGray,
                   width: "100%",
                   marginTop: 2,
                   marginBottom: 1,
@@ -393,9 +393,7 @@ const SignUpPage = () => {
                 <Typography>Đã có tài khoản?&nbsp;</Typography>
                 <NavLink
                   style={({ isActive }) => ({
-                    color: isActive
-                      ? COLOR.secondary_gold
-                      : COLOR.secondary_gold, //adjust this if needed
+                    color: isActive ? COLOR.SecondaryGold : COLOR.SecondaryGold, //adjust this if needed
                   })}
                   to="/login"
                 >
@@ -406,7 +404,7 @@ const SignUpPage = () => {
           )}
         </Formik>
         <Box
-          backgroundColor={COLOR.primary_gray}
+          backgroundColor={COLOR.PrimaryGray}
           height="12%"
           width="100%"
           sx={{
@@ -419,7 +417,7 @@ const SignUpPage = () => {
           }}
         >
           <Typography
-            color={COLOR.primary_white}
+            color={COLOR.PrimaryWhite}
             sx={{
               fontSize: 12,
               fontWeight: 700,
@@ -430,7 +428,7 @@ const SignUpPage = () => {
             CÔNG TY CỔ PHẦN HỢP TÁC LAO ĐỘNG VỚI NƯỚC NGOÀI
           </Typography>
           <Typography
-            color={COLOR.primary_white}
+            color={COLOR.PrimaryWhite}
             sx={{ fontSize: 8, textAlign: "center" }}
           >
             INTERNATIONAL LABOUR AND SERVICES STOCK COMPANY (INLACO - HP)

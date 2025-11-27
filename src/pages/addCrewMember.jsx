@@ -24,7 +24,7 @@ import { createCrMemberFrCandidateAPI } from "../services/crewServices";
 import {
   dateStringToISOString,
   isoStringToDateString,
-} from "../utils/ValueConverter";
+} from "../utils/converter";
 
 const AddCrewMember = () => {
   const navigate = useNavigate();
@@ -163,13 +163,13 @@ const AddCrewMember = () => {
                   sx={{
                     width: "10%",
                     padding: 1,
-                    color: COLOR.primary_black,
-                    backgroundColor: COLOR.primary_gold,
+                    color: COLOR.PrimaryBlack,
+                    backgroundColor: COLOR.PrimaryGold,
                     minWidth: 130,
                   }}
                 >
                   {addCrewLoading ? (
-                    <CircularProgress size={24} color={COLOR.primary_black} />
+                    <CircularProgress size={24} color={COLOR.PrimaryBlack} />
                   ) : (
                     <Box sx={{ display: "flex", alignItems: "end" }}>
                       <PersonAddIcon
@@ -306,12 +306,12 @@ const AddCrewMember = () => {
             <SectionDivider sectionName="Thông tin công việc: " />
             <Box sx={{ padding: 4 }}>
               <Typography
-                sx={{ textAlign: "center", color: COLOR.primary_black }}
+                sx={{ textAlign: "center", color: COLOR.PrimaryBlack }}
               >
                 <span
                   style={{
                     fontStyle: "italic",
-                    color: COLOR.primary_gray,
+                    color: COLOR.PrimaryGray,
                     textDecoration: "underline",
                   }}
                 >
@@ -321,7 +321,7 @@ const AddCrewMember = () => {
                 <span
                   style={{
                     fontStyle: "italic",
-                    color: COLOR.primary_gray,
+                    color: COLOR.PrimaryGray,
                     textDecoration: "underline",
                   }}
                 >

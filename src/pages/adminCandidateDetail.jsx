@@ -26,7 +26,7 @@ import {
   approveCandidateApplicationAPI,
   rejectCandidateApplicationAPI,
 } from "../services/postServices";
-import { isoStringToDateString } from "../utils/ValueConverter";
+import { isoStringToDateString } from "../utils/converter";
 
 const AdminCandidateDetail = () => {
   const navigate = useNavigate();
@@ -180,16 +180,16 @@ const AdminCandidateDetail = () => {
                       color={COLOR.primary_black_placeholder}
                     />
                   ) : status === "Từ chối" ? (
-                    <StatusLabel label="Từ chối" color={COLOR.primary_orange} />
+                    <StatusLabel label="Từ chối" color={COLOR.PrimaryOrgange} />
                   ) : status === "Đã qua vòng phỏng vấn" ? (
                     <StatusLabel
                       label="Đã qua vòng phỏng vấn"
-                      color={COLOR.primary_green}
+                      color={COLOR.PrimaryGreen}
                     />
                   ) : (
                     <StatusLabel
                       label="Đã ký hợp đồng"
-                      color={COLOR.secondary_gold}
+                      color={COLOR.SecondaryGold}
                     />
                   )}
                 </Box>
@@ -241,8 +241,8 @@ const AdminCandidateDetail = () => {
                         sx={{
                           width: "30%",
                           padding: 1,
-                          color: COLOR.primary_white,
-                          backgroundColor: COLOR.primary_blue,
+                          color: COLOR.PrimaryWhite,
+                          backgroundColor: COLOR.PrimaryBlue,
                           minWidth: 130,
                           marginRight: 2,
                         }}
@@ -250,7 +250,7 @@ const AdminCandidateDetail = () => {
                         {buttonLoading ? (
                           <CircularProgress
                             size={24}
-                            color={COLOR.primary_black}
+                            color={COLOR.PrimaryBlack}
                           />
                         ) : (
                           <Box sx={{ display: "flex", alignItems: "end" }}>
@@ -270,15 +270,15 @@ const AdminCandidateDetail = () => {
                         sx={{
                           width: "30%",
                           padding: 1,
-                          color: COLOR.primary_white,
-                          backgroundColor: COLOR.primary_orange,
+                          color: COLOR.PrimaryWhite,
+                          backgroundColor: COLOR.PrimaryOrgange,
                           minWidth: 130,
                         }}
                       >
                         {buttonLoading ? (
                           <CircularProgress
                             size={24}
-                            color={COLOR.primary_black}
+                            color={COLOR.PrimaryBlack}
                           />
                         ) : (
                           <Box sx={{ display: "flex", alignItems: "end" }}>
