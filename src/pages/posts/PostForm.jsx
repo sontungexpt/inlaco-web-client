@@ -47,30 +47,36 @@ export const PostSchema = Yup.object({
   }),
   expectedSalary: Yup.string(),
 
-  recruitmentStartDate: Yup.string().test(
-    "recruitmentStartDate-required",
-    "Recruitment start date is required and must be in the future",
-    function (value) {
-      const { type } = this.parent;
-      if (type !== "RECRUITMENT") return true;
-      if (!value) return false;
-      const date = new Date(value);
-      return !isNaN(date) && date > new Date();
-    },
-  ),
-
-  recruitmentEndDate: Yup.string().test(
-    "recruitmentEndDate-required",
-    "Recruitment end date is required and must be after start date",
-    function (value) {
-      const { type, recruitmentStartDate } = this.parent;
-      if (type !== "RECRUITMENT") return true;
-      if (!value || !recruitmentStartDate) return false;
-      const start = new Date(recruitmentStartDate);
-      const end = new Date(value);
-      return !isNaN(start) && !isNaN(end) && end > start;
-    },
-  ),
+  recruitmentStartDate: Yup.string().when("type", {
+    is: "RECRUITMENT",
+    then: (schema) =>
+      Yup.date()
+        .required()
+        .test(
+          "is-before-recruitment-end-date",
+          "Ngày mở đăng ký phải trước ngày đóng đăng ký",
+          function (value) {
+            const { recruitmentEndDate } = this.parent; // Access sibling field recruitmentEndDate
+            return !recruitmentEndDate || value < recruitmentEndDate;
+          },
+        ),
+    otherwise: (schema) => Yup.date().notRequired(),
+  }),
+  recruitmentEndDate: Yup.string().when("type", {
+    is: "RECRUITMENT",
+    then: (schema) =>
+      Yup.date()
+        .required()
+        .test(
+          "is-after-recruiment-start-date",
+          "Ngày đóng đăng ký phải sau ngày bắt đầu mở đăng ký",
+          function (value) {
+            const { recruitmentStartDate } = this.parent; // Access sibling field recruitmentStartDate
+            return !recruitmentStartDate || value > recruitmentStartDate;
+          },
+        ),
+    otherwise: (schema) => Yup.date().notRequired(),
+  }),
 });
 
 const POST_TYPES = [
@@ -85,6 +91,7 @@ export default function PostForm({
   initialValues = {},
   mode = "create", // create | update
   isSubmitting = false,
+  contentSectionLabel = "Nội dung bài viết*: ",
 }) {
   const safeInitialValues = {
     title: "",
@@ -369,7 +376,7 @@ export default function PostForm({
             <Box>
               <SectionDivider
                 sx={{ marginTop: 1 }}
-                sectionName="Nội dung bài đăng*: "
+                sectionName={contentSectionLabel}
               />
               <InfoTextField
                 name="content"

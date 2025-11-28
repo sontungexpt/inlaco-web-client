@@ -22,6 +22,21 @@ export const fetchPosts = async ({
   }
 };
 
+/**
+ * @typedef {Object} CreatePostPayload
+ * @property {string} type
+ * @property {string} title
+ * @property {string} content
+ * @property {string} company
+ * @property {string} description
+ * @property {string} recruitmentStartDate
+ * @property {string} recruitmentEndDate
+ * @property {string} position
+ * @property {number[]} expectedSalary
+ * @property {string} workLocation
+ *
+ * @param {CreatePostPayload} postInfo
+ */
 export const createPost = async (postInfo) => {
   try {
     const response = await privateRequest.post(
@@ -30,7 +45,8 @@ export const createPost = async (postInfo) => {
     );
     return response.data;
   } catch (err) {
-    return err.response;
+    console.debug(err);
+    throw err;
   }
 };
 

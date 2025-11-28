@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { PageTitle, SectionDivider, InfoTextField } from "../components/global";
+import { PageTitle, SectionDivider, InfoTextField } from "@components/global";
 import {
   Box,
   Button,
@@ -8,15 +8,15 @@ import {
   CircularProgress,
   InputAdornment,
 } from "@mui/material";
-import { COLOR } from "../assets/Color";
+import Color from "@constants/Color";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import EventBusyRoundedIcon from "@mui/icons-material/EventBusyRounded";
 import { useNavigate, useParams } from "react-router";
-import { useAuthContext } from "../contexts/AuthContext";
-import HttpStatusCode from "../constants/HttpStatusCode";
-import { getPostByID_API } from "../services/postServices";
-import { isoStringToDateString } from "../utils/converter";
+import { useAuthContext } from "@/contexts/AuthContext";
+import HttpStatusCode from "@constants/HttpStatusCode";
+import { getPostByID_API } from "@/services/postServices";
+import { isoStringToDateString } from "@utils/converter";
 
 const RecruitmentDetail = () => {
   const navigate = useNavigate();
@@ -132,15 +132,15 @@ const RecruitmentDetail = () => {
                   sx={{
                     width: "15%",
                     padding: 1,
-                    color: COLOR.PrimaryWhite,
+                    color: Color.PrimaryWhite,
                     backgroundColor: !isActive
-                      ? COLOR.PrimaryBlue
-                      : COLOR.PrimaryOrgange,
+                      ? Color.PrimaryBlue
+                      : Color.PrimaryOrgange,
                     minWidth: 110,
                   }}
                 >
                   {openClosedLoading ? (
-                    <CircularProgress size={24} color={COLOR.PrimaryBlack} />
+                    <CircularProgress size={24} color={Color.PrimaryBlack} />
                   ) : (
                     <Box sx={{ display: "flex", alignItems: "end" }}>
                       {!isActive ? (
@@ -173,8 +173,8 @@ const RecruitmentDetail = () => {
                   variant="contained"
                   onClick={() => handleUserApplicationClick(id)}
                   sx={{
-                    backgroundColor: COLOR.PrimaryGold,
-                    color: COLOR.PrimaryBlack,
+                    backgroundColor: Color.PrimaryGold,
+                    color: Color.PrimaryBlack,
                     borderRadius: 2,
                   }}
                 >
@@ -236,7 +236,7 @@ const RecruitmentDetail = () => {
           >
             <Box
               sx={{
-                borderBottom: `2px solid ${COLOR.PrimaryBlack}`,
+                borderBottom: `2px solid ${Color.PrimaryBlack}`,
                 width: "40%",
               }}
             />

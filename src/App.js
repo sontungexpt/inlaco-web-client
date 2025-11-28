@@ -36,11 +36,11 @@ import UserSupplyRequestDetail from "./pages/UserSupplyRequestDetail";
 import CreateSupplyRequest from "./pages/createSupplyRequest";
 
 import CrewRecruitment from "./pages/crewRecruitment";
-import CreateRecruitment from "./pages/recruitments/CreateRecruitment";
-import RecruitmentDetail from "./pages/recruitmentDetail";
 import AdminCandidateDetail from "./pages/adminCandidateDetail";
 import UserCandidateDetail from "./pages/UserCandidateDetail";
-import ApplyRecruitment from "./pages/recruitments/ApplyRecruitment";
+import ApplyRecruitment from "./pages/posts/recruitments/ApplyRecruitment";
+import CreateRecruitment from "./pages/posts/recruitments/CreateRecruitment";
+import RecruitmentDetail from "./pages/posts/recruitments/RecruitmentDetail";
 
 import CrewCourse from "./pages/courses/CrewCourse";
 import CreateCourse from "./pages/courses/CreateCourse";
