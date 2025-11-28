@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { PageTitle, SectionDivider, InfoTextField } from "@components/global";
 import { FileUploadField } from "@components/contract";
 import {
@@ -12,22 +12,38 @@ import {
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import { Formik } from "formik";
 import Color from "@constants/Color";
-import * as yup from "yup";
+import * as Yup from "yup";
 import { useNavigate, useParams } from "react-router";
 import { applyRecruitment } from "@/services/postServices";
 import { dateStringToISOString } from "@utils/converter";
-import { HttpStatusCode } from "axios";
+import Regex from "@/constants/Regex";
+import { useMutation } from "@tanstack/react-query";
+
+const GENDERS = [
+  { label: "Nam", value: "MALE" },
+  { label: "Nữ", value: "FEMALE" },
+  { label: "Khác", value: "OTHER" },
+];
+
+const APPLICATION_SCHEMA = Yup.object().shape({
+  fullName: Yup.string().required("Họ và tên không được để trống"),
+  dob: Yup.date()
+    .max(new Date(), "Ngày sinh không hợp lệ")
+    .required("Ngày sinh không được để trống"),
+  gender: Yup.string().required("Giới tính không được để trống"),
+  phoneNumber: Yup.string()
+    .matches(Regex.VN_PHONE, "Số điện thoại không hợp lệ")
+    .required("Số điện thoại không được để trống"),
+  email: Yup.string()
+    .email("Email không hợp lệ")
+    .required("Email không được để trống"),
+  permanentAddr: Yup.string().required("Địa chỉ không được để trống"),
+  // cvFile: Yup.mixed().required("Vui lòng tải lên CV"),
+});
 
 const ApplyRecruitment = () => {
   const navigate = useNavigate();
-
   const { id } = useParams();
-
-  const genders = [
-    { label: "Nam", value: "MALE" },
-    { label: "Nữ", value: "FEMALE" },
-    { label: "Khác", value: "OTHER" },
-  ];
 
   const initialValues = {
     fullName: "",
@@ -37,49 +53,22 @@ const ApplyRecruitment = () => {
     email: "",
     permanentAddr: "",
     languageSkills: [],
-    cvFile: "",
+    cvFile: null,
   };
-
-  const phoneRegex =
-    "^(\\+84|0)(3[2-9]|5[2689]|7[06-9]|8[1-9]|9[0-46-9])\\d{7}$";
-
-  const applicationSchema = yup.object().shape({
-    fullName: yup.string().required("Họ và tên không được để trống"),
-
-    dob: yup
-      .date()
-      .max(new Date(), "Ngày sinh không hợp lệ")
-      .required("Ngày sinh không được để trống"),
-
-    gender: yup.string().required("Giới tính không được để trống"),
-    phoneNumber: yup
-      .string()
-      .matches(phoneRegex, "Số điện thoại không hợp lệ")
-      .required("Số điện thoại không được để trống"),
-    email: yup
-      .string()
-      .email("Email không hợp lệ")
-      .required("Email không được để trống"),
-
-    permanentAddr: yup.string().required("Địa chỉ không được để trống"),
-
-    // cvFile: yup
-    //   .mixed()
-    //   .required("Vui lòng tải lên CV")
+  const { mutateAsync: applyRecruitmentAsync, isPending } = useMutation({
+    mutationFn: ({ id, data }) => applyRecruitment(id, data),
   });
 
-  const [loading, isLoading] = useState(false);
+  const handleSubmit = async (values, { resetForm }) => {
+    //Calling API to create a new crew member
+    // const tempFile = {
+    //   file: URL.createObjectURL(values.cvFile),
+    //   name: values.cvFile.name,
+    //   type: values.cvFile.type,
+    // };
 
-  const handleApplySubmit = async (values, { resetForm }) => {
-    isLoading(true);
-    try {
-      //Calling API to create a new crew member
-      // const tempFile = {
-      //   file: URL.createObjectURL(values.cvFile),
-      //   name: values.cvFile.name,
-      //   type: values.cvFile.type,
-      // };
-      const response = await applyRecruitment(id, {
+    await applyRecruitmentAsync(
+      {
         birthDate: dateStringToISOString(values.dob),
         fullName: values.fullName,
         email: values.email,
@@ -88,27 +77,23 @@ const ApplyRecruitment = () => {
         address: values.permanentAddr,
         languageSkills: [values.languageSkills],
         // resume: tempFile,
-      });
-      await new Promise((resolve) => setTimeout(resolve, 400)); //Delay for 0.4s to simulate API call
-
-      if (response.status === HttpStatusCode.Created) {
-        resetForm();
-        navigate("/recruitment");
-      }
-    } catch (err) {
-      console.log("Error when submitting application for a recruitment: ", err);
-    } finally {
-      isLoading(false);
-    }
+      },
+      {
+        onSuccess: (data) => {
+          resetForm();
+          navigate("/recruitment");
+        },
+      },
+    );
   };
 
   return (
     <div>
       <Formik
-        validateOnChange={false}
+        validateOnChange={true}
         initialValues={initialValues}
-        validationSchema={applicationSchema}
-        onSubmit={handleApplySubmit}
+        validationSchema={APPLICATION_SCHEMA}
+        onSubmit={handleSubmit}
       >
         {({
           values,
@@ -154,7 +139,7 @@ const ApplyRecruitment = () => {
                       minWidth: 130,
                     }}
                   >
-                    {loading ? (
+                    {isPending ? (
                       <CircularProgress size={24} color={Color.PrimaryBlack} />
                     ) : (
                       <Box sx={{ display: "flex", alignItems: "end" }}>
@@ -183,9 +168,7 @@ const ApplyRecruitment = () => {
                   name="fullName"
                   value={values.fullName}
                   error={!!touched.fullName && !!errors.fullName}
-                  helperText={
-                    touched.fullName && errors.fullName ? errors.fullName : " "
-                  }
+                  helperText={touched.fullName && errors.fullName}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -210,7 +193,7 @@ const ApplyRecruitment = () => {
                   name="dob"
                   value={values.dob}
                   error={!!touched.dob && !!errors.dob}
-                  helperText={touched.dob && errors.dob ? errors.dob : " "}
+                  helperText={touched.dob && errors.dob}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -242,11 +225,7 @@ const ApplyRecruitment = () => {
                   name="phoneNumber"
                   value={values.phoneNumber}
                   error={!!touched.phoneNumber && !!errors.phoneNumber}
-                  helperText={
-                    touched.phoneNumber && errors.phoneNumber
-                      ? errors.phoneNumber
-                      : " "
-                  }
+                  helperText={touched.phoneNumber && errors.phoneNumber}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -270,11 +249,7 @@ const ApplyRecruitment = () => {
                   name="permanentAddr"
                   value={values.permanentAddr}
                   error={!!touched.permanentAddr && !!errors.permanentAddr}
-                  helperText={
-                    touched.permanentAddr && errors.permanentAddr
-                      ? errors.permanentAddr
-                      : " "
-                  }
+                  helperText={touched.permanentAddr && errors.permanentAddr}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -303,7 +278,7 @@ const ApplyRecruitment = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                 >
-                  {genders.map((option) => (
+                  {GENDERS.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
@@ -321,9 +296,7 @@ const ApplyRecruitment = () => {
                   name="email"
                   value={values.email}
                   error={!!touched.email && !!errors.email}
-                  helperText={
-                    touched.email && errors.email ? errors.email : " "
-                  }
+                  helperText={touched.email && errors.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -336,7 +309,7 @@ const ApplyRecruitment = () => {
                   }}
                 />
               </Grid>
-              <Grid size={5}>
+              <Grid size={12}>
                 <InfoTextField
                   id="language-skills"
                   label="Trình độ ngoại ngữ (liệt kê nếu có)"
@@ -346,11 +319,7 @@ const ApplyRecruitment = () => {
                   name="languageSkills"
                   value={values.languageSkills}
                   error={!!touched.languageSkills && !!errors.languageSkills}
-                  helperText={
-                    touched.languageSkills && errors.languageSkills
-                      ? errors.languageSkills
-                      : " "
-                  }
+                  helperText={touched.languageSkills && errors.languageSkills}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -366,6 +335,7 @@ const ApplyRecruitment = () => {
             </Grid>
             <SectionDivider sectionName="CV đính kèm*: " />
             <FileUploadField
+              id="cvFile"
               label="Tải lên CV"
               name="cvFile"
               sx={{ justifyContent: "start", marginLeft: 2 }}
