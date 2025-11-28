@@ -122,6 +122,7 @@ const HomePage = () => {
                     variant="contained"
                     color="primary"
                     size="small"
+                    onClick={() => navigate(`/posts/${news.id}`)}
                     sx={{ mt: 2 }}
                   >
                     Xem chi tiết

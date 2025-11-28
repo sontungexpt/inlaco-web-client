@@ -35,7 +35,7 @@ import AdminSupplyRequestDetail from "./pages/adminSupplyRequestDetail";
 import UserSupplyRequestDetail from "./pages/UserSupplyRequestDetail";
 import CreateSupplyRequest from "./pages/createSupplyRequest";
 
-import CrewRecruitment from "./pages/crewRecruitment";
+import CrewRecruitment from "./pages/posts/recruitments/CrewRecruitment";
 import AdminCandidateDetail from "./pages/adminCandidateDetail";
 import UserCandidateDetail from "./pages/UserCandidateDetail";
 import ApplyRecruitment from "./pages/posts/recruitments/ApplyRecruitment";
@@ -52,6 +52,7 @@ import { useEffect } from "react";
 import { localStorage, sessionStorage } from "./utils/storage";
 import StorageKey from "./constants/StorageKey";
 import CreatePost from "./pages/posts/CreatePost";
+import PostDetail from "./pages/posts/PostDetail";
 
 function App() {
   let navigate = useNavigate();
@@ -140,6 +141,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/posts">
               <Route path="create" element={<CreatePost />} />
+              <Route path=":id" element={<PostDetail />} />
             </Route>
             {(isAdmin || isCrewMember) && (
               <>

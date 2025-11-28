@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { PageTitle } from "@components/global";
-import { Alert, Box, Snackbar, Stack, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import { createPost } from "@/services/postServices";
 import { dateStringToISOString } from "@utils/converter";
 import { useNavigate } from "react-router";
@@ -9,26 +9,35 @@ import { useMutation } from "@tanstack/react-query";
 
 const CreateRecruitment = () => {
   const navigate = useNavigate();
-  const [snackbarOpened, setSnackbarOpened] = useState(false);
-  const [createdPostId, setCreatedPostId] = useState(null);
 
-  const openSnackbar = (postId) => {
-    setCreatedPostId(postId);
-    setSnackbarOpened(true);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+    postId: null,
+  });
+
+  const openSnackbar = ({ message, severity, postId }) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity,
+      postId,
+    });
   };
 
   const closeSnackbar = () => {
-    setSnackbarOpened(false);
-    setCreatedPostId(null);
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
-  const {
-    mutateAsync: createRecruitmentAsync,
-    isPending: isCreating,
-    isError,
-  } = useMutation({
-    mutationFn: createPost, // endpoint API
-  });
+  const handleViewPost = (id) => {
+    navigate(`/posts/${id}`);
+  };
+
+  const { mutateAsync: createRecruitmentAsync, isPending: isCreating } =
+    useMutation({
+      mutationFn: createPost, // endpoint API
+    });
 
   const handleSubmit = async (postInfo, { resetForm }) => {
     await createRecruitmentAsync(
@@ -49,7 +58,17 @@ const CreateRecruitment = () => {
       {
         onSuccess: (post) => {
           resetForm();
-          openSnackbar(post?.id);
+          openSnackbar({
+            message: "Tạo bài đăng thành công!",
+            severity: "success",
+            postId: post.id,
+          });
+        },
+        onError: () => {
+          openSnackbar({
+            message: "Tạo bài đăng thất bại. Vui lòng thử lại.",
+            severity: "error",
+          });
         },
       },
     );
@@ -67,47 +86,10 @@ const CreateRecruitment = () => {
         contentSectionLabel="Mô tả công việc*"
         isSubmitting={isCreating}
         onSubmit={handleSubmit}
+        snackbar={snackbar}
+        onCloseSnackbar={closeSnackbar}
+        onViewPost={handleViewPost}
       />
-
-      {/* ERROR Snackbar */}
-      <Snackbar
-        open={isError}
-        autoHideDuration={6000}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert severity="error" variant="filled">
-          Tạo bài đăng thất bại! Vui lòng thử lại.
-        </Alert>
-      </Snackbar>
-
-      {/* Notification snackbar */}
-      <Snackbar
-        open={snackbarOpened}
-        autoHideDuration={6000}
-        onClose={closeSnackbar}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert
-          severity="success"
-          variant="filled"
-          sx={{ display: "flex", alignItems: "center" }}
-          onClose={closeSnackbar}
-        >
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <span>Tạo bài đăng thành công!</span>
-            {createdPostId && (
-              <Button
-                color="inherit"
-                size="small"
-                onClick={() => navigate(`/posts/${createdPostId}`)}
-                sx={{ fontWeight: 600 }}
-              >
-                Xem bài đăng
-              </Button>
-            )}
-          </Stack>
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };

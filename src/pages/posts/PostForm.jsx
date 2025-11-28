@@ -5,6 +5,8 @@ import {
   Box,
   TextField,
   Button,
+  Snackbar,
+  Alert,
   Stack,
   MenuItem,
   Chip,
@@ -91,6 +93,10 @@ export default function PostForm({
   initialValues = {},
   mode = "create", // create | update
   isSubmitting = false,
+
+  snackbar,
+  onCloseSnackbar, // The fn call when snackbar close
+  onViewPost, // The fn call when user click "Xem bài viết" in snackbar
   contentSectionLabel = "Nội dung bài viết*: ",
 }) {
   const safeInitialValues = {
@@ -222,7 +228,6 @@ export default function PostForm({
                 />
               </Box>
             </Box>
-
             {values.type === "RECRUITMENT" && (
               <Box mt={3}>
                 <SectionDivider
@@ -326,7 +331,6 @@ export default function PostForm({
                 </Grid>
               </Box>
             )}
-
             {/* MEDIA */}
             <Box>
               <SectionDivider
@@ -371,7 +375,6 @@ export default function PostForm({
                 </Grid>
               </Grid>
             </Box>
-
             {/* CONTENT */}
             <Box>
               <SectionDivider
@@ -396,7 +399,6 @@ export default function PostForm({
                 helperText={touched.content && errors.content}
               />
             </Box>
-
             <Button
               type="submit"
               variant="contained"
@@ -417,6 +419,34 @@ export default function PostForm({
                   ? "Cập nhật bài viết"
                   : "Tạo bài viết"}
             </Button>
+            {snackbar && (
+              <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={onCloseSnackbar}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              >
+                <Alert
+                  severity={snackbar.severity}
+                  variant="filled"
+                  onClose={onCloseSnackbar}
+                >
+                  <Stack direction="row" alignItems="center" spacing={2}>
+                    <span>{snackbar.message}</span>
+                    {snackbar.severity === "success" && snackbar.postId && (
+                      <Button
+                        color="inherit"
+                        size="small"
+                        onClick={() => onViewPost?.(snackbar.postId)}
+                        sx={{ fontWeight: 600 }}
+                      >
+                        Xem bài đăng
+                      </Button>
+                    )}
+                  </Stack>
+                </Alert>
+              </Snackbar>
+            )}
           </Stack>
         </form>
       )}

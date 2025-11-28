@@ -61,14 +61,25 @@ export const getPostByID_API = async (postID) => {
   }
 };
 
-export const getAllCandidatesAPI = async (page, size, status) => {
+export const fetchCandidates = async ({
+  page,
+  size = 10,
+  status,
+  sort = null,
+}) => {
   try {
-    const response = await privateRequest.get(
-      `${PostEndpoint.GET_ALL_CANDIDATES}?status=${status}&page=${page}&size=${size}`,
-    );
-    return response;
+    const response = await privateRequest.get(PostEndpoint.GET_ALL_CANDIDATES, {
+      params: {
+        page,
+        size,
+        status,
+        sort,
+      },
+    });
+    return response.data;
   } catch (err) {
-    return err.response;
+    console.debug(err);
+    throw err;
   }
 };
 
