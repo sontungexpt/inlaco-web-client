@@ -96,20 +96,43 @@ const HomePage = () => {
                 md: 4,
               }}
             >
-              <Card sx={{ boxShadow: 3 }}>
+              <Card
+                onClick={() => navigate(`/posts/${news.id}`)}
+                sx={{
+                  boxShadow: 3,
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    boxShadow: 6,
+                    transform: "translateY(-4px)",
+                  },
+                }}
+              >
                 <CardMedia
                   component="img"
                   height="140"
                   image={news.image}
                   alt={news.title}
                 />
-                <CardContent>
+
+                <CardContent
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    flexGrow: 1,
+                  }}
+                >
                   <Typography gutterBottom variant="h6" component="div">
                     {news.title}
                   </Typography>
+
                   <Typography variant="body2" color="text.secondary">
                     {news.description}
                   </Typography>
+
                   <Typography
                     variant="caption"
                     display="block"
@@ -118,12 +141,16 @@ const HomePage = () => {
                   >
                     {news.date}
                   </Typography>
+
+                  {/* Nút đặt ở đáy card */}
                   <Button
                     variant="contained"
-                    color="primary"
                     size="small"
-                    onClick={() => navigate(`/posts/${news.id}`)}
-                    sx={{ mt: 2 }}
+                    sx={{ mt: "auto", borderRadius: 2 }}
+                    onClick={(e) => {
+                      e.stopPropagation(); //  không trigger click card
+                      navigate(`/posts/${news.id}`);
+                    }}
                   >
                     Xem chi tiết
                   </Button>
