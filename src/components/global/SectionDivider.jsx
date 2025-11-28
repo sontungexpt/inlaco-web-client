@@ -1,9 +1,9 @@
 import { Typography, Box } from "@mui/material";
-import { COLOR } from "../../assets/Color";
+import Color from "@constants/Color";
 
 const SectionDivider = ({
   sectionName,
-  color = COLOR.PrimaryBlackPlaceHolder,
+  color = Color.PrimaryBlackPlaceHolder,
   my = 3,
   sx,
   ...props
@@ -15,7 +15,7 @@ const SectionDivider = ({
       sx={[
         {
           width: "100%",
-          borderBottom: `2px solid ${COLOR.primary}`,
+          borderBottom: `2px solid ${Color.primary}`,
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}

@@ -1,8 +1,8 @@
 import React from "react";
-import { PageTitle, SearchBar } from "../components/global";
+import { PageTitle, SearchBar } from "@components/global";
 import { Grid, Box } from "@mui/material";
-import { TemplateContractCard } from "../components/contract";
-import { mockTemplateContracts } from "../data/mockData";
+import { TemplateContractCard } from "@components/contract";
+import { mockTemplateContracts } from "@/data/mockData";
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { saveAs } from "file-saver";

@@ -33,3 +33,14 @@ export const createCourse = async (payload) => {
     return err.response;
   }
 };
+
+export const fetchCourseDetail = async (courseId) => {
+  try {
+    const res = await privateRequest.get(
+      CourseEndpoint.GET_COURSE_DETAIL(courseId),
+    );
+    return res.data;
+  } catch (err) {
+    return err.response;
+  }
+};

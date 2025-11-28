@@ -4,7 +4,7 @@ const Color = {
   PrimaryBlue: "#195CAC",
   PrimaryHoverBlue: "#3374C5",
   SecondaryBlue: "#4D85D8",
-  tertiary_blue: "#133E80 ",
+  TertiaryBlue: "#133E80 ",
 
   //Background color
   PrimaryWhite: "#F5F9FC",
@@ -14,7 +14,7 @@ const Color = {
   PrimaryGreen: "#5ABF8F",
   PrimaryOrgange: "#E74C3C",
   PrimaryGold: "#FFC860 ",
-  primary_light_gold: "#FFDEA6",
+  PrimaryLightGold: "#FFDEA6",
   SecondaryGold: "#E6B350 ",
 
   //Text color

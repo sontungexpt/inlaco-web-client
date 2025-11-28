@@ -3,8 +3,8 @@ import {
   SectionDivider,
   InfoTextField,
   HorizontalImageInput,
-} from "../../components/global";
-import { LogoInput } from "../../components/other";
+} from "@components/global";
+import { LogoInput } from "@components/other";
 import {
   Box,
   Button,
@@ -414,7 +414,7 @@ const CreateCourse = () => {
                   <InfoTextField
                     id="end-registration-date"
                     type="date"
-                    label="Ngày  kết thúc đăng ký khoá học"
+                    label="Ngày kết thúc đăng ký khoá học"
                     size="small"
                     margin="none"
                     required

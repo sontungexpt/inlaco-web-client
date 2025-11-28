@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageTitle, SectionDivider, InfoTextField } from "../components/global";
+import { PageTitle, SectionDivider, InfoTextField } from "@components/global";
 import {
   Box,
   Button,
@@ -8,14 +8,14 @@ import {
   Grid,
   InputAdornment,
 } from "@mui/material";
-import { COLOR } from "../assets/Color";
+import Color from "@constants/Color";
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { createRecruitmentPostAPI } from "../services/postServices";
-import HttpStatusCode from "../constants/HttpStatusCode";
-import { dateStringToISOString } from "../utils/converter";
+import { createPost } from "@/services/postServices";
+import { dateStringToISOString } from "@utils/converter";
 import { useNavigate } from "react-router";
+import { HttpStatusCode } from "axios";
 
 const CreateRecruitment = () => {
   const navigate = useNavigate();
@@ -74,7 +74,7 @@ const CreateRecruitment = () => {
     setCreateCourseLoading(true);
     try {
       //Calling API to create a new crew member
-      const response = await createRecruitmentPostAPI({
+      const response = await createPost({
         title: values.title,
         content: values.content,
         // recruitmentStartDate: dateStringToISOString(
@@ -85,7 +85,7 @@ const CreateRecruitment = () => {
         expectedSalary: [1000, values.salary], // Changed to double[2] which is the salary range
         workLocation: values.workLocation,
       });
-      if (response.status === HttpStatusCode.CREATED) {
+      if (response.status === HttpStatusCode.Created) {
         resetForm();
         navigate("/recruitment");
       } else {
@@ -144,13 +144,13 @@ const CreateRecruitment = () => {
                     sx={{
                       width: "10%",
                       padding: 1,
-                      color: COLOR.PrimaryBlack,
-                      backgroundColor: COLOR.PrimaryGold,
+                      color: Color.PrimaryBlack,
+                      backgroundColor: Color.PrimaryGold,
                       minWidth: 130,
                     }}
                   >
                     {createCourseLoading ? (
-                      <CircularProgress size={24} color={COLOR.PrimaryBlack} />
+                      <CircularProgress size={24} color={Color.PrimaryBlack} />
                     ) : (
                       <Box sx={{ display: "flex", alignItems: "end" }}>
                         <SaveIcon
@@ -212,7 +212,7 @@ const CreateRecruitment = () => {
               >
                 <Box
                   sx={{
-                    borderBottom: `2px solid ${COLOR.PrimaryBlack}`,
+                    borderBottom: `2px solid ${Color.PrimaryBlack}`,
                     width: "40%",
                   }}
                 />

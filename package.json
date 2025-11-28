@@ -59,6 +59,7 @@
     ]
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.91.2",
     "babel-plugin-module-resolver": "^5.0.2",
     "babel-plugin-react-compiler": "^1.0.0",
     "customize-cra": "^1.0.0",

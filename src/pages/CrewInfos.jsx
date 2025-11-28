@@ -4,17 +4,17 @@ import {
   NoValuesOverlay,
   SearchBar,
   SwitchBar,
-} from "../components/global";
+} from "@components/global";
 import { Box, Button, Typography, CircularProgress } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined";
 import { useNavigate } from "react-router";
-import { getAllCrewMemberAPI } from "../services/crewServices";
-import HttpStatusCode from "../constants/HttpStatusCode";
-import { isoStringToAppDateString } from "../utils/converter";
+import { fetchCrewMembers } from "@/services/crewServices";
+import { isoStringToAppDateString } from "@utils/converter";
 import Color from "@constants/Color";
+import { HttpStatusCode } from "axios";
 
 const CrewInfos = () => {
   const navigate = useNavigate();
@@ -27,10 +27,10 @@ const CrewInfos = () => {
     const fetchCrewMembers = async (official) => {
       setLoading(true);
       try {
-        const response = await getAllCrewMemberAPI(0, 10, official);
+        const response = await fetchCrewMembers(0, 10, official);
         await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-        if (response.status === HttpStatusCode.OK) {
+        if (response.status === HttpStatusCode.Ok) {
           console.log(response.data.content);
           setCrewMembers(response.data.content);
         } else {
@@ -55,10 +55,10 @@ const CrewInfos = () => {
   const fetchCrewMemberTabChange = async (official) => {
     setSectionLoading(true);
     try {
-      const response = await getAllCrewMemberAPI(0, 10, official);
+      const response = await fetchCrewMembers(0, 10, official);
       await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-      if (response.status === HttpStatusCode.OK) {
+      if (response.status === HttpStatusCode.Ok) {
         setCrewMembers(response.data.content);
       } else {
         console.log("Error when fetching crew members: ", response);

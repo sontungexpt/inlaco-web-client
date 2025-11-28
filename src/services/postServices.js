@@ -1,12 +1,34 @@
-import PostEndpoint from "../endpoints/PostEndpoint";
+import PostEndpoint from "@endpoints/PostEndpoint";
 import { privateRequest, publicRequest } from "@utils/request";
 
-export const getAllPostAPI = async (page, size) => {
+export const fetchPosts = async ({
+  page = 0,
+  size = 20,
+  type = "NEWS",
+  sort = null,
+}) => {
   try {
-    const response = await publicRequest.get(
-      `${PostEndpoint.GET_ALL}?page=${page}&size=${size}`,
+    const response = await publicRequest.get(PostEndpoint.GET_POSTS, {
+      params: {
+        page,
+        type,
+        size,
+        sort,
+      },
+    });
+    return response.data;
+  } catch (err) {
+    return err.response;
+  }
+};
+
+export const createPost = async (postInfo) => {
+  try {
+    const response = await privateRequest.post(
+      PostEndpoint.CREATE_POST,
+      postInfo,
     );
-    return response;
+    return response.data;
   } catch (err) {
     return err.response;
   }
@@ -63,10 +85,10 @@ export const createRecruitmentPostAPI = async (postInfo) => {
   }
 };
 
-export const applyRecruitmentAPI = async (postID, candidateInfo) => {
+export const applyRecruitment = async (postID, candidateInfo) => {
   try {
     const response = await privateRequest.post(
-      `${PostEndpoint.CANDIDATE_APPLY}/${postID}`,
+      PostEndpoint.APPLY_CANDIDATE(postID),
       {
         birthDate: candidateInfo.birthDate,
         fullName: candidateInfo.fullName,

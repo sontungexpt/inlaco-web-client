@@ -5,6 +5,7 @@
       "@assets/*": ["./src/assets/*"],
       "@types/*": ["./src/types/*"],
       "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
       "@pages/*": ["./src/pages/*"],
       "@constants/*": ["./src/constants/*"],
       "@endpoints/*": ["./src/endpoints/*"],

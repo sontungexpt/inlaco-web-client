@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   PageTitle,
   SectionDivider,
@@ -6,31 +6,30 @@ import {
   HorizontalImageInput,
   SwitchBar,
   NoValuesOverlay,
-} from "../components/global";
+} from "@components/global";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import SaveIcon from "@mui/icons-material/Save";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import EventBusyRoundedIcon from "@mui/icons-material/EventBusyRounded";
-import { LogoInput } from "../components/other";
+import { LogoInput } from "@components/other";
 import { DataGrid } from "@mui/x-data-grid";
-import { mockCandidates } from "../data/mockData";
+import { mockCandidates } from "@/data/mockData";
 import {
   Box,
   Button,
   Typography,
   Grid,
-  TextField,
   MenuItem,
   CircularProgress,
   InputAdornment,
 } from "@mui/material";
-import { COLOR } from "../assets/Color";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams, useLocation } from "react-router";
-import { formatDateTime } from "../utils/converter";
+import { formatDateTime } from "@utils/converter";
+import Color from "@constants/Color";
 
 const CourseDetail = () => {
   const navigate = useNavigate();
@@ -166,11 +165,9 @@ const CourseDetail = () => {
     instructorName: yup.string(),
     institute: yup.string().required("Tên đơn vị đào tạo không được để trống"),
     instituteLogo: yup.string(),
-
     courseName: yup.string().required("Tên khóa học không được để trống"),
     startDate: yup
       .date()
-      .max(new Date(), "Ngày bắt đầu không hợp lệ")
       .required("Ngày bắt đầu không được để trống")
       .test(
         "is-before-end-date",
@@ -180,7 +177,6 @@ const CourseDetail = () => {
           return !endDate || value < endDate;
         },
       ),
-
     endDate: yup
       .date()
       .required("Ngày kết thúc không được để trống")
@@ -192,12 +188,50 @@ const CourseDetail = () => {
           return !startDate || value > startDate;
         },
       ),
+    startRegistrationAt: yup
+      .date()
+      .required("Ngày bắt đầu đăng kí khoá học không được để trống")
+      .test(
+        "is-before-registration-end-date",
+        "Ngày bắt đầu đăng kí khoá học phải trước ngày kết thúc đăng kí khoá học",
+        function (value) {
+          const { endRegistrationAt } = this.parent; // Access sibling field endDate
+          return !endRegistrationAt || value < endRegistrationAt;
+        },
+      )
+      .test(
+        "is-before-start-date",
+        "Ngày bắt đầu đăng kí khoá học phải trước ngày bắt đầu khoá học",
+        function (value) {
+          const { startDate } = this.parent; // Access sibling field startDate
+          return !startDate || value < startDate;
+        },
+      ),
+    endRegistrationAt: yup
+      .date()
+      .required("Ngày kết thúc đăng kí khoá học không được đễ trống")
+      .test(
+        "is-after-registration-start-date",
+        "Ngày kết thúc đăng kí khoá học phải sau ngày bắt đầu đăng kí khoá học",
+        function (value) {
+          const { startRegistrationAt } = this.parent; // Access sibling field startDate
+          return startRegistrationAt ? value > startRegistrationAt : true;
+        },
+      )
+      .test(
+        "is-before-start-date",
+        "Ngày kết thúc đăng kí khoá học phải trước ngày bắt đầu khoá học",
+        function (value) {
+          const { startDate } = this.parent; // Access sibling field startDate
+          return !startDate || value < startDate;
+        },
+      ),
     description: yup.string().required("Mô tả khóa học không được để trống"),
-    estimatedCourseDuration: yup
-      .number()
-      .required("Thời gian ước lượng không được để trống"),
-
     isCertificatedCourse: yup.string().required("Vui lòng chọn một lựa chọn"),
+    limitStudent: yup.number().required("Vui lòng nhập số người học"),
+    archivedPosition: yup
+      .string()
+      .required("Vui lòng nhập vị trí đạt được sau khi hoàn thành khoá học"),
   });
 
   const [openClosedLoading, setOpenClosedLoading] = useState(false);
@@ -302,15 +336,15 @@ const CourseDetail = () => {
                         sx={{
                           width: "12%",
                           padding: 1,
-                          color: COLOR.PrimaryBlack,
-                          backgroundColor: COLOR.PrimaryGold,
+                          color: Color.PrimaryBlack,
+                          backgroundColor: Color.PrimaryGold,
                           minWidth: 130,
                         }}
                       >
                         {enrollLoading ? (
                           <CircularProgress
                             size={24}
-                            color={COLOR.PrimaryBlack}
+                            color={Color.PrimaryBlack}
                           />
                         ) : (
                           <Box sx={{ display: "flex", alignItems: "end" }}>
@@ -345,10 +379,10 @@ const CourseDetail = () => {
                           <Button
                             variant="outlined"
                             sx={{
-                              color: COLOR.PrimaryOrgange,
+                              color: Color.PrimaryOrgange,
                               padding: "8px",
                               marginRight: 2,
-                              borderColor: COLOR.PrimaryOrgange,
+                              borderColor: Color.PrimaryOrgange,
                             }}
                             onClick={handleCancelClick}
                           >
@@ -376,8 +410,8 @@ const CourseDetail = () => {
                             type={"submit"}
                             disabled={!isValid || !dirty}
                             sx={{
-                              color: COLOR.PrimaryWhite,
-                              backgroundColor: COLOR.PrimaryBlue,
+                              color: Color.PrimaryWhite,
+                              backgroundColor: Color.PrimaryBlue,
                               padding: "10px",
                               marginTop: "1px",
                               marginBottom: "1px",
@@ -409,8 +443,8 @@ const CourseDetail = () => {
                           type={"button"}
                           disabled={!isClosed}
                           sx={{
-                            color: COLOR.PrimaryBlack,
-                            backgroundColor: COLOR.PrimaryGold,
+                            color: Color.PrimaryBlack,
+                            backgroundColor: Color.PrimaryGold,
                             padding: "10px",
                             marginTop: "1px",
                             marginBottom: "1px",
@@ -430,7 +464,7 @@ const CourseDetail = () => {
                               sx={{
                                 fontWeight: 700,
                                 fontSize: 14,
-                                color: COLOR.PrimaryBlack,
+                                color: Color.PrimaryBlack,
                               }}
                             >
                               Chỉnh sửa
@@ -446,17 +480,17 @@ const CourseDetail = () => {
                       sx={{
                         width: "15%",
                         padding: 1,
-                        color: COLOR.PrimaryWhite,
+                        color: Color.PrimaryWhite,
                         backgroundColor: isClosed
-                          ? COLOR.PrimaryBlue
-                          : COLOR.PrimaryOrgange,
+                          ? Color.PrimaryBlue
+                          : Color.PrimaryOrgange,
                         minWidth: 110,
                       }}
                     >
                       {openClosedLoading ? (
                         <CircularProgress
                           size={24}
-                          color={COLOR.PrimaryBlack}
+                          color={Color.PrimaryBlack}
                         />
                       ) : (
                         <Box sx={{ display: "flex", alignItems: "end" }}>
@@ -498,9 +532,9 @@ const CourseDetail = () => {
                   tabLabel2={"Danh sách ứng viên"}
                   variant={"fullWidth"}
                   onChange={(newValue) => handleTabChange(newValue)}
-                  color={COLOR.SecondaryBlue}
+                  color={Color.SecondaryBlue}
                   sx={{
-                    backgroundColor: COLOR.SecondaryWhite,
+                    backgroundColor: Color.SecondaryWhite,
                     marginTop: 2,
                   }}
                 />
@@ -513,12 +547,12 @@ const CourseDetail = () => {
                   maxWidth={1600}
                   sx={{
                     "& .MuiDataGrid-columnHeader": {
-                      backgroundColor: COLOR.SecondaryBlue,
-                      color: COLOR.PrimaryWhite,
+                      backgroundColor: Color.SecondaryBlue,
+                      color: Color.PrimaryWhite,
                     },
                     "& .MuiTablePagination-root": {
-                      backgroundColor: COLOR.SecondaryBlue,
-                      color: COLOR.PrimaryWhite,
+                      backgroundColor: Color.SecondaryBlue,
+                      color: Color.PrimaryWhite,
                     },
                   }}
                 >
@@ -587,10 +621,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.PrimaryBlack,
+                            color: Color.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.PrimaryBlack,
+                            borderColor: Color.PrimaryBlack,
                           },
                           marginTop: 2,
                         }}
@@ -618,10 +652,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.PrimaryBlack,
+                            color: Color.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.PrimaryBlack,
+                            borderColor: Color.PrimaryBlack,
                           },
                           marginTop: 2,
                         }}
@@ -651,10 +685,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.PrimaryBlack,
+                            color: Color.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.PrimaryBlack,
+                            borderColor: Color.PrimaryBlack,
                           },
                         }}
                       />
@@ -681,10 +715,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.PrimaryBlack,
+                            color: Color.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.PrimaryBlack,
+                            borderColor: Color.PrimaryBlack,
                           },
                         }}
                         slotProps={{
@@ -716,10 +750,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.PrimaryBlack,
+                            color: Color.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.PrimaryBlack,
+                            borderColor: Color.PrimaryBlack,
                           },
                         }}
                         slotProps={{
@@ -771,10 +805,10 @@ const CourseDetail = () => {
                             MozAppearance: "textfield",
                           },
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.PrimaryBlack,
+                            color: Color.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.PrimaryBlack,
+                            borderColor: Color.PrimaryBlack,
                           },
                         }}
                       />
@@ -803,10 +837,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.PrimaryBlack,
+                            color: Color.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.PrimaryBlack,
+                            borderColor: Color.PrimaryBlack,
                           },
                         }}
                       >
@@ -840,10 +874,10 @@ const CourseDetail = () => {
                         onBlur={handleBlur}
                         sx={{
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: COLOR.PrimaryBlack,
+                            color: Color.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                            borderColor: COLOR.PrimaryBlack,
+                            borderColor: Color.PrimaryBlack,
                           },
                         }}
                       />

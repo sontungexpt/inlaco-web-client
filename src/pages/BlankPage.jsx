@@ -1,5 +1,5 @@
 import React from "react";
-import { COLOR } from "../assets/Color";
+import Color from "@constants/Color";
 
 const BlankPage = () => {
   const styles = {
@@ -9,7 +9,7 @@ const BlankPage = () => {
       alignItems: "center",
       height: "100vh",
       backgroundColor: "#FFFFFF",
-      color: COLOR.PrimaryWhite,
+      color: Color.PrimaryWhite,
       flexDirection: "column",
     },
     heading: {

@@ -1,30 +1,22 @@
 import React, { useState } from "react";
-import {
-  PageTitle,
-  SectionDivider,
-  InfoTextField,
-  HorizontalImageInput,
-  MultilineFileUploadField,
-} from "../components/global";
-import { CardPhotoInput, FileUploadField } from "../components/contract";
+import { PageTitle, SectionDivider, InfoTextField } from "@components/global";
+import { FileUploadField } from "@components/contract";
 import {
   Box,
   Button,
   Typography,
-  TextField,
   Grid,
   MenuItem,
   CircularProgress,
-  InputAdornment,
 } from "@mui/material";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
-import { COLOR } from "../assets/Color";
 import { Formik } from "formik";
+import Color from "@constants/Color";
 import * as yup from "yup";
 import { useNavigate, useParams } from "react-router";
-import { applyRecruitmentAPI } from "../services/postServices";
-import HttpStatusCode from "../constants/HttpStatusCode";
-import { dateStringToISOString } from "../utils/converter";
+import { applyRecruitment } from "@/services/postServices";
+import { dateStringToISOString } from "@utils/converter";
+import { HttpStatusCode } from "axios";
 
 const ApplyRecruitment = () => {
   const navigate = useNavigate();
@@ -87,7 +79,7 @@ const ApplyRecruitment = () => {
       //   name: values.cvFile.name,
       //   type: values.cvFile.type,
       // };
-      const response = await applyRecruitmentAPI(id, {
+      const response = await applyRecruitment(id, {
         birthDate: dateStringToISOString(values.dob),
         fullName: values.fullName,
         email: values.email,
@@ -99,7 +91,7 @@ const ApplyRecruitment = () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 400)); //Delay for 0.4s to simulate API call
 
-      if (response.status === HttpStatusCode.CREATED) {
+      if (response.status === HttpStatusCode.Created) {
         resetForm();
         navigate("/recruitment");
       }
@@ -157,13 +149,13 @@ const ApplyRecruitment = () => {
                     sx={{
                       width: "12%",
                       padding: 1,
-                      color: COLOR.PrimaryBlack,
-                      backgroundColor: COLOR.PrimaryGold,
+                      color: Color.PrimaryBlack,
+                      backgroundColor: Color.PrimaryGold,
                       minWidth: 130,
                     }}
                   >
                     {loading ? (
-                      <CircularProgress size={24} color={COLOR.PrimaryBlack} />
+                      <CircularProgress size={24} color={Color.PrimaryBlack} />
                     ) : (
                       <Box sx={{ display: "flex", alignItems: "end" }}>
                         <SendRoundedIcon
@@ -198,10 +190,10 @@ const ApplyRecruitment = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -223,10 +215,10 @@ const ApplyRecruitment = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -259,10 +251,10 @@ const ApplyRecruitment = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -287,10 +279,10 @@ const ApplyRecruitment = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -336,10 +328,10 @@ const ApplyRecruitment = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -363,10 +355,10 @@ const ApplyRecruitment = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />

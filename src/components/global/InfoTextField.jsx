@@ -1,6 +1,6 @@
 import React from "react";
 import { TextField } from "@mui/material";
-import { COLOR } from "../../assets/Color";
+import Color from "@constants/Color";
 
 const InfoTextField = ({
   sx,
@@ -23,13 +23,13 @@ const InfoTextField = ({
         ...(Array.isArray(sx) ? sx : [sx]),
         {
           "& .MuiInputBase-input.Mui-disabled": {
-            WebkitTextFillColor: COLOR.PrimaryBlack,
+            WebkitTextFillColor: Color.PrimaryBlack,
           },
           "& .MuiOutlinedInput-root.Mui-disabled": {
-            WebkitTextFillColor: COLOR.PrimaryBlack,
+            WebkitTextFillColor: Color.PrimaryBlack,
           },
           "& .MuiInputLabel-root.Mui-disabled": {
-            WebkitTextFillColor: COLOR.PrimaryBlack,
+            WebkitTextFillColor: Color.PrimaryBlack,
           },
         },
       ]} // Merging styles with spread operator
@@ -39,7 +39,7 @@ const InfoTextField = ({
             margin: 0,
             paddingRight: 1,
             paddingLeft: 1,
-            backgroundColor: COLOR.PrimaryWhite,
+            backgroundColor: Color.PrimaryWhite,
           },
         },
         input: {},
@@ -50,4 +50,3 @@ const InfoTextField = ({
 };
 
 export default InfoTextField;
-

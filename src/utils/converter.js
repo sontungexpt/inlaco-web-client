@@ -6,10 +6,8 @@ export function formatVND(value) {
   if (value) {
     // Split integer and decimal parts (handles values without decimals)
     const parts = value.toString().split(".");
-
     // Format the integer part with commas for thousands separation
     const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
     return `${integerPart}`;
   }
   return "";
@@ -150,6 +148,30 @@ export function dateTimeStringToISOString(dateTimeString) {
   }
 }
 
+export function toISOStringSafe(input) {
+  try {
+    if (!input) throw new Error("Empty date string");
+    const normalized = String(input).trim().replace(/\s+/, "T");
+
+    const [datePart, timePart = "00:00:00"] = normalized.split("T");
+    const [year, month, day] = datePart.split("-").map(Number);
+    const [hours = 0, minutes = 0, seconds = 0] = timePart
+      .split(":")
+      .map(Number);
+
+    // Create as UTC to avoid timezone j
+    const date = new Date(
+      Date.UTC(year, month - 1, day, hours, minutes, seconds),
+    );
+
+    if (isNaN(date.getTime())) throw new Error("Invalid datetime");
+    return date.toISOString();
+  } catch (error) {
+    console.error("Error converting to ISOString:", error);
+    return null;
+  }
+}
+
 export function isoStringToMUIDateTime(isoString) {
   try {
     const date = new Date(isoString);
@@ -175,12 +197,11 @@ export function isoStringToMUIDateTime(isoString) {
   }
 }
 
+//convert "yyyy-mm-ddT00:00:00.000Z" to "yyyy-mm-dd"
 export function isoStringToDateString(isoString) {
-  //convert "yyyy-mm-ddT00:00:00.000Z" to "yyyy-mm-dd"
   try {
     // Create a new Date object using the ISO string
     const date = new Date(isoString);
-
     // Check if the date is valid
     if (isNaN(date.getTime())) {
       throw new Error("Invalid ISO string");
@@ -199,8 +220,8 @@ export function isoStringToDateString(isoString) {
   }
 }
 
+///convert "yyyy-mm-ddT00:00:00.000Z" to "dd-mm-yyyy"
 export function isoStringToAppDateString(isoString) {
-  //convert "yyyy-mm-ddT00:00:00.000Z" to "dd-mm-yyyy"
   try {
     // Create a new Date object using the ISO string
     const date = new Date(isoString);
@@ -244,9 +265,7 @@ export function getTime(value) {
     // Extract and format date components according to your custom format
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
-
-    const result = `${hours}:${minutes}`;
-    return result;
+    return `${hours}:${minutes}`;
   } catch (error) {
     console.error("Error parsing ISOString date:", error);
     return null; // Return None on parsing errors

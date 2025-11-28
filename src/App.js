@@ -5,8 +5,8 @@ import LoginPage from "./pages/auth/LoginPage";
 import SignUpPage from "./pages/auth/SignUpPage";
 import VerifyEmailConfirmation from "./pages/auth/VerifyEmailConfirmation";
 
-import HomePage from "./pages/homePage";
-import BlankPage from "./pages/blankPage";
+import HomePage from "./pages/HomePage";
+import BlankPage from "./pages/BlankPage";
 
 import CrewInfos from "./pages/CrewInfos";
 import AddCrewMember from "./pages/addCrewMember";
@@ -36,21 +36,22 @@ import UserSupplyRequestDetail from "./pages/UserSupplyRequestDetail";
 import CreateSupplyRequest from "./pages/createSupplyRequest";
 
 import CrewRecruitment from "./pages/crewRecruitment";
-import CreateRecruitment from "./pages/createRecruitment";
+import CreateRecruitment from "./pages/recruitments/CreateRecruitment";
 import RecruitmentDetail from "./pages/recruitmentDetail";
 import AdminCandidateDetail from "./pages/adminCandidateDetail";
 import UserCandidateDetail from "./pages/UserCandidateDetail";
-import ApplyRecruitment from "./pages/applyRecruitment";
+import ApplyRecruitment from "./pages/recruitments/ApplyRecruitment";
 
 import CrewCourse from "./pages/courses/CrewCourse";
 import CreateCourse from "./pages/courses/CreateCourse";
-import CourseDetail from "./pages/courseDetail";
+import CourseDetail from "./pages/courses/CourseDetail";
 
 import { MainLayout } from "./components/global";
 import { useAuthContext } from "./contexts/AuthContext";
 import { useEffect } from "react";
 import { localStorage, sessionStorage } from "./utils/storage";
 import StorageKey from "./constants/StorageKey";
+import CreatePost from "./pages/posts/CreatePost";
 
 function App() {
   let navigate = useNavigate();
@@ -137,6 +138,9 @@ function App() {
         {accessToken ? (
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/posts">
+              <Route path="create" element={<CreatePost />} />
+            </Route>
             {(isAdmin || isCrewMember) && (
               <>
                 <Route path="/crews">

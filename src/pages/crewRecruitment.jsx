@@ -9,18 +9,18 @@ import {
   MenuItem,
   CircularProgress,
 } from "@mui/material";
-import { PageTitle, SwitchBar, NoValuesOverlay } from "../components/global";
+import { PageTitle, SwitchBar, NoValuesOverlay } from "@components/global";
 import { DataGrid } from "@mui/x-data-grid";
-import { RecruitmentCard } from "../components/other";
-import { COLOR } from "../assets/Color";
+import { RecruitmentCard } from "@components/other";
+import Color from "@constants/Color";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import { useNavigate, useLocation } from "react-router";
-import { useAuthContext } from "../contexts/AuthContext";
-import HttpStatusCode from "../constants/HttpStatusCode";
-import { getAllPostAPI, getAllCandidatesAPI } from "../services/postServices";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { fetchPosts, getAllCandidatesAPI } from "@/services/postServices";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
-import { isoStringToAppDateString } from "../utils/converter";
+import { isoStringToAppDateString } from "@utils/converter";
+import { HttpStatusCode } from "axios";
 
 const CrewRecruitment = () => {
   const navigate = useNavigate();
@@ -33,13 +33,13 @@ const CrewRecruitment = () => {
   const [sectionLoading, setSectionLoading] = useState(false);
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchAllPosts = async () => {
       setLoading(true);
       try {
-        const response = await getAllPostAPI(0, 10);
+        const response = await fetchPosts({ page: 0, size: 10 });
         await new Promise((resolve) => setTimeout(resolve, 200)); //Delay the UI for 200ms
 
-        if (response.status === HttpStatusCode.OK) {
+        if (response.status === HttpStatusCode.Ok) {
           setPosts(response.data);
         } else {
           console.error("Error when fetching posts: ", response);
@@ -51,7 +51,7 @@ const CrewRecruitment = () => {
       }
     };
 
-    fetchPosts();
+    fetchAllPosts();
   }, []);
 
   const handleCreateRecruitmentClick = () => {
@@ -214,8 +214,8 @@ const CrewRecruitment = () => {
                 size="small"
                 onClick={() => onCreateCrewMemberClick(params?.id, params?.row)}
                 sx={{
-                  backgroundColor: COLOR.PrimaryGold,
-                  color: COLOR.PrimaryBlack,
+                  backgroundColor: Color.PrimaryGold,
+                  color: Color.PrimaryBlack,
                   fontWeight: 700,
                   textTransform: "capitalize",
                   marginRight: "8px",
@@ -236,8 +236,8 @@ const CrewRecruitment = () => {
               size="small"
               onClick={() => onAdminMemberDetailClick(params?.id)}
               sx={{
-                backgroundColor: COLOR.PrimaryGreen,
-                color: COLOR.PrimaryBlack,
+                backgroundColor: Color.PrimaryGreen,
+                color: Color.PrimaryBlack,
                 fontWeight: 700,
                 textTransform: "capitalize",
               }}
@@ -271,7 +271,7 @@ const CrewRecruitment = () => {
         const response = await getAllCandidatesAPI(0, 20, candidateStatus);
         await new Promise((resolve) => setTimeout(resolve, 200)); //Delay the UI for 200ms
 
-        if (response.status === HttpStatusCode.OK) {
+        if (response.status === HttpStatusCode.Ok) {
           console.log("Candidates: ", response.data.content);
           setCandidateList(response.data.content);
         } else {
@@ -300,7 +300,7 @@ const CrewRecruitment = () => {
         const response = await getAllCandidatesAPI(0, 20, candidateStatus);
         await new Promise((resolve) => setTimeout(resolve, 200)); //Delay the UI for 200ms
 
-        if (response.status === HttpStatusCode.OK) {
+        if (response.status === HttpStatusCode.Ok) {
           console.log("Candidates: ", response.data.content);
           setCandidateList(response.data.content);
           setTabValue(newValue);
@@ -315,7 +315,7 @@ const CrewRecruitment = () => {
     } else {
       setSectionLoading(true);
       try {
-        const response = await getAllPostAPI(0, 10);
+        const response = await fetchPosts(0, 10);
         await new Promise((resolve) => setTimeout(resolve, 200)); //Delay the UI for 200ms
 
         if (response.status === HttpStatusCode.OK) {
@@ -368,9 +368,9 @@ const CrewRecruitment = () => {
             variant={"fullWidth"}
             initialTab={tabValue}
             onChange={(newValue) => handleTabChange(newValue)}
-            color={COLOR.SecondaryBlue}
+            color={Color.SecondaryBlue}
             sx={{
-              backgroundColor: COLOR.SecondaryWhite,
+              backgroundColor: Color.SecondaryWhite,
               marginTop: 4,
               marginBottom: 2,
             }}
@@ -400,12 +400,12 @@ const CrewRecruitment = () => {
               maxWidth={1600}
               sx={{
                 "& .MuiDataGrid-columnHeader": {
-                  backgroundColor: COLOR.SecondaryBlue,
-                  color: COLOR.PrimaryWhite,
+                  backgroundColor: Color.SecondaryBlue,
+                  color: Color.PrimaryWhite,
                 },
                 "& .MuiTablePagination-root": {
-                  backgroundColor: COLOR.SecondaryBlue,
-                  color: COLOR.PrimaryWhite,
+                  backgroundColor: Color.SecondaryBlue,
+                  color: Color.PrimaryWhite,
                 },
               }}
             >
@@ -459,7 +459,7 @@ const CrewRecruitment = () => {
                       fontSize: 16,
                       fontStyle: "italic",
                       fontWeight: "700",
-                      color: COLOR.PrimaryGreen,
+                      color: Color.PrimaryGreen,
                     }}
                   >
                     {posts.numberOfElements ? posts.numberOfElements : "0"}
@@ -468,7 +468,7 @@ const CrewRecruitment = () => {
                   <Typography
                     sx={{
                       fontSize: 16,
-                      color: COLOR.PrimaryBlackPlaceHolder,
+                      color: Color.PrimaryBlackPlaceHolder,
                       fontStyle: "italic",
                     }}
                   >
@@ -481,8 +481,8 @@ const CrewRecruitment = () => {
                     variant="contained"
                     onClick={handleCreateRecruitmentClick}
                     sx={{
-                      backgroundColor: COLOR.PrimaryGold,
-                      color: COLOR.PrimaryBlack,
+                      backgroundColor: Color.PrimaryGold,
+                      color: Color.PrimaryBlack,
                       borderRadius: 2,
                     }}
                   >
@@ -543,11 +543,11 @@ const CrewRecruitment = () => {
                   sx={{
                     "& .MuiPaginationItem-root": {
                       "&.Mui-selected": {
-                        backgroundColor: COLOR.PrimaryGold,
-                        color: COLOR.PrimaryBlack,
+                        backgroundColor: Color.PrimaryGold,
+                        color: Color.PrimaryBlack,
                       },
                       "&:hover": {
-                        backgroundColor: COLOR.SecondaryGold,
+                        backgroundColor: Color.SecondaryGold,
                       },
                     },
                   }}

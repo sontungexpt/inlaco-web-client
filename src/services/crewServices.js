@@ -2,12 +2,16 @@ import privateRequest from "../utils/privateRequest";
 import CrewEndpoints from "../endpoints/crewEndpoints";
 import { dateStringToISOString } from "../utils/converter";
 
-export const getAllCrewMemberAPI = async (page, size, official) => {
+export const fetchCrewMembers = async ({ page, size, official }) => {
   try {
-    const response = await privateRequest.get(
-      `${CrewEndpoints.GENERAL}?page=${page}&size=${size}&official=${official}`,
-    );
-    return response;
+    const response = await privateRequest.get(CrewEndpoints.GENERAL, {
+      params: {
+        page,
+        size,
+        official,
+      },
+    });
+    return response.data;
   } catch (err) {
     return err.response;
   }
