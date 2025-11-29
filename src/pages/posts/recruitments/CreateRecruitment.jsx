@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { PageTitle } from "@components/global";
 import { Box } from "@mui/material";
 import { createPost } from "@/services/postServices";
-import { dateStringToISOString } from "@utils/converter";
 import { useNavigate } from "react-router";
 import PostForm from "../PostForm";
 import { useMutation } from "@tanstack/react-query";
@@ -31,7 +30,7 @@ const CreateRecruitment = () => {
   };
 
   const handleViewPost = (id) => {
-    navigate(`/posts/${id}`);
+    navigate(`/recruitment/${id}`);
   };
 
   const { mutateAsync: createRecruitmentAsync, isPending: isCreating } =
@@ -40,38 +39,23 @@ const CreateRecruitment = () => {
     });
 
   const handleSubmit = async (postInfo, { resetForm }) => {
-    await createRecruitmentAsync(
-      {
-        type: postInfo.type,
-        title: postInfo.title,
-        content: postInfo.content,
-        company: postInfo.company,
-        description: postInfo.description,
-        recruitmentStartDate: dateStringToISOString(
-          postInfo.recruitmentStartDate,
-        ),
-        recruitmentEndDate: dateStringToISOString(postInfo.recruitmentEndDate),
-        position: postInfo.position,
-        expectedSalary: postInfo.expectedSalary, // Changed to double[2] which is the salary range
-        workLocation: postInfo.workLocation,
+    await createRecruitmentAsync(postInfo, {
+      onSuccess: (post) => {
+        openSnackbar({
+          message: "Tạo bài đăng thành công!",
+          severity: "success",
+          postId: post.id,
+          payload: post,
+        });
+        resetForm();
       },
-      {
-        onSuccess: (post) => {
-          resetForm();
-          openSnackbar({
-            message: "Tạo bài đăng thành công!",
-            severity: "success",
-            postId: post.id,
-          });
-        },
-        onError: () => {
-          openSnackbar({
-            message: "Tạo bài đăng thất bại. Vui lòng thử lại.",
-            severity: "error",
-          });
-        },
+      onError: () => {
+        openSnackbar({
+          message: "Tạo bài đăng thất bại. Vui lòng thử lại.",
+          severity: "error",
+        });
       },
-    );
+    });
   };
 
   return (

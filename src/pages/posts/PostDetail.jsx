@@ -12,7 +12,7 @@ import { useNavigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 
 import { InfoTextField, SectionDivider } from "@/components/global";
-import { getPostByID_API } from "@/services/postServices"; // API get detail
+import { fetchUniquePost } from "@/services/postServices"; // API get detail
 
 export default function PostDetail() {
   const { id } = useParams();
@@ -20,7 +20,7 @@ export default function PostDetail() {
 
   const { data: post, isLoading } = useQuery({
     queryKey: ["post-detail", id],
-    queryFn: () => getPostByID_API(id),
+    queryFn: () => fetchUniquePost(id),
   });
 
   if (isLoading) return <Typography>Đang tải...</Typography>;

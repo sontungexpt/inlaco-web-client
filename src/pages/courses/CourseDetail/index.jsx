@@ -4,7 +4,7 @@ import {
   SectionDivider,
   InfoTextField,
   HorizontalImageInput,
-  SwitchBar,
+  DoubleTabBar,
   NoValuesOverlay,
 } from "@components/global";
 import EditIcon from "@mui/icons-material/Edit";
@@ -527,11 +527,11 @@ const CourseDetail = () => {
             </Box>
             <>
               {isAdmin && (
-                <SwitchBar
+                <DoubleTabBar
                   tabLabel1={"Thông tin bài đăng"}
                   tabLabel2={"Danh sách ứng viên"}
                   variant={"fullWidth"}
-                  onChange={(newValue) => handleTabChange(newValue)}
+                  onTabChange={(newValue) => handleTabChange(newValue)}
                   color={Color.SecondaryBlue}
                   sx={{
                     backgroundColor: Color.SecondaryWhite,

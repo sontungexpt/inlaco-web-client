@@ -17,12 +17,26 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import StorageKey from "@/constants/StorageKey";
 import { Formik } from "formik";
-import * as yup from "yup";
+import * as Yup from "yup";
 import Color from "@constants/Color";
 import { loginAPI } from "@/services/authServices";
 import { HttpStatusCode } from "axios";
 import { localStorage, sessionStorage } from "@/utils/storage";
 import { useAuthContext } from "@/contexts/AuthContext";
+import Regex from "@/constants/Regex";
+
+const LOGIN_SCHEMA = Yup.object().shape({
+  email: Yup.string()
+    .email("Email không hợp lệ")
+    .required("Vui lòng nhập email"),
+
+  password: Yup.string()
+    .matches(
+      Regex.PASSWORD,
+      "Mật khẩu phải có ít nhất 8 ký tự, bao gồm 1 chữ hoa và 1 chữ thường",
+    )
+    .required("Vui lòng nhập mật khẩu"), //"\n" is to make sure the error message will be displayed in 2 lines for fixed height
+});
 
 const LoginPage = () => {
   const { setAccessToken, setRefreshToken, setAccountName, setRoles } =
@@ -36,23 +50,6 @@ const LoginPage = () => {
     email: "",
     password: "",
   };
-
-  const passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])[A-Za-z\\d@$!%*?&]{8,}$";
-
-  const loginSchema = yup.object().shape({
-    email: yup
-      .string()
-      .email("Email không hợp lệ")
-      .required("Vui lòng nhập email"),
-
-    password: yup
-      .string()
-      .matches(
-        passwordRegex,
-        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm 1 chữ hoa và 1 chữ thường",
-      )
-      .required("Vui lòng nhập mật khẩu"), //"\n" is to make sure the error message will be displayed in 2 lines for fixed height
-  });
 
   const handleLoginClick = async (values, { setErrors }) => {
     setLoginLoading(true);
@@ -156,7 +153,7 @@ const LoginPage = () => {
         </Box>
         <Formik
           initialValues={initialValues}
-          validationSchema={loginSchema}
+          validationSchema={LOGIN_SCHEMA}
           onSubmit={handleLoginClick}
         >
           {({

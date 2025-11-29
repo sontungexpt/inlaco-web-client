@@ -4,17 +4,18 @@ import {
   SectionDivider,
   InfoTextField,
   HorizontalImageInput,
-} from "../components/global";
-import { NationalityTextField } from "../components/mobilization";
-import { FileUploadField } from "../components/contract";
+} from "@components/global";
+import { NationalityTextField } from "@components/mobilization";
+import { FileUploadField } from "@components/contract";
 import { Box, Button, Typography, Grid, CircularProgress } from "@mui/material";
 import ScheduleSendRoundedIcon from "@mui/icons-material/ScheduleSendRounded";
-import { COLOR } from "../assets/Color";
 import { Formik } from "formik";
-import * as yup from "yup";
+import * as Yup from "yup";
 import { useNavigate } from "react-router";
-import HttpStatusCode from "../constants/HttpStatusCode";
-import { createSupplyRequestAPI } from "../services/supplyReqServices";
+import { createSupplyRequestAPI } from "@/services/supplyReqServices";
+import Color from "@constants/Color";
+import { HttpStatusCode } from "axios";
+import Regex from "@/constants/Regex";
 
 const CreateSupplyRequest = () => {
   const navigate = useNavigate();
@@ -51,71 +52,6 @@ const CreateSupplyRequest = () => {
     },
   };
 
-  const phoneRegex =
-    "^(\\+84|0)(3[2-9]|5[2689]|7[06-9]|8[1-9]|9[0-46-9])\\d{7}$";
-
-  const supplyRequestSchema = yup.object().shape({
-    compInfo: yup.object().shape({
-      compName: yup.string().required("Tên công ty không được để trống"),
-      compAddress: yup.string().required("Địa chỉ công ty không được để trống"),
-
-      compPhoneNumber: yup
-        .string()
-        .matches(phoneRegex, "Số điện thoại không hợp lệ")
-        .required("Số điện thoại không được để trống"),
-      compEmail: yup
-        .string()
-        .email("Email không hợp lệ")
-        .required("Email không được để trống"),
-
-      representative: yup
-        .string()
-        .required("Tên người đại diện không được để trống"),
-      representativePos: yup
-        .string()
-        .required("Chức vụ người đại diện không được để trống"),
-    }),
-
-    requestInfo: yup.object().shape({
-      timeOfDeparture: yup
-        .date()
-        .min(new Date(), "Thời gian khởi hành không hợp lệ")
-        .required("Thời gian khởi hành dự kiến không được để trống")
-        .test(
-          "is-before-end-datetime",
-          "Thời gian khởi hành phải trước thời gian đến nơi dự kiến",
-          function (value) {
-            const { estimatedTimeOfArrival } = this.parent; // Access sibling field estimatedTimeOfArrival
-            return !estimatedTimeOfArrival || value < estimatedTimeOfArrival;
-          },
-        ),
-      UN_LOCODE_DepartureLocation: yup
-        .string()
-        .required("UN/LOCODE điểm khởi hành không được để trống"),
-      departureLocation: yup
-        .string()
-        .required("Tên điểm khởi hành không được để trống"),
-
-      estimatedTimeOfArrival: yup
-        .date()
-        .required("Thời gian đến nơi dự kiến không được để trống")
-        .test(
-          "is-after-start-datetime",
-          "Thời gian đến nơi dự kiến phải sau thời gian khởi hành",
-          function (value) {
-            const { timeOfDeparture } = this.parent; // Access sibling field timeOfDeparture
-            return !timeOfDeparture || value > timeOfDeparture;
-          },
-        ),
-      UN_LOCODE_ArrivalLocation: yup
-        .string()
-        .required("UN/LOCODE điểm đến không được để trống"),
-      arrivalLocation: yup
-        .string()
-        .required("Tên điểm đến không được để trống"),
-    }),
-  });
-
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCreateRequestSubmit = async (values, { resetForm }) => {
@@ -125,7 +61,7 @@ const CreateSupplyRequest = () => {
       const response = await createSupplyRequestAPI(values);
       await new Promise((resolve) => setTimeout(resolve, 200)); // Delay 0.2s
 
-      if (response.status === HttpStatusCode.CREATED) {
+      if (response.status === HttpStatusCode.Created) {
         resetForm();
         navigate("/supply-requests");
       } else {
@@ -138,12 +74,77 @@ const CreateSupplyRequest = () => {
     }
   };
 
+  const SUPPLY_REQUEST_SCHEMA = Yup.object().shape({
+    compInfo: Yup.object().shape({
+      compName: Yup.string().required("Tên công ty không được để trống"),
+      compAddress: Yup.string().required("Địa chỉ công ty không được để trống"),
+      compPhoneNumber: Yup.string()
+        .matches(Regex.VN_PHONE, "Số điện thoại không hợp lệ")
+        .required("Số điện thoại không được để trống"),
+      compEmail: Yup.string()
+        .email("Email không hợp lệ")
+        .required("Email không được để trống"),
+      representative: Yup.string().required(
+        "Tên người đại diện không được để trống",
+      ),
+      representativePos: Yup.string().required(
+        "Chức vụ người đại diện không được để trống",
+      ),
+    }),
+
+    requestInfo: Yup.object().shape({
+      timeOfDeparture: Yup.date()
+        .min(new Date(), "Thời gian khởi hành không hợp lệ")
+        .required("Thời gian khởi hành dự kiến không được để trống")
+        .test(
+          "is-before-end-datetime",
+          "Thời gian khởi hành phải trước thời gian đến nơi dự kiến",
+          function (value) {
+            const { estimatedTimeOfArrival } = this.parent; // Access sibling field estimatedTimeOfArrival
+            return !estimatedTimeOfArrival || value < estimatedTimeOfArrival;
+          },
+        ),
+      UN_LOCODE_DepartureLocation: Yup.string().required(
+        "UN/LOCODE điểm khởi hành không được để trống",
+      ),
+      departureLocation: Yup.string().required(
+        "Tên điểm khởi hành không được để trống",
+      ),
+
+      estimatedTimeOfArrival: Yup.date()
+        .required("Thời gian đến nơi dự kiến không được để trống")
+        .test(
+          "is-after-start-datetime",
+          "Thời gian đến nơi dự kiến phải sau thời gian khởi hành",
+          function (value) {
+            const { timeOfDeparture } = this.parent; // Access sibling field timeOfDeparture
+            return !timeOfDeparture || value > timeOfDeparture;
+          },
+        ),
+      UN_LOCODE_ArrivalLocation: Yup.string().required(
+        "UN/LOCODE điểm đến không được để trống",
+      ),
+      arrivalLocation: Yup.string().required(
+        "Tên điểm đến không được để trống",
+      ),
+    }),
+  });
+
+  const SHARED_SX = {
+    "& .MuiInputBase-input.Mui-disabled": {
+      color: Color.PrimaryBlack,
+    },
+    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
+      borderColor: Color.PrimaryBlack,
+    },
+  };
+
   return (
     <div>
       <Formik
         validateOnChange={false}
         initialValues={initialValues}
-        validationSchema={supplyRequestSchema}
+        validationSchema={SUPPLY_REQUEST_SCHEMA}
         onSubmit={handleCreateRequestSubmit}
       >
         {({
@@ -186,15 +187,14 @@ const CreateSupplyRequest = () => {
                 type="submit"
                 disabled={!isValid || !dirty || isLoading}
                 sx={{
-                  width: "16%",
                   padding: 1,
-                  color: COLOR.PrimaryBlack,
-                  backgroundColor: COLOR.PrimaryGold,
+                  color: Color.PrimaryBlack,
+                  backgroundColor: Color.PrimaryGold,
                   minWidth: 130,
                 }}
               >
                 {isLoading ? (
-                  <CircularProgress size={24} color={COLOR.PrimaryBlack} />
+                  <CircularProgress size={24} color={Color.PrimaryBlack} />
                 ) : (
                   <Box sx={{ display: "flex", alignItems: "end" }}>
                     <ScheduleSendRoundedIcon
@@ -212,7 +212,7 @@ const CreateSupplyRequest = () => {
               />
             </Box>
             <SectionDivider sectionName="Thông tin công ty: " />
-            <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
+            <Grid container spacing={2} mx={2} rowSpacing={3} pt={2}>
               <Grid size={4}>
                 <InfoTextField
                   id="company-name"
@@ -228,19 +228,10 @@ const CreateSupplyRequest = () => {
                   }
                   helperText={
                     touched.compInfo?.compName && errors.compInfo?.compName
-                      ? errors.compInfo?.compName
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
+                  sx={SHARED_SX}
                 />
               </Grid>
               <Grid size={5}>
@@ -260,19 +251,10 @@ const CreateSupplyRequest = () => {
                   helperText={
                     touched.compInfo?.compAddress &&
                     errors.compInfo?.compAddress
-                      ? errors.compInfo?.compAddress
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
+                  sx={SHARED_SX}
                 />
               </Grid>
               <Grid size={3}>
@@ -295,14 +277,7 @@ const CreateSupplyRequest = () => {
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
+                  sx={SHARED_SX}
                 />
               </Grid>
               <Grid size={4}>
@@ -321,19 +296,10 @@ const CreateSupplyRequest = () => {
                   }
                   helperText={
                     touched.compInfo?.compEmail && errors.compInfo?.compEmail
-                      ? errors.compInfo?.compEmail
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
+                  sx={SHARED_SX}
                 />
               </Grid>
               <Grid size={5}>
@@ -358,14 +324,7 @@ const CreateSupplyRequest = () => {
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
+                  sx={SHARED_SX}
                 />
               </Grid>
               <Grid size={3}>
@@ -385,19 +344,10 @@ const CreateSupplyRequest = () => {
                   helperText={
                     touched.compInfo?.representativePos &&
                     errors.compInfo?.representativePos
-                      ? errors.compInfo?.representativePos
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
+                  sx={SHARED_SX}
                 />
               </Grid>
             </Grid>
@@ -408,12 +358,12 @@ const CreateSupplyRequest = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.PrimaryBlackPlaceHolder,
+                color: Color.PrimaryBlackPlaceHolder,
               }}
             >
               Lịch trình dự kiến:
             </Typography>
-            <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
+            <Grid container spacing={2} mx={2} rowSpacing={3} pt={2}>
               <Grid size={4}>
                 <InfoTextField
                   id="time-of-departure"
@@ -432,19 +382,10 @@ const CreateSupplyRequest = () => {
                   helperText={
                     touched.requestInfo?.timeOfDeparture &&
                     errors.requestInfo?.timeOfDeparture
-                      ? errors.requestInfo?.timeOfDeparture
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
+                  sx={SHARED_SX}
                   slotProps={{
                     inputLabel: {
                       shrink: true,
@@ -452,7 +393,7 @@ const CreateSupplyRequest = () => {
                   }}
                 />
               </Grid>
-              <Grid size={2}>
+              <Grid size={3}>
                 <InfoTextField
                   id="arrival-location"
                   label="UN/LOCODE điểm khởi hành"
@@ -469,22 +410,13 @@ const CreateSupplyRequest = () => {
                   helperText={
                     touched.requestInfo?.UN_LOCODE_DepartureLocation &&
                     errors.requestInfo?.UN_LOCODE_DepartureLocation
-                      ? errors.requestInfo?.UN_LOCODE_DepartureLocation
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
+                  sx={SHARED_SX}
                 />
               </Grid>
-              <Grid size={6}>
+              <Grid size={5}>
                 <InfoTextField
                   id="departure-location"
                   label="Tên điểm khởi hành"
@@ -501,19 +433,10 @@ const CreateSupplyRequest = () => {
                   helperText={
                     touched.requestInfo?.departureLocation &&
                     errors.requestInfo?.departureLocation
-                      ? errors.requestInfo?.departureLocation
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
+                  sx={SHARED_SX}
                 />
               </Grid>
               <Grid size={4}>
@@ -534,19 +457,10 @@ const CreateSupplyRequest = () => {
                   helperText={
                     touched.requestInfo?.estimatedTimeOfArrival &&
                     errors.requestInfo?.estimatedTimeOfArrival
-                      ? errors.requestInfo?.estimatedTimeOfArrival
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
+                  sx={SHARED_SX}
                   slotProps={{
                     inputLabel: {
                       shrink: true,
@@ -554,7 +468,7 @@ const CreateSupplyRequest = () => {
                   }}
                 />
               </Grid>
-              <Grid size={2}>
+              <Grid size={3}>
                 <InfoTextField
                   id="arrival-location"
                   label="UN/LOCODE điểm đến"
@@ -571,22 +485,13 @@ const CreateSupplyRequest = () => {
                   helperText={
                     touched.requestInfo?.UN_LOCODE_ArrivalLocation &&
                     errors.requestInfo?.UN_LOCODE_ArrivalLocation
-                      ? errors.requestInfo?.UN_LOCODE_ArrivalLocation
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
+                  sx={SHARED_SX}
                 />
               </Grid>
-              <Grid size={6}>
+              <Grid size={5}>
                 <InfoTextField
                   id="arrival-location"
                   label="Tên điểm đến"
@@ -603,19 +508,10 @@ const CreateSupplyRequest = () => {
                   helperText={
                     touched.requestInfo?.arrivalLocation &&
                     errors.requestInfo?.arrivalLocation
-                      ? errors.requestInfo?.arrivalLocation
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
+                  sx={SHARED_SX}
                 />
               </Grid>
             </Grid>
@@ -625,149 +521,116 @@ const CreateSupplyRequest = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.PrimaryBlackPlaceHolder,
+                color: Color.PrimaryBlackPlaceHolder,
               }}
             >
               Thông tin Tàu:
             </Typography>
             <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
-              <Grid
-                size={12}
-                sx={{ display: "flex", justifyContent: "center" }}
-              >
+              <Grid size={6} sx={{ display: "flex", justifyContent: "center" }}>
                 <HorizontalImageInput
                   id="social-ins-image"
-                  width={300}
-                  height={180}
                   name="requestInfo.shipImage"
-                  sx={{ marginBottom: 2 }}
+                  sx={{
+                    height: "100%",
+                    width: "100%",
+                    marginBottom: 2,
+                  }}
                   onClick={() =>
                     document.getElementById("social-ins-image").click()
                   }
                 />
               </Grid>
-              <Grid size={2}>
-                <InfoTextField
-                  id="ship-imo"
-                  label="IMO"
-                  size="small"
-                  margin="none"
-                  fullWidth
-                  name="requestInfo.shipIMO"
-                  value={values.requestInfo?.shipIMO}
-                  error={
-                    !!touched.requestInfo?.shipIMO &&
-                    !!errors.requestInfo?.shipIMO
-                  }
-                  helperText={
-                    touched.requestInfo?.shipIMO && errors.requestInfo?.shipIMO
-                      ? errors.requestInfo?.shipIMO
-                      : " "
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid size={4}>
-                <InfoTextField
-                  id="ship-name"
-                  label="Tên tàu"
-                  size="small"
-                  margin="none"
-                  fullWidth
-                  name="requestInfo.shipName"
-                  value={values.requestInfo?.shipName}
-                  error={
-                    !!touched.requestInfo?.shipName &&
-                    !!errors.requestInfo?.shipName
-                  }
-                  helperText={
-                    touched.requestInfo?.shipName &&
-                    errors.requestInfo?.shipName
-                      ? errors.requestInfo?.shipName
-                      : " "
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid size={2}>
-                <NationalityTextField
-                  id="ship-nationality"
-                  label="Quốc tịch"
-                  size="small"
-                  margin="none"
-                  fullWidth
-                  name="requestInfo.shipNationality"
-                  value={values.requestInfo?.shipNationality}
-                  error={
-                    !!touched.requestInfo?.shipNationality &&
-                    !!errors.requestInfo?.shipNationality
-                  }
-                  helperText={
-                    touched.requestInfo?.shipNationality &&
-                    errors.requestInfo?.shipNationality
-                      ? errors.requestInfo?.shipNationality
-                      : " "
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid size={4}>
-                <InfoTextField
-                  id="ship-type"
-                  label="Loại tàu"
-                  size="small"
-                  margin="none"
-                  fullWidth
-                  name="requestInfo.shipType"
-                  value={values.requestInfo?.shipType}
-                  error={
-                    !!touched.requestInfo?.shipType &&
-                    !!errors.requestInfo?.shipType
-                  }
-                  helperText={
-                    touched.requestInfo?.shipType &&
-                    errors.requestInfo?.shipType
-                      ? errors.requestInfo?.shipType
-                      : " "
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
-                    },
-                  }}
-                />
+              <Grid container rowSpacing={3} flexDirection="column" size={6}>
+                <Grid>
+                  <InfoTextField
+                    id="ship-imo"
+                    label="IMO"
+                    size="small"
+                    margin="none"
+                    fullWidth
+                    name="requestInfo.shipIMO"
+                    value={values.requestInfo?.shipIMO}
+                    error={
+                      !!touched.requestInfo?.shipIMO &&
+                      !!errors.requestInfo?.shipIMO
+                    }
+                    helperText={
+                      touched.requestInfo?.shipIMO &&
+                      errors.requestInfo?.shipIMO
+                    }
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    sx={SHARED_SX}
+                  />
+                </Grid>
+                <Grid>
+                  <InfoTextField
+                    id="ship-name"
+                    label="Tên tàu"
+                    size="small"
+                    margin="none"
+                    fullWidth
+                    name="requestInfo.shipName"
+                    value={values.requestInfo?.shipName}
+                    error={
+                      !!touched.requestInfo?.shipName &&
+                      !!errors.requestInfo?.shipName
+                    }
+                    helperText={
+                      touched.requestInfo?.shipName &&
+                      errors.requestInfo?.shipName
+                    }
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    sx={SHARED_SX}
+                  />
+                </Grid>
+                <Grid item>
+                  <NationalityTextField
+                    id="ship-nationality"
+                    label="Quốc tịch"
+                    fullWidth
+                    size="small"
+                    margin="none"
+                    fullWidthcontainer
+                    name="requestInfo.shipNationality"
+                    value={values.requestInfo?.shipNationality}
+                    error={
+                      !!touched.requestInfo?.shipNationality &&
+                      !!errors.requestInfo?.shipNationality
+                    }
+                    helperText={
+                      touched.requestInfo?.shipNationality &&
+                      errors.requestInfo?.shipNationality
+                    }
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    sx={SHARED_SX}
+                  />
+                </Grid>
+                <Grid>
+                  <InfoTextField
+                    id="ship-type"
+                    label="Loại tàu"
+                    size="small"
+                    margin="none"
+                    fullWidth
+                    name="requestInfo.shipType"
+                    value={values.requestInfo?.shipType}
+                    error={
+                      !!touched.requestInfo?.shipType &&
+                      !!errors.requestInfo?.shipType
+                    }
+                    helperText={
+                      touched.requestInfo?.shipType &&
+                      errors.requestInfo?.shipType
+                    }
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    sx={SHARED_SX}
+                  />
+                </Grid>
               </Grid>
             </Grid>
           </Box>

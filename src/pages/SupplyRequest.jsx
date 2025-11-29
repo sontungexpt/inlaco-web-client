@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { PageTitle, NoValuesOverlay } from "../components/global";
+import { PageTitle, NoValuesOverlay } from "@components/global";
 import { Box, Button, Typography, CircularProgress } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { ScheduleCell, ShipInfoCell } from "../components/mobilization";
+import { ScheduleCell, ShipInfoCell } from "@components/mobilization";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useNavigate } from "react-router";
-import { useAuthContext } from "../contexts/AuthContext";
-import { getAllSupplyRequestAPI } from "../services/supplyReqServices";
-import { formatDateTime } from "../utils/converter";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { getAllSupplyRequestAPI } from "@/services/supplyReqServices";
+import { formatDateTime } from "@utils/converter";
 import Color from "@constants/Color";
 import { HttpStatusCode } from "axios";
 

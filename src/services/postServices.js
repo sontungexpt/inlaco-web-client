@@ -50,28 +50,44 @@ export const createPost = async (postInfo) => {
   }
 };
 
-export const getPostByID_API = async (postID) => {
+export const updatePost = async (id, update_data) => {
+  try {
+    const response = await privateRequest.patch(
+      PostEndpoint.UPDATE_POST(id),
+      update_data,
+    );
+    return response.data;
+  } catch (err) {
+    console.debug(err);
+    throw err;
+  }
+};
+
+export const fetchUniquePost = async (postID) => {
   try {
     const response = await publicRequest.get(
-      `${PostEndpoint.GENERAL}/${postID}`,
+      PostEndpoint.GET_POST_BY_ID(postID),
     );
-    return response;
+    return response.data;
   } catch (err) {
-    return err.response;
+    console.debug(err);
+    throw err;
   }
 };
 
 export const fetchCandidates = async ({
   page,
-  size = 10,
+  sizePerPage = 10,
   status,
+  recruitmentPostId,
   sort = null,
 }) => {
   try {
     const response = await privateRequest.get(PostEndpoint.GET_ALL_CANDIDATES, {
       params: {
         page,
-        size,
+        recruitmentPostId,
+        size: sizePerPage,
         status,
         sort,
       },

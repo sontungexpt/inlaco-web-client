@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { InfoTextField, SectionDivider } from "@/components/global";
+import { dateTimeStringToISOString } from "@/utils/converter";
 
 // ===================
 // Validation Schema
@@ -91,9 +92,8 @@ export default function PostForm({
   onSubmit,
   fixedType,
   initialValues = {},
-  mode = "create", // create | update
+  mode = "create", // create | edit
   isSubmitting = false,
-
   snackbar,
   onCloseSnackbar, // The fn call when snackbar close
   onViewPost, // The fn call when user click "Xem bài viết" in snackbar
@@ -134,7 +134,19 @@ export default function PostForm({
       validationSchema={PostSchema}
       enableReinitialize
       onSubmit={(values, ...args) =>
-        onSubmit({ ...values, attachments }, ...args)
+        onSubmit(
+          {
+            ...values,
+            recruitmentStartDate: dateTimeStringToISOString(
+              values.recruitmentStartDate,
+            ),
+            recruitmentEndDate: dateTimeStringToISOString(
+              values.recruitmentEndDate,
+            ),
+            attachments,
+          },
+          ...args,
+        )
       }
     >
       {({
@@ -437,7 +449,9 @@ export default function PostForm({
                       <Button
                         color="inherit"
                         size="small"
-                        onClick={() => onViewPost?.(snackbar.postId)}
+                        onClick={() => {
+                          onViewPost?.(snackbar.postId, snackbar.payload);
+                        }}
                         sx={{ fontWeight: 600 }}
                       >
                         Xem bài đăng

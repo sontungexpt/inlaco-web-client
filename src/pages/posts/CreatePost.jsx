@@ -5,21 +5,24 @@ import { PageTitle } from "@/components/global";
 import { Box } from "@mui/material";
 import Color from "@/constants/Color";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 export default function CreatePost() {
-  const navigate = useMutation();
+  const navigate = useNavigate();
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
     postId: null,
+    payload: null,
   });
-  const openSnackbar = ({ message, severity, postId }) => {
+  const openSnackbar = ({ message, severity, postId, payload }) => {
     setSnackbar({
       open: true,
       message,
       severity,
       postId,
+      payload,
     });
   };
 
@@ -27,42 +30,36 @@ export default function CreatePost() {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
-  const handleViewPost = (id) => {
-    navigate(`/posts/${id}`);
-  };
-
   const { mutateAsync: createPostAsync, isPending: isCreating } = useMutation({
     mutationFn: createPost, // endpoint API
   });
 
+  const handleViewPost = (id, postInfo) => {
+    if (postInfo.type === "RECRUITMENT") {
+      navigate(`/recruitment/${id}`);
+    } else {
+      navigate(`/posts/${id}`);
+    }
+  };
+
   const handleSubmit = async (postInfo, { resetForm }) => {
-    await createPostAsync(
-      {
-        type: postInfo.type,
-        title: postInfo.title,
-        content: postInfo.content,
-        company: postInfo.company,
-        description: postInfo.description,
-        // image: postInfo.image,
-        // attachments: postInfo.attachments,
+    await createPostAsync(postInfo, {
+      onSuccess: (post) => {
+        openSnackbar({
+          message: "Tạo bài đăng thành công!",
+          severity: "success",
+          postId: post.id,
+          payload: post,
+        });
+        resetForm();
       },
-      {
-        onSuccess: (post) => {
-          resetForm();
-          openSnackbar({
-            message: "Tạo bài đăng thành công!",
-            severity: "success",
-            postId: post.id,
-          });
-        },
-        onError: () => {
-          openSnackbar({
-            message: "Tạo bài đăng thất bại. Vui lòng thử lại.",
-            severity: "error",
-          });
-        },
+      onError: () => {
+        openSnackbar({
+          message: "Tạo bài đăng thất bại. Vui lòng thử lại.",
+          severity: "error",
+        });
       },
-    );
+    });
   };
 
   return (

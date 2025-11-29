@@ -76,8 +76,8 @@ const HorizontalImageInput = ({
         }
         alt="Selected Card Photo"
         sx={{
-          width: width,
-          height: height,
+          width: "100%",
+          height: "100%",
         }}
       />
       <Overlay>

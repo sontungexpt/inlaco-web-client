@@ -3,7 +3,7 @@ import {
   PageTitle,
   NoValuesOverlay,
   SearchBar,
-  SwitchBar,
+  DoubleTabBar,
 } from "@components/global";
 import { Box, Button, Typography, CircularProgress } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
@@ -24,10 +24,14 @@ const CrewInfos = () => {
   const [sectionLoading, setSectionLoading] = useState(false);
 
   useEffect(() => {
-    const fetchCrewMembers = async (official) => {
+    const getAllCrewMembers = async (official) => {
       setLoading(true);
       try {
-        const response = await fetchCrewMembers(0, 10, official);
+        const response = await fetchCrewMembers({
+          page: 0,
+          size: 10,
+          official: official,
+        });
         await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
         if (response.status === HttpStatusCode.Ok) {
@@ -43,7 +47,7 @@ const CrewInfos = () => {
       }
     };
 
-    fetchCrewMembers(true);
+    getAllCrewMembers(true);
   }, []);
 
   const onMemberDetailClick = (id) => {
@@ -286,11 +290,11 @@ const CrewInfos = () => {
             subtitle="Danh sách Thuyền viên công ty"
           />
         </Box>
-        <SwitchBar
+        <DoubleTabBar
           tabLabel1={"Danh sách Thuyền viên chính thức"}
           tabLabel2={"Danh sách Thuyền viên chưa chính thức"}
           variant={"fullWidth"}
-          onChange={(newValue) => handleTabChange(newValue)}
+          onTabChange={(newValue) => handleTabChange(newValue)}
           color={Color.SecondaryBlue}
           sx={{
             backgroundColor: Color.SecondaryWhite,

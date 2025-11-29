@@ -1,99 +1,54 @@
-import React, { useState, useEffect } from "react";
-import { PageTitle, SectionDivider, InfoTextField } from "@components/global";
+import React, { useState } from "react";
 import {
   Box,
-  Button,
+  Card,
   Grid,
+  Chip,
   Typography,
+  Button,
   CircularProgress,
-  InputAdornment,
+  Divider,
 } from "@mui/material";
+
 import Color from "@constants/Color";
-import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import EventBusyRoundedIcon from "@mui/icons-material/EventBusyRounded";
+
 import { useNavigate, useParams } from "react-router";
 import { useAuthContext } from "@/contexts/AuthContext";
-import HttpStatusCode from "@constants/HttpStatusCode";
-import { getPostByID_API } from "@/services/postServices";
 import { isoStringToDateString } from "@utils/converter";
+import { usePost } from "@/hooks/services/posts";
 
 const RecruitmentDetail = () => {
   const navigate = useNavigate();
-
   const { id } = useParams();
+
   const { roles } = useAuthContext();
   const isAdmin = roles.includes("ADMIN");
-  const isAlreadyApplied = false; //this later will be replaced by the actual applied status of the user when fetching API
+  const isAlreadyApplied = false;
 
-  const [loading, setLoading] = useState(false);
-  const [postInfo, setPostInfo] = useState({});
-
-  useEffect(() => {
-    const fetchRecruitmentInfo = async () => {
-      setLoading(true);
-      try {
-        // Call API to fetch recruitment info
-        const response = await getPostByID_API(id);
-        await new Promise((resolve) => setTimeout(resolve, 200)); //Delay 200ms to simulate API call
-
-        if (response.status === HttpStatusCode.OK) {
-          setPostInfo(response.data);
-          setIsActive(!response.date?.isActive);
-        } else {
-          console.log("Error when fetching recruitment info");
-        }
-      } catch (err) {
-        console.log("Error when fetching recruitment info: ", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRecruitmentInfo();
-  }, []);
-
-  // const [hideUnhideLoading, setHideUnhideLoading] = useState(false);
-  // const [isActive, setIsActive] = useState(true);
+  const { post, isLoading } = usePost(id);
+  const isActive = post?.isActive || true;
 
   const [openClosedLoading, setOpenClosedLoading] = useState(false);
-  const [isActive, setIsActive] = useState(false);
+  // const [isActive, setIsActive] = useState(false);
 
-  const handleUserApplicationClick = (id) => {
-    if (isAlreadyApplied) {
-      navigate(`/recruitment/${id}/application`);
-    } else {
-      navigate(`/recruitment/${id}/apply`);
-    }
+  const handleUserApplicationClick = () => {
+    navigate(
+      isAlreadyApplied
+        ? `/recruitment/${id}/application`
+        : `/recruitment/${id}/apply`,
+    );
   };
 
-  // const handleSwitchingIsActiveClick = async () => {
-  //   setIsActive(!isActive);
-  // };
-
-  const handleSwitchingOpenClosedClick = async () => {
-    console.log("Switching open closed click");
-    setOpenClosedLoading(true);
-    try {
-      //Call API to update the status of the recruitment
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //Mock API call
-
-      setIsActive(!isActive);
-    } catch (error) {
-      console.log("Error when updating recruitment status: ", error);
-    } finally {
-      setOpenClosedLoading(false);
-    }
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <Box
         sx={{
+          height: "80vh",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh",
         }}
       >
         <CircularProgress />
@@ -102,263 +57,227 @@ const RecruitmentDetail = () => {
   }
 
   return (
-    <div>
-      <Box m="20px">
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Box
-            sx={{
-              display: "flex",
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <PageTitle
-              title="CHI TIẾT BÀI ĐĂNG TUYỂN DỤNG"
-              subtitle={`Chi tiết bài đăng tuyển dụng: ${postInfo?.title}`}
-            />
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "start",
-                alignItems: "center",
-              }}
-            >
-              {isAdmin ? (
-                <Button
-                  variant="contained"
-                  onClick={() => handleSwitchingOpenClosedClick()}
-                  disabled={openClosedLoading}
-                  sx={{
-                    width: "15%",
-                    padding: 1,
-                    color: Color.PrimaryWhite,
-                    backgroundColor: !isActive
-                      ? Color.PrimaryBlue
-                      : Color.PrimaryOrgange,
-                    minWidth: 110,
-                  }}
-                >
-                  {openClosedLoading ? (
-                    <CircularProgress size={24} color={Color.PrimaryBlack} />
-                  ) : (
-                    <Box sx={{ display: "flex", alignItems: "end" }}>
-                      {!isActive ? (
-                        <CheckCircleRoundedIcon
-                          sx={{
-                            marginRight: "5px",
-                            marginBottom: "3px",
-                            width: 20,
-                            height: 20,
-                          }}
-                        />
-                      ) : (
-                        <EventBusyRoundedIcon
-                          sx={{
-                            marginRight: "5px",
-                            marginBottom: "3px",
-                            width: 20,
-                            height: 20,
-                          }}
-                        />
-                      )}
-                      <Typography sx={{ fontWeight: 700, marginLeft: "2px" }}>
-                        {!isActive ? "Mở đăng ký" : "Đóng đăng ký"}
-                      </Typography>
-                    </Box>
-                  )}
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  onClick={() => handleUserApplicationClick(id)}
-                  sx={{
-                    backgroundColor: Color.PrimaryGold,
-                    color: Color.PrimaryBlack,
-                    borderRadius: 2,
-                  }}
-                >
-                  <AppRegistrationRoundedIcon />
-                  <Typography
-                    sx={{
-                      fontWeight: 700,
-                      marginLeft: "4px",
-                    }}
-                  >
-                    {isAlreadyApplied ? "XEM HỒ SƠ ỨNG TUYỂN" : "ỨNG TUYỂN"}
-                  </Typography>
-                </Button>
-              )}
-            </Box>
-          </Box>
-        </Box>
+    <Box sx={{ p: 3 }}>
+      {/* ======================= HEADER ======================= */}
+      <Card
+        sx={{
+          p: 3,
+          display: "flex",
+          flexDirection: "column",
+          gap: 1,
+          borderRadius: 3,
+          mb: 3,
+        }}
+      >
+        <Typography variant="h4" fontWeight={700}>
+          {post?.title}
+        </Typography>
+
+        <Typography variant="subtitle1" fontWeight={500} color="text.secondary">
+          {post?.description}
+        </Typography>
+
+        <Typography variant="body1" color="text.secondary">
+          📍 {post.workLocation}
+        </Typography>
+
+        {/* ======= DÒNG CHIP + BUTTON ======= */}
         <Box
-          px={2}
-          mt={4}
           sx={{
+            mt: 2,
             display: "flex",
-            width: "100%",
             justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          <InfoTextField
-            id="recruitment-start-date"
-            type="date"
-            label="Ngày mở đăng ký"
-            size="small"
-            margin="none"
-            disabled={true}
-            fullWidth
-            name="recruitmentStartDate"
-            value={
-              postInfo.recruitmentStartDate
-                ? isoStringToDateString(postInfo.recruitmentStartDate)
-                : ""
-            }
-            mx={2}
-            sx={{
-              width: "40%",
-              marginBottom: 0,
-            }}
-            slotProps={{
-              inputLabel: {
-                shrink: true,
-              },
-            }}
+          <Chip
+            label={isActive ? "Đang tuyển" : "Đã đóng"}
+            color={isActive ? "success" : "error"}
+            sx={{ fontSize: 14, px: 2 }}
           />
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "30%",
-            }}
-          >
-            <Box
+
+          {isAdmin && (
+            <Button
+              variant="contained"
+              disabled={openClosedLoading}
+              // onClick={}
               sx={{
-                borderBottom: `2px solid ${Color.PrimaryBlack}`,
-                width: "40%",
+                py: 1.1,
+                borderRadius: 2,
+                backgroundColor: !isActive
+                  ? Color.PrimaryBlue
+                  : Color.PrimaryOrgange,
+                minWidth: 180,
               }}
-            />
-          </Box>
-          <InfoTextField
-            id="recruitment-end-date"
-            label="Ngày đóng đăng ký"
-            size="small"
-            margin="none"
-            disabled={true}
-            type="date"
-            fullWidth
-            name="recruitmentEndDate"
-            value={
-              postInfo.recruitmentEndDate
-                ? isoStringToDateString(postInfo.recruitmentEndDate)
-                : ""
-            }
-            mx={2}
-            sx={{
-              width: "40%",
-              marginBottom: 0,
-            }}
-            slotProps={{
-              inputLabel: {
-                shrink: true,
-              },
-            }}
-          />
+            >
+              {openClosedLoading ? (
+                <CircularProgress size={22} />
+              ) : (
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  {!isActive ? (
+                    <CheckCircleRoundedIcon sx={{ mr: 1 }} />
+                  ) : (
+                    <EventBusyRoundedIcon sx={{ mr: 1 }} />
+                  )}
+                  {isActive ? "Đóng tuyển dụng" : "Mở tuyển dụng"}
+                </Box>
+              )}
+            </Button>
+          )}
         </Box>
-        <SectionDivider
-          sx={{ marginTop: 2 }}
-          sectionName="Thông tin bài đăng*: "
-        />
-        <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
-          <Grid size={4}>
-            <InfoTextField
-              id="title"
-              label="Tiêu đề bài đăng"
-              size="small"
-              margin="none"
-              disabled={true}
-              required
-              fullWidth
-              name="title"
-              value={postInfo.title}
-            />
-          </Grid>
-          <Grid size={3}>
-            <InfoTextField
-              id="position"
-              label="Vị trí tuyển dụng"
-              size="small"
-              margin="none"
-              disabled={true}
-              required
-              fullWidth
-              name="position"
-              value={postInfo.position}
-            />
-          </Grid>
-          <Grid size={2.5}>
-            <InfoTextField
-              id="work-location"
-              label="Địa điểm"
-              size="small"
-              margin="none"
-              disabled={true}
-              required
-              fullWidth
-              name="workLocation"
-              value={postInfo.workLocation}
-            />
-          </Grid>
-          <Grid size={2.5}>
-            <InfoTextField
-              id="salary"
-              label="Mức lương"
-              size="small"
-              type="number"
-              margin="none"
-              disabled={true}
-              required
-              fullWidth
-              name="salary"
-              value={postInfo.expectedSalary ? postInfo.expectedSalary[1] : "0"}
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end">vnđ</InputAdornment>
-                  ),
-                },
-              }}
-              sx={{
-                "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                  {
-                    display: "none",
-                  },
-                "& input[type=number]": {
-                  MozAppearance: "textfield",
-                },
-              }}
-            />
-          </Grid>
-          <Grid size={12}>
-            <InfoTextField
-              id="content"
-              label="Mô tả công việc"
-              rows={8}
-              multiline
-              size="small"
-              margin="none"
-              disabled={true}
-              required
-              fullWidth
-              name="content"
-              value={postInfo.content}
-            />
-          </Grid>
+      </Card>
+
+      {/* ======================= BODY ======================= */}
+      <Grid container spacing={3}>
+        {/* LEFT: JOB DESCRIPTION */}
+        <Grid item size={8}>
+          <Card sx={{ p: 3, borderRadius: 3 }}>
+            <Typography variant="h5" fontWeight={700} mb={2}>
+              Mô tả công việc
+            </Typography>
+
+            <Typography sx={{ whiteSpace: "pre-line" }}>
+              {post.content}
+            </Typography>
+          </Card>
         </Grid>
-      </Box>
-    </div>
+
+        {/* RIGHT: SUMMARY BOX / SIDEBAR */}
+        <Grid item size={4}>
+          <Card sx={{ p: 3, borderRadius: 3 }}>
+            {/* THÔNG TIN CHUNG */}
+            <Typography variant="h6" fontWeight={700}>
+              Thông tin chung
+            </Typography>
+
+            <Box my={1}>
+              <Typography fontWeight={600} color="text.secondary">
+                📝 Vị trí đang tuyển dụng
+              </Typography>
+              <Typography>{post?.position}</Typography>
+            </Box>
+
+            <Box my={1}>
+              <Typography fontWeight={600} color="text.secondary">
+                💰 Mức lương
+              </Typography>
+              <Typography>{post?.expectedSalary} vnđ</Typography>
+            </Box>
+
+            <Box my={1}>
+              <Typography fontWeight={600} color="text.secondary">
+                📅 Ngày mở
+              </Typography>
+              <Typography>
+                {isoStringToDateString(post.recruitmentStartDate)}
+              </Typography>
+            </Box>
+
+            <Box my={1}>
+              <Typography fontWeight={600} color="text.secondary">
+                📅 Ngày đóng
+              </Typography>
+              <Typography>
+                {isoStringToDateString(post.recruitmentEndDate)}
+              </Typography>
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            {/* Skills */}
+            <Typography variant="subtitle1" fontWeight={700}>
+              Kỹ năng yêu cầu
+            </Typography>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
+              {(post.skills || ["Cẩn thận", "Siêng năng"]).map((s) => (
+                <Chip key={s} label={s} />
+              ))}
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            {/* THÔNG TIN LIÊN HỆ */}
+            <Typography variant="subtitle1" fontWeight={700}>
+              Thông tin liên hệ
+            </Typography>
+            <Box mt={1}>
+              <Typography color="text.secondary">👤 Người liên hệ</Typography>
+              <Typography fontWeight={600}>
+                {post.contactName || "—"}
+              </Typography>
+
+              <Typography mt={1} color="text.secondary">
+                📧 Email
+              </Typography>
+              <Typography fontWeight={600}>
+                {post.contactEmail || "—"}
+              </Typography>
+
+              <Typography mt={1} color="text.secondary">
+                📞 Số điện thoại
+              </Typography>
+              <Typography fontWeight={600}>
+                {post.contactPhone || "—"}
+              </Typography>
+            </Box>
+
+            {/* ===== BUTTONS ===== */}
+            <Box mt={3} display="flex" flexDirection="column" gap={1.5}>
+              {/* USER BUTTON */}
+              {!isAdmin && (
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  sx={{ py: 1.2, borderRadius: 2 }}
+                  onClick={handleUserApplicationClick}
+                >
+                  {isAlreadyApplied ? "Xem hồ sơ đã nộp" : "Ứng tuyển ngay"}
+                </Button>
+              )}
+
+              {/* ADMIN BUTTONS */}
+              {isAdmin && (
+                <>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    sx={{
+                      py: 1.2,
+                      borderRadius: 2,
+                      backgroundColor: Color.PrimaryBlue,
+                      "&:hover": { backgroundColor: Color.PrimaryBlueDark },
+                    }}
+                    onClick={() =>
+                      navigate("/recruitment", {
+                        state: {
+                          tab: "CANDIDATE",
+                          candidate: {
+                            recruitmentPostId: id,
+                            status: "APPLIED",
+                          },
+                        },
+                      })
+                    }
+                  >
+                    Xem hồ sơ ứng tuyển
+                  </Button>
+
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    sx={{ py: 1.2, borderRadius: 2 }}
+                    onClick={() => navigate(`/posts/edit/${id}`)}
+                  >
+                    Chỉnh sửa bài tuyển dụng
+                  </Button>
+                </>
+              )}
+            </Box>
+          </Card>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

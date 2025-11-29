@@ -7,7 +7,7 @@ import {
   Stack,
 } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
-import { PageTitle, SwitchBar } from "@components/global";
+import { PageTitle, DoubleTabBar } from "@components/global";
 import { useNavigate, useLocation } from "react-router";
 import Color from "@constants/Color";
 
@@ -22,13 +22,16 @@ const NUMBER_CANDIDATE_PER_PAGE = 10;
 
 export default function CrewRecruitment() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const { state } = useLocation();
   const isAdmin = useAllowedRole("ADMIN");
 
-  const [tab, setTab] = useState(location.state?.tabValue || 0);
+  // If had initital tab then only show one bar
+  const INITITAL_TAB = state?.tab === "CANDIDATE" ? 1 : state?.tab;
+
+  const [tab, setTab] = useState(INITITAL_TAB || 0);
 
   // post state
-  const [postPage, setPostPage] = useState(location.state?.postPage || 0);
+  const [postPage, setPostPage] = useState(state?.post?.page || 0);
 
   const { data: postData, isLoading: postsLoading } = useRecruitmentPosts(
     postPage,
@@ -40,19 +43,22 @@ export default function CrewRecruitment() {
   // candidate state
 
   const [filterCandidateStatus, setFilterCandidateStatus] = useState(
-    location.state?.candidateStatus || "APPLIED",
+    state?.candidate?.status || "APPLIED",
   );
 
   const [paginationModel, setPaginationModel] = useState({
-    page: location.state?.candidatePage || 0,
+    page: state?.candidate?.page || 0,
     pageSize: NUMBER_CANDIDATE_PER_PAGE,
   });
 
-  const { data: candidateData, isLoading: candidateLoading } = useCandidates(
-    filterCandidateStatus,
-    paginationModel.page,
-    paginationModel.pageSize,
-  );
+  const INITIAL_RECRUIMENT_POST_ID =
+    state?.candidate?.recruitmentPostId || null;
+  const { data: candidateData, isLoading: candidateLoading } = useCandidates({
+    status: filterCandidateStatus,
+    recruitmentPostId: INITIAL_RECRUIMENT_POST_ID,
+    page: paginationModel.page,
+    sizePerPage: paginationModel.pageSize,
+  });
 
   const candidates = candidateData?.content || [];
   return (
@@ -63,10 +69,7 @@ export default function CrewRecruitment() {
         alignItems="center"
         mb={3}
       >
-        <PageTitle
-          title="TUYỂN DỤNG"
-          subtitle="Danh sách các bài đăng tuyển dụng Thuyền viên"
-        />
+        <PageTitle title="TUYỂN DỤNG" />
 
         {tab === 0 && isAdmin && (
           <Button
@@ -95,12 +98,13 @@ export default function CrewRecruitment() {
       </Stack>
 
       {isAdmin && (
-        <SwitchBar
+        <DoubleTabBar
           tabLabel1={"Danh sách bài đăng"}
           tabLabel2={"Danh sách đơn ứng tuyển"}
           variant={"fullWidth"}
           initialTab={tab}
-          onChange={setTab}
+          isSingleTab={Boolean(INITITAL_TAB)}
+          onTabChange={setTab}
           color={Color.SecondaryBlue}
           sx={{
             backgroundColor: Color.SecondaryWhite,

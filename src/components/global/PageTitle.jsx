@@ -7,13 +7,15 @@ const PageTitle = ({ title, subtitle }) => {
       <Typography variant="h5" color={COLOR.PrimaryBlack} fontWeight="bold">
         {title}
       </Typography>
-      <Typography
-        variant="h7"
-        color={COLOR.SecondaryBlack}
-        sx={{ fontStyle: "italic" }}
-      >
-        {subtitle}
-      </Typography>
+      {subtitle && (
+        <Typography
+          variant="h7"
+          color={COLOR.SecondaryBlack}
+          sx={{ fontStyle: "italic" }}
+        >
+          {subtitle}
+        </Typography>
+      )}
     </Box>
   );
 };

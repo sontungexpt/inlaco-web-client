@@ -2,40 +2,19 @@ import { Box, IconButton, Typography } from "@mui/material";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import { COLOR } from "../../assets/Color";
 import NavSearchBar from "./NavSearchBar";
-import { useAuthContext } from "../../contexts/AuthContext";
-import { localStorage, sessionStorage, StorageKey } from "../../utils/storage";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router";
 import { Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
+import Color from "@constants/Color";
 
 const TopBar = () => {
   const navigate = useNavigate();
-  const { setAccessToken, setRefreshToken, setAccountName, setRoles } =
-    useAuthContext();
+  const { logout } = useAuthContext();
 
   const handleLogoutClick = async () => {
-    //Perform something and calling logout API to invalid the refresh token
-    const rememberMe = await localStorage.getItem(StorageKey.REMEMBER_ME);
-    if (rememberMe) {
-      localStorage.removeItem(StorageKey.ACCESS_TOKEN);
-      localStorage.removeItem(StorageKey.REFRESH_TOKEN);
-      localStorage.removeItem(StorageKey.ACCOUNT_NAME);
-      localStorage.removeItem(StorageKey.ROLES);
-    } else {
-      sessionStorage.removeItem(StorageKey.ACCESS_TOKEN);
-      sessionStorage.removeItem(StorageKey.REFRESH_TOKEN);
-      sessionStorage.removeItem(StorageKey.ACCOUNT_NAME);
-      sessionStorage.removeItem(StorageKey.ROLES);
-    }
-
-    localStorage.removeItem(StorageKey.REMEMBER_ME);
-    setAccessToken("");
-    setRefreshToken("");
-    setAccountName("");
-    setRoles([]);
-    navigate("/login");
+    logout();
   };
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -64,8 +43,8 @@ const TopBar = () => {
       {/* SEARCH BAR */}
       <NavSearchBar
         placeholder={"Tìm kiếm trang......"}
-        backgroundColor={COLOR.SecondaryBlue}
-        color={COLOR.PrimaryWhite}
+        backgroundColor={Color.SecondaryBlue}
+        color={Color.PrimaryWhite}
         sx={{ width: "20%" }}
       />
 
@@ -95,7 +74,7 @@ const TopBar = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                color: COLOR.PrimaryOrgange,
+                color: Color.PrimaryOrgange,
               }}
             >
               <LogoutRoundedIcon

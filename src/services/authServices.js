@@ -26,3 +26,26 @@ export const signUpAPI = async (fullName, email, password, confirmPassword) => {
     return err.response;
   }
 };
+
+export const logout = async (refreshToken) => {
+  try {
+    if (!refreshToken) {
+      throw new Error("Access token not found");
+    }
+    await publicRequest.post(
+      AuthEndpoint.LOGOUT,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      },
+    );
+  } catch (error) {
+    console.debug(
+      "Logout unsuccessful " + error + " with status code: ",
+      error.status,
+    );
+    throw error;
+  }
+};

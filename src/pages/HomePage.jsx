@@ -15,9 +15,13 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { usePosts } from "@hooks/services/posts";
 import { useNavigate } from "react-router";
+import useAllowedRole from "@/hooks/useAllowedRole";
+import UserRole from "@/constants/UserRole";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const isAdmin = useAllowedRole(UserRole.ADMIN);
+
   const [page, setPage] = useState(0);
   const size = 12;
   const { data, isLoading, isError, refetch } = usePosts({ page, size });
@@ -77,14 +81,16 @@ const HomePage = () => {
             Tin tức công ty
           </Typography>
 
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={() => navigate("/posts/create")}
-          >
-            Thêm bài viết
-          </Button>
+          {isAdmin && (
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              onClick={() => navigate("/posts/create")}
+            >
+              Thêm bài viết
+            </Button>
+          )}
         </Box>
         <Grid container spacing={3}>
           {newsList.map((news) => (
