@@ -23,7 +23,7 @@ const ShipInfoCell = ({
         ...(Array.isArray(sx) ? sx : [sx]),
         {
           display: "flex",
-          flexDirection: "row",
+          flexDirection: "column",
           alignItem: "center",
           justifyContent: "center",
         },
@@ -37,24 +37,26 @@ const ShipInfoCell = ({
           alignItems: "center",
         }}
       >
-        <img
-          src={
-            imageError || !imageUrl
-              ? require("../../assets/images/no-ship-photo.png")
-              : imageUrl
-          }
-          alt="Ship"
-          style={{
-            width: 160,
-            height: 90,
-            alignSelf: "center",
-            marginTop: 10,
-            marginBottom: 10,
-          }}
-          onError={() => {
-            setImageError(true);
-          }}
-        />
+        {imageUrl && (
+          <img
+            src={
+              imageError
+                ? require("../../assets/images/no-ship-photo.png")
+                : imageUrl
+            }
+            alt="Ship"
+            style={{
+              width: 160,
+              height: 90,
+              alignSelf: "center",
+              marginTop: 10,
+              marginBottom: 10,
+            }}
+            onError={() => {
+              setImageError(true);
+            }}
+          />
+        )}
       </Box>
       <Box
         sx={{

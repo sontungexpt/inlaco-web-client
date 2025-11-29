@@ -19,10 +19,10 @@ import SupplyContractAddendum from "@pages/supplyContractAddendum";
 
 import TemplateContract from "@pages/TemplateContract";
 
-import SupplyRequest from "@pages/SupplyRequest";
+import SupplyRequest from "@pages/supplication/SupplyRequest";
 import AdminSupplyRequestDetail from "@pages/adminSupplyRequestDetail";
 import UserSupplyRequestDetail from "@pages/UserSupplyRequestDetail";
-import CreateSupplyRequest from "@/pages/CreateSupplyRequest";
+import CreateSupplyRequest from "@/pages/supplication/CreateSupplyRequest";
 
 import CrewRecruitment from "@pages/posts/recruitments/CrewRecruitment";
 import AdminCandidateDetail from "@pages/adminCandidateDetail";
