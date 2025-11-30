@@ -12,7 +12,7 @@
 ### 1. Clone Repositories
 
 ```bash
-git clone https://github.com/ngphth1312/inlaco-crewmgr-web-client.git
+git clone https://github.com/sontungexpt/inlaco-web-client.git
 git clone https://github.com/sontungexpt/inlaco-crewmgr-service.git
 ```
 

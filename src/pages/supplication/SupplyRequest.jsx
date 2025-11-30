@@ -15,7 +15,7 @@ import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRound
 import { useNavigate } from "react-router";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { getAllSupplyRequestAPI } from "@/services/supplyReqServices";
-import { formatDateTime } from "@utils/converter";
+import { formatDateTime } from "@/utils/converter";
 import Color from "@constants/Color";
 import { HttpStatusCode } from "axios";
 

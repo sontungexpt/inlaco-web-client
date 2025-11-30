@@ -1,18 +1,5 @@
-export function formatVND(value) {
-  if (value === 0) {
-    return "0.000"; // Special case for zero value
-  }
-
-  if (value) {
-    // Split integer and decimal parts (handles values without decimals)
-    const parts = value.toString().split(".");
-    // Format the integer part with commas for thousands separation
-    const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    return `${integerPart}`;
-  }
-  return "";
-  //return 10.000.000
-}
+export * from "./datetime";
+export * from "./currency";
 
 export function formatTruncatedVND(value) {
   value = parseInt(value);
@@ -198,7 +185,7 @@ export function isoStringToMUIDateTime(isoString) {
 }
 
 //convert "yyyy-mm-ddT00:00:00.000Z" to "yyyy-mm-dd"
-export function isoStringToDateString(isoString) {
+export function isoStringToDateString(isoString, showTime) {
   try {
     // Create a new Date object using the ISO string
     const date = new Date(isoString);
@@ -212,8 +199,16 @@ export function isoStringToDateString(isoString) {
     const month = String(date.getMonth() + 1).padStart(2, "0"); // Add leading zero if needed
     const day = String(date.getDate()).padStart(2, "0");
 
-    // Return the formatted date string in "yyyy-mm-dd" format
-    return `${year}-${month}-${day}`;
+    // The formatted date string in "yyyy-mm-dd" format
+    let result = `${year}-${month}-${day}`;
+
+    if (showTime) {
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      result += ` ${hours}:${minutes}`;
+    }
+
+    return result;
   } catch (error) {
     console.error("Error converting ISOString to date string:", error);
     return null; // Return null on errors

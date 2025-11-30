@@ -30,16 +30,16 @@ import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { saveAs } from "file-saver";
 import JSZipUtils from "jszip-utils";
-import { formatDateString } from "../utils/converter";
 import {
   getCrewContractByID_API,
   editCrewContractAPI,
   activeContractByID_API,
-} from "../services/contractServices";
+} from "@/services/contractServices";
 import {
+  formatDateString,
   isoStringToDateString,
   dateStringToISOString,
-} from "../utils/converter";
+} from "@utils/converter";
 import { HttpStatusCode } from "axios";
 
 const CrewContractDetail = () => {

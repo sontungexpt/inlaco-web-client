@@ -28,7 +28,7 @@ import {
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams, useLocation } from "react-router";
-import { formatDateTime } from "@utils/converter";
+import { formatDateTime } from "@/utils/converter";
 import Color from "@constants/Color";
 
 const CourseDetail = () => {

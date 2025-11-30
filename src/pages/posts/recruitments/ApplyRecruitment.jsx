@@ -15,7 +15,7 @@ import Color from "@constants/Color";
 import * as Yup from "yup";
 import { useNavigate, useParams } from "react-router";
 import { applyRecruitment } from "@/services/postServices";
-import { dateStringToISOString } from "@utils/converter";
+import { dateStringToISOString } from "@/utils/converter";
 import Regex from "@/constants/Regex";
 import { useMutation } from "@tanstack/react-query";
 

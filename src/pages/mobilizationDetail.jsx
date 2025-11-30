@@ -20,21 +20,21 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import SaveIcon from "@mui/icons-material/Save";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
-import { COLOR } from "../assets/Color";
+import Color from "@constants/Color";
 import { Formik } from "formik";
 import * as yup from "yup";
 import * as XLSX from "xlsx";
 import { useLocation, useParams } from "react-router";
-import { formatDate } from "../utils/converter";
 import {
   getMobilizationByID_API,
   editMobilizationAPI,
 } from "../services/mobilizationServices";
 import HttpStatusCode from "../constants/HttpStatusCode";
 import {
+  formatDate,
   isoStringToMUIDateTime,
   dateTimeStringToISOString,
-} from "../utils/converter";
+} from "@utils/converter";
 
 const MobilizationDetail = () => {
   const { id } = useParams();
@@ -345,10 +345,10 @@ const MobilizationDetail = () => {
                         <Button
                           variant="outlined"
                           sx={{
-                            color: COLOR.PrimaryOrgange,
+                            color: Color.PrimaryOrgange,
                             padding: "8px",
                             marginRight: 2,
-                            borderColor: COLOR.PrimaryOrgange,
+                            borderColor: Color.PrimaryOrgange,
                           }}
                           onClick={handleCancelClick}
                         >
@@ -376,8 +376,8 @@ const MobilizationDetail = () => {
                           type={"submit"}
                           disabled={!isValid || !dirty}
                           sx={{
-                            color: COLOR.PrimaryWhite,
-                            backgroundColor: COLOR.PrimaryBlue,
+                            color: Color.PrimaryWhite,
+                            backgroundColor: Color.PrimaryBlue,
                             padding: "10px",
                             marginTop: "1px",
                             marginBottom: "1px",
@@ -408,8 +408,8 @@ const MobilizationDetail = () => {
                         variant="contained"
                         type={"button"}
                         sx={{
-                          color: COLOR.PrimaryBlack,
-                          backgroundColor: COLOR.PrimaryGold,
+                          color: Color.PrimaryBlack,
+                          backgroundColor: Color.PrimaryGold,
                           padding: "10px",
                           marginTop: "1px",
                           marginBottom: "1px",
@@ -429,7 +429,7 @@ const MobilizationDetail = () => {
                             sx={{
                               fontWeight: 700,
                               fontSize: 14,
-                              color: COLOR.PrimaryBlack,
+                              color: Color.PrimaryBlack,
                             }}
                           >
                             Chỉnh sửa
@@ -543,7 +543,7 @@ const MobilizationDetail = () => {
                     fontSize: 18,
                     textDecoration: "underline",
                     fontStyle: "italic",
-                    color: COLOR.PrimaryBlackPlaceHolder,
+                    color: Color.PrimaryBlackPlaceHolder,
                   }}
                 >
                   Công việc:
@@ -563,13 +563,13 @@ const MobilizationDetail = () => {
                         { backgroundColor: "#FFF", marginBottom: 1 },
                         {
                           "& .MuiInputBase-input.Mui-disabled": {
-                            WebkitTextFillColor: COLOR.PrimaryBlack,
+                            WebkitTextFillColor: Color.PrimaryBlack,
                           },
                           "& .MuiOutlinedInput-root.Mui-disabled": {
-                            WebkitTextFillColor: COLOR.PrimaryBlack,
+                            WebkitTextFillColor: Color.PrimaryBlack,
                           },
                           "& .MuiInputLabel-root.Mui-disabled": {
-                            WebkitTextFillColor: COLOR.PrimaryBlack,
+                            WebkitTextFillColor: Color.PrimaryBlack,
                           },
                         },
                       ]} // Merging styles with spread operator
@@ -579,7 +579,7 @@ const MobilizationDetail = () => {
                             margin: 0,
                             paddingRight: 1,
                             paddingLeft: 1,
-                            backgroundColor: COLOR.PrimaryWhite,
+                            backgroundColor: Color.PrimaryWhite,
                           },
                         },
                       }}
@@ -594,7 +594,7 @@ const MobilizationDetail = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.PrimaryBlackPlaceHolder,
+                color: Color.PrimaryBlackPlaceHolder,
                 marginTop: 4,
               }}
             >
@@ -770,7 +770,7 @@ const MobilizationDetail = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.PrimaryBlackPlaceHolder,
+                color: Color.PrimaryBlackPlaceHolder,
                 marginTop: 4,
               }}
             >
@@ -899,8 +899,8 @@ const MobilizationDetail = () => {
                       variant="contained"
                       type="button"
                       sx={{
-                        color: COLOR.PrimaryBlack,
-                        backgroundColor: COLOR.PrimaryGold,
+                        color: Color.PrimaryBlack,
+                        backgroundColor: Color.PrimaryGold,
                         padding: "10px",
                         marginTop: "1px",
                         marginBottom: "1px",
@@ -935,15 +935,15 @@ const MobilizationDetail = () => {
                         {
                           width: "100%",
                           "& .actions": {
-                            color: COLOR.PrimaryBlackPlaceHolder,
+                            color: Color.PrimaryBlackPlaceHolder,
                           },
                           "& .MuiDataGrid-columnHeader": {
-                            backgroundColor: COLOR.SecondaryBlue,
-                            color: COLOR.PrimaryWhite,
+                            backgroundColor: Color.SecondaryBlue,
+                            color: Color.PrimaryWhite,
                           },
                           "& .MuiTablePagination-root": {
-                            backgroundColor: COLOR.SecondaryBlue,
-                            color: COLOR.PrimaryWhite,
+                            backgroundColor: Color.SecondaryBlue,
+                            color: Color.PrimaryWhite,
                           },
                         },
                       ]}

@@ -10,7 +10,7 @@ import {
   Grid,
   IconButton,
 } from "@mui/material";
-import { COLOR } from "../assets/Color";
+import Color from "@constants/Color";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import SaveIcon from "@mui/icons-material/Save";
@@ -28,14 +28,14 @@ import {
   getCrewContractByID_API,
   activeContractByID_API,
   editSupplyContractAPI,
-} from "../services/contractServices";
-import HttpStatusCode from "../constants/HttpStatusCode";
+} from "@/services/contractServices";
+import HttpStatusCode from "@/constants/HttpStatusCode";
 import {
   isoStringToDateString,
   isoStringToMUIDateTime,
   formatDateString,
   dateStringToISOString,
-} from "../utils/converter";
+} from "@utils/converter";
 
 const SupplyContractDetail = () => {
   const navigate = useNavigate();
@@ -450,9 +450,9 @@ const SupplyContractDetail = () => {
                   {!isEditable && !isOfficialContract && (
                     <IconButton
                       sx={{
-                        backgroundColor: COLOR.PrimaryBlue,
-                        color: COLOR.PrimaryWhite,
-                        "&:hover": { backgroundColor: COLOR.SecondaryBlue },
+                        backgroundColor: Color.PrimaryBlue,
+                        color: Color.PrimaryWhite,
+                        "&:hover": { backgroundColor: Color.SecondaryBlue },
                       }}
                       onClick={() => handleDownloadPaperContractClick(values)}
                     >
@@ -481,10 +481,10 @@ const SupplyContractDetail = () => {
                           <Button
                             variant="outlined"
                             sx={{
-                              color: COLOR.PrimaryOrgange,
+                              color: Color.PrimaryOrgange,
                               padding: "8px",
                               marginRight: 2,
-                              borderColor: COLOR.PrimaryOrgange,
+                              borderColor: Color.PrimaryOrgange,
                             }}
                             onClick={handleCancelClick}
                           >
@@ -512,8 +512,8 @@ const SupplyContractDetail = () => {
                             type={"submit"}
                             disabled={!isValid || !dirty}
                             sx={{
-                              color: COLOR.PrimaryWhite,
-                              backgroundColor: COLOR.PrimaryBlue,
+                              color: Color.PrimaryWhite,
+                              backgroundColor: Color.PrimaryBlue,
                               padding: "10px",
                               marginTop: "1px",
                               marginBottom: "1px",
@@ -545,8 +545,8 @@ const SupplyContractDetail = () => {
                             variant="contained"
                             type={"button"}
                             sx={{
-                              color: COLOR.PrimaryBlack,
-                              backgroundColor: COLOR.PrimaryGold,
+                              color: Color.PrimaryBlack,
+                              backgroundColor: Color.PrimaryGold,
                               padding: "10px",
                               marginTop: "1px",
                               marginBottom: "1px",
@@ -567,7 +567,7 @@ const SupplyContractDetail = () => {
                                 sx={{
                                   fontWeight: 700,
                                   fontSize: 14,
-                                  color: COLOR.PrimaryBlack,
+                                  color: Color.PrimaryBlack,
                                 }}
                               >
                                 Chỉnh sửa
@@ -579,8 +579,8 @@ const SupplyContractDetail = () => {
                             sx={{
                               width: "35%",
                               padding: 1,
-                              color: COLOR.PrimaryWhite,
-                              backgroundColor: COLOR.PrimaryGreen,
+                              color: Color.PrimaryWhite,
+                              backgroundColor: Color.PrimaryGreen,
                               minWidth: 130,
                             }}
                             onClick={() => handleApproveContract()}
@@ -610,8 +610,8 @@ const SupplyContractDetail = () => {
                       sx={{
                         width: "15%",
                         padding: 1,
-                        color: COLOR.PrimaryBlack,
-                        backgroundColor: COLOR.PrimaryGold,
+                        color: Color.PrimaryBlack,
+                        backgroundColor: Color.PrimaryGold,
                         minWidth: 130,
                       }}
                     >
@@ -687,10 +687,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -719,10 +719,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -750,10 +750,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -783,10 +783,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -816,10 +816,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -850,10 +850,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -882,10 +882,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -913,10 +913,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -946,10 +946,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -979,10 +979,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1016,10 +1016,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -1055,10 +1055,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -1094,10 +1094,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                     "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
                       {
@@ -1123,7 +1123,7 @@ const SupplyContractDetail = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.PrimaryBlackPlaceHolder,
+                color: Color.PrimaryBlackPlaceHolder,
               }}
             >
               Lịch trình dự kiến:
@@ -1154,10 +1154,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -1191,10 +1191,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1223,10 +1223,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1256,10 +1256,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                   slotProps={{
@@ -1293,10 +1293,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -1325,10 +1325,10 @@ const SupplyContractDetail = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />

@@ -6,16 +6,11 @@ import {
 import { useQuery } from "@tanstack/react-query";
 
 export const usePost = (id) => {
-  const result = useQuery({
+  return useQuery({
     queryKey: ["post", id],
     queryFn: () => fetchUniquePost(id),
     enabled: !!id,
   });
-  const post = result.data;
-  return {
-    post,
-    ...result,
-  };
 };
 
 export const usePosts = (page, size = 20, type = "NEWS", sort = null) => {

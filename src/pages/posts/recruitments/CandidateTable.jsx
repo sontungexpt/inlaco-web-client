@@ -4,7 +4,7 @@ import { DataGrid, GridFooter, GridFooterContainer } from "@mui/x-data-grid";
 import Color from "@constants/Color";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
-import { isoStringToAppDateString } from "@utils/converter";
+import { isoStringToAppDateString } from "@/utils/converter";
 import { NoValuesOverlay } from "@/components/global";
 
 const STATUS_FILTERS = [

@@ -12,7 +12,7 @@ import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRound
 import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined";
 import { useNavigate } from "react-router";
 import { fetchCrewMembers } from "@/services/crewServices";
-import { isoStringToAppDateString } from "@utils/converter";
+import { isoStringToAppDateString } from "@/utils/converter";
 import Color from "@constants/Color";
 import { HttpStatusCode } from "axios";
 

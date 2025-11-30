@@ -110,24 +110,6 @@ export const getCandidateByID_API = async (candidateID) => {
   }
 };
 
-export const createRecruitmentPostAPI = async (postInfo) => {
-  try {
-    const response = await privateRequest.post(`${PostEndpoint.GENERAL}`, {
-      title: postInfo.title,
-      content: postInfo.content,
-      recruitmentStartDate: postInfo.recruitmentStartDate,
-      recruitmentEndDate: postInfo.recruitmentEndDate,
-      position: postInfo.position,
-      expectedSalary: postInfo.expectedSalary,
-      workLocation: postInfo.workLocation,
-      type: "RECRUITMENT",
-    });
-    return response;
-  } catch (err) {
-    return err.response;
-  }
-};
-
 export const applyRecruitment = async (
   postID,
   {
@@ -156,6 +138,24 @@ export const applyRecruitment = async (
       },
     );
     return response;
+  } catch (err) {
+    console.debug(err);
+    throw err;
+  }
+};
+
+export const changeRegistrationRecruitmentPostStatus = async (id, active) => {
+  try {
+    const response = await privateRequest.post(
+      PostEndpoint.CHANGE_REGISTRATION_RECRUIMENT_POST_STATUS(id),
+      null,
+      {
+        params: {
+          active,
+        },
+      },
+    );
+    return response.data;
   } catch (err) {
     console.debug(err);
     throw err;

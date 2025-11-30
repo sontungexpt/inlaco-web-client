@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Card,
@@ -9,29 +9,52 @@ import {
   CircularProgress,
   Divider,
 } from "@mui/material";
-
 import Color from "@constants/Color";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import EventBusyRoundedIcon from "@mui/icons-material/EventBusyRounded";
-
+import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { isoStringToDateString } from "@utils/converter";
 import { usePost } from "@/hooks/services/posts";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { changeRegistrationRecruitmentPostStatus } from "@/services/postServices";
+import { isoToLocalDatetime } from "@/utils/converter";
 
 const RecruitmentDetail = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { id } = useParams();
 
   const { roles } = useAuthContext();
   const isAdmin = roles.includes("ADMIN");
   const isAlreadyApplied = false;
 
-  const { post, isLoading } = usePost(id);
-  const isActive = post?.isActive || true;
+  const { data: post, isLoading } = usePost(id);
+  const active = Boolean(post?.active);
 
-  const [openClosedLoading, setOpenClosedLoading] = useState(false);
-  // const [isActive, setIsActive] = useState(false);
+  const {
+    mutateAsync: changeRegistrationStatus,
+    isPending: isTogglingOpenStatus,
+  } = useMutation({
+    throwOnError: false,
+    mutationFn: (active) => changeRegistrationRecruitmentPostStatus(id, active),
+    onSuccess: () => {
+      queryClient.setQueryData(["post", id], (oldValue) => {
+        return {
+          ...oldValue,
+          active: !active,
+        };
+      });
+    },
+  });
+
+  const toggleRecruitmentClosingStatus = async () => {
+    try {
+      await changeRegistrationStatus(active);
+    } catch (err) {
+      toast.error("Thay đổi trạng thái thất bại!");
+    }
+  };
 
   const handleUserApplicationClick = () => {
     navigate(
@@ -91,35 +114,35 @@ const RecruitmentDetail = () => {
           }}
         >
           <Chip
-            label={isActive ? "Đang tuyển" : "Đã đóng"}
-            color={isActive ? "success" : "error"}
+            label={active ? "Đang tuyển" : "Đã đóng"}
+            color={active ? "success" : "error"}
             sx={{ fontSize: 14, px: 2 }}
           />
 
           {isAdmin && (
             <Button
               variant="contained"
-              disabled={openClosedLoading}
-              // onClick={}
+              disabled={isTogglingOpenStatus}
+              onClick={toggleRecruitmentClosingStatus}
               sx={{
                 py: 1.1,
                 borderRadius: 2,
-                backgroundColor: !isActive
+                backgroundColor: !active
                   ? Color.PrimaryBlue
                   : Color.PrimaryOrgange,
                 minWidth: 180,
               }}
             >
-              {openClosedLoading ? (
+              {isTogglingOpenStatus ? (
                 <CircularProgress size={22} />
               ) : (
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  {!isActive ? (
+                  {!active ? (
                     <CheckCircleRoundedIcon sx={{ mr: 1 }} />
                   ) : (
                     <EventBusyRoundedIcon sx={{ mr: 1 }} />
                   )}
-                  {isActive ? "Đóng tuyển dụng" : "Mở tuyển dụng"}
+                  {active ? "Đóng tuyển dụng" : "Mở tuyển dụng"}
                 </Box>
               )}
             </Button>
@@ -169,7 +192,7 @@ const RecruitmentDetail = () => {
                 📅 Ngày mở
               </Typography>
               <Typography>
-                {isoStringToDateString(post.recruitmentStartDate)}
+                {isoToLocalDatetime(post.recruitmentStartDate)}
               </Typography>
             </Box>
 
@@ -178,7 +201,7 @@ const RecruitmentDetail = () => {
                 📅 Ngày đóng
               </Typography>
               <Typography>
-                {isoStringToDateString(post.recruitmentEndDate)}
+                {isoToLocalDatetime(post.recruitmentEndDate)}
               </Typography>
             </Box>
 
@@ -201,17 +224,15 @@ const RecruitmentDetail = () => {
               Thông tin liên hệ
             </Typography>
             <Box mt={1}>
-              <Typography color="text.secondary">👤 Người liên hệ</Typography>
-              <Typography fontWeight={600}>
-                {post.contactName || "—"}
+              <Typography fontWeight={600} color="text.secondary">
+                👤 Tên công ty
               </Typography>
+              <Typography>{post.company || "—"}</Typography>
 
-              <Typography mt={1} color="text.secondary">
+              <Typography fontWeight={600} mt={1} color="text.secondary">
                 📧 Email
               </Typography>
-              <Typography fontWeight={600}>
-                {post.contactEmail || "—"}
-              </Typography>
+              <Typography>{post.contactEmail || "—"}</Typography>
 
               <Typography mt={1} color="text.secondary">
                 📞 Số điện thoại

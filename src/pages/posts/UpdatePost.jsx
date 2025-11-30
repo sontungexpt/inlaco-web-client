@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { PageTitle } from "@/components/global";
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import Color from "@/constants/Color";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
@@ -12,7 +12,7 @@ import PostForm from "./PostForm";
 export default function UpdatePost() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { post, isLoading } = usePost(id);
+  const { data: post, isLoading } = usePost(id);
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -59,7 +59,24 @@ export default function UpdatePost() {
   };
 
   if (isLoading) {
-    return <div>Đang tải...</div>;
+    return (
+      <Box
+        sx={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0,0,0,0.1)",
+          zIndex: 9999,
+        }}
+      >
+        <CircularProgress size={60} />
+      </Box>
+    );
   }
 
   return (
@@ -73,14 +90,14 @@ export default function UpdatePost() {
       <PostForm
         mode="edit"
         isSubmitting={isUpdating}
-        fixedType={post.type}
+        fixedType={post?.type}
         initialValues={{
           ...post,
           recruitmentStartDate:
-            post?.recruitmentStartDate ||
+            post?.recruitmentStartDate &&
             isoStringToMUIDateTime(post.recruitmentStartDate),
           recruitmentEndDate:
-            post?.recruitmentEndDate ||
+            post?.recruitmentEndDate &&
             isoStringToMUIDateTime(post.recruitmentEndDate),
         }}
         onSubmit={handleSubmit}
