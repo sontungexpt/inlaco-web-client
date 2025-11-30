@@ -99,14 +99,15 @@ export const fetchCandidates = async ({
   }
 };
 
-export const getCandidateByID_API = async (candidateID) => {
+export const fetchUniqueCandidate = async (candidateID) => {
   try {
     const response = await privateRequest.get(
-      `${PostEndpoint.CANDIDATE_GENERAL}/${candidateID}`,
+      PostEndpoint.GET_CANDIDATE_BY_ID(candidateID),
     );
-    return response;
+    return response.data;
   } catch (err) {
-    return err.response;
+    console.debug(err);
+    throw err;
   }
 };
 
@@ -173,14 +174,22 @@ export const candidate_GetApplicationAPI = async () => {
   }
 };
 
-export const approveCandidateApplicationAPI = async (candidateID) => {
+export const reviewCandidateApplication = async (candidateID, status) => {
   try {
     const response = await privateRequest.post(
-      `${PostEndpoint.REVIEW_CANDIDATE}/${candidateID}?autoEmail=true&status=WAIT_FOR_INTERVIEW`,
+      PostEndpoint.REVIEW_CANDIDATE(candidateID),
+      null,
+      {
+        params: {
+          autoEmail: true,
+          status,
+        },
+      },
     );
     return response;
   } catch (err) {
-    return err.response;
+    console.debug(err);
+    throw err;
   }
 };
 

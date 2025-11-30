@@ -1,6 +1,7 @@
 import {
   fetchCandidates,
   fetchPosts,
+  fetchUniqueCandidate,
   fetchUniquePost,
 } from "@/services/postServices";
 import { useQuery } from "@tanstack/react-query";
@@ -41,7 +42,7 @@ export const useCandidates = ({
       sizePerPage,
       sort,
     ],
-    queryFn: () =>
+    queryFn: async () =>
       fetchCandidates({
         page,
         size: sizePerPage,
@@ -51,5 +52,14 @@ export const useCandidates = ({
       }),
     enabled: !!status,
     staleTime: 1000 * 60, // cache 1 phút
+  });
+};
+
+export const useCandidate = (candidateId) => {
+  return useQuery({
+    queryKey: ["candidate-profile", candidateId],
+    queryFn: () => fetchUniqueCandidate(candidateId),
+    staleTime: 1000 * 60 * 2, // 2 phút cache (tùy chỉnh)
+    retry: 1, // thử lại 1 lần nếu fail
   });
 };

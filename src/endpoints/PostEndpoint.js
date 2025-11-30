@@ -9,10 +9,12 @@ const PostEndpoint = {
     `/v1/recruitments/registration-status/${id}`,
 
   CANDIDATE_GENERAL: "/v1/candidates",
+  GET_CANDIDATE_BY_ID: (id) => `/v1/candidates/${id}`,
+  REVIEW_CANDIDATE: (id) => `/v1/candidates/review/${id}`,
+
   CANDIDATE_APPLY: (postID) => `/v1/candidates/recruitment/${postID}`,
   CANDIDATE_APPLICATION: "/v1/candidates/profile/me",
   GET_ALL_CANDIDATES: "/v1/candidates/web",
-  REVIEW_CANDIDATE: "/v1/candidates/review",
 };
 
 export default PostEndpoint;

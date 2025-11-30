@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { PageTitle, NoValuesOverlay } from "../components/global";
-import { Box, Button, Typography, CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { ShipInfoCell, ScheduleCell } from "../components/mobilization";
-import { COLOR } from "../assets/Color";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useNavigate } from "react-router";
 import { getMyMobilizationAPI } from "../services/mobilizationServices";
 import { getProfileCurrentCrewMemberAPI } from "../services/crewServices";
-import HttpStatusCode from "../constants/HttpStatusCode";
-import { formatDateTime } from "../utils/converter";
+import { formatDateTime } from "@utils/converter";
+import Color from "@constants/Color";
+import { HttpStatusCode } from "axios";
 
 const CrewMyMobilization = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const CrewMyMobilization = () => {
         const response = await getProfileCurrentCrewMemberAPI();
         await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-        if (response.status === HttpStatusCode.OK) {
+        if (response.status === HttpStatusCode.Ok) {
           setCardID(response.data.cardId);
         }
       } catch (err) {
@@ -186,8 +186,8 @@ const CrewMyMobilization = () => {
                 )
               }
               sx={{
-                backgroundColor: COLOR.PrimaryGreen,
-                color: COLOR.PrimaryBlack,
+                backgroundColor: Color.PrimaryGreen,
+                color: Color.PrimaryBlack,
                 fontWeight: 700,
                 textTransform: "capitalize",
               }}
@@ -325,12 +325,12 @@ const CrewMyMobilization = () => {
           maxWidth={1600}
           sx={{
             "& .MuiDataGrid-columnHeader": {
-              backgroundColor: COLOR.SecondaryBlue,
-              color: COLOR.PrimaryWhite,
+              backgroundColor: Color.SecondaryBlue,
+              color: Color.PrimaryWhite,
             },
             "& .MuiTablePagination-root": {
-              backgroundColor: COLOR.SecondaryBlue,
-              color: COLOR.PrimaryWhite,
+              backgroundColor: Color.SecondaryBlue,
+              color: Color.PrimaryWhite,
             },
           }}
         >

@@ -15,6 +15,7 @@ import { fetchCrewMembers } from "@/services/crewServices";
 import { isoStringToAppDateString } from "@/utils/converter";
 import Color from "@constants/Color";
 import { HttpStatusCode } from "axios";
+import CandidateStatus from "@/constants/CandidateStatus";
 
 const CrewInfos = () => {
   const navigate = useNavigate();
@@ -334,7 +335,7 @@ const CrewInfos = () => {
                 color={Color.PrimaryBlack}
                 backgroundColor={Color.SecondaryWhite}
                 sx={{
-                  width: "40%",
+                  width: "50%",
                 }}
               />
               <Button
@@ -347,8 +348,10 @@ const CrewInfos = () => {
                 onClick={() =>
                   navigate("/recruitment", {
                     state: {
-                      tabValue: 1,
-                      candidateStatus: "WAIT_FOR_INTERVIEW",
+                      tab: 1,
+                      candidate: {
+                        status: CandidateStatus.WAIT_FOR_INTERVIEW,
+                      },
                     },
                   })
                 }

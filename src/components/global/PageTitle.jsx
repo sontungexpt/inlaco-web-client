@@ -1,9 +1,9 @@
 import { Typography, Box } from "@mui/material";
 import { COLOR } from "../../assets/Color";
 
-const PageTitle = ({ title, subtitle }) => {
+const PageTitle = ({ title, subtitle, ...props }) => {
   return (
-    <Box mb="30px">
+    <Box mb="14px" {...props}>
       <Typography variant="h5" color={COLOR.PrimaryBlack} fontWeight="bold">
         {title}
       </Typography>

@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { PageTitle, NoValuesOverlay, SearchBar } from "../components/global";
-import {
-  Box,
-  Button,
-  Typography,
-  CircularProgress,
-  Select,
-  MenuItem,
-} from "@mui/material";
+import { Box, Button, CircularProgress, Select, MenuItem } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { COLOR } from "../assets/Color";
-import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useNavigate } from "react-router";
-import { getCrewContractsAPI } from "../services/contractServices";
-import HttpStatusCode from "../constants/HttpStatusCode";
-import { isoStringToAppDateString } from "../utils/converter";
+import { getCrewContractsAPI } from "@/services/contractServices";
+import { isoStringToAppDateString } from "@utils/converter";
+import Color from "@constants/Color";
+import { HttpStatusCode } from "axios";
 
 const CrewContract = () => {
   const navigate = useNavigate();
@@ -29,7 +21,7 @@ const CrewContract = () => {
       const response = await getCrewContractsAPI(0, 10, signed);
       await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
-      if (response.status === HttpStatusCode.OK) {
+      if (response.status === HttpStatusCode.Ok) {
         console.log("Crew contracts: ", response.data.content);
         setCrewContracts(response.data.content);
       }
@@ -103,8 +95,8 @@ const CrewContract = () => {
             size="small"
             onClick={() => onContractDetailClick(params?.id)}
             sx={{
-              backgroundColor: COLOR.PrimaryGreen,
-              color: COLOR.PrimaryBlack,
+              backgroundColor: Color.PrimaryGreen,
+              color: Color.PrimaryBlack,
               fontWeight: 700,
               textTransform: "capitalize",
             }}
@@ -139,12 +131,12 @@ const CrewContract = () => {
           maxWidth={1600}
           sx={{
             "& .MuiDataGrid-columnHeader": {
-              backgroundColor: COLOR.SecondaryBlue,
-              color: COLOR.PrimaryWhite,
+              backgroundColor: Color.SecondaryBlue,
+              color: Color.PrimaryWhite,
             },
             "& .MuiTablePagination-root": {
-              backgroundColor: COLOR.SecondaryBlue,
-              color: COLOR.PrimaryWhite,
+              backgroundColor: Color.SecondaryBlue,
+              color: Color.PrimaryWhite,
             },
           }}
         >
@@ -161,8 +153,8 @@ const CrewContract = () => {
               placeholder={
                 "Nhập tên hoặc mã thuyền viên cần tìm kiếm (VD: Nguyễn Văn A,...)"
               }
-              color={COLOR.PrimaryBlack}
-              backgroundColor={COLOR.SecondaryWhite}
+              color={Color.PrimaryBlack}
+              backgroundColor={Color.SecondaryWhite}
               sx={{
                 width: "40%",
               }}

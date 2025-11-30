@@ -6,15 +6,15 @@ import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRound
 import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import { isoStringToAppDateString } from "@/utils/converter";
 import { NoValuesOverlay } from "@/components/global";
-
-const STATUS_FILTERS = [
-  { label: "Đã nộp", value: "APPLIED" },
-  { label: "Đã qua vòng phỏng vấn", value: "WAIT_FOR_INTERVIEW" },
-  { label: "Từ chối", value: "REJECTED" },
-  { label: "Đã ký hợp đồng", value: "HIRED" },
-];
+import CandidateStatus from "@/constants/CandidateStatus";
 
 const CustomFooter = ({ filterStatus, onFilterStatusChange }) => {
+  const STATUS_FILTERS = [
+    { label: "Đã nộp", value: "APPLIED" },
+    { label: "Đã qua vòng phỏng vấn", value: "WAIT_FOR_INTERVIEW" },
+    { label: "Từ chối", value: "REJECTED" },
+    { label: "Đã ký hợp đồng", value: "HIRED" },
+  ];
   return (
     <GridFooterContainer
       sx={{
@@ -68,7 +68,7 @@ const CandidateTable = ({
   loading = false,
   filterStatus,
   onFilterStatusChange,
-  candidateStatus = "APPLIED",
+  candidateStatus = CandidateStatus.APPLIED,
   onAdminMemberDetailClick,
   onCreateCrewMemberClick,
   paginationModel,

@@ -35,7 +35,7 @@ import UserSupplyRequestDetail from "./pages/UserSupplyRequestDetail";
 import CreateSupplyRequest from "./pages/supplication/CreateSupplyRequest";
 
 import CrewRecruitment from "./pages/posts/recruitments/CrewRecruitment";
-import AdminCandidateDetail from "./pages/adminCandidateDetail";
+import AdminCandidateDetail from "./pages/candidates/AdminCandidateDetail";
 import UserCandidateDetail from "./pages/UserCandidateDetail";
 import ApplyRecruitment from "./pages/posts/recruitments/ApplyRecruitment";
 import CreateRecruitment from "./pages/posts/recruitments/CreateRecruitment";
