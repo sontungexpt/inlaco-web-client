@@ -17,8 +17,6 @@ import CreateSupplyContract from "@pages/createSupplyContract";
 import SupplyContractDetail from "@pages/SupplyContractDetail";
 import SupplyContractAddendum from "@pages/supplyContractAddendum";
 
-import TemplateContract from "@pages/TemplateContract";
-
 import SupplyRequest from "@pages/supplication/SupplyRequest";
 import AdminSupplyRequestDetail from "@pages/adminSupplyRequestDetail";
 import UserSupplyRequestDetail from "@pages/UserSupplyRequestDetail";
@@ -26,7 +24,7 @@ import CreateSupplyRequest from "@/pages/supplication/CreateSupplyRequest";
 
 import CrewRecruitment from "@pages/posts/recruitments/CrewRecruitment";
 import AdminCandidateDetail from "@/pages/candidates/AdminCandidateDetail";
-import UserCandidateDetail from "@pages/UserCandidateDetail";
+import UserCandidateDetail from "@/pages/candidates/UserCandidateDetail";
 import ApplyRecruitment from "@pages/posts/recruitments/ApplyRecruitment";
 import CreateRecruitment from "@pages/posts/recruitments/CreateRecruitment";
 import RecruitmentDetail from "@pages/posts/recruitments/RecruitmentDetail";
@@ -52,6 +50,9 @@ const AddCrewMember = lazy(() => import("@pages/AddCrewMember"));
 const CrewMyMobilization = lazy(() => import("@pages/CrewMyMobilization"));
 const CrewMemberDetail = lazy(() => import("@pages/CrewMemberDetail"));
 const CrewProfile = lazy(() => import("@pages/CrewProfile"));
+const TemplateContract = lazy(
+  () => import("@pages/contracts/TemplateContract"),
+);
 
 const ADMIN_SAILOR = [UserRole.ADMIN, UserRole.SAILOR];
 

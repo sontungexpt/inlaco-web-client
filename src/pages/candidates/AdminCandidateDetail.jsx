@@ -12,7 +12,7 @@ import {
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import { Formik } from "formik";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import Color from "@constants/Color";
 import { reviewCandidateApplication } from "@/services/postServices";
 import { isoStringToDateString } from "@utils/converter";
@@ -22,11 +22,12 @@ import CandidateStatus from "@/constants/CandidateStatus";
 import toast from "react-hot-toast";
 
 const AdminCandidateDetail = () => {
+  const navigate = useNavigate();
   const { candidateID } = useParams();
   const queryClient = useQueryClient();
 
   const { data: candidateInfo, isLoading } = useCandidate(candidateID);
-  const { mutateAsync: reviewCandidate, isPending: isReviewing } = useMutation({
+  const { mutateAsync, isPending: isReviewing } = useMutation({
     mutationFn: (status) => reviewCandidateApplication(candidateID, status),
     onSuccess: () => {
       // Refetch lại profile ngay lập tức
@@ -35,6 +36,13 @@ const AdminCandidateDetail = () => {
       });
     },
   });
+  const reviewCandidateAsync = async (status) => {
+    try {
+      await mutateAsync(status);
+    } catch {
+      toast.error("Thay đổi trạng thái thất bại!");
+    }
+  };
 
   const GENDERS = [
     { label: "Nam", value: "MALE" },
@@ -43,12 +51,12 @@ const AdminCandidateDetail = () => {
   ];
 
   const STATUS_MAP = {
-    APPLIED: "Đã nộp",
-    WAIT_FOR_INTERVIEW: "Đã qua vòng phỏng vấn",
-    REJECTED: "Từ chối",
-    HIRED: "Đã ký hợp đồng",
+    [CandidateStatus.APPLIED]: "Đã nộp",
+    [CandidateStatus.WAIT_FOR_INTERVIEW]: "Đang đợi phỏng vấn",
+    [CandidateStatus.REJECTED]: "Từ chối",
+    [CandidateStatus.HIRED]: "Đã ký hợp đồng",
   };
-  const status = STATUS_MAP[candidateInfo?.status] || "Lỗi";
+  const status = candidateInfo?.status;
 
   const initialValues = {
     fullName: candidateInfo?.fullName || "",
@@ -64,19 +72,19 @@ const AdminCandidateDetail = () => {
   };
 
   const handleApproveClick = async () => {
-    try {
-      await reviewCandidate(CandidateStatus.WAIT_FOR_INTERVIEW);
-    } catch {
-      toast.error("Thay đổi trạng thái thất bại!");
+    if (status === CandidateStatus.REJECTED) {
+      await reviewCandidateAsync(CandidateStatus.WAIT_FOR_INTERVIEW);
+    } else if (status === CandidateStatus.APPLIED) {
+      await reviewCandidateAsync(CandidateStatus.WAIT_FOR_INTERVIEW);
+    } else if (status === CandidateStatus.WAIT_FOR_INTERVIEW) {
+      await reviewCandidateAsync(CandidateStatus.HIRED);
+    } else if (status === CandidateStatus.HIRED) {
+      navigate(`/crew-contracts/create/${candidateID}`);
     }
   };
 
   const handleDeclineClick = async () => {
-    try {
-      await reviewCandidate(CandidateStatus.REJECTED);
-    } catch {
-      toast.error("Thay đổi trạng thái thất bại!");
-    }
+    await reviewCandidateAsync(CandidateStatus.REJECTED);
   };
 
   if (isLoading) {
@@ -115,13 +123,13 @@ const AdminCandidateDetail = () => {
         </Box>
 
         <StatusLabel
-          label={status}
+          label={STATUS_MAP[candidateInfo?.status] || "Lỗi"}
           color={
-            status === "Đã nộp"
+            status === CandidateStatus.APPLIED
               ? Color.PrimaryBlackPlaceHolder
-              : status === "Từ chối"
+              : status === CandidateStatus.REJECTED
                 ? Color.PrimaryOrgange
-                : status === "Đã qua vòng phỏng vấn"
+                : status === CandidateStatus.WAIT_FOR_INTERVIEW
                   ? Color.PrimaryGreen
                   : Color.SecondaryGold
           }
@@ -129,70 +137,76 @@ const AdminCandidateDetail = () => {
       </Box>
 
       {/* ACTION BUTTONS */}
-      {status === "Đã nộp" && (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            mb: 3,
-            gap: 2,
-          }}
-        >
-          {isReviewing ? (
-            <Box
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          mb: 3,
+          gap: 2,
+        }}
+      >
+        {isReviewing ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: 220, // chiều rộng tương đương 2 nút → spinner vào giữa
+              height: 40,
+            }}
+          >
+            <CircularProgress size={24} sx={{ color: Color.PrimaryBlue }} />
+          </Box>
+        ) : (
+          <>
+            <Button
+              variant="contained"
+              onClick={handleApproveClick}
+              disabled={isReviewing}
               sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: 220, // chiều rộng tương đương 2 nút → spinner vào giữa
-                height: 40,
+                px: 3,
+                py: 1,
+                bgcolor: Color.PrimaryBlue,
+                color: "#fff",
+                borderRadius: 2,
+                boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
+                textTransform: "none",
+                fontWeight: 600,
+                ":hover": { opacity: 0.9, bgcolor: Color.PrimaryBlue },
               }}
             >
-              <CircularProgress size={24} sx={{ color: Color.PrimaryBlue }} />
-            </Box>
-          ) : (
-            <>
-              <Button
-                variant="contained"
-                onClick={handleApproveClick}
-                disabled={isReviewing}
-                sx={{
-                  px: 3,
-                  py: 1,
-                  bgcolor: Color.PrimaryBlue,
-                  color: "#fff",
-                  borderRadius: 2,
-                  boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
-                  textTransform: "none",
-                  fontWeight: 600,
-                  ":hover": { opacity: 0.9, bgcolor: Color.PrimaryBlue },
-                }}
-              >
-                <CheckCircleRoundedIcon sx={{ mr: 1 }} /> Chấp nhận
-              </Button>
+              <CheckCircleRoundedIcon sx={{ mr: 1 }} />
+              {status === CandidateStatus.WAIT_FOR_INTERVIEW
+                ? "Thuê"
+                : status === CandidateStatus.HIRED
+                  ? "Tạo hợp đồng"
+                  : "Chấp nhận"}
+            </Button>
 
-              <Button
-                variant="contained"
-                onClick={handleDeclineClick}
-                disabled={isReviewing}
-                sx={{
-                  px: 3,
-                  py: 1,
-                  bgcolor: Color.PrimaryOrgange,
-                  color: "#fff",
-                  borderRadius: 2,
-                  boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
-                  textTransform: "none",
-                  fontWeight: 600,
-                  ":hover": { opacity: 0.9, bgcolor: Color.PrimaryOrgange },
-                }}
-              >
-                <CancelRoundedIcon sx={{ mr: 1 }} /> Từ chối
-              </Button>
-            </>
-          )}
-        </Box>
-      )}
+            {status !== CandidateStatus.HIRED &&
+              status !== CandidateStatus.REJECTED && (
+                <Button
+                  variant="contained"
+                  onClick={handleDeclineClick}
+                  disabled={isReviewing}
+                  sx={{
+                    px: 3,
+                    py: 1,
+                    bgcolor: Color.PrimaryOrgange,
+                    color: "#fff",
+                    borderRadius: 2,
+                    boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    ":hover": { opacity: 0.9, bgcolor: Color.PrimaryOrgange },
+                  }}
+                >
+                  <CancelRoundedIcon sx={{ mr: 1 }} /> Từ chối
+                </Button>
+              )}
+          </>
+        )}
+      </Box>
 
       {/* FORM */}
       <Formik validateOnChange={false} initialValues={initialValues}>

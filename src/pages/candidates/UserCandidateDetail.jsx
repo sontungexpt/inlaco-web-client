@@ -6,8 +6,8 @@ import {
   StatusLabel,
   HorizontalImageInput,
   MultilineFileUploadField,
-} from "../components/global";
-import { CardPhotoInput } from "../components/contract";
+} from "../../components/global";
+import { CardPhotoInput } from "../../components/contract";
 import { Box, Typography, Grid } from "@mui/material";
 import { Formik } from "formik";
 import { useNavigate, useParams } from "react-router";

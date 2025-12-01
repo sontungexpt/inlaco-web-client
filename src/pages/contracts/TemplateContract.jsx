@@ -17,7 +17,7 @@ const TemplateContract = () => {
     };
 
     loadFile(
-      require("../assets/templates/template-hop-dong-thuyen-vien.docx"),
+      require("@assets/templates/template-hop-dong-thuyen-vien.docx"),
       (error, content) => {
         if (error) {
           throw error;

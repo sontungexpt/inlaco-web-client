@@ -45,7 +45,6 @@ const TopBar = () => {
         placeholder={"Tìm kiếm trang......"}
         backgroundColor={Color.SecondaryBlue}
         color={Color.PrimaryWhite}
-        sx={{ width: "20%" }}
       />
 
       {/* ICONS */}
@@ -60,6 +59,7 @@ const TopBar = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                width: "30%",
               }}
             >
               <PersonOutlinedIcon
