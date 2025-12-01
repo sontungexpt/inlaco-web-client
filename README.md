@@ -1,5 +1,9 @@
 # INLACO Crew Management System
 
+## Reference
+
+- [INLACO Crew Management Backend](https://github.com/sontungexpt/inlaco-crewmgr-service)
+
 ## Prerequisites
 
 - Node.js and npm installed

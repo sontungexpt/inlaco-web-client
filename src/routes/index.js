@@ -7,11 +7,6 @@ import CrewMobilization from "@pages/crewMobilization";
 import CreateMobilization from "@pages/createMobilization";
 import MobilizationDetail from "@pages/mobilizationDetail";
 
-import CrewContract from "@pages/crewContract";
-import CreateCrewContract from "@pages/createCrewContract";
-import CrewContractDetail from "@pages/crewContractDetail";
-import CrewContractAddendum from "@pages/crewContractAddendum";
-
 import SupplyContract from "@pages/supplyContract";
 import CreateSupplyContract from "@pages/createSupplyContract";
 import SupplyContractDetail from "@pages/SupplyContractDetail";
@@ -37,6 +32,14 @@ import RoutePath from "@/constants/RoutePath";
 import CreatePost from "@/pages/posts/CreatePost";
 import PostDetail from "@/pages/posts/PostDetail";
 import UpdatePost from "@/pages/posts/UpdatePost";
+
+import CrewContract from "@pages/crewContract";
+import CrewContractDetail from "@pages/crewContractDetail";
+import CrewContractAddendum from "@pages/crewContractAddendum";
+
+const CreateCrewContract = lazy(
+  () => import("@pages/contracts/CreateCrewContract"),
+);
 
 const E404 = lazy(() => import("@/pages/E404"));
 const LoginPage = lazy(() => import("@pages/auth/LoginPage"));

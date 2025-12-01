@@ -1,24 +1,24 @@
 import React, { useState } from "react";
-import { PageTitle, SectionDivider, InfoTextField } from "../components/global";
-import { FileUploadField } from "../components/contract";
+import { PageTitle, SectionDivider, InfoTextField } from "@components/global";
+import { FileUploadField } from "@components/contract";
 import {
   Box,
   Button,
   Typography,
-  TextField,
   Grid,
   MenuItem,
   CircularProgress,
   InputAdornment,
 } from "@mui/material";
-import { COLOR } from "../assets/Color";
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams } from "react-router";
-import HttpStatusCode from "../constants/HttpStatusCode";
-import { createCrewContractAPI } from "../services/contractServices";
-import { dateStringToISOString } from "../utils/converter";
+import Color from "@constants/Color";
+import { createCrewContractAPI } from "@/services/contractServices";
+import { dateStringToISOString } from "@utils/converter";
+import { HttpStatusCode } from "axios";
+import Regex from "@/constants/Regex";
 
 const CreateCrewContract = () => {
   const navigate = useNavigate();
@@ -66,8 +66,6 @@ const CreateCrewContract = () => {
     },
   };
 
-  const phoneRegex =
-    "^(\\+84|0)(3[2-9]|5[2689]|7[06-9]|8[1-9]|9[0-46-9])\\d{7}$";
   const ciNumberRegex = "^\\d{12}$";
 
   const crewContractSchema = yup.object().shape({
@@ -79,7 +77,7 @@ const CreateCrewContract = () => {
 
       compPhoneNumber: yup
         .string()
-        .matches(phoneRegex, "SĐT không hợp lệ")
+        .matches(Regex.VN_PHONE, "SĐT không hợp lệ")
         .required("SĐT không được để trống"),
 
       representative: yup
@@ -349,7 +347,7 @@ const CreateCrewContract = () => {
 
       console.log("Response: ", values);
 
-      if (response.status === HttpStatusCode.CREATED) {
+      if (response.status === HttpStatusCode.Created) {
         resetForm();
         navigate("/crew-contracts");
       }
@@ -407,13 +405,13 @@ const CreateCrewContract = () => {
                     sx={{
                       width: "10%",
                       padding: 1,
-                      color: COLOR.PrimaryBlack,
-                      backgroundColor: COLOR.PrimaryGold,
+                      color: Color.PrimaryBlack,
+                      backgroundColor: Color.PrimaryGold,
                       minWidth: 130,
                     }}
                   >
                     {createContractLoading ? (
-                      <CircularProgress size={24} color={COLOR.PrimaryBlack} />
+                      <CircularProgress size={24} color={Color.PrimaryBlack} />
                     ) : (
                       <Box sx={{ display: "flex", alignItems: "end" }}>
                         <SaveIcon
@@ -447,9 +445,7 @@ const CreateCrewContract = () => {
                   name="title"
                   value={values.title}
                   error={!!touched.title && !!errors.title}
-                  helperText={
-                    touched.title && errors.title ? errors.title : " "
-                  }
+                  helperText={touched.title && errors.title}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
@@ -475,8 +471,6 @@ const CreateCrewContract = () => {
                   }
                   helperText={
                     touched.partyA?.compName && errors.partyA?.compName
-                      ? errors.partyA?.compName
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -498,8 +492,6 @@ const CreateCrewContract = () => {
                   }
                   helperText={
                     touched.partyA?.compAddress && errors.partyA?.compAddress
-                      ? errors.partyA?.compAddress
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -544,8 +536,6 @@ const CreateCrewContract = () => {
                   helperText={
                     touched.partyA?.representative &&
                     errors.partyA?.representative
-                      ? errors.partyA?.representative
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -568,8 +558,6 @@ const CreateCrewContract = () => {
                   helperText={
                     touched.partyA?.representativePos &&
                     errors.partyA?.representativePos
-                      ? errors.partyA?.representativePos
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -593,8 +581,6 @@ const CreateCrewContract = () => {
                   }
                   helperText={
                     touched.partyB?.fullName && errors.partyB?.fullName
-                      ? errors.partyB?.fullName
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -612,11 +598,7 @@ const CreateCrewContract = () => {
                   name="partyB.dob"
                   value={values.partyB?.dob}
                   error={!!touched.partyB?.dob && !!errors.partyB?.dob}
-                  helperText={
-                    touched.partyB?.dob && errors.partyB?.dob
-                      ? errors.partyB?.dob
-                      : " "
-                  }
+                  helperText={touched.partyB?.dob && errors.partyB?.dob}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   slotProps={{
@@ -644,8 +626,6 @@ const CreateCrewContract = () => {
                   }
                   helperText={
                     touched.partyB?.birthplace && errors.partyB?.birthplace
-                      ? errors.partyB?.birthplace
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -691,8 +671,6 @@ const CreateCrewContract = () => {
                   helperText={
                     touched.partyB?.permanentAddr &&
                     errors.partyB?.permanentAddr
-                      ? errors.partyB?.permanentAddr
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -715,8 +693,6 @@ const CreateCrewContract = () => {
                   helperText={
                     touched.partyB?.temporaryAddr &&
                     errors.partyB?.temporaryAddr
-                      ? errors.partyB?.temporaryAddr
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -737,8 +713,6 @@ const CreateCrewContract = () => {
                   }
                   helperText={
                     touched.partyB?.ciNumber && errors.partyB?.ciNumber
-                      ? errors.partyB?.ciNumber
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -761,8 +735,6 @@ const CreateCrewContract = () => {
                   }
                   helperText={
                     touched.partyB?.ciIssueDate && errors.partyB?.ciIssueDate
-                      ? errors.partyB?.ciIssueDate
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -792,8 +764,6 @@ const CreateCrewContract = () => {
                   }
                   helperText={
                     touched.partyB?.ciIssuePlace && errors.partyB?.ciIssuePlace
-                      ? errors.partyB?.ciIssuePlace
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -881,8 +851,6 @@ const CreateCrewContract = () => {
                   helperText={
                     touched.jobInfo?.workingLocation &&
                     errors.jobInfo?.workingLocation
-                      ? errors.jobInfo?.workingLocation
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -903,8 +871,6 @@ const CreateCrewContract = () => {
                   }
                   helperText={
                     touched.jobInfo?.position && errors.jobInfo?.position
-                      ? errors.jobInfo?.position
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -929,8 +895,6 @@ const CreateCrewContract = () => {
                   helperText={
                     touched.jobInfo?.jobDescription &&
                     errors.jobInfo?.jobDescription
-                      ? errors.jobInfo?.jobDescription
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -957,8 +921,6 @@ const CreateCrewContract = () => {
                   helperText={
                     touched.salaryInfo?.basicSalary &&
                     errors.salaryInfo?.basicSalary
-                      ? errors.salaryInfo?.basicSalary
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -998,8 +960,6 @@ const CreateCrewContract = () => {
                   helperText={
                     touched.salaryInfo?.allowance &&
                     errors.salaryInfo?.allowance
-                      ? errors.salaryInfo?.allowance
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -1039,8 +999,6 @@ const CreateCrewContract = () => {
                   helperText={
                     touched.salaryInfo?.receiveMethod &&
                     errors.salaryInfo?.receiveMethod
-                      ? errors.salaryInfo?.receiveMethod
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -1067,8 +1025,6 @@ const CreateCrewContract = () => {
                   }
                   helperText={
                     touched.salaryInfo?.payday && errors.salaryInfo?.payday
-                      ? errors.salaryInfo?.payday
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -1091,8 +1047,6 @@ const CreateCrewContract = () => {
                   helperText={
                     touched.salaryInfo?.salaryReviewPeriod &&
                     errors.salaryInfo?.salaryReviewPeriod
-                      ? errors.salaryInfo?.salaryReviewPeriod
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
