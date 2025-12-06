@@ -15,7 +15,7 @@ import EventBusyRoundedIcon from "@mui/icons-material/EventBusyRounded";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { usePost } from "@/hooks/services/posts";
+import { useSpecificPost } from "@/hooks/services/posts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { changeRegistrationRecruitmentPostStatus } from "@/services/postServices";
 import { isoToLocalDatetime } from "@/utils/converter";
@@ -29,7 +29,7 @@ const RecruitmentDetail = () => {
   const isAdmin = roles.includes("ADMIN");
   const isAlreadyApplied = false;
 
-  const { data: post, isLoading } = usePost(id);
+  const { data: post, isLoading } = useSpecificPost(id);
   const active = Boolean(post?.active);
 
   const {

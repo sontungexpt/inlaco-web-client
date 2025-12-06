@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchCrewMembers } from "@/services/crewServices";
-import { HttpStatusCode } from "axios";
 
 export function useCrewMembers({ page = 0, size = 12, official }) {
   return useQuery({

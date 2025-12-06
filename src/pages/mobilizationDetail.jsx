@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   PageTitle,
   SectionDivider,
   InfoTextField,
   HorizontalImageInput,
   NoValuesOverlay,
-} from "../components/global";
-import { NationalityTextField } from "../components/mobilization";
+} from "@components/global";
+import { NationalityTextField } from "@components/mobilization";
 import {
   Box,
   Button,
@@ -22,49 +22,25 @@ import SaveIcon from "@mui/icons-material/Save";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import Color from "@constants/Color";
 import { Formik } from "formik";
-import * as yup from "yup";
+import * as Yup from "yup";
 import * as XLSX from "xlsx";
 import { useLocation, useParams } from "react-router";
-import {
-  getMobilizationByID_API,
-  editMobilizationAPI,
-} from "../services/mobilizationServices";
-import HttpStatusCode from "../constants/HttpStatusCode";
+import { editMobilizationAPI } from "@/services/mobilizationServices";
 import {
   formatDate,
   isoStringToMUIDateTime,
   dateTimeStringToISOString,
 } from "@utils/converter";
+import { HttpStatusCode } from "axios";
+import { useMobilizationDetail } from "@/hooks/services/mobilization";
 
 const MobilizationDetail = () => {
   const { id } = useParams();
   const location = useLocation();
   const isAdmin = location.state?.isAdmin;
   const position = location.state?.position;
-  // const isAdmin = true;
 
-  const [mobilizationInfos, setMobilizationInfos] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [crewMembers, setCrewMembers] = useState([]);
-
-  const fetchMobilizationInfos = async (id) => {
-    setLoading(true);
-    try {
-      const response = await getMobilizationByID_API(id);
-      if (response.status === HttpStatusCode.OK) {
-        setMobilizationInfos(response.data);
-        setCrewMembers(response.data.crewMembers);
-      }
-    } catch (err) {
-      console.log("Error when fetching mobilization info: ", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMobilizationInfos(id);
-  }, []);
+  const { data: mobilizationInfos, isLoading } = useMobilizationDetail(id);
 
   const initialValues = {
     compName: mobilizationInfos?.partnerName || "",
@@ -97,14 +73,13 @@ const MobilizationDetail = () => {
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
 
-  const mobilizationSchema = yup.object().shape({
-    compName: yup.string().required("Tên công ty không được để trống"),
-    email: yup.string().required("Email không được để trống"),
-    phoneNumber: yup.string().required("Số điện thoại không được để trống"),
+  const MOBILIZATION_SCHEMA = Yup.object().shape({
+    compName: Yup.string().required("Tên công ty không được để trống"),
+    email: Yup.string().required("Email không được để trống"),
+    phoneNumber: Yup.string().required("Số điện thoại không được để trống"),
 
-    mobilizationInfo: yup.object().shape({
-      timeOfDeparture: yup
-        .date()
+    mobilizationInfo: Yup.object().shape({
+      timeOfDeparture: Yup.date()
         .min(yesterday, "Thời gian khởi hành không hợp lệ")
         .required("Thời gian khởi hành dự kiến không được để trống")
         .test(
@@ -115,15 +90,13 @@ const MobilizationDetail = () => {
             return !estimatedTimeOfArrival || value < estimatedTimeOfArrival;
           },
         ),
-      UN_LOCODE_DepartureLocation: yup
-        .string()
-        .required("UN/LOCODE điểm khởi hành không được để trống"),
-      departureLocation: yup
-        .string()
-        .required("Tên điểm khởi hành không được để trống"),
-
-      estimatedTimeOfArrival: yup
-        .date()
+      UN_LOCODE_DepartureLocation: Yup.string().required(
+        "UN/LOCODE điểm khởi hành không được để trống",
+      ),
+      departureLocation: Yup.string().required(
+        "Tên điểm khởi hành không được để trống",
+      ),
+      estimatedTimeOfArrival: Yup.date()
         .required("Thời gian đến nơi dự kiến không được để trống")
         .test(
           "is-after-start-datetime",
@@ -133,12 +106,12 @@ const MobilizationDetail = () => {
             return !timeOfDeparture || value > timeOfDeparture;
           },
         ),
-      UN_LOCODE_ArrivalLocation: yup
-        .string()
-        .required("UN/LOCODE điểm đến không được để trống"),
-      arrivalLocation: yup
-        .string()
-        .required("Tên điểm đến không được để trống"),
+      UN_LOCODE_ArrivalLocation: Yup.string().required(
+        "UN/LOCODE điểm đến không được để trống",
+      ),
+      arrivalLocation: Yup.string().required(
+        "Tên điểm đến không được để trống",
+      ),
     }),
   });
 
@@ -285,7 +258,7 @@ const MobilizationDetail = () => {
     console.log("Download excel file successfully");
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Box
         sx={{
@@ -305,7 +278,7 @@ const MobilizationDetail = () => {
       <Formik
         validateOnChange={false}
         initialValues={initialValues}
-        validationSchema={mobilizationSchema}
+        validationSchema={MOBILIZATION_SCHEMA}
         onSubmit={handleSaveMobilizationSubmit}
       >
         {({
@@ -949,7 +922,7 @@ const MobilizationDetail = () => {
                       ]}
                     >
                       <DataGrid
-                        rows={crewMembers}
+                        rows={mobilizationInfos.crewMembers}
                         columns={columns}
                         disableColumnMenu
                         disableRowSelectionOnClick

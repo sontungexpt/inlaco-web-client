@@ -23,14 +23,15 @@ export const getAllMobilizationsAPI = async (page, size, status) => {
   }
 };
 
-export const getMobilizationByID_API = async (mobilizationID) => {
+export const fetchSpecificMobilization = async (mobilizationID) => {
   try {
     const response = await privateRequest.get(
-      `${MobilizationEndpoints.GENERAL}/${mobilizationID}`,
+      MobilizationEndpoints.GET_BY_ID(mobilizationID),
     );
-    return response;
+    return response.data;
   } catch (err) {
-    return err.response;
+    console.debug(err);
+    throw err;
   }
 };
 
