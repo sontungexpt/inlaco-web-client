@@ -19,32 +19,31 @@ import { dateStringToISOString } from "@/utils/converter";
 import Regex from "@/constants/Regex";
 import { useMutation } from "@tanstack/react-query";
 
-const GENDERS = [
-  { label: "Nam", value: "MALE" },
-  { label: "Nữ", value: "FEMALE" },
-  { label: "Khác", value: "OTHER" },
-];
-
-const APPLICATION_SCHEMA = Yup.object().shape({
-  fullName: Yup.string().required("Họ và tên không được để trống"),
-  dob: Yup.date()
-    .max(new Date(), "Ngày sinh không hợp lệ")
-    .required("Ngày sinh không được để trống"),
-  gender: Yup.string().required("Giới tính không được để trống"),
-  phoneNumber: Yup.string()
-    .matches(Regex.VN_PHONE, "Số điện thoại không hợp lệ")
-    .required("Số điện thoại không được để trống"),
-  email: Yup.string()
-    .email("Email không hợp lệ")
-    .required("Email không được để trống"),
-  permanentAddr: Yup.string().required("Địa chỉ không được để trống"),
-  // cvFile: Yup.mixed().required("Vui lòng tải lên CV"),
-});
-
 const ApplyRecruitment = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  const GENDERS = [
+    { label: "Nam", value: "MALE" },
+    { label: "Nữ", value: "FEMALE" },
+    { label: "Khác", value: "OTHER" },
+  ];
+
+  const APPLICATION_SCHEMA = Yup.object().shape({
+    fullName: Yup.string().required("Họ và tên không được để trống"),
+    dob: Yup.date()
+      .max(new Date(), "Ngày sinh không hợp lệ")
+      .required("Ngày sinh không được để trống"),
+    gender: Yup.string().required("Giới tính không được để trống"),
+    phoneNumber: Yup.string()
+      .matches(Regex.VN_PHONE, "Số điện thoại không hợp lệ")
+      .required("Số điện thoại không được để trống"),
+    email: Yup.string()
+      .email("Email không hợp lệ")
+      .required("Email không được để trống"),
+    permanentAddr: Yup.string().required("Địa chỉ không được để trống"),
+    // cvFile: Yup.mixed().required("Vui lòng tải lên CV"),
+  });
   const initialValues = {
     fullName: "",
     dob: "",
@@ -88,262 +87,258 @@ const ApplyRecruitment = () => {
   };
 
   return (
-    <div>
-      <Formik
-        validateOnChange={true}
-        initialValues={initialValues}
-        validationSchema={APPLICATION_SCHEMA}
-        onSubmit={handleSubmit}
-      >
-        {({
-          values,
-          errors,
-          touched,
-          isValid,
-          dirty,
-          handleBlur,
-          handleChange,
-          handleSubmit,
-        }) => (
-          <Box m="20px" component="form" onSubmit={handleSubmit}>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+    <Formik
+      validateOnChange={true}
+      initialValues={initialValues}
+      validationSchema={APPLICATION_SCHEMA}
+      onSubmit={handleSubmit}
+    >
+      {({
+        values,
+        errors,
+        touched,
+        isValid,
+        dirty,
+        handleBlur,
+        handleChange,
+        handleSubmit,
+      }) => (
+        <Box m="20px" component="form" onSubmit={handleSubmit}>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flex: 1,
+                flexDirection: "column",
+              }}
+            >
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <PageTitle
+                  title="NỘP HỒ SƠ ỨNG TUYỂN"
+                  subtitle={`Bài đăng tuyển dụng: ${id}`} //Change this to the actual recruitmentID
+                />
+              </Box>
               <Box
                 sx={{
                   display: "flex",
-                  flex: 1,
-                  flexDirection: "column",
+                  alignItems: "end",
+                  justifyContent: "space-between",
                 }}
               >
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <PageTitle
-                    title="NỘP HỒ SƠ ỨNG TUYỂN"
-                    subtitle={`Bài đăng tuyển dụng: ${id}`} //Change this to the actual recruitmentID
-                  />
-                </Box>
-                <Box
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={!isValid || !dirty}
                   sx={{
-                    display: "flex",
-                    alignItems: "end",
-                    justifyContent: "space-between",
+                    width: "12%",
+                    padding: 1,
+                    color: Color.PrimaryBlack,
+                    backgroundColor: Color.PrimaryGold,
+                    minWidth: 130,
                   }}
                 >
-                  <Button
-                    variant="contained"
-                    type="submit"
-                    disabled={!isValid || !dirty}
-                    sx={{
-                      width: "12%",
-                      padding: 1,
-                      color: Color.PrimaryBlack,
-                      backgroundColor: Color.PrimaryGold,
-                      minWidth: 130,
-                    }}
-                  >
-                    {isPending ? (
-                      <CircularProgress size={24} color={Color.PrimaryBlack} />
-                    ) : (
-                      <Box sx={{ display: "flex", alignItems: "end" }}>
-                        <SendRoundedIcon
-                          sx={{ marginRight: "5px", marginBottom: "1px" }}
-                        />
-                        <Typography sx={{ fontWeight: 700 }}>
-                          Nộp đơn
-                        </Typography>
-                      </Box>
-                    )}
-                  </Button>
-                </Box>
+                  {isPending ? (
+                    <CircularProgress size={24} color={Color.PrimaryBlack} />
+                  ) : (
+                    <Box sx={{ display: "flex", alignItems: "end" }}>
+                      <SendRoundedIcon
+                        sx={{ marginRight: "5px", marginBottom: "1px" }}
+                      />
+                      <Typography sx={{ fontWeight: 700 }}>Nộp đơn</Typography>
+                    </Box>
+                  )}
+                </Button>
               </Box>
             </Box>
-            <SectionDivider sectionName="Thông tin ứng viên: " />
-            <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
-              <Grid size={5}>
-                <InfoTextField
-                  id="full-name"
-                  label="Họ và tên"
-                  size="small"
-                  margin="none"
-                  required
-                  fullWidth
-                  name="fullName"
-                  value={values.fullName}
-                  error={!!touched.fullName && !!errors.fullName}
-                  helperText={touched.fullName && errors.fullName}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: Color.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: Color.PrimaryBlack,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid size={3}>
-                <InfoTextField
-                  id="dob"
-                  type="date"
-                  label="Ngày sinh"
-                  size="small"
-                  margin="none"
-                  required
-                  fullWidth
-                  name="dob"
-                  value={values.dob}
-                  error={!!touched.dob && !!errors.dob}
-                  helperText={touched.dob && errors.dob}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: Color.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: Color.PrimaryBlack,
-                    },
-                  }}
-                  slotProps={{
-                    input: {
-                      placeholder: "asjdbnaskjd",
-                    },
-                    inputLabel: {
-                      shrink: true,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid size={4}>
-                <InfoTextField
-                  id="phoneNumber"
-                  label="Số điện thoại"
-                  size="small"
-                  margin="none"
-                  required
-                  fullWidth
-                  name="phoneNumber"
-                  value={values.phoneNumber}
-                  error={!!touched.phoneNumber && !!errors.phoneNumber}
-                  helperText={touched.phoneNumber && errors.phoneNumber}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: Color.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: Color.PrimaryBlack,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid size={5}>
-                <InfoTextField
-                  id="permanent-address"
-                  label="Địa chỉ"
-                  size="small"
-                  margin="none"
-                  required
-                  fullWidth
-                  name="permanentAddr"
-                  value={values.permanentAddr}
-                  error={!!touched.permanentAddr && !!errors.permanentAddr}
-                  helperText={touched.permanentAddr && errors.permanentAddr}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: Color.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: Color.PrimaryBlack,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid size={3}>
-                <InfoTextField
-                  select
-                  id="gender"
-                  label="Giới tính"
-                  size="small"
-                  margin="none"
-                  required
-                  fullWidth
-                  name="gender"
-                  value={values.gender}
-                  error={!!touched.gender && !!errors.gender}
-                  helperText={touched.gender && errors.gender}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                >
-                  {GENDERS.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </InfoTextField>
-              </Grid>
-              <Grid size={4}>
-                <InfoTextField
-                  id="email"
-                  label="Email"
-                  size="small"
-                  margin="none"
-                  required
-                  fullWidth
-                  name="email"
-                  value={values.email}
-                  error={!!touched.email && !!errors.email}
-                  helperText={touched.email && errors.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: Color.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: Color.PrimaryBlack,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid size={12}>
-                <InfoTextField
-                  id="language-skills"
-                  label="Trình độ ngoại ngữ (liệt kê nếu có)"
-                  size="small"
-                  margin="none"
-                  fullWidth
-                  name="languageSkills"
-                  value={values.languageSkills}
-                  error={!!touched.languageSkills && !!errors.languageSkills}
-                  helperText={touched.languageSkills && errors.languageSkills}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      color: Color.PrimaryBlack,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: Color.PrimaryBlack,
-                    },
-                  }}
-                />
-              </Grid>
-            </Grid>
-            <SectionDivider sectionName="CV đính kèm*: " />
-            <FileUploadField
-              id="cvFile"
-              label="Tải lên CV"
-              name="cvFile"
-              sx={{ justifyContent: "start", marginLeft: 2 }}
-            />
           </Box>
-        )}
-      </Formik>
-    </div>
+          <SectionDivider sectionName="Thông tin ứng viên: " />
+          <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
+            <Grid size={5}>
+              <InfoTextField
+                id="full-name"
+                label="Họ và tên"
+                size="small"
+                margin="none"
+                required
+                fullWidth
+                name="fullName"
+                value={values.fullName}
+                error={!!touched.fullName && !!errors.fullName}
+                helperText={touched.fullName && errors.fullName}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                sx={{
+                  "& .MuiInputBase-input.Mui-disabled": {
+                    color: Color.PrimaryBlack,
+                  },
+                  "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
+                    borderColor: Color.PrimaryBlack,
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={3}>
+              <InfoTextField
+                id="dob"
+                type="date"
+                label="Ngày sinh"
+                size="small"
+                margin="none"
+                required
+                fullWidth
+                name="dob"
+                value={values.dob}
+                error={!!touched.dob && !!errors.dob}
+                helperText={touched.dob && errors.dob}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                sx={{
+                  "& .MuiInputBase-input.Mui-disabled": {
+                    color: Color.PrimaryBlack,
+                  },
+                  "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
+                    borderColor: Color.PrimaryBlack,
+                  },
+                }}
+                slotProps={{
+                  input: {
+                    placeholder: "asjdbnaskjd",
+                  },
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={4}>
+              <InfoTextField
+                id="phoneNumber"
+                label="Số điện thoại"
+                size="small"
+                margin="none"
+                required
+                fullWidth
+                name="phoneNumber"
+                value={values.phoneNumber}
+                error={!!touched.phoneNumber && !!errors.phoneNumber}
+                helperText={touched.phoneNumber && errors.phoneNumber}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                sx={{
+                  "& .MuiInputBase-input.Mui-disabled": {
+                    color: Color.PrimaryBlack,
+                  },
+                  "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
+                    borderColor: Color.PrimaryBlack,
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={5}>
+              <InfoTextField
+                id="permanent-address"
+                label="Địa chỉ"
+                size="small"
+                margin="none"
+                required
+                fullWidth
+                name="permanentAddr"
+                value={values.permanentAddr}
+                error={!!touched.permanentAddr && !!errors.permanentAddr}
+                helperText={touched.permanentAddr && errors.permanentAddr}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                sx={{
+                  "& .MuiInputBase-input.Mui-disabled": {
+                    color: Color.PrimaryBlack,
+                  },
+                  "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
+                    borderColor: Color.PrimaryBlack,
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={3}>
+              <InfoTextField
+                select
+                id="gender"
+                label="Giới tính"
+                size="small"
+                margin="none"
+                required
+                fullWidth
+                name="gender"
+                value={values.gender}
+                error={!!touched.gender && !!errors.gender}
+                helperText={touched.gender && errors.gender}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              >
+                {GENDERS.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </InfoTextField>
+            </Grid>
+            <Grid size={4}>
+              <InfoTextField
+                id="email"
+                label="Email"
+                size="small"
+                margin="none"
+                required
+                fullWidth
+                name="email"
+                value={values.email}
+                error={!!touched.email && !!errors.email}
+                helperText={touched.email && errors.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                sx={{
+                  "& .MuiInputBase-input.Mui-disabled": {
+                    color: Color.PrimaryBlack,
+                  },
+                  "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
+                    borderColor: Color.PrimaryBlack,
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={12}>
+              <InfoTextField
+                id="language-skills"
+                label="Trình độ ngoại ngữ (liệt kê nếu có)"
+                size="small"
+                margin="none"
+                fullWidth
+                name="languageSkills"
+                value={values.languageSkills}
+                error={!!touched.languageSkills && !!errors.languageSkills}
+                helperText={touched.languageSkills && errors.languageSkills}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                sx={{
+                  "& .MuiInputBase-input.Mui-disabled": {
+                    color: Color.PrimaryBlack,
+                  },
+                  "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
+                    borderColor: Color.PrimaryBlack,
+                  },
+                }}
+              />
+            </Grid>
+          </Grid>
+          <SectionDivider sectionName="CV đính kèm*: " />
+          <FileUploadField
+            id="cvFile"
+            label="Tải lên CV"
+            name="cvFile"
+            sx={{ justifyContent: "start", marginLeft: 2 }}
+          />
+        </Box>
+      )}
+    </Formik>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { PageTitle, NoValuesOverlay } from "@components/global";
 import {
   Box,
@@ -12,61 +12,47 @@ import { ScheduleCell, ShipInfoCell } from "@components/mobilization";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useNavigate } from "react-router";
-import { getAllSupplyRequestAPI } from "@/services/supplyReqServices";
 import { formatDateTime } from "@/utils/converter";
 import Color from "@constants/Color";
-import { HttpStatusCode } from "axios";
 import useAllowedRole from "@/hooks/useAllowedRole";
+import { useSupplyRequests } from "@/hooks/services/supplyRequests";
 
 const SupplyRequest = () => {
   const navigate = useNavigate();
   const isAdmin = useAllowedRole("ADMIN");
+  const PAGE_SIZE = 10;
 
-  const [loading, setLoading] = useState(false);
-  const [supplyRequests, setSupplyRequests] = useState([]);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: PAGE_SIZE,
+  });
+  const { data: response, isLoading } = useSupplyRequests({
+    page: paginationModel.page,
+    sizePerPage: paginationModel.pageSize,
+  });
 
-  useEffect(() => {
-    const fetchSupplyRequests = async () => {
-      setLoading(true);
-
-      try {
-        const response = await getAllSupplyRequestAPI(0, 10, "");
-        await new Promise((resolve) => setTimeout(resolve, 200));
-
-        if (response.status === HttpStatusCode.Ok) {
-          const formattedRequests = response.data.content.map((r) => ({
-            id: r.id,
-            companyName: r.companyName,
-            representativeInfo: {
-              representativeName: r.representativeName,
-              email: r.companyEmail,
-              phoneNumber: r.companyPhone,
-            },
-            shipInfo: {
-              IMONumber: r.shipInfo.imonumber,
-              name: r.shipInfo.name,
-              countryCode: r.shipInfo.countryISO,
-              type: r.shipInfo.shipType,
-            },
-            scheduleInfo: {
-              startLocation: r.departurePoint,
-              startDate: r.estimatedDepartureTime,
-              endLocation: r.arrivalPoint,
-              estimatedEndTime: r.estimatedArrivalTime,
-            },
-          }));
-
-          setSupplyRequests(formattedRequests);
-        }
-      } catch (e) {
-        console.error("Error fetching supply requests");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSupplyRequests();
-  }, []);
+  const supplyRequests = response?.content.map((r) => ({
+    id: r.id,
+    companyName: r.companyName,
+    representativeInfo: {
+      representativeName: r.representativeName,
+      email: r.companyEmail,
+      phoneNumber: r.companyPhone,
+    },
+    shipInfo: {
+      IMONumber: r.shipInfo.imonumber,
+      name: r.shipInfo.name,
+      countryCode: r.shipInfo.countryISO,
+      type: r.shipInfo.shipType,
+    },
+    scheduleInfo: {
+      startLocation: r.departurePoint,
+      startDate: r.estimatedDepartureTime,
+      endLocation: r.arrivalPoint,
+      estimatedEndTime: r.estimatedArrivalTime,
+    },
+  }));
+  const totalRequests = response?.totalElements;
 
   const onRequestDetailClick = (id) => {
     const type = isAdmin ? "admin" : "user";
@@ -162,7 +148,7 @@ const SupplyRequest = () => {
     },
   ];
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Box
         sx={{
@@ -220,12 +206,14 @@ const SupplyRequest = () => {
           disableColumnMenu
           disableColumnResize
           getRowHeight={() => "auto"}
-          rows={supplyRequests}
           columns={columns}
+          paginationMode="server" // QUAN TRỌNG!
+          rowCount={totalRequests}
+          rows={supplyRequests}
           slots={{ noRowsOverlay: NoValuesOverlay }}
-          pageSizeOptions={[5, 10, { value: -1, label: "Tất cả" }]}
-          initialState={{
-            pagination: { paginationModel: { pageSize: 5, page: 0 } },
+          paginationModel={paginationModel}
+          onPaginationModelChange={(model) => {
+            setPaginationModel({ ...model });
           }}
           sx={{
             "& .MuiDataGrid-columnHeader": {

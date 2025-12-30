@@ -75,15 +75,7 @@ const CrewMobilization = () => {
       align: "center",
       headerAlign: "center",
       renderCell: (params) => (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-          }}
-        >
+        <div>
           <p style={{ margin: 0, textAlign: "left" }}>
             <strong>Tên: </strong>
             {params.value?.partnerName}
@@ -295,22 +287,7 @@ const CrewMobilization = () => {
             <Typography>THỜI GIAN BIỂU</Typography>
           </Box>
         )} */}
-        <Box
-          m="40px 0 0 0"
-          height={"62vh"}
-          maxHeight={550}
-          maxWidth={1600}
-          sx={{
-            "& .MuiDataGrid-columnHeader": {
-              backgroundColor: Color.SecondaryBlue,
-              color: Color.PrimaryWhite,
-            },
-            "& .MuiTablePagination-root": {
-              backgroundColor: Color.SecondaryBlue,
-              color: Color.PrimaryWhite,
-            },
-          }}
-        >
+        <Box m="40px 0 0 0" height={"62vh"} maxHeight={550} maxWidth={1600}>
           <Box
             sx={{
               display: "flex",
@@ -361,6 +338,14 @@ const CrewMobilization = () => {
               "& .MuiDataGrid-columnHeaderTitle": {
                 fontSize: 16,
                 fontWeight: 700,
+              },
+              "& .MuiDataGrid-columnHeader": {
+                backgroundColor: Color.SecondaryBlue,
+                color: Color.PrimaryWhite,
+              },
+              "& .MuiTablePagination-root": {
+                backgroundColor: Color.SecondaryBlue,
+                color: Color.PrimaryWhite,
               },
             }}
           />

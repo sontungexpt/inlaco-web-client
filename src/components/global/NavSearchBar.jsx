@@ -1,15 +1,15 @@
 import { Box, IconButton, Autocomplete, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { COLOR } from "../../assets/Color";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import { useAuthContext } from "../../contexts/AuthContext";
+import { useAuthContext } from "@/contexts/AuthContext";
+import Color from "@constants/Color";
 
 const NavSearchBar = ({
   placeholder,
   value,
-  backgroundColor = COLOR.PrimaryWhite,
-  color = COLOR.PrimaryBlack,
+  backgroundColor = Color.PrimaryWhite,
+  color = Color.PrimaryBlack,
   sx = [],
   onChange,
   onSearchClick,

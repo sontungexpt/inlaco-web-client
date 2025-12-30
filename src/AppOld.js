@@ -17,12 +17,12 @@ import CrewMobilization from "./pages/crewMobilization";
 import CreateMobilization from "./pages/createMobilization";
 import MobilizationDetail from "./pages/mobilizationDetail";
 
-import CrewContract from "./pages/crewContract";
+import CrewContract from "./pages/contracts/CrewContract";
 import CreateCrewContract from "./pages/createCrewContract";
-import CrewContractDetail from "./pages/crewContractDetail";
+import CrewContractDetail from "./pages/CrewContractDetail";
 import CrewContractAddendum from "./pages/crewContractAddendum";
 
-import SupplyContract from "./pages/supplyContract";
+import SupplyContract from "./pages/contracts/SupplyContract";
 import CreateSupplyContract from "./pages/createSupplyContract";
 import SupplyContractDetail from "./pages/SupplyContractDetail";
 import SupplyContractAddendum from "./pages/supplyContractAddendum";

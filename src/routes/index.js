@@ -7,7 +7,7 @@ import CrewMobilization from "@pages/crewMobilization";
 import CreateMobilization from "@pages/createMobilization";
 import MobilizationDetail from "@pages/mobilizationDetail";
 
-import SupplyContract from "@pages/supplyContract";
+import SupplyContract from "@/pages/contracts/SupplyContract";
 import CreateSupplyContract from "@pages/createSupplyContract";
 import SupplyContractDetail from "@pages/SupplyContractDetail";
 import SupplyContractAddendum from "@pages/supplyContractAddendum";
@@ -33,8 +33,8 @@ import CreatePost from "@/pages/posts/CreatePost";
 import PostDetail from "@/pages/posts/PostDetail";
 import UpdatePost from "@/pages/posts/UpdatePost";
 
-import CrewContract from "@pages/crewContract";
-import CrewContractDetail from "@pages/crewContractDetail";
+import CrewContract from "@/pages/contracts/CrewContract";
+import CrewContractDetail from "@/pages/CrewContractDetail";
 import CrewContractAddendum from "@pages/crewContractAddendum";
 
 const CreateCrewContract = lazy(

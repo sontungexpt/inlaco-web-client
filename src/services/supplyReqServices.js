@@ -1,7 +1,27 @@
-import privateRequest from "../utils/privateRequest";
 import { dateTimeStringToISOString } from "../utils/converter";
+import SupplyRequestEndpoint from "@/endpoints/SupplyRequestEndpoint";
+import { privateRequest } from "@/utils/request";
 
 const GENERAL = "/v1/crew-rental-requests";
+
+export const fetchSupplyRequests = async ({ page, size, status }) => {
+  try {
+    const response = await privateRequest.get(
+      SupplyRequestEndpoint.GET_SUPPLY_REQUESTS,
+      {
+        params: {
+          page,
+          size,
+          status,
+        },
+      },
+    );
+    return response.data;
+  } catch (err) {
+    console.debug(err);
+    throw err;
+  }
+};
 
 export const getAllSupplyRequestAPI = async (page, size, status) => {
   try {

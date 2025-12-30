@@ -1,14 +1,41 @@
-import privateRequest from "../utils/privateRequest";
-import ContractEndpoints from "../endpoints/contractEndpoints";
+import { privateRequest } from "@/utils/request";
+import ContractEndpoints from "@/endpoints/ContractEndpoint";
 
-export const getCrewContractsAPI = async (page, size, signed) => {
+export const fetchCrewContracts = async ({
+  page,
+  size,
+  signed,
+  type = "LABOR_CONTRACT",
+}) => {
   try {
     const response = await privateRequest.get(
-      `${ContractEndpoints.GENERAL}?page=${page}&size=${size}&type=LABOR_CONTRACT&signed=${signed}`,
+      ContractEndpoints.GET_ALL_CONTRACTS,
+      {
+        params: {
+          page,
+          size,
+          signed,
+          type,
+        },
+      },
     );
-    return response;
+    return response.data;
   } catch (err) {
-    return err.response;
+    console.debug(err);
+    throw err;
+  }
+};
+
+export const fetchUniqueContract = async (contractID) => {
+  try {
+    const response = await privateRequest.get(
+      ContractEndpoints.GET_CONTRACT_BY_ID(contractID),
+    );
+    console.log(response);
+    return response.data;
+  } catch (err) {
+    console.debug(err);
+    throw err;
   }
 };
 
@@ -16,17 +43,6 @@ export const getCrewContractByID_API = async (contractID) => {
   try {
     const response = await privateRequest.get(
       `${ContractEndpoints.GENERAL}/${contractID}`,
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
-};
-
-export const getSupplyContractsAPI = async (page, size, signed) => {
-  try {
-    const response = await privateRequest.get(
-      `${ContractEndpoints.GENERAL}?page=${page}&size=${size}&type=SUPPLY_CONTRACT&signed=${signed}`,
     );
     return response;
   } catch (err) {

@@ -4,8 +4,8 @@ import {
   SectionDivider,
   InfoTextField,
   HorizontalImageInput,
-} from "../components/global";
-import { CardPhotoInput } from "../components/contract";
+} from "@components/global";
+import { CardPhotoInput } from "@components/contract";
 import {
   Box,
   Button,
@@ -16,15 +16,13 @@ import {
 } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { Formik } from "formik";
-import * as yup from "yup";
+import * as Yup from "yup";
 import { useNavigate, useParams, useLocation } from "react-router";
 import Color from "@constants/Color";
-import { createCrMemberFrCandidateAPI } from "../services/crewServices";
-import {
-  dateStringToISOString,
-  isoStringToDateString,
-} from "../utils/converter";
+import { createCrMemberFrCandidateAPI } from "@/services/crewServices";
+import { dateStringToISOString, isoStringToDateString } from "@utils/converter";
 import { HttpStatusCode } from "axios";
+import Regex from "@/constants/Regex";
 
 const AddCrewMember = () => {
   const navigate = useNavigate();
@@ -32,12 +30,11 @@ const AddCrewMember = () => {
   const location = useLocation();
   const candidateInfo = location.state?.candidateInfo;
 
-  const genders = [
+  const GENDERS = [
     { label: "Nam", value: "MALE" },
     { label: "Nữ", value: "FEMALE" },
     { label: "Khác", value: "OTHER" },
   ];
-  console.log("CandidateInfo: ", candidateInfo);
 
   const initialValues = {
     cardPhoto: "",
@@ -66,27 +63,20 @@ const AddCrewMember = () => {
     },
   };
 
-  const phoneRegex =
-    "^(\\+84|0)(3[2-9]|5[2689]|7[06-9]|8[1-9]|9[0-46-9])\\d{7}$";
   // const ciNumberRegex = "^\\d{12}$";
 
-  const crewMemberInfosSchema = yup.object().shape({
-    fullName: yup.string().required("Họ và tên không được để trống"),
-    dob: yup
-      .date()
+  const crewMemberInfosSchema = Yup.object().shape({
+    fullName: Yup.string().required("Họ và tên không được để trống"),
+    dob: Yup.date()
       .max(new Date(), "Ngày sinh không hợp lệ")
       .required("Ngày sinh không được để trống"),
+    gender: Yup.string().required("Vui lòng chọn giới tính"),
+    address: Yup.string().required("Địa chỉ không được để trống"),
 
-    gender: yup.string().required("Vui lòng chọn giới tính"),
-    address: yup.string().required("Địa chỉ không được để trống"),
-
-    phoneNumber: yup
-      .string()
-      .matches(phoneRegex, "SĐT không hợp lệ")
+    phoneNumber: Yup.string()
+      .matches(Regex.VN_PHONE, "SĐT không hợp lệ")
       .required("SĐT không được để trống"),
-
-    email: yup
-      .string()
+    email: Yup.string()
       .email("Email không hợp lệ")
       .required("Email không được để trống"),
   });
@@ -245,7 +235,7 @@ const AddCrewMember = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                 >
-                  {genders.map((option) => (
+                  {GENDERS.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>

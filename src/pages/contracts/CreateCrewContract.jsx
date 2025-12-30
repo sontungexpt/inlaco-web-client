@@ -70,7 +70,6 @@ const CreateCrewContract = () => {
 
   const crewContractSchema = yup.object().shape({
     title: yup.string().required("Tiêu đề không được để trống"),
-
     partyA: yup.object().shape({
       compName: yup.string().required("Tên công ty không được để trống"),
       compAddress: yup.string().required("Địa chỉ không được để trống"),
@@ -89,12 +88,10 @@ const CreateCrewContract = () => {
 
     partyB: yup.object().shape({
       fullName: yup.string().required("Họ và tên không được để trống"),
-
       dob: yup
         .date()
         .max(new Date(), "Ngày sinh không hợp lệ")
         .required("Ngày sinh không được để trống"),
-
       birthplace: yup.string().required("Nơi sinh không được để trống"),
       nationality: yup.string().required("Quốc tịch không được để trống"),
       permanentAddr: yup
@@ -103,7 +100,6 @@ const CreateCrewContract = () => {
       temporaryAddr: yup
         .string()
         .required("Địa chỉ tạm trú không được để trống"),
-
       ciNumber: yup
         .string()
         .matches(ciNumberRegex, "Số CCCD không hợp lệ")

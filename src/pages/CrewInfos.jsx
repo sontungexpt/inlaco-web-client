@@ -303,22 +303,7 @@ const CrewInfos = () => {
           }}
         />
         {!sectionLoading ? (
-          <Box
-            m="24px 0 0 0"
-            height="80vh"
-            maxHeight={550}
-            maxWidth={1600}
-            sx={{
-              "& .MuiDataGrid-columnHeader": {
-                backgroundColor: Color.SecondaryBlue,
-                color: Color.PrimaryWhite,
-              },
-              "& .MuiTablePagination-root": {
-                backgroundColor: Color.SecondaryBlue,
-                color: Color.PrimaryWhite,
-              },
-            }}
-          >
+          <Box m="24px 0 0 0" height="80vh" maxHeight={550} maxWidth={1600}>
             <Box
               sx={{
                 display: "flex",
@@ -384,9 +369,19 @@ const CrewInfos = () => {
               sx={{
                 backgroundColor: "#FFF",
                 headerAlign: "center",
+
                 "& .MuiDataGrid-columnHeaderTitle": {
                   fontSize: 16,
                   fontWeight: 700,
+                },
+
+                "& .MuiDataGrid-columnHeader": {
+                  backgroundColor: Color.SecondaryBlue,
+                  color: Color.PrimaryWhite,
+                },
+                "& .MuiTablePagination-root": {
+                  backgroundColor: Color.SecondaryBlue,
+                  color: Color.PrimaryWhite,
                 },
               }}
             />
