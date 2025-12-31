@@ -27,7 +27,6 @@ const RecruitmentDetail = () => {
 
   const { roles } = useAuthContext();
   const isAdmin = roles.includes("ADMIN");
-  const isAlreadyApplied = false;
 
   const { data: post, isLoading } = useSpecificPost(id);
   const active = Boolean(post?.active);
@@ -57,11 +56,7 @@ const RecruitmentDetail = () => {
   };
 
   const handleUserApplicationClick = () => {
-    navigate(
-      isAlreadyApplied
-        ? `/recruitment/${id}/application`
-        : `/recruitment/${id}/apply`,
-    );
+    navigate(`/recruitment/apply/${id}`);
   };
 
   if (isLoading) {
@@ -254,7 +249,7 @@ const RecruitmentDetail = () => {
                   sx={{ py: 1.2, borderRadius: 2 }}
                   onClick={handleUserApplicationClick}
                 >
-                  {isAlreadyApplied ? "Xem hồ sơ đã nộp" : "Ứng tuyển ngay"}
+                  Ứng tuyển ngay
                 </Button>
               )}
 

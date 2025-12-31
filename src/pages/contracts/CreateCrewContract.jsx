@@ -4,6 +4,7 @@ import { FileUploadField } from "@components/contract";
 import {
   Box,
   Button,
+  Paper,
   Typography,
   Grid,
   MenuItem,
@@ -19,14 +20,66 @@ import { createCrewContractAPI } from "@/services/contractServices";
 import { dateStringToISOString } from "@utils/converter";
 import { HttpStatusCode } from "axios";
 import Regex from "@/constants/Regex";
+import { reviewCandidateApplication } from "@/services/postServices";
+import CandidateStatus from "@/constants/CandidateStatus";
+import { now, yesterday } from "@/utils/date";
+
+const SectionWrapper = ({ children }) => (
+  <Paper
+    elevation={1}
+    sx={{
+      p: 3,
+      mb: 3,
+      borderRadius: 2,
+      backgroundColor: "background.paper",
+    }}
+  >
+    {children}
+  </Paper>
+);
+
+const SubSegment = ({ title, children }) => (
+  <Paper
+    variant="outlined"
+    sx={{
+      p: 2,
+      borderRadius: 1.5,
+      borderColor: "text.secondary",
+    }}
+  >
+    <Typography
+      sx={{
+        fontSize: 14,
+        fontWeight: 600,
+        mb: 1.5,
+        color: "text.secondary",
+      }}
+    >
+      {title}
+    </Typography>
+
+    {children}
+  </Paper>
+);
+
+const SalarySectionWrapper = ({ children }) => (
+  <Paper
+    sx={{
+      p: 3,
+      mb: 3,
+      borderRadius: 2,
+      background: "linear-gradient(135deg, rgba(255,215,0,0.15), transparent)",
+    }}
+  >
+    {children}
+  </Paper>
+);
 
 const CreateCrewContract = () => {
   const navigate = useNavigate();
   const { crewMemberID } = useParams();
 
-  const receiveMethod = ["Tiền mặt", "Chuyển khoản ngân hàng"];
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
+  const RECEIVE_METHOD = ["Tiền mặt", "Chuyển khoản ngân hàng"];
 
   const initialValues = {
     contractFileLink: "",
@@ -66,101 +119,10 @@ const CreateCrewContract = () => {
     },
   };
 
-  const ciNumberRegex = "^\\d{12}$";
-
-  const crewContractSchema = Yup.object().shape({
-    title: Yup.string().required("Tiêu đề không được để trống"),
-    partyA: Yup.object().shape({
-      compName: Yup.string().required("Tên công ty không được để trống"),
-      compAddress: Yup.string().required("Địa chỉ không được để trống"),
-
-      compPhoneNumber: Yup.string()
-        .matches(Regex.VN_PHONE, "SĐT không hợp lệ")
-        .required("SĐT không được để trống"),
-
-      representative: Yup.string().required(
-        "Người đại diện không được để trống",
-      ),
-
-      representativePos: Yup.string().required("Chức vụ không được để trống"),
-    }),
-
-    partyB: Yup.object().shape({
-      fullName: Yup.string().required("Họ và tên không được để trống"),
-      dob: Yup.date()
-        .max(new Date(), "Ngày sinh không hợp lệ")
-        .required("Ngày sinh không được để trống"),
-      birthplace: Yup.string().required("Nơi sinh không được để trống"),
-      nationality: Yup.string().required("Quốc tịch không được để trống"),
-      permanentAddr: Yup.string().required(
-        "Địa chỉ thường trú không được để trống",
-      ),
-      temporaryAddr: Yup.string().required(
-        "Địa chỉ tạm trú không được để trống",
-      ),
-      ciNumber: Yup.string()
-        .matches(ciNumberRegex, "Số CCCD không hợp lệ")
-        .required("Số căn cước công dân không được để trống"),
-      ciIssueDate: Yup.date()
-        .max(new Date(), "Ngày cấp không hợp lệ")
-        .required("Ngày cấp không được để trống"),
-      ciIssuePlace: Yup.string().required("Nơi cấp không được để trống"),
-    }),
-
-    jobInfo: Yup.object().shape({
-      startDate: Yup.date()
-        .min(yesterday, "Ngày bắt đầu không hợp lệ")
-        .required("Ngày bắt đầu không được để trống")
-        .test(
-          "is-before-end-date",
-          "Ngày bắt đầu phải trước ngày kết thúc",
-          function (value) {
-            const { endDate } = this.parent; // Access sibling field endDate
-            return !endDate || value < endDate;
-          },
-        ),
-
-      endDate: Yup.date()
-        .required("Ngày kết thúc không được để trống")
-        .test(
-          "is-after-start-date",
-          "Ngày kết thúc phải sau ngày bắt đầu",
-          function (value) {
-            const { startDate } = this.parent; // Access sibling field startDate
-            return !startDate || value > startDate;
-          },
-        ),
-
-      workingLocation: Yup.string().required(
-        "Địa điểm làm việc không được để trống",
-      ),
-      position: Yup.string().required("Vị trí chuyên môn không được để trống"),
-      jobDescription: Yup.string().required(
-        "Mô tả công việc không được để trống",
-      ),
-    }),
-
-    salaryInfo: Yup.object().shape({
-      basicSalary: Yup.number()
-        .min(0, "Lương cơ bản không hợp lệ")
-        .required("Lương cơ bản không được để trống"),
-      allowance: Yup.number().min(0, "Phụ cấp không hợp lệ"),
-      receiveMethod: Yup.string().required(
-        "Hình thức trả lương không được để trống",
-      ),
-
-      payday: Yup.string().required("Thời hạn trả lương không được để trống"),
-
-      salaryReviewPeriod: Yup.string().required(
-        "Thời hạn được xét nâng lương không được để trống",
-      ),
-    }),
-  });
-
-  const [createContractLoading, setCreateContractLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
 
   const handleCreateCrewContractSubmit = async (values, { resetForm }) => {
-    setCreateContractLoading(true);
+    setCreating(true);
     try {
       //Calling API to create a new crew member
       const response = await createCrewContractAPI(crewMemberID, {
@@ -248,93 +210,7 @@ const CreateCrewContract = () => {
           },
         ],
       });
-      await new Promise((resolve) => setTimeout(resolve, 200)); //Delay UI for 200ms
-      // const temp = {
-      //   title: values.title,
-      //   initiator: {
-      //     partyName: values.partyA.compName,
-      //     address: values.partyA.compAddress,
-      //     phone: values.partyA.compPhoneNumber,
-      //     representer: values.partyA.representative,
-      //     email: "thong2046@gmail.com",
-      //     type: "STATIC",
-      //   },
-      //   signedPartners: [
-      //     {
-      //       partyName: values.partyB.fullName,
-      //       address: values.partyB.permanentAddr,
-      //       type: "DYNAMIC",
-      //       customAttributes: [
-      //         {
-      //           key: "dob",
-      //           value: dateStringToISOString(values.partyB.dob),
-      //         },
-      //         {
-      //           key: "birthplace",
-      //           value: values.partyB.birthplace,
-      //         },
-      //         {
-      //           key: "nationality",
-      //           value: values.partyB.nationality,
-      //         },
-      //         {
-      //           key: "temporaryAddr",
-      //           value: values.partyB.temporaryAddr,
-      //         },
-      //         {
-      //           key: "ciNumber",
-      //           value: values.partyB.ciNumber,
-      //         },
-      //         {
-      //           key: "ciIssueDate",
-      //           value: dateStringToISOString(values.partyB.ciIssueDate),
-      //         },
-      //         {
-      //           key: "ciIssuePlace",
-      //           value: values.partyB.ciIssuePlace,
-      //         },
-      //       ],
-      //     },
-      //   ],
-      //   activationDate: dateStringToISOString(values.jobInfo.startDate),
-      //   expiredDate: dateStringToISOString(values.jobInfo.endDate),
-      //   customAttributes: [
-      //     {
-      //       key: "workingLocation",
-      //       value: values.jobInfo.workingLocation,
-      //     },
-      //     {
-      //       key: "position",
-      //       value: values.jobInfo.position,
-      //     },
-      //     {
-      //       key: "jobDescription",
-      //       value: values.jobInfo.jobDescription,
-      //     },
-      //     {
-      //       key: "basicSalary",
-      //       value: values.salaryInfo.basicSalary,
-      //     },
-      //     {
-      //       key: "allowance",
-      //       value: values.salaryInfo.allowance,
-      //     },
-      //     {
-      //       key: "receiveMethod",
-      //       value: values.salaryInfo.receiveMethod,
-      //     },
-      //     {
-      //       key: "payday",
-      //       value: values.salaryInfo.payday,
-      //     },
-      //     {
-      //       key: "salaryReviewPeriod",
-      //       value: values.salaryInfo.salaryReviewPeriod,
-      //     },
-      //   ],
-      // };
-
-      console.log("Response: ", values);
+      await reviewCandidateApplication(crewMemberID, CandidateStatus.HIRED);
 
       if (response.status === HttpStatusCode.Created) {
         resetForm();
@@ -344,91 +220,151 @@ const CreateCrewContract = () => {
     } catch (err) {
       console.log("Error when creating crew contract: ", err);
     } finally {
-      setCreateContractLoading(false);
+      setCreating(false);
     }
   };
 
+  const FORM_SCHEMA = Yup.object().shape({
+    title: Yup.string().required("Tiêu đề không được để trống"),
+    partyA: Yup.object().shape({
+      compName: Yup.string().required("Tên công ty không được để trống"),
+      compAddress: Yup.string().required("Địa chỉ không được để trống"),
+      compPhoneNumber: Yup.string()
+        .matches(Regex.VN_PHONE, "SĐT không hợp lệ")
+        .required("SĐT không được để trống"),
+      representative: Yup.string().required(
+        "Người đại diện không được để trống",
+      ),
+      representativePos: Yup.string().required("Chức vụ không được để trống"),
+    }),
+
+    partyB: Yup.object().shape({
+      fullName: Yup.string().required("Họ và tên không được để trống"),
+      dob: Yup.date()
+        .max(now(), "Ngày sinh không hợp lệ")
+        .required("Ngày sinh không được để trống"),
+      birthplace: Yup.string().required("Nơi sinh không được để trống"),
+      nationality: Yup.string().required("Quốc tịch không được để trống"),
+      permanentAddr: Yup.string().required(
+        "Địa chỉ thường trú không được để trống",
+      ),
+      temporaryAddr: Yup.string().required(
+        "Địa chỉ tạm trú không được để trống",
+      ),
+      ciNumber: Yup.string()
+        .matches(Regex.CI_NUMBER, "Số CCCD không hợp lệ")
+        .required("Số căn cước công dân không được để trống"),
+      ciIssueDate: Yup.date()
+        .max(now(), "Ngày cấp không hợp lệ")
+        .required("Ngày cấp không được để trống"),
+      ciIssuePlace: Yup.string().required("Nơi cấp không được để trống"),
+    }),
+
+    jobInfo: Yup.object().shape({
+      startDate: Yup.date()
+        .min(yesterday(), "Ngày bắt đầu không hợp lệ")
+        .required("Ngày bắt đầu không được để trống")
+        .test(
+          "is-before-end-date",
+          "Ngày bắt đầu phải trước ngày kết thúc",
+          function (value) {
+            const { endDate } = this.parent; // Access sibling field endDate
+            return !endDate || value < endDate;
+          },
+        ),
+
+      endDate: Yup.date()
+        .required("Ngày kết thúc không được để trống")
+        .test(
+          "is-after-start-date",
+          "Ngày kết thúc phải sau ngày bắt đầu",
+          function (value) {
+            const { startDate } = this.parent; // Access sibling field startDate
+            return !startDate || value > startDate;
+          },
+        ),
+      workingLocation: Yup.string().required(
+        "Địa điểm làm việc không được để trống",
+      ),
+      position: Yup.string().required("Vị trí chuyên môn không được để trống"),
+      jobDescription: Yup.string().required(
+        "Mô tả công việc không được để trống",
+      ),
+    }),
+
+    salaryInfo: Yup.object().shape({
+      basicSalary: Yup.number()
+        .min(0, "Lương cơ bản không hợp lệ")
+        .required("Lương cơ bản không được để trống"),
+      allowance: Yup.number().min(0, "Phụ cấp không hợp lệ"),
+      receiveMethod: Yup.string().required(
+        "Hình thức trả lương không được để trống",
+      ),
+      payday: Yup.string().required("Thời hạn trả lương không được để trống"),
+      salaryReviewPeriod: Yup.string().required(
+        "Thời hạn được xét nâng lương không được để trống",
+      ),
+    }),
+  });
   return (
-    <div>
-      <Formik
-        validateOnChange={false}
-        initialValues={initialValues}
-        validationSchema={crewContractSchema}
-        onSubmit={handleCreateCrewContractSubmit}
-      >
-        {({
-          values,
-          errors,
-          touched,
-          isValid,
-          dirty,
-          handleBlur,
-          handleChange,
-          handleSubmit,
-        }) => (
-          <Box m="20px" component="form" onSubmit={handleSubmit}>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Box
+    <Formik
+      validateOnBlur
+      validateOnChange
+      initialValues={initialValues}
+      validationSchema={FORM_SCHEMA}
+      onSubmit={handleCreateCrewContractSubmit}
+    >
+      {({
+        values,
+        errors,
+        touched,
+        isValid,
+        dirty,
+        handleBlur,
+        handleChange,
+        handleSubmit,
+      }) => (
+        <Box p={2} component="form" onSubmit={handleSubmit}>
+          {/* ===== Sticky Header ===== */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              px: 2,
+            }}
+          >
+            <PageTitle
+              title="TẠO HỢP ĐỒNG THUYỀN VIÊN"
+              subtitle="Tạo và lưu hợp đồng mới vào hệ thống"
+            />
+
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <FileUploadField name="contractFileLink" />
+
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={!isValid || !dirty}
+                startIcon={<SaveIcon />}
                 sx={{
-                  display: "flex",
-                  flex: 1,
-                  flexDirection: "column",
-                  justifyContent: "space-between",
+                  px: 3,
+                  fontWeight: 700,
+                  backgroundColor: Color.PrimaryGold,
+                  color: Color.PrimaryBlack,
                 }}
               >
-                <PageTitle
-                  title="TẠO HỢP ĐỒNG THUYỀN VIÊN"
-                  subtitle="Tạo và lưu Hợp đồng thuyền viên mới vào hệ thống"
-                />
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    type="submit"
-                    disabled={!isValid || !dirty}
-                    sx={{
-                      width: "10%",
-                      padding: 1,
-                      color: Color.PrimaryBlack,
-                      backgroundColor: Color.PrimaryGold,
-                      minWidth: 130,
-                    }}
-                  >
-                    {createContractLoading ? (
-                      <CircularProgress size={24} color={Color.PrimaryBlack} />
-                    ) : (
-                      <Box sx={{ display: "flex", alignItems: "end" }}>
-                        <SaveIcon
-                          sx={{ marginRight: "5px", marginBottom: "1px" }}
-                        />
-                        <Typography sx={{ fontWeight: 700 }}>Tạo</Typography>
-                      </Box>
-                    )}
-                  </Button>
-                  <FileUploadField name="contractFileLink" />
-                </Box>
-              </Box>
+                {creating ? <CircularProgress size={22} /> : "Tạo hợp đồng"}
+              </Button>
             </Box>
-            <Grid
-              container
-              spacing={2}
-              mt={2}
-              mx={2}
-              rowSpacing={1}
-              pt={2}
-              sx={{ display: "flex", justifyContent: "center" }}
-            >
+          </Box>
+
+          {/* ===== Title ===== */}
+          <SectionWrapper>
+            <Grid container spacing={2}>
               <Grid size={6}>
                 <InfoTextField
-                  id="title"
                   label="Tiêu đề hợp đồng"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="title"
@@ -440,17 +376,15 @@ const CreateCrewContract = () => {
                 />
               </Grid>
             </Grid>
-            <SectionDivider
-              sx={{ marginTop: 1 }}
-              sectionName="Người sử dụng lao động (Bên A)*: "
-            />
-            <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
+          </SectionWrapper>
+
+          {/* ===== Party A ===== */}
+          <SectionWrapper>
+            <SectionDivider sectionName="Người sử dụng lao động (Bên A)" />
+            <Grid container spacing={2} mt={1}>
               <Grid size={4}>
                 <InfoTextField
-                  id="company-name"
                   label="Tên công ty"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="partyA.compName"
@@ -465,12 +399,10 @@ const CreateCrewContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
+
               <Grid size={6}>
                 <InfoTextField
-                  id="company-address"
                   label="Địa chỉ"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="partyA.compAddress"
@@ -486,12 +418,10 @@ const CreateCrewContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
+
               <Grid size={2}>
                 <InfoTextField
-                  id="company-phone-number"
                   label="Số điện thoại"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="partyA.compPhoneNumber"
@@ -508,12 +438,10 @@ const CreateCrewContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
+
               <Grid size={4}>
                 <InfoTextField
-                  id="representative"
                   label="Người đại diện"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="partyA.representative"
@@ -530,16 +458,13 @@ const CreateCrewContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
+
               <Grid size={3}>
                 <InfoTextField
-                  id="representative-position"
                   label="Chức vụ"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="partyA.representativePos"
-                  value={values.partyA?.representativePos}
                   error={
                     !!touched.partyA?.representativePos &&
                     !!errors.partyA?.representativePos
@@ -548,19 +473,21 @@ const CreateCrewContract = () => {
                     touched.partyA?.representativePos &&
                     errors.partyA?.representativePos
                   }
+                  value={values.partyA?.representativePos}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
               </Grid>
             </Grid>
-            <SectionDivider sectionName="Người lao động (Bên B)*: " />
-            <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
-              <Grid size={3}>
+          </SectionWrapper>
+
+          {/* ===== Party B ===== */}
+          <SectionWrapper>
+            <SectionDivider sectionName="Người lao động (Bên B)" />
+            <Grid container spacing={2} mt={1}>
+              <Grid size={6}>
                 <InfoTextField
-                  id="full-name"
                   label="Họ và tên"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="partyB.fullName"
@@ -575,13 +502,11 @@ const CreateCrewContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
+
               <Grid size={3}>
                 <InfoTextField
-                  id="dob"
                   type="date"
                   label="Ngày sinh"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="partyB.dob"
@@ -590,21 +515,13 @@ const CreateCrewContract = () => {
                   helperText={touched.partyB?.dob && errors.partyB?.dob}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  slotProps={{
-                    input: {
-                      placeholder: "asjdbnaskjd",
-                    },
-                    inputLabel: {
-                      shrink: true,
-                    },
-                  }}
+                  slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
               <Grid size={3}>
                 <InfoTextField
                   id="birthplace"
                   label="Nơi sinh"
-                  size="small"
                   margin="none"
                   required
                   fullWidth
@@ -620,12 +537,10 @@ const CreateCrewContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
-              <Grid size={3}>
+
+              <Grid size={2}>
                 <InfoTextField
-                  id="nationality"
                   label="Quốc tịch"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="partyB.nationality"
@@ -636,19 +551,15 @@ const CreateCrewContract = () => {
                   }
                   helperText={
                     touched.partyB?.nationality && errors.partyB?.nationality
-                      ? errors.partyB?.nationality
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
               </Grid>
-              <Grid size={6}>
+
+              <Grid size={5}>
                 <InfoTextField
-                  id="permanent-address"
                   label="Địa chỉ thường trú"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="partyB.permanentAddr"
@@ -665,11 +576,10 @@ const CreateCrewContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
-              <Grid size={6}>
+              <Grid size={5}>
                 <InfoTextField
                   id="temporary-address"
                   label="Địa chỉ tạm trú"
-                  size="small"
                   margin="none"
                   required
                   fullWidth
@@ -687,118 +597,108 @@ const CreateCrewContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
-              <Grid size={4}>
-                <InfoTextField
-                  id="ci-number"
-                  label="Số Căn cước công dân"
-                  size="small"
-                  margin="none"
-                  required
-                  fullWidth
-                  name="partyB.ciNumber"
-                  value={values.partyB?.ciNumber}
-                  error={
-                    !!touched.partyB?.ciNumber && !!errors.partyB?.ciNumber
-                  }
-                  helperText={
-                    touched.partyB?.ciNumber && errors.partyB?.ciNumber
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-              </Grid>
-              <Grid size={3}>
-                <InfoTextField
-                  id="ci-issue-date"
-                  type="date"
-                  label="Ngày cấp"
-                  size="small"
-                  margin="none"
-                  required
-                  fullWidth
-                  name="partyB.ciIssueDate"
-                  value={values.partyB?.ciIssueDate}
-                  error={
-                    !!touched.partyB?.ciIssueDate &&
-                    !!errors.partyB?.ciIssueDate
-                  }
-                  helperText={
-                    touched.partyB?.ciIssueDate && errors.partyB?.ciIssueDate
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  slotProps={{
-                    input: {
-                      placeholder: "asjdbnaskjd",
-                    },
-                    inputLabel: {
-                      shrink: true,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid size={5}>
-                <InfoTextField
-                  id="ci-issue-place"
-                  label="Nơi cấp"
-                  size="small"
-                  margin="none"
-                  required
-                  fullWidth
-                  name="partyB.ciIssuePlace"
-                  value={values.partyB?.ciIssuePlace}
-                  error={
-                    !!touched.partyB?.ciIssuePlace &&
-                    !!errors.partyB?.ciIssuePlace
-                  }
-                  helperText={
-                    touched.partyB?.ciIssuePlace && errors.partyB?.ciIssuePlace
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
+              <Grid size={12}>
+                <SubSegment title="Thông tin Căn cước công dân">
+                  <Grid container spacing={2}>
+                    <Grid size={4}>
+                      <InfoTextField
+                        id="ci-number"
+                        label="Số Căn cước công dân"
+                        required
+                        fullWidth
+                        name="partyB.ciNumber"
+                        value={values.partyB?.ciNumber}
+                        error={
+                          !!touched.partyB?.ciNumber &&
+                          !!errors.partyB?.ciNumber
+                        }
+                        helperText={
+                          touched.partyB?.ciNumber && errors.partyB?.ciNumber
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                    </Grid>
+
+                    <Grid size={3}>
+                      <InfoTextField
+                        id="ci-issue-date"
+                        type="date"
+                        label="Ngày cấp"
+                        required
+                        fullWidth
+                        name="partyB.ciIssueDate"
+                        value={values.partyB?.ciIssueDate}
+                        error={
+                          !!touched.partyB?.ciIssueDate &&
+                          !!errors.partyB?.ciIssueDate
+                        }
+                        helperText={
+                          touched.partyB?.ciIssueDate &&
+                          errors.partyB?.ciIssueDate
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        slotProps={{
+                          inputLabel: { shrink: true },
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid size={5}>
+                      <InfoTextField
+                        id="ci-issue-place"
+                        label="Nơi cấp"
+                        required
+                        fullWidth
+                        name="partyB.ciIssuePlace"
+                        value={values.partyB?.ciIssuePlace}
+                        error={
+                          !!touched.partyB?.ciIssuePlace &&
+                          !!errors.partyB?.ciIssuePlace
+                        }
+                        helperText={
+                          touched.partyB?.ciIssuePlace &&
+                          errors.partyB?.ciIssuePlace
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                    </Grid>
+                  </Grid>
+                </SubSegment>
               </Grid>
             </Grid>
-            <SectionDivider sectionName="Thông tin công việc*: " />
-            <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
-              <Grid size={3}>
+          </SectionWrapper>
+
+          {/* ===== Job Info ===== */}
+          <SectionWrapper>
+            <SectionDivider sectionName="Thông tin công việc" />
+            <Grid container spacing={2} mt={1}>
+              <Grid size={4}>
                 <InfoTextField
-                  id="start-date"
                   type="date"
                   label="Ngày bắt đầu"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="jobInfo.startDate"
                   value={values.jobInfo?.startDate}
+                  onChange={handleChange}
                   error={
                     !!touched.jobInfo?.startDate && !!errors.jobInfo?.startDate
                   }
                   helperText={
                     touched.jobInfo?.startDate && errors.jobInfo?.startDate
-                      ? errors.jobInfo?.startDate
-                      : " "
                   }
-                  onChange={handleChange}
                   onBlur={handleBlur}
-                  slotProps={{
-                    input: {
-                      placeholder: "asjdbnaskjd",
-                    },
-                    inputLabel: {
-                      shrink: true,
-                    },
-                  }}
+                  slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
-              <Grid size={3}>
+
+              <Grid size={4}>
                 <InfoTextField
-                  id="end-date"
                   type="date"
                   label="Ngày kết thúc"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="jobInfo.endDate"
@@ -808,48 +708,17 @@ const CreateCrewContract = () => {
                   }
                   helperText={
                     touched.jobInfo?.endDate && errors.jobInfo?.endDate
-                      ? errors.jobInfo?.endDate
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  slotProps={{
-                    input: {
-                      placeholder: "asjdbnaskjd",
-                    },
-                    inputLabel: {
-                      shrink: true,
-                    },
-                  }}
+                  slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
-              <Grid size={3}>
-                <InfoTextField
-                  id="working-location"
-                  label="Địa điểm làm việc"
-                  size="small"
-                  margin="none"
-                  required
-                  fullWidth
-                  name="jobInfo.workingLocation"
-                  value={values.jobInfo?.workingLocation}
-                  error={
-                    !!touched.jobInfo?.workingLocation &&
-                    !!errors.jobInfo?.workingLocation
-                  }
-                  helperText={
-                    touched.jobInfo?.workingLocation &&
-                    errors.jobInfo?.workingLocation
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-              </Grid>
-              <Grid size={3}>
+
+              <Grid size={4}>
                 <InfoTextField
                   id="position"
                   label="Vị trí chuyên môn"
-                  size="small"
                   margin="none"
                   required
                   fullWidth
@@ -867,13 +736,30 @@ const CreateCrewContract = () => {
               </Grid>
               <Grid size={12}>
                 <InfoTextField
-                  id="job-description"
-                  label="Mô tả công việc"
-                  rows={6}
-                  multiline
-                  size="small"
-                  margin="none"
+                  label="Địa điểm làm việc"
                   required
+                  fullWidth
+                  name="jobInfo.workingLocation"
+                  value={values.jobInfo?.workingLocation}
+                  error={
+                    !!touched.jobInfo?.workingLocation &&
+                    !!errors.jobInfo?.workingLocation
+                  }
+                  helperText={
+                    touched.jobInfo?.workingLocation &&
+                    errors.jobInfo?.workingLocation
+                  }
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+              </Grid>
+
+              <Grid size={12}>
+                <InfoTextField
+                  label="Mô tả công việc"
+                  required
+                  multiline
+                  rows={5}
                   fullWidth
                   name="jobInfo.jobDescription"
                   value={values.jobInfo?.jobDescription}
@@ -890,15 +776,16 @@ const CreateCrewContract = () => {
                 />
               </Grid>
             </Grid>
-            <SectionDivider sectionName="Thông tin lương*: " />
-            <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
+          </SectionWrapper>
+
+          {/* ===== Salary ===== */}
+          <SalarySectionWrapper>
+            <SectionDivider sectionName="Thông tin lương" />
+            <Grid container spacing={2} mt={1}>
               <Grid size={3}>
                 <InfoTextField
-                  id="basic-salary"
                   type="number"
                   label="Lương cơ bản"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="salaryInfo.basicSalary"
@@ -920,24 +807,13 @@ const CreateCrewContract = () => {
                       ),
                     },
                   }}
-                  sx={{
-                    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                      {
-                        display: "none",
-                      },
-                    "& input[type=number]": {
-                      MozAppearance: "textfield",
-                    },
-                  }}
                 />
               </Grid>
+
               <Grid size={3}>
                 <InfoTextField
-                  id="allowance"
                   type="number"
                   label="Phụ cấp"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="salaryInfo.allowance"
@@ -952,31 +828,13 @@ const CreateCrewContract = () => {
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  slotProps={{
-                    input: {
-                      endAdornment: (
-                        <InputAdornment position="end">vnđ</InputAdornment>
-                      ),
-                    },
-                  }}
-                  sx={{
-                    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                      {
-                        display: "none",
-                      },
-                    "& input[type=number]": {
-                      MozAppearance: "textfield",
-                    },
-                  }}
                 />
               </Grid>
+
               <Grid size={3}>
                 <InfoTextField
-                  id="receive-method"
                   select
                   label="Hình thức trả lương"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="salaryInfo.receiveMethod"
@@ -992,19 +850,17 @@ const CreateCrewContract = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                 >
-                  {receiveMethod.map((method) => (
-                    <MenuItem key={method} value={method}>
-                      {method}
+                  {RECEIVE_METHOD.map((m) => (
+                    <MenuItem key={m} value={m}>
+                      {m}
                     </MenuItem>
                   ))}
                 </InfoTextField>
               </Grid>
+
               <Grid size={3}>
                 <InfoTextField
-                  id="payday"
                   label="Thời hạn trả lương"
-                  size="small"
-                  margin="none"
                   required
                   fullWidth
                   name="salaryInfo.payday"
@@ -1023,7 +879,6 @@ const CreateCrewContract = () => {
                 <InfoTextField
                   id="salary-review-period"
                   label="Thời hạn được xét nâng lương"
-                  size="small"
                   margin="none"
                   required
                   fullWidth
@@ -1042,10 +897,10 @@ const CreateCrewContract = () => {
                 />
               </Grid>
             </Grid>
-          </Box>
-        )}
-      </Formik>
-    </div>
+          </SalarySectionWrapper>
+        </Box>
+      )}
+    </Formik>
   );
 };
 

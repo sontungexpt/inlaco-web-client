@@ -4,7 +4,6 @@ import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
 import { InfoTextField, StatusLabel } from "@components/global";
-import { FileUploadField } from "@components/contract";
 import {
   Box,
   Button,
@@ -32,7 +31,7 @@ const getFileIcon = (url) => {
   return <DescriptionRoundedIcon />;
 };
 
-const AdminCandidateDetail = () => {
+const CandidateProfileDetail = () => {
   const navigate = useNavigate();
   const { candidateID } = useParams();
 
@@ -41,6 +40,7 @@ const AdminCandidateDetail = () => {
     isLoading,
     refetch: refetchCandidateInfo,
   } = useCandidate(candidateID);
+
   const { mutateAsync, isPending: isReviewing } = useMutation({
     mutationFn: (status) => reviewCandidateApplication(candidateID, status),
     onSuccess: () => {
@@ -94,8 +94,6 @@ const AdminCandidateDetail = () => {
     } else if (status === CandidateStatus.APPLIED) {
       await reviewCandidateAsync(CandidateStatus.WAIT_FOR_INTERVIEW);
     } else if (status === CandidateStatus.WAIT_FOR_INTERVIEW) {
-      await reviewCandidateAsync(CandidateStatus.HIRED);
-    } else if (status === CandidateStatus.HIRED) {
       navigate(`/crew-contracts/create/${candidateID}`);
     }
   };
@@ -194,10 +192,8 @@ const AdminCandidateDetail = () => {
             >
               <CheckCircleRoundedIcon sx={{ mr: 1 }} />
               {status === CandidateStatus.WAIT_FOR_INTERVIEW
-                ? "Thuê"
-                : status === CandidateStatus.HIRED
-                  ? "Tạo hợp đồng"
-                  : "Chấp nhận"}
+                ? "Tạo hợp đồng"
+                : "Chấp nhận"}
             </Button>
 
             {status !== CandidateStatus.HIRED &&
@@ -392,4 +388,4 @@ const AdminCandidateDetail = () => {
   );
 };
 
-export default AdminCandidateDetail;
+export default CandidateProfileDetail;

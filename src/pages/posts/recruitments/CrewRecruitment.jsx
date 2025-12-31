@@ -129,7 +129,7 @@ export default function CrewRecruitment() {
             onPageChange={(e, value) => setPostPage(value - 1)}
             onPostClick={(post) => navigate(`/recruitment/${post.id}`)}
             onViewDetail={(post) => navigate(`/recruitment/${post.id}`)}
-            onApplyNow={(post) => navigate(`/recruitment/${post.id}/apply`)}
+            onApplyNow={(post) => navigate(`/recruitment/apply/${post.id}`)}
           />
         ))}
 
@@ -143,7 +143,7 @@ export default function CrewRecruitment() {
           <CandidateTable
             filterStatus={filterCandidateStatus}
             onAdminMemberDetailClick={(id) =>
-              navigate(`/recruitment/candidates/${id}/admin`)
+              navigate(`/recruitment/candidates/${id}`)
             }
             onCreateCrewMemberClick={(candidateId) =>
               navigate(`/crews/add/${candidateId}`, {

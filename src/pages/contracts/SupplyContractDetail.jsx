@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { PageTitle, SectionDivider, InfoTextField } from "../components/global";
-import { FileUploadField } from "../components/contract";
+import { PageTitle, SectionDivider, InfoTextField } from "@components/global";
+import { FileUploadField } from "@components/contract";
 import {
   Box,
   Button,
@@ -260,7 +260,7 @@ const SupplyContractDetail = () => {
     };
 
     loadFile(
-      require("../assets/templates/template-hop-dong-cung-ung-thuyen-vien.docx"),
+      require("@assets/templates/template-hop-dong-cung-ung-thuyen-vien.docx"),
       (error, content) => {
         if (error) {
           throw error;

@@ -53,7 +53,7 @@ const FileUploadField = ({
   sx = [],
   ...props
 }) => {
-  const { setFieldValue, setFieldTouched, validateField } = useFormikContext();
+  const { setFieldValue, setFieldTouched } = useFormikContext();
   const [field, meta] = useField(name);
   const [dragOver, setDragOver] = useState(false);
   const inputId = id || `file-upload-${name}`;
@@ -90,8 +90,6 @@ const FileUploadField = ({
       {...props}
       sx={[
         {
-          width: "100%",
-          maxWidth: 560,
           display: "flex",
           flexDirection: "column",
           gap: 0.75,

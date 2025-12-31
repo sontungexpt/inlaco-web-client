@@ -47,7 +47,6 @@ const cldUpload = async (file, params) => {
 const cloudinaryUpload = async (file, stragegy) => {
   const params = await getUploadOptions(stragegy);
   const response = await cldUpload(file, params);
-  console.log(response);
   return response;
 };
 

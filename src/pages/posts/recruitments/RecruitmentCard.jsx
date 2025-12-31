@@ -17,7 +17,6 @@ const RecruitmentCard = ({
   onViewDetail,
   ...props
 }) => {
-  const expired = !isAdmin && isExpired;
   return (
     <Grid
       {...props}
@@ -70,13 +69,13 @@ const RecruitmentCard = ({
                 borderRadius: 2,
                 fontSize: 12,
                 fontWeight: 600,
-                backgroundColor: expired
+                backgroundColor: isExpired
                   ? "rgba(211,47,47,0.1)"
                   : "rgba(46,125,50,0.1)",
-                color: expired ? "error.main" : "success.main",
+                color: isExpired ? "error.main" : "success.main",
               }}
             >
-              {expired ? "Đã đóng" : "Đang tuyển"}
+              {isExpired ? "Đã đóng" : "Đang tuyển"}
             </Box>
           </Box>
 
@@ -118,7 +117,7 @@ const RecruitmentCard = ({
         {/* ---------- Action ---------- */}
         <Box display="flex" justifyContent="flex-end" mt={3}>
           <Button
-            disabled={expired}
+            disabled={!isAdmin && isExpired}
             onClick={(e) => {
               e.stopPropagation();
               if (isAdmin) onViewDetail(e);
@@ -126,20 +125,22 @@ const RecruitmentCard = ({
             }}
             variant="contained"
             sx={{
-              backgroundColor: expired
-                ? "action.disabledBackground"
-                : Color.SecondaryBlue,
-              color: expired ? "text.disabled" : "#fff",
+              backgroundColor:
+                !isAdmin && isExpired
+                  ? "action.disabledBackground"
+                  : Color.SecondaryBlue,
+              color: !isAdmin && isExpired ? "text.disabled" : "#fff",
               textTransform: "none",
               fontWeight: 600,
               px: 3,
               py: 1,
               borderRadius: 2,
               "&:hover": {
-                backgroundColor: expired
-                  ? "action.disabledBackground"
-                  : Color.SecondaryBlue,
-                opacity: expired ? 1 : 0.9,
+                backgroundColor:
+                  !isAdmin && isExpired
+                    ? "action.disabledBackground"
+                    : Color.SecondaryBlue,
+                opacity: !isAdmin && isExpired ? 1 : 0.9,
               },
             }}
           >

@@ -99,10 +99,10 @@ export const fetchCandidates = async ({
   }
 };
 
-export const fetchUniqueCandidate = async (candidateID) => {
+export const fetchUniqueCandidate = async (candidateId) => {
   try {
     const response = await privateRequest.get(
-      PostEndpoint.GET_CANDIDATE_BY_ID(candidateID),
+      PostEndpoint.GET_CANDIDATE_BY_ID(candidateId),
     );
     return response.data;
   } catch (err) {

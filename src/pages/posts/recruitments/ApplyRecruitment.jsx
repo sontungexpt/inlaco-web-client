@@ -22,7 +22,7 @@ import toast from "react-hot-toast";
 
 const ApplyRecruitment = () => {
   const navigate = useNavigate();
-  const { id: recruitmentId } = useParams();
+  const { recruitmentId } = useParams();
   const [isPending, setIsPending] = useState(false);
 
   const handleSubmit = async (values, { resetForm }) => {
@@ -33,7 +33,7 @@ const ApplyRecruitment = () => {
         UploadStragegy.RESUME,
       );
 
-      await applyRecruitment(
+      const candidate = await applyRecruitment(
         recruitmentId,
         {
           fullName: values.fullName,
@@ -42,11 +42,13 @@ const ApplyRecruitment = () => {
           gender: values.gender,
           address: values.permanentAddr,
           languageSkills: values.languageSkills,
+          experiences: values.experiences,
         },
         uploadResponse.public_id,
       );
       resetForm();
-      navigate("/recruitment");
+      console.log(candidate);
+      navigate(`/recruitment/candidates/${candidate.id}`);
     } catch (error) {
       console.log(error);
       toast.error("Ứng tuyển thất bại");
@@ -97,6 +99,7 @@ const ApplyRecruitment = () => {
     email: "",
     permanentAddr: "",
     languageSkills: "",
+    experiences: "",
     cvFile: null,
   };
 
@@ -167,7 +170,7 @@ const ApplyRecruitment = () => {
           </Box>
           <SectionDivider sectionName="Thông tin ứng viên: " />
           <Grid container spacing={2} rowSpacing={1} pt={2}>
-            <Grid size={5}>
+            <Grid size={6}>
               <InfoTextField
                 id="full-name"
                 label="Họ và tên"
@@ -215,31 +218,7 @@ const ApplyRecruitment = () => {
                 }}
               />
             </Grid>
-            <Grid size={5}>
-              <InfoTextField
-                id="permanent-address"
-                label="Địa chỉ"
-                size="small"
-                margin="none"
-                required
-                fullWidth
-                name="permanentAddr"
-                value={values.permanentAddr}
-                error={!!touched.permanentAddr && !!errors.permanentAddr}
-                helperText={touched.permanentAddr && errors.permanentAddr}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                sx={{
-                  "& .MuiInputBase-input.Mui-disabled": {
-                    color: Color.PrimaryBlack,
-                  },
-                  "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                    borderColor: Color.PrimaryBlack,
-                  },
-                }}
-              />
-            </Grid>
-            <Grid size={3}>
+            <Grid size={2}>
               <InfoTextField
                 select
                 id="gender"
@@ -262,7 +241,8 @@ const ApplyRecruitment = () => {
                 ))}
               </InfoTextField>
             </Grid>
-            <Grid size={4}>
+
+            <Grid size={6}>
               <InfoTextField
                 id="email"
                 label="Email"
@@ -286,6 +266,30 @@ const ApplyRecruitment = () => {
                 }}
               />
             </Grid>
+            <Grid size={6}>
+              <InfoTextField
+                id="permanent-address"
+                label="Địa chỉ"
+                size="small"
+                margin="none"
+                required
+                fullWidth
+                name="permanentAddr"
+                value={values.permanentAddr}
+                error={!!touched.permanentAddr && !!errors.permanentAddr}
+                helperText={touched.permanentAddr && errors.permanentAddr}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                sx={{
+                  "& .MuiInputBase-input.Mui-disabled": {
+                    color: Color.PrimaryBlack,
+                  },
+                  "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
+                    borderColor: Color.PrimaryBlack,
+                  },
+                }}
+              />
+            </Grid>
             <Grid size={12}>
               <InfoTextField
                 id="language-skills"
@@ -297,6 +301,31 @@ const ApplyRecruitment = () => {
                 value={values.languageSkills}
                 error={!!touched.languageSkills && !!errors.languageSkills}
                 helperText={touched.languageSkills && errors.languageSkills}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                sx={{
+                  "& .MuiInputBase-input.Mui-disabled": {
+                    color: Color.PrimaryBlack,
+                  },
+                  "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
+                    borderColor: Color.PrimaryBlack,
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={12}>
+              <InfoTextField
+                id="experiences"
+                label="Kinh nghiệm làm việc"
+                size="small"
+                margin="none"
+                fullWidth
+                name="experiences"
+                value={values.experiences}
+                error={!!touched.experiences && !!errors.experiences}
+                helperText={touched.experiences && errors.experiences}
+                rows={2}
+                multiline={true}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 sx={{

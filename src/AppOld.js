@@ -24,7 +24,7 @@ import CrewContractAddendum from "./pages/crewContractAddendum";
 
 import SupplyContract from "./pages/contracts/SupplyContract";
 import CreateSupplyContract from "./pages/createSupplyContract";
-import SupplyContractDetail from "./pages/SupplyContractDetail";
+import SupplyContractDetail from "./pages/contracts/SupplyContractDetail";
 import SupplyContractAddendum from "./pages/supplyContractAddendum";
 
 import TemplateContract from "./pages/contracts/TemplateContract";
@@ -35,7 +35,7 @@ import UserSupplyRequestDetail from "./pages/UserSupplyRequestDetail";
 import CreateSupplyRequest from "./pages/supplication/CreateSupplyRequest";
 
 import CrewRecruitment from "./pages/posts/recruitments/CrewRecruitment";
-import AdminCandidateDetail from "./pages/candidates/AdminCandidateDetail";
+import CandidateProfileDetail from "./pages/candidates/CandidateProfileDetail";
 import UserCandidateDetail from "./pages/candidates/UserCandidateDetail";
 import ApplyRecruitment from "./pages/posts/recruitments/ApplyRecruitment";
 import CreateRecruitment from "./pages/posts/recruitments/CreateRecruitment";
@@ -211,7 +211,7 @@ function App() {
                   <Route path=":id" element={<RecruitmentDetail />} />
                   <Route
                     path="candidates/:candidateID/admin"
-                    element={<AdminCandidateDetail />}
+                    element={<CandidateProfileDetail />}
                   />
 
                   {/* User */}
