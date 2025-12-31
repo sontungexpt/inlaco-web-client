@@ -19,7 +19,7 @@ import MobilizationDetail from "./pages/mobilizationDetail";
 
 import CrewContract from "./pages/contracts/CrewContract";
 import CreateCrewContract from "./pages/createCrewContract";
-import CrewContractDetail from "./pages/CrewContractDetail";
+import CrewContractDetail from "./pages/contracts/CrewContractDetail";
 import CrewContractAddendum from "./pages/crewContractAddendum";
 
 import SupplyContract from "./pages/contracts/SupplyContract";

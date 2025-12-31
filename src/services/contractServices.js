@@ -1,5 +1,5 @@
 import { privateRequest } from "@/utils/request";
-import ContractEndpoints from "@/endpoints/ContractEndpoint";
+import ContractEndpoint from "@/endpoints/ContractEndpoint";
 
 export const fetchCrewContracts = async ({
   page,
@@ -9,7 +9,7 @@ export const fetchCrewContracts = async ({
 }) => {
   try {
     const response = await privateRequest.get(
-      ContractEndpoints.GET_ALL_CONTRACTS,
+      ContractEndpoint.GET_ALL_CONTRACTS,
       {
         params: {
           page,
@@ -29,7 +29,7 @@ export const fetchCrewContracts = async ({
 export const fetchUniqueContract = async (contractID) => {
   try {
     const response = await privateRequest.get(
-      ContractEndpoints.GET_CONTRACT_BY_ID(contractID),
+      ContractEndpoint.GET_CONTRACT_BY_ID(contractID),
     );
     console.log(response);
     return response.data;
@@ -42,7 +42,7 @@ export const fetchUniqueContract = async (contractID) => {
 export const getCrewContractByID_API = async (contractID) => {
   try {
     const response = await privateRequest.get(
-      `${ContractEndpoints.GENERAL}/${contractID}`,
+      `${ContractEndpoint.GENERAL}/${contractID}`,
     );
     return response;
   } catch (err) {
@@ -53,7 +53,7 @@ export const getCrewContractByID_API = async (contractID) => {
 export const getSupplyContractByID_API = async (contractID) => {
   try {
     const response = await privateRequest.get(
-      `${ContractEndpoints.GENERAL}/${contractID}`,
+      `${ContractEndpoint.GENERAL}/${contractID}`,
     );
     return response;
   } catch (err) {
@@ -61,24 +61,19 @@ export const getSupplyContractByID_API = async (contractID) => {
   }
 };
 
-export const createCrewContractAPI = async (crewMemberID, crewContractInfo) => {
+export const createLaborContract = async (crewMemberID, contract) => {
   try {
     const response = await privateRequest.post(
-      `${ContractEndpoints.LABOR_GENERAL}/${crewMemberID}`,
+      ContractEndpoint.CREATE_LABOR_CONTRACT(crewMemberID),
       {
-        title: crewContractInfo.title,
-        initiator: crewContractInfo.initiator,
-        signedPartners: crewContractInfo.signedPartners,
-        terms: ["Terms 1"],
-        activationDate: crewContractInfo.activationDate,
-        expiredDate: crewContractInfo.expiredDate,
+        ...contract,
         type: "LABOR_CONTRACT",
-        customAttributes: crewContractInfo.customAttributes,
       },
     );
-    return response;
+    return response.data;
   } catch (err) {
-    return err.response;
+    console.debug(err);
+    throw err;
   }
 };
 
@@ -88,7 +83,7 @@ export const createSupplyContractAPI = async (
 ) => {
   try {
     const response = await privateRequest.post(
-      `${ContractEndpoints.SUPPLY_GENERAL}/${supplyReqID}`,
+      `${ContractEndpoint.SUPPLY_GENERAL}/${supplyReqID}`,
       {
         title: supplyContractInfo.title,
         initiator: supplyContractInfo.initiator,
@@ -109,7 +104,7 @@ export const createSupplyContractAPI = async (
 export const editCrewContractAPI = async (contractID, contractInfo) => {
   try {
     const response = await privateRequest.patch(
-      `${ContractEndpoints.GENERAL}/${contractID}`,
+      `${ContractEndpoint.GENERAL}/${contractID}`,
       {
         title: contractInfo.title,
         initiator: contractInfo.initiator,
@@ -130,7 +125,7 @@ export const editCrewContractAPI = async (contractID, contractInfo) => {
 export const editSupplyContractAPI = async (contractID, contractInfo) => {
   try {
     const response = await privateRequest.patch(
-      `${ContractEndpoints.GENERAL}/${contractID}`,
+      `${ContractEndpoint.GENERAL}/${contractID}`,
       {
         title: contractInfo.title,
         initiator: contractInfo.initiator,
@@ -151,7 +146,7 @@ export const editSupplyContractAPI = async (contractID, contractInfo) => {
 export const activeContractByID_API = async (contractID) => {
   try {
     const response = await privateRequest.post(
-      `${ContractEndpoints.ACTIVE}/${contractID}`,
+      `${ContractEndpoint.ACTIVE}/${contractID}`,
     );
     return response;
   } catch (err) {

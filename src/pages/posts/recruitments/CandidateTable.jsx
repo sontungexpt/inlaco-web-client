@@ -11,7 +11,7 @@ import CandidateStatus from "@/constants/CandidateStatus";
 const CustomFooter = ({ filterStatus, onFilterStatusChange }) => {
   const STATUS_FILTERS = [
     { label: "Đã nộp", value: "APPLIED" },
-    { label: "Đã qua vòng phỏng vấn", value: "WAIT_FOR_INTERVIEW" },
+    { label: "Đang trong vòng phỏng vấn", value: "WAIT_FOR_INTERVIEW" },
     { label: "Từ chối", value: "REJECTED" },
     { label: "Đã ký hợp đồng", value: "HIRED" },
   ];

@@ -34,7 +34,7 @@ import PostDetail from "@/pages/posts/PostDetail";
 import UpdatePost from "@/pages/posts/UpdatePost";
 
 import CrewContract from "@/pages/contracts/CrewContract";
-import CrewContractDetail from "@/pages/CrewContractDetail";
+import CrewContractDetail from "@/pages/contracts/CrewContractDetail";
 import CrewContractAddendum from "@pages/crewContractAddendum";
 
 const CreateCrewContract = lazy(
@@ -122,7 +122,7 @@ export const AppRoutes = [
     roles: ADMIN_SAILOR,
     children: [
       { index: true, element: CrewContract },
-      { path: "create/:crewMemberID", element: CreateCrewContract },
+      { path: "create/:candidateProfileId", element: CreateCrewContract },
       { path: ":id", element: CrewContractDetail },
       { path: ":id/create-addendum", element: CrewContractAddendum },
     ],

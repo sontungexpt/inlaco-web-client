@@ -16,73 +16,92 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigate, useParams } from "react-router";
 import Color from "@constants/Color";
-import { createCrewContractAPI } from "@/services/contractServices";
+import { createLaborContract } from "@/services/contractServices";
 import { dateStringToISOString } from "@utils/converter";
-import { HttpStatusCode } from "axios";
 import Regex from "@/constants/Regex";
-import { reviewCandidateApplication } from "@/services/postServices";
-import CandidateStatus from "@/constants/CandidateStatus";
 import { now, yesterday } from "@/utils/date";
-
-const SectionWrapper = ({ children }) => (
-  <Paper
-    elevation={1}
-    sx={{
-      p: 3,
-      mb: 3,
-      borderRadius: 2,
-      backgroundColor: "background.paper",
-    }}
-  >
-    {children}
-  </Paper>
-);
-
-const SubSegment = ({ title, children }) => (
-  <Paper
-    variant="outlined"
-    sx={{
-      p: 2,
-      borderRadius: 1.5,
-      borderColor: "text.secondary",
-    }}
-  >
-    <Typography
-      sx={{
-        fontSize: 14,
-        fontWeight: 600,
-        mb: 1.5,
-        color: "text.secondary",
-      }}
-    >
-      {title}
-    </Typography>
-
-    {children}
-  </Paper>
-);
-
-const SalarySectionWrapper = ({ children }) => (
-  <Paper
-    sx={{
-      p: 3,
-      mb: 3,
-      borderRadius: 2,
-      background: "linear-gradient(135deg, rgba(255,215,0,0.15), transparent)",
-    }}
-  >
-    {children}
-  </Paper>
-);
+import SubSegmentWrapper from "./components/SubSegmentWrapper";
+import SectionWrapper from "@components/global/SectionWrapper";
 
 const CreateCrewContract = () => {
   const navigate = useNavigate();
-  const { crewMemberID } = useParams();
+  const { candidateProfileId } = useParams();
 
   const RECEIVE_METHOD = ["Tiền mặt", "Chuyển khoản ngân hàng"];
 
+  const [creating, setCreating] = useState(false);
+
+  const createContract = async (values, { resetForm }) => {
+    setCreating(true);
+    try {
+      //Calling API to create a new crew member
+      const response = await createLaborContract(candidateProfileId, {
+        title: values.title,
+        initiator: {
+          partyName: values.partyA.compName,
+          address: values.partyA.compAddress,
+          phone: values.partyA.compPhoneNumber,
+          representer: values.partyA.representative,
+          email: "thong2046@gmail.com",
+          type: "STATIC",
+        },
+        partners: [
+          {
+            partyName: values.partyB.fullName,
+            representer: values.partyB.fullName,
+            address: values.partyB.permanentAddr,
+            phone: "0865474654",
+            type: "LABOR",
+            birthPlace: values.partyB.birthplace,
+            birthDate: dateStringToISOString(values.partyB.dob),
+            nationality: values.partyB.nationality,
+            temporaryAddress: values.partyB.temporaryAddr,
+            identificationCardId: values.partyB.ciNumber,
+            identificationCardIssuedDate: dateStringToISOString(
+              values.partyB.ciIssueDate,
+            ),
+            identificationCardIssuedPlace: values.partyB.ciIssuePlace,
+            bankAccount: values.salaryInfo.bankAccount,
+            bankName: values.salaryInfo.bankName,
+          },
+        ],
+        activationDate: dateStringToISOString(values.jobInfo.startDate),
+        expiredDate: dateStringToISOString(values.jobInfo.endDate),
+        position: values.jobInfo.position,
+        workingLocation: values.jobInfo.workingLocation,
+        basicSalary: values.salaryInfo.basicSalary,
+        birthplace: values.partyB.birthplace,
+        terms: [],
+        customAttributes: [
+          {
+            key: "jobDescription",
+            value: values.jobInfo.jobDescription,
+          },
+          {
+            key: "allowance",
+            value: values.salaryInfo.allowance,
+          },
+          {
+            key: "receiveMethod",
+            value: values.salaryInfo.receiveMethod,
+          },
+          {
+            key: "payday",
+            value: values.salaryInfo.payday,
+          },
+          {
+            key: "salaryReviewPeriod",
+            value: values.salaryInfo.salaryReviewPeriod,
+          },
+        ],
+      });
+      resetForm();
+      navigate("/crew-contracts");
+    } catch (err) {}
+    setCreating(false);
+  };
+
   const initialValues = {
-    contractFileLink: "",
     title: "",
     partyA: {
       cardPhoto: "",
@@ -116,112 +135,10 @@ const CreateCrewContract = () => {
       receiveMethod: "Tiền mặt",
       payday: "Ngày 5 hàng tháng",
       salaryReviewPeriod: "Mỗi 3 tháng",
+      bankAccount: "",
+      bankName: "",
     },
-  };
-
-  const [creating, setCreating] = useState(false);
-
-  const handleCreateCrewContractSubmit = async (values, { resetForm }) => {
-    setCreating(true);
-    try {
-      //Calling API to create a new crew member
-      const response = await createCrewContractAPI(crewMemberID, {
-        title: values.title,
-        initiator: {
-          partyName: values.partyA.compName,
-          address: values.partyA.compAddress,
-          phone: values.partyA.compPhoneNumber,
-          representer: values.partyA.representative,
-          email: "thong2046@gmail.com",
-          type: "STATIC",
-        },
-        signedPartners: [
-          {
-            partyName: values.partyB.fullName,
-            address: values.partyB.permanentAddr,
-            phone: "0865474654",
-            type: "DYNAMIC",
-            customAttributes: [
-              {
-                key: "dob",
-                value: dateStringToISOString(values.partyB.dob),
-              },
-              {
-                key: "birthplace",
-                value: values.partyB.birthplace,
-              },
-              {
-                key: "nationality",
-                value: values.partyB.nationality,
-              },
-              {
-                key: "temporaryAddr",
-                value: values.partyB.temporaryAddr,
-              },
-              {
-                key: "ciNumber",
-                value: values.partyB.ciNumber,
-              },
-              {
-                key: "ciIssueDate",
-                value: dateStringToISOString(values.partyB.ciIssueDate),
-              },
-              {
-                key: "ciIssuePlace",
-                value: values.partyB.ciIssuePlace,
-              },
-            ],
-          },
-        ],
-        activationDate: dateStringToISOString(values.jobInfo.startDate),
-        expiredDate: dateStringToISOString(values.jobInfo.endDate),
-        customAttributes: [
-          {
-            key: "workingLocation",
-            value: values.jobInfo.workingLocation,
-          },
-          {
-            key: "position",
-            value: values.jobInfo.position,
-          },
-          {
-            key: "jobDescription",
-            value: values.jobInfo.jobDescription,
-          },
-          {
-            key: "basicSalary",
-            value: values.salaryInfo.basicSalary,
-          },
-          {
-            key: "allowance",
-            value: values.salaryInfo.allowance,
-          },
-          {
-            key: "receiveMethod",
-            value: values.salaryInfo.receiveMethod,
-          },
-          {
-            key: "payday",
-            value: values.salaryInfo.payday,
-          },
-          {
-            key: "salaryReviewPeriod",
-            value: values.salaryInfo.salaryReviewPeriod,
-          },
-        ],
-      });
-      await reviewCandidateApplication(crewMemberID, CandidateStatus.HIRED);
-
-      if (response.status === HttpStatusCode.Created) {
-        resetForm();
-        navigate("/crew-contracts");
-      }
-      console.log("Successfully submitted: ", values);
-    } catch (err) {
-      console.log("Error when creating crew contract: ", err);
-    } finally {
-      setCreating(false);
-    }
+    contractFileLink: null,
   };
 
   const FORM_SCHEMA = Yup.object().shape({
@@ -304,7 +221,31 @@ const CreateCrewContract = () => {
       salaryReviewPeriod: Yup.string().required(
         "Thời hạn được xét nâng lương không được để trống",
       ),
+      bankAccount: Yup.string().required(
+        "Tài khoản ngân hàng không đượcể trống",
+      ),
+      bankName: Yup.string().required(
+        "Tài khoản ngân hàng không được để trống",
+      ),
     }),
+    contractFileLink: Yup.mixed()
+      .required("Vui lòng tải lên hợp đồng bản giấy")
+      .test(
+        "fileSize",
+        "Dung lượng file tối đa 5MB",
+        (value) => value && value.size <= 5 * 1024 * 1024,
+      )
+      .test(
+        "fileType",
+        "Chỉ chấp nhận file PDF, DOC hoặc DOCX",
+        (value) =>
+          value &&
+          [
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          ].includes(value.type),
+      ),
   });
   return (
     <Formik
@@ -312,7 +253,7 @@ const CreateCrewContract = () => {
       validateOnChange
       initialValues={initialValues}
       validationSchema={FORM_SCHEMA}
-      onSubmit={handleCreateCrewContractSubmit}
+      onSubmit={createContract}
     >
       {({
         values,
@@ -328,34 +269,53 @@ const CreateCrewContract = () => {
           {/* ===== Sticky Header ===== */}
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              px: 2,
+              position: "sticky",
+              top: 0,
+              zIndex: 10,
+              backgroundColor: "background.paper",
+              borderBottom: "1px solid #e0e0e0",
+              px: 3,
+              py: 2,
+              mb: 3,
             }}
           >
-            <PageTitle
-              title="TẠO HỢP ĐỒNG THUYỀN VIÊN"
-              subtitle="Tạo và lưu hợp đồng mới vào hệ thống"
-            />
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                px: 2,
+              }}
+            >
+              <PageTitle
+                title="TẠO HỢP ĐỒNG THUYỀN VIÊN"
+                subtitle="Tạo và lưu hợp đồng mới vào hệ thống"
+              />
 
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <FileUploadField name="contractFileLink" />
-
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={!isValid || !dirty}
-                startIcon={<SaveIcon />}
-                sx={{
-                  px: 3,
-                  fontWeight: 700,
-                  backgroundColor: Color.PrimaryGold,
-                  color: Color.PrimaryBlack,
-                }}
-              >
-                {creating ? <CircularProgress size={22} /> : "Tạo hợp đồng"}
-              </Button>
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={!isValid || !dirty || creating}
+                  startIcon={!creating && <SaveIcon />}
+                  sx={{
+                    minWidth: 150,
+                    px: 3,
+                    fontWeight: 700,
+                    backgroundColor: Color.PrimaryGold,
+                    color: Color.PrimaryBlack,
+                  }}
+                >
+                  {creating ? (
+                    <CircularProgress
+                      size={22}
+                      sx={{ color: Color.PrimaryBlack }}
+                    />
+                  ) : (
+                    "Tạo hợp đồng"
+                  )}
+                </Button>
+              </Box>
             </Box>
           </Box>
 
@@ -598,7 +558,7 @@ const CreateCrewContract = () => {
                 />
               </Grid>
               <Grid size={12}>
-                <SubSegment title="Thông tin Căn cước công dân">
+                <SubSegmentWrapper title="Thông tin Căn cước công dân">
                   <Grid container spacing={2}>
                     <Grid size={4}>
                       <InfoTextField
@@ -666,7 +626,7 @@ const CreateCrewContract = () => {
                       />
                     </Grid>
                   </Grid>
-                </SubSegment>
+                </SubSegmentWrapper>
               </Grid>
             </Grid>
           </SectionWrapper>
@@ -779,7 +739,15 @@ const CreateCrewContract = () => {
           </SectionWrapper>
 
           {/* ===== Salary ===== */}
-          <SalarySectionWrapper>
+          <SectionWrapper
+            sx={{
+              p: 3,
+              mb: 3,
+              borderRadius: 2,
+              background:
+                "linear-gradient(135deg, rgba(255,215,0,0.15), transparent)",
+            }}
+          >
             <SectionDivider sectionName="Thông tin lương" />
             <Grid container spacing={2} mt={1}>
               <Grid size={3}>
@@ -896,8 +864,60 @@ const CreateCrewContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
+
+              <Grid size={4}>
+                <InfoTextField
+                  id="bankAccount"
+                  label="Tài khoản ngân hàng"
+                  margin="none"
+                  required
+                  fullWidth
+                  name="salaryInfo.bankAccount"
+                  value={values.salaryInfo?.bankAccount}
+                  error={
+                    !!touched.salaryInfo?.bankAccount &&
+                    !!errors.salaryInfo?.bankAccount
+                  }
+                  helperText={
+                    touched.salaryInfo?.bankAccount &&
+                    errors.salaryInfo?.bankAccount
+                  }
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+              </Grid>
+              <Grid size={4}>
+                <InfoTextField
+                  id="bankName"
+                  label="Tên ngân hàng"
+                  margin="none"
+                  required
+                  fullWidth
+                  name="salaryInfo.bankName"
+                  value={values.salaryInfo?.bankName}
+                  error={
+                    !!touched.salaryInfo?.bankName &&
+                    !!errors.salaryInfo?.bankName
+                  }
+                  helperText={
+                    touched.salaryInfo?.bankName && errors.salaryInfo?.bankName
+                  }
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+              </Grid>
             </Grid>
-          </SalarySectionWrapper>
+          </SectionWrapper>
+
+          <SectionWrapper>
+            <SectionDivider sectionName="Bản mềm" />
+            <FileUploadField
+              required
+              id="contractFileLink"
+              name="contractFileLink"
+              helperText={touched.contractFileLink && errors.contractFileLink}
+            />
+          </SectionWrapper>
         </Box>
       )}
     </Formik>

@@ -9,21 +9,19 @@ import {
   Button,
   Paper,
   Typography,
-  MenuItem,
   Grid,
   CircularProgress,
 } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
-import { Formik } from "formik";
 import { useNavigate, useParams } from "react-router";
 import Color from "@constants/Color";
 import { reviewCandidateApplication } from "@/services/postServices";
-import { isoStringToDateString } from "@utils/converter";
 import { useCandidate } from "@/hooks/services/posts";
 import { useMutation } from "@tanstack/react-query";
 import CandidateStatus from "@/constants/CandidateStatus";
 import toast from "react-hot-toast";
+import { isoToLocalDatetime } from "@/utils/converter";
 
 const getFileIcon = (url) => {
   if (!url) return <DescriptionRoundedIcon />;
@@ -71,22 +69,11 @@ const CandidateProfileDetail = () => {
     [CandidateStatus.APPLIED]: "Đã nộp",
     [CandidateStatus.WAIT_FOR_INTERVIEW]: "Đang đợi phỏng vấn",
     [CandidateStatus.REJECTED]: "Từ chối",
-    [CandidateStatus.HIRED]: "Đã ký hợp đồng",
+    [CandidateStatus.CONTRACT_NOT_YET_IN_FORCE]:
+      "Đã ký hợp đồng (chưa có hiệu lực)",
+    [CandidateStatus.HIRED]: "Hợp đồng đã có hiệu lực",
   };
   const status = candidateInfo?.status;
-
-  const initialValues = {
-    fullName: candidateInfo?.fullName || "",
-    dob: candidateInfo?.birthDate
-      ? isoStringToDateString(candidateInfo.birthDate)
-      : "",
-    phoneNumber: candidateInfo?.phoneNumber || "",
-    address: candidateInfo?.address || "",
-    gender: candidateInfo?.gender ? candidateInfo.gender : "OTHER",
-    email: candidateInfo?.email || "",
-    languageSkills: candidateInfo?.languageSkills || "",
-    resume: "",
-  };
 
   const handleApproveClick = async () => {
     if (status === CandidateStatus.REJECTED) {
@@ -95,6 +82,11 @@ const CandidateProfileDetail = () => {
       await reviewCandidateAsync(CandidateStatus.WAIT_FOR_INTERVIEW);
     } else if (status === CandidateStatus.WAIT_FOR_INTERVIEW) {
       navigate(`/crew-contracts/create/${candidateID}`);
+    } else if (
+      status === CandidateStatus.CONTRACT_NOT_YET_IN_FORCE ||
+      status === CandidateStatus.HIRED
+    ) {
+      navigate(`/crew-contracts/${candidateID}`);
     }
   };
 
@@ -191,9 +183,12 @@ const CandidateProfileDetail = () => {
               }}
             >
               <CheckCircleRoundedIcon sx={{ mr: 1 }} />
-              {status === CandidateStatus.WAIT_FOR_INTERVIEW
-                ? "Tạo hợp đồng"
-                : "Chấp nhận"}
+              {status === CandidateStatus.HIRED ||
+              status === CandidateStatus.CONTRACT_NOT_YET_IN_FORCE
+                ? "Xem hợp đồng"
+                : status === CandidateStatus.WAIT_FOR_INTERVIEW
+                  ? "Tạo hợp đồng"
+                  : "Chấp nhận"}
             </Button>
 
             {status !== CandidateStatus.HIRED &&
@@ -222,168 +217,119 @@ const CandidateProfileDetail = () => {
       </Box>
 
       {/* FORM */}
-      <Formik validateOnChange={false} initialValues={initialValues}>
-        {({ values, errors, touched, handleBlur, handleChange }) => (
-          <Box component="form">
-            {/* CARD: Thông tin ứng viên */}
-            <Box
-              sx={{
-                p: 3,
-                borderRadius: 3,
-                bgcolor: "#fff",
-                mb: 4,
-                boxShadow: "0 4px 18px rgba(0,0,0,0.06)",
-              }}
-            >
-              <Typography variant="h6" fontWeight={700} mb={2}>
-                Thông tin ứng viên
-              </Typography>
+      <Box component="form">
+        {/* CARD: Thông tin ứng viên */}
+        <Box
+          sx={{
+            p: 3,
+            borderRadius: 3,
+            bgcolor: "#fff",
+            mb: 4,
+            boxShadow: "0 4px 18px rgba(0,0,0,0.06)",
+          }}
+        >
+          <Typography variant="h6" fontWeight={700} mb={2}>
+            Thông tin ứng viên
+          </Typography>
 
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <InfoTextField
-                    label="Họ và tên"
-                    size="small"
-                    fullWidth
-                    name="fullName"
-                    value={values.fullName}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                </Grid>
+          <Grid container spacing={2}>
+            <Grid item size={4}>
+              <InfoTextField
+                label="Họ và tên"
+                fullWidth
+                disabled
+                name="fullName"
+                value={candidateInfo?.fullName}
+              />
+            </Grid>
+            <Grid item size={5}>
+              <InfoTextField
+                label="Email"
+                fullWidth
+                disabled
+                name="email"
+                value={candidateInfo?.email}
+              />
+            </Grid>
 
-                <Grid item xs={12} md={3}>
-                  <InfoTextField
-                    type="date"
-                    label="Ngày sinh"
-                    size="small"
-                    fullWidth
-                    name="dob"
-                    value={values.dob}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    slotProps={{
-                      inputLabel: { shrink: true },
-                    }}
-                  />
-                </Grid>
+            <Grid item size={3}>
+              <InfoTextField
+                label="Số điện thoại"
+                fullWidth
+                name="phoneNumber"
+                disabled
+                value={candidateInfo?.phoneNumber}
+              />
+            </Grid>
 
-                <Grid item xs={12} md={3}>
-                  <InfoTextField
-                    label="Số điện thoại"
-                    size="small"
-                    fullWidth
-                    name="phoneNumber"
-                    value={values.phoneNumber}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                </Grid>
+            <Grid item size={12}>
+              <InfoTextField
+                label="Địa chỉ"
+                fullWidth
+                name="address"
+                disabled
+                value={candidateInfo?.address}
+              />
+            </Grid>
+            <Grid item size={12}>
+              <InfoTextField
+                label="Trình độ ngoại ngữ"
+                fullWidth
+                name="languageSkills"
+                disabled
+                value={candidateInfo?.languageSkills}
+              />
+            </Grid>
+          </Grid>
+        </Box>
 
-                <Grid item xs={12} md={6}>
-                  <InfoTextField
-                    label="Địa chỉ"
-                    size="small"
-                    fullWidth
-                    name="address"
-                    value={values.address}
-                    onChange={handleChange}
-                  />
-                </Grid>
-
-                <Grid item xs={12} md={3}>
-                  <InfoTextField
-                    select
-                    label="Giới tính"
-                    name="gender"
-                    size="small"
-                    fullWidth
-                    value={values.gender}
-                    onChange={handleChange}
-                  >
-                    {GENDERS.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </InfoTextField>
-                </Grid>
-
-                <Grid item xs={12} md={3}>
-                  <InfoTextField
-                    label="Email"
-                    size="small"
-                    fullWidth
-                    name="email"
-                    value={values.email}
-                    onChange={handleChange}
-                  />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                  <InfoTextField
-                    label="Trình độ ngoại ngữ"
-                    size="small"
-                    fullWidth
-                    name="languageSkills"
-                    value={values.languageSkills}
-                    onChange={handleChange}
-                  />
-                </Grid>
-              </Grid>
+        {!resume?.url ? (
+          <Typography color="text.secondary">Không có CV đính kèm</Typography>
+        ) : (
+          <Paper
+            variant="outlined"
+            sx={{
+              p: 2,
+              borderRadius: 2,
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              borderStyle: "dashed",
+            }}
+          >
+            <Box sx={{ color: Color.PrimaryBlue }}>
+              {getFileIcon(resume.url)}
             </Box>
 
-            {!resume?.url ? (
-              <Typography color="text.secondary">
-                Không có CV đính kèm
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography fontWeight={600} noWrap>
+                {resume.name}
               </Typography>
-            ) : (
-              <Paper
-                variant="outlined"
-                sx={{
-                  p: 2,
-                  borderRadius: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 2,
-                  borderStyle: "dashed",
-                }}
-              >
-                <Box sx={{ color: Color.PrimaryBlue }}>
-                  {getFileIcon(resume.url)}
-                </Box>
+              <Typography variant="caption" color="text.secondary">
+                CV ứng viên
+              </Typography>
+            </Box>
 
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography fontWeight={600} noWrap>
-                    {resume.name}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    CV ứng viên
-                  </Typography>
-                </Box>
+            <Button
+              size="small"
+              startIcon={<OpenInNewRoundedIcon />}
+              onClick={() => window.open(resume.url, "_blank")}
+            >
+              Xem
+            </Button>
 
-                <Button
-                  size="small"
-                  startIcon={<OpenInNewRoundedIcon />}
-                  onClick={() => window.open(resume.url, "_blank")}
-                >
-                  Xem
-                </Button>
-
-                <Button
-                  size="small"
-                  startIcon={<DownloadRoundedIcon />}
-                  component="a"
-                  href={resume.url}
-                  download
-                >
-                  Tải
-                </Button>
-              </Paper>
-            )}
-          </Box>
+            <Button
+              size="small"
+              startIcon={<DownloadRoundedIcon />}
+              component="a"
+              href={resume.url}
+              download
+            >
+              Tải
+            </Button>
+          </Paper>
         )}
-      </Formik>
+      </Box>
     </Box>
   );
 };
