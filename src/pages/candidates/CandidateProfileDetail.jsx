@@ -81,7 +81,9 @@ const CandidateProfileDetail = () => {
     } else if (status === CandidateStatus.APPLIED) {
       await reviewCandidateAsync(CandidateStatus.WAIT_FOR_INTERVIEW);
     } else if (status === CandidateStatus.WAIT_FOR_INTERVIEW) {
-      navigate(`/crew-contracts/create/${candidateID}`);
+      navigate(`/crew-contracts/create/${candidateID}`, {
+        state: candidateInfo,
+      });
     } else if (
       status === CandidateStatus.CONTRACT_NOT_YET_IN_FORCE ||
       status === CandidateStatus.HIRED

@@ -11,13 +11,19 @@ import {
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
 import { useState } from "react";
 import Color from "@constants/Color";
+import PizZip from "pizzip";
+import Docxtemplater from "docxtemplater";
+import { saveAs } from "file-saver";
+import JSZipUtils from "jszip-utils";
 
 const TemplateContractCard = ({
   image,
   title,
   type,
-  templateUrl, // 👈 URL file DOCX
+  url,
   gridSize = 4,
+  initialData = {},
+  dowloadFileName = "template.docx",
   color = Color.PrimaryBlack,
   sx = [],
 }) => {
@@ -25,7 +31,7 @@ const TemplateContractCard = ({
   const [openPreview, setOpenPreview] = useState(false);
 
   const handleOpenPreview = () => {
-    if (!templateUrl) return;
+    if (!url) return;
     setOpenPreview(true);
   };
 
@@ -33,24 +39,34 @@ const TemplateContractCard = ({
     setOpenPreview(false);
   };
 
-  const downloadByBlob = async (url, filename) => {
-    const res = await fetch(url);
-    const blob = await res.blob();
-
-    const blobUrl = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = filename;
-
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(blobUrl);
-  };
   const handleDownload = async (e) => {
-    e.stopPropagation(); // ❗ không trigger preview
-    await downloadByBlob(templateUrl, `${title}.docx`);
-    // window.open(templateUrl, "_blank");
+    e.stopPropagation();
+
+    JSZipUtils.getBinaryContent(url, (error, content) => {
+      if (error) throw error;
+
+      const zip = new PizZip(content);
+      const doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true,
+      });
+
+      doc.setData(initialData);
+
+      try {
+        doc.render();
+
+        const out = doc.getZip().generate({
+          type: "blob",
+          mimeType:
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        });
+
+        saveAs(out, dowloadFileName);
+      } catch (err) {
+        console.error("Error download document:", err);
+      }
+    });
   };
 
   return (
@@ -153,7 +169,7 @@ const TemplateContractCard = ({
           <iframe
             title="template-preview"
             src={`https://docs.google.com/gview?url=${encodeURIComponent(
-              templateUrl,
+              url,
             )}&embedded=true`}
             style={{
               width: "100%",

@@ -14,18 +14,21 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import Color from "@constants/Color";
 import { createLaborContract } from "@/services/contractServices";
-import { dateStringToISOString } from "@utils/converter";
+import { dateStringToISOString, isoToLocalDatetime } from "@utils/converter";
 import Regex from "@/constants/Regex";
 import { now, yesterday } from "@/utils/date";
 import SubSegmentWrapper from "./components/SubSegmentWrapper";
 import SectionWrapper from "@components/global/SectionWrapper";
+import cloudinaryUpload from "@/services/cloudinaryServices";
+import UploadStrategy from "@/constants/UploadStrategy";
 
 const CreateCrewContract = () => {
   const navigate = useNavigate();
   const { candidateProfileId } = useParams();
+  const { state: candidateInfo } = useLocation();
 
   const RECEIVE_METHOD = ["Tiền mặt", "Chuyển khoản ngân hàng"];
 
@@ -34,69 +37,78 @@ const CreateCrewContract = () => {
   const createContract = async (values, { resetForm }) => {
     setCreating(true);
     try {
+      const uploadRespone = await cloudinaryUpload(
+        values.contractFile,
+        UploadStrategy.CONTRACT_FILE,
+      );
+
       //Calling API to create a new crew member
-      const response = await createLaborContract(candidateProfileId, {
-        title: values.title,
-        initiator: {
-          partyName: values.partyA.compName,
-          address: values.partyA.compAddress,
-          phone: values.partyA.compPhoneNumber,
-          representer: values.partyA.representative,
-          email: "thong2046@gmail.com",
-          type: "STATIC",
+      const contract = await createLaborContract(
+        candidateProfileId,
+        {
+          title: values.title,
+          initiator: {
+            partyName: values.partyA.compName,
+            address: values.partyA.compAddress,
+            phone: values.partyA.compPhoneNumber,
+            representer: values.partyA.representative,
+            email: "thong2046@gmail.com",
+            type: "STATIC",
+          },
+          partners: [
+            {
+              partyName: values.partyB.fullName,
+              representer: values.partyB.fullName,
+              address: values.partyB.permanentAddr,
+              phone: values.partyB.phone,
+              type: "LABOR",
+              birthPlace: values.partyB.birthPlace,
+              birthDate: dateStringToISOString(values.partyB.dob),
+              nationality: values.partyB.nationality,
+              temporaryAddress: values.partyB.temporaryAddr,
+              identificationCardId: values.partyB.ciNumber,
+              identificationCardIssuedDate: dateStringToISOString(
+                values.partyB.ciIssueDate,
+              ),
+              identificationCardIssuedPlace: values.partyB.ciIssuePlace,
+              bankAccount: values.salaryInfo.bankAccount,
+              bankName: values.salaryInfo.bankName,
+            },
+          ],
+          activationDate: dateStringToISOString(values.jobInfo.startDate),
+          expiredDate: dateStringToISOString(values.jobInfo.endDate),
+          position: values.jobInfo.position,
+          workingLocation: values.jobInfo.workingLocation,
+          basicSalary: values.salaryInfo.basicSalary,
+          birthPlace: values.partyB.birthPlace,
+          terms: [],
+          customAttributes: [
+            {
+              key: "jobDescription",
+              value: values.jobInfo.jobDescription,
+            },
+            {
+              key: "allowance",
+              value: values.salaryInfo.allowance,
+            },
+            {
+              key: "receiveMethod",
+              value: values.salaryInfo.receiveMethod,
+            },
+            {
+              key: "payday",
+              value: values.salaryInfo.payday,
+            },
+            {
+              key: "salaryReviewPeriod",
+              value: values.salaryInfo.salaryReviewPeriod,
+            },
+          ],
         },
-        partners: [
-          {
-            partyName: values.partyB.fullName,
-            representer: values.partyB.fullName,
-            address: values.partyB.permanentAddr,
-            phone: "0865474654",
-            type: "LABOR",
-            birthPlace: values.partyB.birthplace,
-            birthDate: dateStringToISOString(values.partyB.dob),
-            nationality: values.partyB.nationality,
-            temporaryAddress: values.partyB.temporaryAddr,
-            identificationCardId: values.partyB.ciNumber,
-            identificationCardIssuedDate: dateStringToISOString(
-              values.partyB.ciIssueDate,
-            ),
-            identificationCardIssuedPlace: values.partyB.ciIssuePlace,
-            bankAccount: values.salaryInfo.bankAccount,
-            bankName: values.salaryInfo.bankName,
-          },
-        ],
-        activationDate: dateStringToISOString(values.jobInfo.startDate),
-        expiredDate: dateStringToISOString(values.jobInfo.endDate),
-        position: values.jobInfo.position,
-        workingLocation: values.jobInfo.workingLocation,
-        basicSalary: values.salaryInfo.basicSalary,
-        birthplace: values.partyB.birthplace,
-        terms: [],
-        customAttributes: [
-          {
-            key: "jobDescription",
-            value: values.jobInfo.jobDescription,
-          },
-          {
-            key: "allowance",
-            value: values.salaryInfo.allowance,
-          },
-          {
-            key: "receiveMethod",
-            value: values.salaryInfo.receiveMethod,
-          },
-          {
-            key: "payday",
-            value: values.salaryInfo.payday,
-          },
-          {
-            key: "salaryReviewPeriod",
-            value: values.salaryInfo.salaryReviewPeriod,
-          },
-        ],
-      });
+        uploadRespone?.public_id,
+      );
       resetForm();
-      navigate("/crew-contracts");
+      navigate(`/crew-contracts/${contract.id}`);
     } catch (err) {}
     setCreating(false);
   };
@@ -106,18 +118,19 @@ const CreateCrewContract = () => {
     partyA: {
       cardPhoto: "",
       compName: "Công ty INLACO Hải Phòng",
-      compAddress: "",
+      compAddress: "Công ty INLACO Hải Phòng",
       compPhoneNumber: "",
       representative: "",
       representativePos: "Trưởng phòng Nhân sự",
     },
     partyB: {
-      fullName: "",
+      fullName: candidateInfo?.fullName || "",
       dob: "",
-      birthplace: "",
+      phone: candidateInfo?.phoneNumber || "",
+      birthPlace: "",
       nationality: "",
-      permanentAddr: "",
-      temporaryAddr: "",
+      permanentAddr: candidateInfo?.address || "",
+      temporaryAddr: candidateInfo?.address || "",
       ciNumber: "",
       ciIssueDate: "",
       ciIssuePlace: "",
@@ -138,7 +151,7 @@ const CreateCrewContract = () => {
       bankAccount: "",
       bankName: "",
     },
-    contractFileLink: null,
+    contractFile: null,
   };
 
   const FORM_SCHEMA = Yup.object().shape({
@@ -160,8 +173,9 @@ const CreateCrewContract = () => {
       dob: Yup.date()
         .max(now(), "Ngày sinh không hợp lệ")
         .required("Ngày sinh không được để trống"),
-      birthplace: Yup.string().required("Nơi sinh không được để trống"),
+      birthPlace: Yup.string().required("Nơi sinh không được để trống"),
       nationality: Yup.string().required("Quốc tịch không được để trống"),
+      phone: Yup.string().matches(Regex.VN_PHONE, "SĐT không hợp lệ"),
       permanentAddr: Yup.string().required(
         "Địa chỉ thường trú không được để trống",
       ),
@@ -228,7 +242,7 @@ const CreateCrewContract = () => {
         "Tài khoản ngân hàng không được để trống",
       ),
     }),
-    contractFileLink: Yup.mixed()
+    contractFile: Yup.mixed()
       .required("Vui lòng tải lên hợp đồng bản giấy")
       .test(
         "fileSize",
@@ -293,6 +307,18 @@ const CreateCrewContract = () => {
               />
 
               <Box sx={{ display: "flex", gap: 1 }}>
+                <Button
+                  variant="contained"
+                  sx={{
+                    minWidth: 150,
+                    px: 3,
+                    fontWeight: 700,
+                    backgroundColor: Color.PrimaryBlue,
+                    color: Color.PrimaryWhite,
+                  }}
+                >
+                  Tải template
+                </Button>
                 <Button
                   type="submit"
                   variant="contained"
@@ -480,18 +506,18 @@ const CreateCrewContract = () => {
               </Grid>
               <Grid size={3}>
                 <InfoTextField
-                  id="birthplace"
+                  id="birthPlace"
                   label="Nơi sinh"
                   margin="none"
                   required
                   fullWidth
-                  name="partyB.birthplace"
-                  value={values.partyB?.birthplace}
+                  name="partyB.birthPlace"
+                  value={values.partyB?.birthPlace}
                   error={
-                    !!touched.partyB?.birthplace && !!errors.partyB?.birthplace
+                    !!touched.partyB?.birthPlace && !!errors.partyB?.birthPlace
                   }
                   helperText={
-                    touched.partyB?.birthplace && errors.partyB?.birthplace
+                    touched.partyB?.birthPlace && errors.partyB?.birthPlace
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -553,6 +579,20 @@ const CreateCrewContract = () => {
                     touched.partyB?.temporaryAddr &&
                     errors.partyB?.temporaryAddr
                   }
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+              </Grid>
+
+              <Grid size={3}>
+                <InfoTextField
+                  label="Số điện thoại"
+                  required
+                  fullWidth
+                  name="partyB.phone"
+                  value={values.partyB?.phone}
+                  error={!!touched.partyB?.phone && !!errors.partyB?.phone}
+                  helperText={touched.partyB?.phone && errors.partyB?.phone}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
@@ -913,9 +953,9 @@ const CreateCrewContract = () => {
             <SectionDivider sectionName="Bản mềm" />
             <FileUploadField
               required
-              id="contractFileLink"
-              name="contractFileLink"
-              helperText={touched.contractFileLink && errors.contractFileLink}
+              id="contractFile"
+              name="contractFile"
+              helperText={touched.contractFile && errors.contractFile}
             />
           </SectionWrapper>
         </Box>

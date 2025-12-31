@@ -17,7 +17,7 @@ import { useNavigate, useParams } from "react-router";
 import { applyRecruitment } from "@/services/postServices";
 import Regex from "@/constants/Regex";
 import cloudinaryUpload from "@/services/cloudinaryServices";
-import UploadStragegy from "@/constants/UploadStragegy";
+import UploadStrategy from "@/constants/UploadStrategy";
 import toast from "react-hot-toast";
 
 const ApplyRecruitment = () => {
@@ -30,7 +30,7 @@ const ApplyRecruitment = () => {
     try {
       const uploadResponse = await cloudinaryUpload(
         values.cvFile,
-        UploadStragegy.RESUME,
+        UploadStrategy.RESUME,
       );
 
       const candidate = await applyRecruitment(
