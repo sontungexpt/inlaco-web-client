@@ -9,18 +9,28 @@ import { Box, Button, CircularProgress, MenuItem } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useNavigate } from "react-router";
-import { isoStringToAppDateString, isoToLocalDatetime } from "@utils/converter";
+import { isoToLocalDatetime } from "@utils/converter";
 import Color from "@constants/Color";
 import { useContracts } from "@/hooks/services/contracts";
 
 const CrewContract = () => {
   const navigate = useNavigate();
+  const PAGE_SIZE = 10;
 
   const [isSignedContract, setIsSignedContract] = useState(true);
-  const { data: crewContractsResponse, isLoading } = useContracts({
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: PAGE_SIZE,
+  });
+
+  const { data, isLoading } = useContracts({
+    page: paginationModel.page,
+    size: paginationModel.pageSize,
     signed: isSignedContract,
   });
-  const crewContracts = crewContractsResponse?.content;
+
+  const crewContracts = data?.content;
+  const totalContracts = data?.totalElements;
 
   const handleStatusChange = (event) => {
     setIsSignedContract(event.target.value);
@@ -150,15 +160,14 @@ const CrewContract = () => {
             disableRowSelectionOnClick
             disableColumnMenu
             disableColumnResize
-            rows={crewContracts}
             columns={columns}
             slots={{ noRowsOverlay: NoValuesOverlay }}
-            pageSizeOptions={[5, 10, { value: -1, label: "All" }]}
-            initialState={{
-              pagination: {
-                paginationModel: { pageSize: 5, page: 0 },
-              },
-            }}
+            // pageSizeOptions={[5, 10, { value: -1, label: "All" }]}
+            paginationMode="server" // QUAN TRỌNG!
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            rowCount={totalContracts}
+            rows={crewContracts}
             sx={{
               backgroundColor: "#FFF",
               headerAlign: "center",

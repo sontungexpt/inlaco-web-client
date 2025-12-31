@@ -63,7 +63,7 @@ const SupplyRequest = () => {
     {
       field: "companyName",
       headerName: "Tên công ty",
-      flex: 1.5,
+      flex: 1.2,
       headerAlign: "center",
       align: "center",
       sortable: false,

@@ -6,6 +6,7 @@
 - [Complete Document](https://uithcm-my.sharepoint.com/personal/21522638_ms_uit_edu_vn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2F21522638%5Fms%5Fuit%5Fedu%5Fvn%2FDocuments%2FDA2%20%2D%20INLACO%20CREW%2FDA2%5F21522638%5FNguyenPhuThinh%5F21522772%5FTranVoSonTung%5FSE122%2EP11%2EPMCL%2Epdf&parent=%2Fpersonal%2F21522638%5Fms%5Fuit%5Fedu%5Fvn%2FDocuments%2FDA2%20%2D%20INLACO%20CREW&ga=1)
 
 ## Demo:
+
 <img width="1170" height="518" alt="image" src="https://github.com/user-attachments/assets/3899b02a-13e9-4690-beb6-d4065348a117" />
 
 <img width="1161" height="519" alt="image" src="https://github.com/user-attachments/assets/88b25aa9-b4dc-43df-b8b8-f2614da00d3c" />
@@ -25,8 +26,6 @@
 <img width="1400" height="620" alt="image" src="https://github.com/user-attachments/assets/0e353031-b6e2-402f-852f-c006ac1e2ad2" />
 
 <img width="1402" height="634" alt="image" src="https://github.com/user-attachments/assets/45f57b40-eee5-4ff0-858b-2697c3fd4c89" />
-
-
 
 ## Prerequisites
 

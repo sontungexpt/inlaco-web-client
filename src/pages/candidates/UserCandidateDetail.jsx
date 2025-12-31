@@ -15,8 +15,8 @@ import Color from "@constants/Color";
 
 const UserCandidateDetail = () => {
   const navigate = useNavigate();
-
   const { id } = useParams();
+
   const status = "Chấp thuận"; //Change this to the status of the candidate
   //"Chấp thuận", "Từ chối", "Đang chờ xác nhận", "Đã ký hợp đồng"
 
@@ -149,9 +149,7 @@ const UserCandidateDetail = () => {
                   name="fullName"
                   value={values.fullName}
                   error={!!touched.fullName && !!errors.fullName}
-                  helperText={
-                    touched.fullName && errors.fullName ? errors.fullName : " "
-                  }
+                  helperText={touched.fullName && errors.fullName}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -177,7 +175,7 @@ const UserCandidateDetail = () => {
                   name="dob"
                   value={values.dob}
                   error={!!touched.dob && !!errors.dob}
-                  helperText={touched.dob && errors.dob ? errors.dob : " "}
+                  helperText={touched.dob && errors.dob}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -210,11 +208,7 @@ const UserCandidateDetail = () => {
                   name="birthplace"
                   value={values.birthplace}
                   error={!!touched.birthplace && !!errors.birthplace}
-                  helperText={
-                    touched.birthplace && errors.birthplace
-                      ? errors.birthplace
-                      : " "
-                  }
+                  helperText={touched.birthplace && errors.birthplace}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -238,9 +232,7 @@ const UserCandidateDetail = () => {
                   name="email"
                   value={values.email}
                   error={!!touched.email && !!errors.email}
-                  helperText={
-                    touched.email && errors.email ? errors.email : " "
-                  }
+                  helperText={touched.email && errors.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -264,11 +256,7 @@ const UserCandidateDetail = () => {
                   name="phoneNumber"
                   value={values.phoneNumber}
                   error={!!touched.phoneNumber && !!errors.phoneNumber}
-                  helperText={
-                    touched.phoneNumber && errors.phoneNumber
-                      ? errors.phoneNumber
-                      : " "
-                  }
+                  helperText={touched.phoneNumber && errors.phoneNumber}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -293,11 +281,7 @@ const UserCandidateDetail = () => {
                   name="nationality"
                   value={values.nationality}
                   error={!!touched.nationality && !!errors.nationality}
-                  helperText={
-                    touched.nationality && errors.nationality
-                      ? errors.nationality
-                      : " "
-                  }
+                  helperText={touched.nationality && errors.nationality}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -322,11 +306,7 @@ const UserCandidateDetail = () => {
                   name="permanentAddr"
                   value={values.permanentAddr}
                   error={!!touched.permanentAddr && !!errors.permanentAddr}
-                  helperText={
-                    touched.permanentAddr && errors.permanentAddr
-                      ? errors.permanentAddr
-                      : " "
-                  }
+                  helperText={touched.permanentAddr && errors.permanentAddr}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -351,11 +331,7 @@ const UserCandidateDetail = () => {
                   name="temporaryAddr"
                   value={values.temporaryAddr}
                   error={!!touched.temporaryAddr && !!errors.temporaryAddr}
-                  helperText={
-                    touched.temporaryAddr && errors.temporaryAddr
-                      ? errors.temporaryAddr
-                      : " "
-                  }
+                  helperText={touched.temporaryAddr && errors.temporaryAddr}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -380,9 +356,7 @@ const UserCandidateDetail = () => {
                   name="ciNumber"
                   value={values.ciNumber}
                   error={!!touched.ciNumber && !!errors.ciNumber}
-                  helperText={
-                    touched.ciNumber && errors.ciNumber ? errors.ciNumber : " "
-                  }
+                  helperText={touched.ciNumber && errors.ciNumber}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -408,11 +382,7 @@ const UserCandidateDetail = () => {
                   name="ciIssueDate"
                   value={values.ciIssueDate}
                   error={!!touched.ciIssueDate && !!errors.ciIssueDate}
-                  helperText={
-                    touched.ciIssueDate && errors.ciIssueDate
-                      ? errors.ciIssueDate
-                      : " "
-                  }
+                  helperText={touched.ciIssueDate && errors.ciIssueDate}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{
@@ -445,11 +415,7 @@ const UserCandidateDetail = () => {
                   name="ciIssuePlace"
                   value={values.ciIssuePlace}
                   error={!!touched.ciIssuePlace && !!errors.ciIssuePlace}
-                  helperText={
-                    touched.ciIssuePlace && errors.ciIssuePlace
-                      ? errors.ciIssuePlace
-                      : " "
-                  }
+                  helperText={touched.ciIssuePlace && errors.ciIssuePlace}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={{

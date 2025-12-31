@@ -15,13 +15,23 @@ import { isoToLocalDatetime } from "@/utils/converter";
 
 const SupplyContract = () => {
   const navigate = useNavigate();
+  const PAGE_SIZE = 10;
 
   const [isSignedContract, setIsSignedContract] = useState(true);
-  const { data: supplyContractsResponse, isLoading } = useContracts({
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: PAGE_SIZE,
+  });
+
+  const { data, isLoading } = useContracts({
+    page: paginationModel.page,
+    size: paginationModel.pageSize,
     type: "SUPPLY_CONTRACT",
     signed: isSignedContract,
   });
-  const supplyContracts = supplyContractsResponse?.content || [];
+
+  const supplyContracts = data?.content;
+  const totalContracts = data?.totalElements;
 
   const STATUS_FILTERS = [
     { label: "Hợp đồng chính thức", value: true },
@@ -150,15 +160,14 @@ const SupplyContract = () => {
             disableRowSelectionOnClick
             disableColumnMenu
             disableColumnResize
-            rows={supplyContracts}
             columns={columns}
             slots={{ noRowsOverlay: NoValuesOverlay }}
-            pageSizeOptions={[5, 10, { value: -1, label: "All" }]}
-            initialState={{
-              pagination: {
-                paginationModel: { pageSize: 5, page: 0 },
-              },
-            }}
+            // pageSizeOptions={[5, 10, { value: -1, label: "All" }]}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            paginationMode="server"
+            rowCount={totalContracts}
+            rows={supplyContracts}
             sx={{
               backgroundColor: "#FFF",
               headerAlign: "center",

@@ -166,7 +166,6 @@ const CrewMyMobilization = () => {
       align: "center",
       headerAlign: "center",
       renderCell: (params) => {
-        console.log(params);
         return (
           <div
             style={{

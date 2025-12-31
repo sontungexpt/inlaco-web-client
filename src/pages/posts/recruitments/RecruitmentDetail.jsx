@@ -248,6 +248,7 @@ const RecruitmentDetail = () => {
               {!isAdmin && (
                 <Button
                   fullWidth
+                  disabled={!isAdmin && !active}
                   variant="contained"
                   color="primary"
                   sx={{ py: 1.2, borderRadius: 2 }}

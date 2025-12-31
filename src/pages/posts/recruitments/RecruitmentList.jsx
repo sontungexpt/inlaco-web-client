@@ -1,5 +1,6 @@
 import { Box, Grid, Pagination, Typography } from "@mui/material";
 import RecruitmentCard from "./RecruitmentCard";
+import { isoToLocalDatetime } from "@/utils/converter";
 
 export default function RecruitmentList({
   posts,
@@ -8,6 +9,8 @@ export default function RecruitmentList({
   page,
   onPageChange,
   onPostClick,
+  onApplyNow,
+  onViewDetail,
 }) {
   if (posts.length === 0)
     return (
@@ -15,6 +18,7 @@ export default function RecruitmentList({
         Chưa có bài đăng tuyển dụng nào
       </Typography>
     );
+  console.log("posts", posts);
 
   return (
     <>
@@ -25,7 +29,12 @@ export default function RecruitmentList({
             title={post.title}
             description={post.content}
             isAdmin={isAdmin}
-            onClick={() => onPostClick(post.id)}
+            isExpired={!post.active}
+            startDate={isoToLocalDatetime(post.recruitmentStartDate)}
+            endDate={isoToLocalDatetime(post.recruitmentEndDate)}
+            onClick={() => onPostClick(post)}
+            onApplyNow={() => onApplyNow(post)}
+            onViewDetail={() => onViewDetail(post)}
           />
         ))}
       </Grid>

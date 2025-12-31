@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
-import * as yup from "yup";
+import * as Yup from "yup";
 import { useNavigate, useParams } from "react-router";
 import Color from "@constants/Color";
 import { createCrewContractAPI } from "@/services/contractServices";
@@ -68,52 +68,47 @@ const CreateCrewContract = () => {
 
   const ciNumberRegex = "^\\d{12}$";
 
-  const crewContractSchema = yup.object().shape({
-    title: yup.string().required("Tiêu đề không được để trống"),
-    partyA: yup.object().shape({
-      compName: yup.string().required("Tên công ty không được để trống"),
-      compAddress: yup.string().required("Địa chỉ không được để trống"),
+  const crewContractSchema = Yup.object().shape({
+    title: Yup.string().required("Tiêu đề không được để trống"),
+    partyA: Yup.object().shape({
+      compName: Yup.string().required("Tên công ty không được để trống"),
+      compAddress: Yup.string().required("Địa chỉ không được để trống"),
 
-      compPhoneNumber: yup
-        .string()
+      compPhoneNumber: Yup.string()
         .matches(Regex.VN_PHONE, "SĐT không hợp lệ")
         .required("SĐT không được để trống"),
 
-      representative: yup
-        .string()
-        .required("Người đại diện không được để trống"),
+      representative: Yup.string().required(
+        "Người đại diện không được để trống",
+      ),
 
-      representativePos: yup.string().required("Chức vụ không được để trống"),
+      representativePos: Yup.string().required("Chức vụ không được để trống"),
     }),
 
-    partyB: yup.object().shape({
-      fullName: yup.string().required("Họ và tên không được để trống"),
-      dob: yup
-        .date()
+    partyB: Yup.object().shape({
+      fullName: Yup.string().required("Họ và tên không được để trống"),
+      dob: Yup.date()
         .max(new Date(), "Ngày sinh không hợp lệ")
         .required("Ngày sinh không được để trống"),
-      birthplace: yup.string().required("Nơi sinh không được để trống"),
-      nationality: yup.string().required("Quốc tịch không được để trống"),
-      permanentAddr: yup
-        .string()
-        .required("Địa chỉ thường trú không được để trống"),
-      temporaryAddr: yup
-        .string()
-        .required("Địa chỉ tạm trú không được để trống"),
-      ciNumber: yup
-        .string()
+      birthplace: Yup.string().required("Nơi sinh không được để trống"),
+      nationality: Yup.string().required("Quốc tịch không được để trống"),
+      permanentAddr: Yup.string().required(
+        "Địa chỉ thường trú không được để trống",
+      ),
+      temporaryAddr: Yup.string().required(
+        "Địa chỉ tạm trú không được để trống",
+      ),
+      ciNumber: Yup.string()
         .matches(ciNumberRegex, "Số CCCD không hợp lệ")
         .required("Số căn cước công dân không được để trống"),
-      ciIssueDate: yup
-        .date()
+      ciIssueDate: Yup.date()
         .max(new Date(), "Ngày cấp không hợp lệ")
         .required("Ngày cấp không được để trống"),
-      ciIssuePlace: yup.string().required("Nơi cấp không được để trống"),
+      ciIssuePlace: Yup.string().required("Nơi cấp không được để trống"),
     }),
 
-    jobInfo: yup.object().shape({
-      startDate: yup
-        .date()
+    jobInfo: Yup.object().shape({
+      startDate: Yup.date()
         .min(yesterday, "Ngày bắt đầu không hợp lệ")
         .required("Ngày bắt đầu không được để trống")
         .test(
@@ -125,8 +120,7 @@ const CreateCrewContract = () => {
           },
         ),
 
-      endDate: yup
-        .date()
+      endDate: Yup.date()
         .required("Ngày kết thúc không được để trống")
         .test(
           "is-after-start-date",
@@ -137,30 +131,29 @@ const CreateCrewContract = () => {
           },
         ),
 
-      workingLocation: yup
-        .string()
-        .required("Địa điểm làm việc không được để trống"),
-      position: yup.string().required("Vị trí chuyên môn không được để trống"),
-      jobDescription: yup
-        .string()
-        .required("Mô tả công việc không được để trống"),
+      workingLocation: Yup.string().required(
+        "Địa điểm làm việc không được để trống",
+      ),
+      position: Yup.string().required("Vị trí chuyên môn không được để trống"),
+      jobDescription: Yup.string().required(
+        "Mô tả công việc không được để trống",
+      ),
     }),
 
-    salaryInfo: yup.object().shape({
-      basicSalary: yup
-        .number()
+    salaryInfo: Yup.object().shape({
+      basicSalary: Yup.number()
         .min(0, "Lương cơ bản không hợp lệ")
         .required("Lương cơ bản không được để trống"),
-      allowance: yup.number().min(0, "Phụ cấp không hợp lệ"),
-      receiveMethod: yup
-        .string()
-        .required("Hình thức trả lương không được để trống"),
+      allowance: Yup.number().min(0, "Phụ cấp không hợp lệ"),
+      receiveMethod: Yup.string().required(
+        "Hình thức trả lương không được để trống",
+      ),
 
-      payday: yup.string().required("Thời hạn trả lương không được để trống"),
+      payday: Yup.string().required("Thời hạn trả lương không được để trống"),
 
-      salaryReviewPeriod: yup
-        .string()
-        .required("Thời hạn được xét nâng lương không được để trống"),
+      salaryReviewPeriod: Yup.string().required(
+        "Thời hạn được xét nâng lương không được để trống",
+      ),
     }),
   });
 

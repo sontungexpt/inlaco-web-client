@@ -127,7 +127,9 @@ export default function CrewRecruitment() {
             totalPages={postData?.totalPages || 1}
             page={postPage + 1}
             onPageChange={(e, value) => setPostPage(value - 1)}
-            onPostClick={(id) => navigate(`/recruitment/${id}`)}
+            onPostClick={(post) => navigate(`/recruitment/${post.id}`)}
+            onViewDetail={(post) => navigate(`/recruitment/${post.id}`)}
+            onApplyNow={(post) => navigate(`/recruitment/${post.id}/apply`)}
           />
         ))}
 

@@ -14,4 +14,4 @@ export { default as ReqEditableDataGrid } from "./ReqEditableDataGrid";
 export { default as StatusLabel } from "./StatusLabel";
 export { default as MultilineFileUploadField } from "./MultilineFileUploadField";
 
-export { default as MainLayout } from "./MainLayout";
+export { default as MainLayout } from "../../layout/MainLayout";

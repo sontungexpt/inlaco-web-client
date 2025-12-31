@@ -1,15 +1,15 @@
 import { Outlet } from "react-router";
-import TopBar from "./TopBar";
-import SideBar from "./SideBar";
+import TopBar from "@components/global/TopBar";
+import SideBar from "@components/global/SideBar";
 import { useEffect } from "react";
 
 const MainLayout = ({ children }) => {
-  useEffect(() => {
-    console.log("MainLayout mounted");
-    return () => {
-      console.log("MainLayout unmounted");
-    };
-  }, []);
+  // useEffect(() => {
+  //   console.log("MainLayout mounted");
+  //   return () => {
+  //     console.log("MainLayout unmounted");
+  //   };
+  // }, []);
   return (
     <div className="app">
       <SideBar />

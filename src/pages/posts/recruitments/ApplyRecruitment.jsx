@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { PageTitle, SectionDivider, InfoTextField } from "@components/global";
 import { FileUploadField } from "@components/contract";
 import {
@@ -15,13 +15,44 @@ import Color from "@constants/Color";
 import * as Yup from "yup";
 import { useNavigate, useParams } from "react-router";
 import { applyRecruitment } from "@/services/postServices";
-import { dateStringToISOString } from "@/utils/converter";
 import Regex from "@/constants/Regex";
-import { useMutation } from "@tanstack/react-query";
+import cloudinaryUpload from "@/services/cloudinaryServices";
+import UploadStragegy from "@/constants/UploadStragegy";
+import toast from "react-hot-toast";
 
 const ApplyRecruitment = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id: recruitmentId } = useParams();
+  const [isPending, setIsPending] = useState(false);
+
+  const handleSubmit = async (values, { resetForm }) => {
+    setIsPending(true);
+    try {
+      const uploadResponse = await cloudinaryUpload(
+        values.cvFile,
+        UploadStragegy.RESUME,
+      );
+
+      await applyRecruitment(
+        recruitmentId,
+        {
+          fullName: values.fullName,
+          email: values.email,
+          phoneNumber: values.phoneNumber,
+          gender: values.gender,
+          address: values.permanentAddr,
+          languageSkills: values.languageSkills,
+        },
+        uploadResponse.public_id,
+      );
+      resetForm();
+      navigate("/recruitment");
+    } catch (error) {
+      console.log(error);
+      toast.error("Ứng tuyển thất bại");
+    }
+    setIsPending(false);
+  };
 
   const GENDERS = [
     { label: "Nam", value: "MALE" },
@@ -31,9 +62,6 @@ const ApplyRecruitment = () => {
 
   const APPLICATION_SCHEMA = Yup.object().shape({
     fullName: Yup.string().required("Họ và tên không được để trống"),
-    dob: Yup.date()
-      .max(new Date(), "Ngày sinh không hợp lệ")
-      .required("Ngày sinh không được để trống"),
     gender: Yup.string().required("Giới tính không được để trống"),
     phoneNumber: Yup.string()
       .matches(Regex.VN_PHONE, "Số điện thoại không hợp lệ")
@@ -42,48 +70,34 @@ const ApplyRecruitment = () => {
       .email("Email không hợp lệ")
       .required("Email không được để trống"),
     permanentAddr: Yup.string().required("Địa chỉ không được để trống"),
-    // cvFile: Yup.mixed().required("Vui lòng tải lên CV"),
+    cvFile: Yup.mixed()
+      .required("Vui lòng tải lên CV")
+      .test(
+        "fileSize",
+        "Dung lượng file tối đa 5MB",
+        (value) => value && value.size <= 5 * 1024 * 1024,
+      )
+      .test(
+        "fileType",
+        "Chỉ chấp nhận file PDF, DOC hoặc DOCX",
+        (value) =>
+          value &&
+          [
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          ].includes(value.type),
+      ),
   });
+
   const initialValues = {
     fullName: "",
-    dob: "",
     gender: "",
     phoneNumber: "",
     email: "",
     permanentAddr: "",
-    languageSkills: [],
+    languageSkills: "",
     cvFile: null,
-  };
-  const { mutateAsync: applyRecruitmentAsync, isPending } = useMutation({
-    mutationFn: ({ id, data }) => applyRecruitment(id, data),
-  });
-
-  const handleSubmit = async (values, { resetForm }) => {
-    //Calling API to create a new crew member
-    // const tempFile = {
-    //   file: URL.createObjectURL(values.cvFile),
-    //   name: values.cvFile.name,
-    //   type: values.cvFile.type,
-    // };
-
-    await applyRecruitmentAsync(
-      {
-        birthDate: dateStringToISOString(values.dob),
-        fullName: values.fullName,
-        email: values.email,
-        phoneNumber: values.phoneNumber,
-        gender: values.gender,
-        address: values.permanentAddr,
-        languageSkills: [values.languageSkills],
-        // resume: tempFile,
-      },
-      {
-        onSuccess: (data) => {
-          resetForm();
-          navigate("/recruitment");
-        },
-      },
-    );
   };
 
   return (
@@ -115,7 +129,7 @@ const ApplyRecruitment = () => {
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <PageTitle
                   title="NỘP HỒ SƠ ỨNG TUYỂN"
-                  subtitle={`Bài đăng tuyển dụng: ${id}`} //Change this to the actual recruitmentID
+                  subtitle={`Bài đăng tuyển dụng: ${recruitmentId}`} //Change this to the actual recruitmentID
                 />
               </Box>
               <Box
@@ -152,7 +166,7 @@ const ApplyRecruitment = () => {
             </Box>
           </Box>
           <SectionDivider sectionName="Thông tin ứng viên: " />
-          <Grid container spacing={2} mx={2} rowSpacing={1} pt={2}>
+          <Grid container spacing={2} rowSpacing={1} pt={2}>
             <Grid size={5}>
               <InfoTextField
                 id="full-name"
@@ -173,39 +187,6 @@ const ApplyRecruitment = () => {
                   },
                   "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
                     borderColor: Color.PrimaryBlack,
-                  },
-                }}
-              />
-            </Grid>
-            <Grid size={3}>
-              <InfoTextField
-                id="dob"
-                type="date"
-                label="Ngày sinh"
-                size="small"
-                margin="none"
-                required
-                fullWidth
-                name="dob"
-                value={values.dob}
-                error={!!touched.dob && !!errors.dob}
-                helperText={touched.dob && errors.dob}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                sx={{
-                  "& .MuiInputBase-input.Mui-disabled": {
-                    color: Color.PrimaryBlack,
-                  },
-                  "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                    borderColor: Color.PrimaryBlack,
-                  },
-                }}
-                slotProps={{
-                  input: {
-                    placeholder: "asjdbnaskjd",
-                  },
-                  inputLabel: {
-                    shrink: true,
                   },
                 }}
               />
@@ -331,10 +312,11 @@ const ApplyRecruitment = () => {
           </Grid>
           <SectionDivider sectionName="CV đính kèm*: " />
           <FileUploadField
+            required
             id="cvFile"
-            label="Tải lên CV"
+            // label="Tải lên CV"
             name="cvFile"
-            sx={{ justifyContent: "start", marginLeft: 2 }}
+            helperText={touched.cvFile && errors.cvFile}
           />
         </Box>
       )}

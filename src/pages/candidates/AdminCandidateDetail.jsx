@@ -1,9 +1,14 @@
 import React from "react";
+import PictureAsPdfRoundedIcon from "@mui/icons-material/PictureAsPdfRounded";
+import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
+import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
+import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
 import { InfoTextField, StatusLabel } from "@components/global";
 import { FileUploadField } from "@components/contract";
 import {
   Box,
   Button,
+  Paper,
   Typography,
   MenuItem,
   Grid,
@@ -17,25 +22,37 @@ import Color from "@constants/Color";
 import { reviewCandidateApplication } from "@/services/postServices";
 import { isoStringToDateString } from "@utils/converter";
 import { useCandidate } from "@/hooks/services/posts";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import CandidateStatus from "@/constants/CandidateStatus";
 import toast from "react-hot-toast";
+
+const getFileIcon = (url) => {
+  if (!url) return <DescriptionRoundedIcon />;
+  if (url.endsWith(".pdf")) return <PictureAsPdfRoundedIcon />;
+  return <DescriptionRoundedIcon />;
+};
 
 const AdminCandidateDetail = () => {
   const navigate = useNavigate();
   const { candidateID } = useParams();
-  const queryClient = useQueryClient();
 
-  const { data: candidateInfo, isLoading } = useCandidate(candidateID);
+  const {
+    data: candidateInfo,
+    isLoading,
+    refetch: refetchCandidateInfo,
+  } = useCandidate(candidateID);
   const { mutateAsync, isPending: isReviewing } = useMutation({
     mutationFn: (status) => reviewCandidateApplication(candidateID, status),
     onSuccess: () => {
-      // Refetch lại profile ngay lập tức
-      queryClient.invalidateQueries({
-        queryKey: ["candidate-profile", candidateID],
-      });
+      // // Refetch lại profile ngay lập tức
+      refetchCandidateInfo();
+      // queryClient.invalidateQueries({
+      //   queryKey: ["candidate-profile", candidateID],
+      // });
     },
   });
+  const resume = candidateInfo?.resume;
+
   const reviewCandidateAsync = async (status) => {
     try {
       await mutateAsync(status);
@@ -320,20 +337,54 @@ const AdminCandidateDetail = () => {
               </Grid>
             </Box>
 
-            {/* CARD: CV đính kèm */}
-            <Box
-              sx={{
-                p: 3,
-                borderRadius: 3,
-                bgcolor: "#fff",
-                boxShadow: "0 4px 18px rgba(0,0,0,0.06)",
-              }}
-            >
-              <Typography variant="h6" fontWeight={700} mb={2}>
-                CV đính kèm
+            {!resume?.url ? (
+              <Typography color="text.secondary">
+                Không có CV đính kèm
               </Typography>
-              <FileUploadField label="CV đính kèm" name="resume" disabled />
-            </Box>
+            ) : (
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
+                  borderStyle: "dashed",
+                }}
+              >
+                <Box sx={{ color: Color.PrimaryBlue }}>
+                  {getFileIcon(resume.url)}
+                </Box>
+
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography fontWeight={600} noWrap>
+                    {resume.name}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    CV ứng viên
+                  </Typography>
+                </Box>
+
+                <Button
+                  size="small"
+                  startIcon={<OpenInNewRoundedIcon />}
+                  onClick={() => window.open(resume.url, "_blank")}
+                >
+                  Xem
+                </Button>
+
+                <Button
+                  size="small"
+                  startIcon={<DownloadRoundedIcon />}
+                  component="a"
+                  href={resume.url}
+                  download
+                >
+                  Tải
+                </Button>
+              </Paper>
+            )}
           </Box>
         )}
       </Formik>

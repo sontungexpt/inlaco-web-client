@@ -111,34 +111,18 @@ export const fetchUniqueCandidate = async (candidateID) => {
   }
 };
 
-export const applyRecruitment = async (
-  postID,
-  {
-    birthDate,
-    fullName,
-    email,
-    phoneNumber,
-    gender,
-    address,
-    languageSkills,
-    resume,
-  },
-) => {
+export const applyRecruitment = async (postID, data, resumePublicId) => {
   try {
     const response = await privateRequest.post(
       PostEndpoint.APPLY_CANDIDATE(postID),
+      data,
       {
-        birthDate,
-        fullName,
-        email,
-        phoneNumber,
-        gender,
-        address,
-        languageSkills,
-        resume,
+        params: {
+          resumePublicId: resumePublicId,
+        },
       },
     );
-    return response;
+    return response.data;
   } catch (err) {
     console.debug(err);
     throw err;
