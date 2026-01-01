@@ -11,7 +11,7 @@ import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRound
 import { useNavigate } from "react-router";
 import { isoToLocalDatetime } from "@utils/converter";
 import Color from "@constants/Color";
-import { useContracts } from "@/hooks/services/contracts";
+import { useContracts } from "@/hooks/services/contract";
 
 const CrewContract = () => {
   const navigate = useNavigate();

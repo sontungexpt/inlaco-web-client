@@ -13,7 +13,8 @@ import PictureAsPdfRoundedIcon from "@mui/icons-material/PictureAsPdfRounded";
 import TableChartRoundedIcon from "@mui/icons-material/TableChartRounded";
 import { useField, useFormikContext } from "formik";
 import Color from "@constants/Color";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
+import toast from "react-hot-toast";
 
 /* ---------- helpers ---------- */
 
@@ -57,6 +58,7 @@ const FileUploadField = ({
   const [field, meta] = useField(name);
   const [dragOver, setDragOver] = useState(false);
   const inputId = id || `file-upload-${name}`;
+  const inputRef = useRef(null);
 
   const acceptLabel = useMemo(() => formatAcceptLabel(accept), [accept]);
 
@@ -70,7 +72,7 @@ const FileUploadField = ({
     if (disabled) return;
     setFieldTouched(name, true, false);
     setFieldValue(name, field.value ?? null, true);
-    document.getElementById(inputId).click();
+    inputRef.current?.click();
   };
 
   const handleDrop = (e) => {
@@ -80,7 +82,8 @@ const FileUploadField = ({
     handleFileChanged(e.dataTransfer.files[0]);
   };
 
-  const handleDelete = () => {
+  const handleDelete = (e) => {
+    e.stopPropagation();
     setFieldTouched(name, true, false);
     setFieldValue(name, null, true);
   };
@@ -109,6 +112,18 @@ const FileUploadField = ({
         </Typography>
       )}
 
+      <input
+        hidden
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        disabled={disabled}
+        id={inputId}
+        onChange={(e) => {
+          handleFileChanged(e.target.files[0]);
+          e.target.value = "";
+        }}
+      />
       {/* Upload box */}
       <Paper
         elevation={0}
@@ -119,7 +134,6 @@ const FileUploadField = ({
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
         sx={{
-          p: 2,
           borderRadius: 2.5,
           border: "2px dashed",
           borderColor:
@@ -137,54 +151,52 @@ const FileUploadField = ({
         }}
       >
         {!field.value ? (
-          <>
-            <input
-              hidden
-              type="file"
-              accept={accept}
-              disabled={disabled}
-              id={inputId}
-              onChange={(e) => {
-                handleFileChanged(e.target.files[0]);
-                e.target.value = "";
-              }}
+          <Box p={2} textAlign="center">
+            <UploadFileRoundedIcon
+              sx={{ fontSize: 36, color: "primary.main", mb: 1 }}
             />
-
-            <Box textAlign="center">
-              <UploadFileRoundedIcon
-                sx={{ fontSize: 36, color: "primary.main", mb: 1 }}
-              />
-              <Typography fontWeight={500}>Kéo & thả file vào đây</Typography>
-              <Typography variant="caption" color="text.secondary">
-                hoặc
-              </Typography>
-              <Box mt={1}>
-                <Button
-                  size="small"
-                  variant="contained"
-                  disabled={disabled}
-                  onClick={handleFileDialogOpened}
-                >
-                  Chọn file
-                </Button>
-              </Box>
-              {(acceptLabel || helperText) && (
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  display="block"
-                  mt={1}
-                >
-                  {acceptLabel}
-                  {acceptLabel && helperText ? " • " : ""}
-                  {helperText}
-                </Typography>
-              )}
+            <Typography fontWeight={500}>Kéo & thả file vào đây</Typography>
+            <Typography variant="caption" color="text.secondary">
+              hoặc
+            </Typography>
+            <Box mt={1}>
+              <Button
+                size="small"
+                variant="contained"
+                disabled={disabled}
+                onClick={handleFileDialogOpened}
+              >
+                Chọn file
+              </Button>
             </Box>
-          </>
+            {(acceptLabel || helperText) && (
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                display="block"
+                mt={1}
+              >
+                {acceptLabel}
+                {acceptLabel && helperText ? " • " : ""}
+                {helperText}
+              </Typography>
+            )}
+          </Box>
         ) : (
           <Fade in>
-            <Box display="flex" alignItems="center" gap={1.5}>
+            <Box
+              p={2}
+              onClick={handleFileDialogOpened}
+              display="flex"
+              alignItems="center"
+              gap={1.5}
+              sx={{
+                cursor: "pointer",
+                "&:hover": {
+                  backgroundColor: "action.hover",
+                },
+              }}
+            >
               <Box color="primary.main">{getFileIcon(field.value.name)}</Box>
 
               <Box sx={{ flex: 1, minWidth: 0 }}>

@@ -17,7 +17,7 @@ import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import { useNavigate, useParams } from "react-router";
 import Color from "@constants/Color";
 import { reviewCandidateApplication } from "@/services/postServices";
-import { useCandidate } from "@/hooks/services/posts";
+import { useCandidate } from "@/hooks/services/post";
 import { useMutation } from "@tanstack/react-query";
 import CandidateStatus from "@/constants/CandidateStatus";
 import toast from "react-hot-toast";

@@ -4,12 +4,13 @@ import { FileUploadField } from "@components/contract";
 import {
   Box,
   Button,
-  Paper,
+  Dialog,
   Typography,
   Grid,
   MenuItem,
   CircularProgress,
   InputAdornment,
+  IconButton,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
@@ -17,13 +18,16 @@ import * as Yup from "yup";
 import { useLocation, useNavigate, useParams } from "react-router";
 import Color from "@constants/Color";
 import { createLaborContract } from "@/services/contractServices";
-import { dateStringToISOString, isoToLocalDatetime } from "@utils/converter";
+import { dateStringToISOString } from "@utils/converter";
 import Regex from "@/constants/Regex";
 import { now, yesterday } from "@/utils/date";
 import SubSegmentWrapper from "./components/SubSegmentWrapper";
 import SectionWrapper from "@components/global/SectionWrapper";
 import cloudinaryUpload from "@/services/cloudinaryServices";
 import UploadStrategy from "@/constants/UploadStrategy";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import TemplateContractCard from "./components/TemplateContractCard";
+import TemplateContractList from "./components/TemplateContractList";
 
 const CreateCrewContract = () => {
   const navigate = useNavigate();
@@ -33,6 +37,7 @@ const CreateCrewContract = () => {
   const RECEIVE_METHOD = ["Tiền mặt", "Chuyển khoản ngân hàng"];
 
   const [creating, setCreating] = useState(false);
+  const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
 
   const createContract = async (values, { resetForm }) => {
     setCreating(true);
@@ -308,6 +313,7 @@ const CreateCrewContract = () => {
 
               <Box sx={{ display: "flex", gap: 1 }}>
                 <Button
+                  onClick={() => setOpenTemplateDialog(true)}
                   variant="contained"
                   sx={{
                     minWidth: 150,
@@ -958,6 +964,52 @@ const CreateCrewContract = () => {
               helperText={touched.contractFile && errors.contractFile}
             />
           </SectionWrapper>
+
+          <Dialog
+            open={openTemplateDialog}
+            onClose={() => setOpenTemplateDialog(false)}
+            fullWidth
+            maxWidth="lg"
+          >
+            {/* ===== HEADER ===== */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                px: 2.5,
+                py: 1.5,
+                borderBottom: "1px solid rgba(0,0,0,0.08)",
+              }}
+            >
+              <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
+                Chọn template hợp đồng
+              </Typography>
+
+              <IconButton onClick={() => setOpenTemplateDialog(false)}>
+                <CloseRoundedIcon />
+              </IconButton>
+            </Box>
+
+            {/* ===== CONTENT ===== */}
+            <Box sx={{ p: 3 }}>
+              <Grid container spacing={3}>
+                {/* Template list */}
+                <TemplateContractList
+                  render={(item) => (
+                    <TemplateContractCard
+                      url={item.metadata?.url}
+                      key={item.id}
+                      title={item.name}
+                      initialData={() => values}
+                      dowloadFileName={item.name}
+                      type={item.type}
+                    />
+                  )}
+                />
+              </Grid>
+            </Box>
+          </Dialog>
         </Box>
       )}
     </Formik>

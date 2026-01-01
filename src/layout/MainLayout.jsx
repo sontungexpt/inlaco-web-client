@@ -1,6 +1,6 @@
 import { Outlet } from "react-router";
 import TopBar from "@components/global/TopBar";
-import SideBar from "@components/global/SideBar";
+import SideBar from "@/layout/components/SideBar";
 import { useEffect } from "react";
 
 const MainLayout = ({ children }) => {
@@ -14,7 +14,7 @@ const MainLayout = ({ children }) => {
     <div className="app">
       <SideBar />
       <main className="content">
-        <TopBar />
+        {/* <TopBar /> */}
         {/* Renders the matched child route */}
         {children}
         <Outlet />

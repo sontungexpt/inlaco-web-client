@@ -1,16 +1,16 @@
 import { Typography, Box } from "@mui/material";
-import { COLOR } from "../../assets/Color";
+import Color from "@constants/Color";
 
 const PageTitle = ({ title, subtitle, ...props }) => {
   return (
-    <Box mb="14px" {...props}>
-      <Typography variant="h5" color={COLOR.PrimaryBlack} fontWeight="bold">
+    <Box {...props}>
+      <Typography variant="h5" color={Color.PrimaryBlack} fontWeight="bold">
         {title}
       </Typography>
       {subtitle && (
         <Typography
           variant="h7"
-          color={COLOR.SecondaryBlack}
+          color={Color.SecondaryBlack}
           sx={{ fontStyle: "italic" }}
         >
           {subtitle}

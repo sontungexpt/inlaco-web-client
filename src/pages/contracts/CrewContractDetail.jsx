@@ -15,14 +15,13 @@ import {
 import Color from "@constants/Color";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
-import GetAppRoundedIcon from "@mui/icons-material/GetAppRounded";
 import { useNavigate, useParams, useLocation } from "react-router";
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { saveAs } from "file-saver";
 import JSZipUtils from "jszip-utils";
 import { formatDateString } from "@utils/converter";
-import { useContract } from "@/hooks/services/contracts";
+import { useContract } from "@/hooks/services/contract";
 import SubSegmentWrapper from "./components/SubSegmentWrapper";
 import SectionWrapper from "@components/global/SectionWrapper";
 

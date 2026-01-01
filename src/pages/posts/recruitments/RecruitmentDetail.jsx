@@ -15,7 +15,7 @@ import EventBusyRoundedIcon from "@mui/icons-material/EventBusyRounded";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { useSpecificPost } from "@/hooks/services/posts";
+import { useSpecificPost } from "@/hooks/services/post";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { changeRegistrationRecruitmentPostStatus } from "@/services/postServices";
 import { isoToLocalDatetime } from "@/utils/converter";

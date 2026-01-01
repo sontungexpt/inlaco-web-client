@@ -4,7 +4,7 @@ import { Box, CircularProgress } from "@mui/material";
 import Color from "@/constants/Color";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useSpecificPost } from "@/hooks/services/posts";
+import { useSpecificPost } from "@/hooks/services/post";
 import { isoStringToMUIDateTime } from "@/utils/converter";
 import { updatePost } from "@/services/postServices";
 import PostForm from "./PostForm";

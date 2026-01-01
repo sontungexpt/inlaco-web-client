@@ -3,32 +3,33 @@ import AppProperty from "@/constants/AppProperty";
 import { privateRequest } from "@/utils/request";
 import UploadEndpoint from "@/endpoints/UploadEndpoint";
 
-export const getUploadOptions = async (stragegy, payload) => {
+export const getUploadOptions = async (stragegy, params) => {
   const response = await privateRequest.get(
     UploadEndpoint.GET_UPLOAD_OPTIONS,
     {
       params: {
         stragegy,
+        ...params,
       },
     },
-    payload,
+    params,
   );
   return response.data;
 };
 
-const cldUpload = async (file, params) => {
+const cldUpload = async (file, options) => {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("api_key", AppProperty.CLOUDINARY_API_KEY);
 
-  if (!params.signature) {
+  if (!options.signature) {
     throw new Error("Missing signature");
-  } else if (!params.timestamp) {
+  } else if (!options.timestamp) {
     throw new Error("Missing timestamp");
   }
 
-  for (var k in params) {
-    formData.append(k, params[k]);
+  for (var k in options) {
+    formData.append(k, options[k]);
   }
 
   const response = await axios.post(
@@ -44,9 +45,9 @@ const cldUpload = async (file, params) => {
   return response.data;
 };
 
-const cloudinaryUpload = async (file, stragegy) => {
-  const params = await getUploadOptions(stragegy);
-  const response = await cldUpload(file, params);
+const cloudinaryUpload = async (file, stragegy, optionParams) => {
+  const options = await getUploadOptions(stragegy, optionParams);
+  const response = await cldUpload(file, options);
   return response;
 };
 

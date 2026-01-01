@@ -10,7 +10,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import Color from "@constants/Color";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useNavigate } from "react-router";
-import { useContracts } from "@/hooks/services/contracts";
+import { useContracts } from "@/hooks/services/contract";
 import { isoToLocalDatetime } from "@/utils/converter";
 
 const SupplyContract = () => {

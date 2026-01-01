@@ -15,7 +15,7 @@ import { useNavigate } from "react-router";
 import { formatDateTime } from "@/utils/converter";
 import Color from "@constants/Color";
 import useAllowedRole from "@/hooks/useAllowedRole";
-import { useSupplyRequests } from "@/hooks/services/supplyRequests";
+import { useSupplyRequests } from "@/hooks/services/supplyRequest";
 
 const SupplyRequest = () => {
   const navigate = useNavigate();

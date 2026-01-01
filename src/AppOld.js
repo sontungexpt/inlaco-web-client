@@ -27,7 +27,7 @@ import CreateSupplyContract from "./pages/createSupplyContract";
 import SupplyContractDetail from "./pages/contracts/SupplyContractDetail";
 import SupplyContractAddendum from "./pages/supplyContractAddendum";
 
-import TemplateContract from "./pages/contracts/TemplateContract";
+import ContractTemplate from "./pages/contracts/ContractTemplate";
 
 import SupplyRequest from "./pages/supplication/SupplyRequest";
 import AdminSupplyRequestDetail from "./pages/adminSupplyRequestDetail";
@@ -185,7 +185,7 @@ function App() {
                 </Route>
                 <Route
                   path="/template-contracts"
-                  element={<TemplateContract />}
+                  element={<ContractTemplate />}
                 />
               </>
             )}

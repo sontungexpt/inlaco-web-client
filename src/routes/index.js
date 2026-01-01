@@ -54,7 +54,7 @@ const CrewMyMobilization = lazy(() => import("@pages/CrewMyMobilization"));
 const CrewMemberDetail = lazy(() => import("@pages/CrewMemberDetail"));
 const CrewProfile = lazy(() => import("@pages/CrewProfile"));
 const TemplateContract = lazy(
-  () => import("@pages/contracts/TemplateContract"),
+  () => import("@/pages/contracts/ContractTemplate"),
 );
 
 const ADMIN_SAILOR = [UserRole.ADMIN, UserRole.SAILOR];

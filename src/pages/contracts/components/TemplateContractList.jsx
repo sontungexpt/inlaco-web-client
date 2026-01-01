@@ -1,18 +1,52 @@
-import { Grid, Box, Pagination, Typography } from "@mui/material";
-import { TemplateContractCard } from "@components/contract";
-import { useState } from "react";
+import { SearchBar } from "@/components/global";
 import Color from "@/constants/Color";
+import { useContractTemplates } from "@/hooks/services/contractTemplate";
+import {
+  Grid,
+  Box,
+  Pagination,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
+import { useImperativeHandle, useState } from "react";
 
 const TemplateContractList = ({
-  data = [],
-  totalPages,
-  onSelect, // optional: dùng khi ở dialog
-  initialPage = 0,
+  render,
+  pageSize,
   emptyText = "Không có template nào",
+  ref,
 }) => {
-  const [page, setPage] = useState(initialPage);
+  const [page, setPage] = useState(0);
 
-  if (!data.length) {
+  const {
+    data: { content: templates = [], totalPages = 0 } = {},
+    isLoading,
+    refetch: refetchTemplates,
+  } = useContractTemplates({
+    page,
+    pageSize: pageSize,
+  });
+
+  useImperativeHandle(ref, () => ({
+    refetch: () => refetchTemplates(),
+  }));
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (!templates.length) {
     return (
       <Typography textAlign="center" color="text.secondary">
         {emptyText}
@@ -22,25 +56,39 @@ const TemplateContractList = ({
 
   return (
     <Box>
+      {/* ===== Search ===== */}
+      <Box
+        sx={{
+          maxWidth: 1400,
+          mx: "auto",
+          mt: 3,
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <SearchBar
+          placeholder="Nhập thông tin template hợp đồng"
+          color={Color.PrimaryBlack}
+          backgroundColor={Color.SecondaryWhite}
+          sx={{
+            width: "420px",
+            borderRadius: 2,
+          }}
+        />
+      </Box>
+
       <Grid container spacing={4}>
-        {data.map((item) => (
-          <TemplateContractCard
-            key={item.id}
-            image={item.image}
-            title={item.title}
-            type={item.type}
-            onClick={() => onSelect?.(item)} // dialog có thể dùng
-          />
-        ))}
+        {templates.map((item) => render(item))}
       </Grid>
 
       {totalPages > 1 && (
         <Box display="flex" justifyContent="center" mt={4}>
           <Pagination
             count={totalPages}
-            page={page + 1}
-            onChange={(_, value) => setPage(value - 1)}
-            color={Color.PrimaryBlue}
+            page={page}
+            onChange={(e, value) => setPage(value - 1)}
+            color="primary"
           />
         </Box>
       )}

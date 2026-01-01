@@ -13,7 +13,7 @@ import {
   Alert,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { usePosts } from "@hooks/services/posts";
+import { usePosts } from "@/hooks/services/post";
 import { useNavigate } from "react-router";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";

@@ -1,29 +1,22 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  CircularProgress,
-  Stack,
-} from "@mui/material";
+import { Box, Button, CircularProgress, Stack } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { PageTitle, DoubleTabBar } from "@components/global";
 import { useNavigate, useLocation } from "react-router";
 import Color from "@constants/Color";
 
-import { useRecruitmentPosts, useCandidates } from "@hooks/services/posts";
+import { useRecruitmentPosts, useCandidates } from "@/hooks/services/post";
 
 import RecruitmentList from "./RecruitmentList";
 import CandidateTable from "./CandidateTable";
 import useAllowedRole from "@/hooks/useAllowedRole";
 
-const NUMBER_POST_PER_PAGE = 10;
-const NUMBER_CANDIDATE_PER_PAGE = 10;
-
 export default function CrewRecruitment() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const isAdmin = useAllowedRole("ADMIN");
+  const NUMBER_POST_PER_PAGE = 10;
+  const NUMBER_CANDIDATE_PER_PAGE = 10;
 
   // If had initital tab then only show one bar
   const INITITAL_TAB = state?.tab === "CANDIDATE" ? 1 : state?.tab;
@@ -63,56 +56,60 @@ export default function CrewRecruitment() {
   const candidates = candidateData?.content || [];
   return (
     <Box m="20px">
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={3}
+      <Box
+        sx={{
+          position: "sticky",
+          top: 0,
+          zIndex: 100,
+          py: 2,
+          backgroundColor: Color.PrimaryWhite,
+        }}
       >
-        <PageTitle title="TUYỂN DỤNG" />
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <PageTitle title="TUYỂN DỤNG" />
 
-        {tab === 0 && isAdmin && (
-          <Button
-            variant="contained"
-            onClick={() => navigate("/recruitment/create")}
-            sx={{
-              backgroundColor: Color.PrimaryGold,
-              color: Color.PrimaryBlack,
-              padding: "10px 20px",
-              borderRadius: 4,
-              height: "fit-content",
-            }}
-          >
-            <AddCircleRoundedIcon />
-            <Typography
+          {tab === 0 && isAdmin && (
+            <Button
+              variant="contained"
+              startIcon={<AddCircleRoundedIcon />}
+              onClick={() => navigate("/recruitment/create")}
               sx={{
+                backgroundColor: Color.PrimaryGold,
+                color: Color.PrimaryBlack,
                 fontWeight: 700,
-                marginLeft: "4px",
-                textTransform: "capitalize",
+                borderRadius: 2,
+                px: 2.5,
+                py: 1.2,
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: Color.PrimaryGoldHover,
+                },
               }}
             >
-              Đăng Bài tuyển dụng
-            </Typography>
-          </Button>
+              Đăng bài tuyển dụng
+            </Button>
+          )}
+        </Stack>
+        {isAdmin && (
+          <DoubleTabBar
+            tabLabel1={"Danh sách bài đăng"}
+            tabLabel2={"Danh sách đơn ứng tuyển"}
+            variant={"fullWidth"}
+            initialTab={tab}
+            isSingleTab={Boolean(INITITAL_TAB)}
+            onTabChange={setTab}
+            color={Color.SecondaryBlue}
+            sx={{
+              backgroundColor: Color.SecondaryWhite,
+              marginTop: 3,
+            }}
+          />
         )}
-      </Stack>
-
-      {isAdmin && (
-        <DoubleTabBar
-          tabLabel1={"Danh sách bài đăng"}
-          tabLabel2={"Danh sách đơn ứng tuyển"}
-          variant={"fullWidth"}
-          initialTab={tab}
-          isSingleTab={Boolean(INITITAL_TAB)}
-          onTabChange={setTab}
-          color={Color.SecondaryBlue}
-          sx={{
-            backgroundColor: Color.SecondaryWhite,
-            marginTop: 4,
-            marginBottom: 2,
-          }}
-        />
-      )}
+      </Box>
 
       {/* ===== TAB 1: BÀI ĐĂNG ===== */}
       {tab === 0 &&
