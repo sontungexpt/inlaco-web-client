@@ -1,4 +1,4 @@
-export { default as TopBar } from "./TopBar";
+export { default as TopBar } from "../../layout/components/TopBar";
 export { default as SideBar } from "../../layout/components/SideBar";
 export { default as PageTitle } from "./PageTitle";
 export { default as NoValuesOverlay } from "./NoValuesOverlay";

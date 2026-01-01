@@ -2,7 +2,7 @@ import { Box, IconButton, Typography } from "@mui/material";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import NavSearchBar from "./NavSearchBar";
+import NavSearchBar from "@components/global/NavSearchBar";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router";
 import { Menu, MenuItem } from "@mui/material";
