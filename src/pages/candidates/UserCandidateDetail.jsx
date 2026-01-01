@@ -4,7 +4,7 @@ import {
   SectionDivider,
   InfoTextField,
   StatusLabel,
-  HorizontalImageInput,
+  ImageUploadField,
   MultilineFileUploadField,
 } from "../../components/global";
 import { CardPhotoInput } from "../../components/contract";
@@ -436,7 +436,7 @@ const UserCandidateDetail = () => {
                     alignItems: "center",
                   }}
                 >
-                  <HorizontalImageInput
+                  <ImageUploadField
                     disabled={true}
                     width={250}
                     height={150}
@@ -465,7 +465,7 @@ const UserCandidateDetail = () => {
                     alignItems: "center",
                   }}
                 >
-                  <HorizontalImageInput
+                  <ImageUploadField
                     disabled={true}
                     width={250}
                     height={150}

@@ -3,7 +3,7 @@ import {
   PageTitle,
   SectionDivider,
   InfoTextField,
-  HorizontalImageInput,
+  ImageUploadField,
   DoubleTabBar,
   NoValuesOverlay,
 } from "@components/global";
@@ -883,7 +883,7 @@ const CourseDetail = () => {
                       />
                     </Grid>
                     <Grid size={12}>
-                      <HorizontalImageInput
+                      <ImageUploadField
                         id="course-wallpaper"
                         name="courseWallpaper"
                         width="100%"

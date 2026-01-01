@@ -1,176 +1,52 @@
-import { PageTitle, InfoTextField, ImageUploadField } from "@components/global";
-import { NationalityTextField } from "@components/mobilization";
-import { FileUploadField } from "@components/contract";
+import React from "react";
 import {
-  Stack,
   Box,
   Button,
   Typography,
-  Grid,
   CircularProgress,
+  Stack,
 } from "@mui/material";
-import ScheduleSendRoundedIcon from "@mui/icons-material/ScheduleSendRounded";
 import { Formik } from "formik";
-import * as Yup from "yup";
-import { useNavigate } from "react-router";
-import { createSupplyRequest } from "@/services/supplyReqServices";
-import Color from "@constants/Color";
-import Regex from "@/constants/Regex";
+import Grid from "@mui/material/Grid2";
+
+import ScheduleSendRoundedIcon from "@mui/icons-material/ScheduleSendRounded";
+
+import { PageTitle } from "@components/global";
 import SectionWrapper from "@/components/global/SectionWrapper";
-import toast from "react-hot-toast";
-import cloudinaryUpload from "@/services/cloudinaryServices";
-import UploadStrategy from "@/constants/UploadStrategy";
-import { datetimeToISO } from "@/utils/converter";
 
-const CreateSupplyRequest = () => {
-  const navigate = useNavigate();
+import {
+  InfoTextField,
+  FileUploadField,
+  ImageUploadField,
+  NationalityTextField,
+} from "@/components/global";
 
-  const handleCreateRequestSubmit = async (values, { resetForm }) => {
-    try {
-      const [detailFileUploadRes, shipImageUploadRes] = await Promise.all([
-        cloudinaryUpload(
-          values.detailFile,
-          UploadStrategy.CREW_RENTAL_REQUEST_DETAIL_FILE,
-        ),
-        cloudinaryUpload(values.shipInfo.image, UploadStrategy.SHIP_IMAGE),
-      ]);
+import Color from "@constants/Color";
 
-      //Calling API to create a new crew member
-      const request = await createSupplyRequest(
-        {
-          ...values,
-          rentalStartDate: datetimeToISO(values.rentalStartDate),
-          rentalEndDate: datetimeToISO(values.rentalEndDate),
-        },
-        detailFileUploadRes.asset_id,
-        shipImageUploadRes.asset_id,
-      );
-      // resetForm();
-      // navigate("/supply-requests");
-    } catch (err) {
-      console.log("Error when creating supply request: ", err);
-      toast.error("Tạo yêu cầu thất bại!");
-    }
-  };
+const SHARED_SX = {
+  "& .MuiInputBase-input.Mui-disabled": {
+    color: Color.PrimaryBlack,
+  },
+  "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
+    borderColor: Color.PrimaryBlack,
+  },
+};
 
-  const SHARED_SX = {
-    "& .MuiInputBase-input.Mui-disabled": {
-      color: Color.PrimaryBlack,
-    },
-    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-      borderColor: Color.PrimaryBlack,
-    },
-  };
-
-  const initialValues = {
-    requestListFileLink: "",
-    companyName: "",
-    companyPhone: "",
-    companyAddress: "",
-    companyEmail: "",
-    companyRepresentor: "",
-    companyRepresentorPosition: "",
-    rentalStartDate: "",
-    rentalEndDate: "",
-    detailFile: null,
-
-    shipInfo: {
-      image: "",
-      IMONumber: "",
-      name: "",
-      countryISO: "",
-      type: "",
-      description: "",
-    },
-  };
-
-  const SUPPLY_REQUEST_SCHEMA = Yup.object().shape({
-    companyName: Yup.string().required("Tên công ty không được để trống"),
-    companyAddress: Yup.string().required(
-      "Địa chỉ công ty không được để trống",
-    ),
-    companyPhone: Yup.string()
-      .matches(Regex.VN_PHONE, "Số điện thoại không hợp lệ")
-      .required("Số điện thoại không được để trống"),
-    companyEmail: Yup.string()
-      .email("Email không hợp lệ")
-      .required("Email không được để trống"),
-    companyRepresentor: Yup.string().required(
-      "Tên người đại diện không được để trống",
-    ),
-    companyRepresentorPosition: Yup.string().required(
-      "Chức vụ người đại diện không được để trống",
-    ),
-    rentalStartDate: Yup.date()
-      .min(new Date(), "Thời gian bắt đầu thuê không hợp lệ")
-      .required("Thời gian bắt đầu thuê không được để trống")
-      .test(
-        "is-before-end-datetime",
-        "Thời bắt đầu thuê phải trước thời gian kết thúc thuê",
-        function (value) {
-          const { rentalEndDate } = this.parent; // Access sibling field estimatedTimeOfArrival
-          return !rentalEndDate || value < rentalEndDate;
-        },
-      ),
-    rentalEndDate: Yup.date()
-      .min(new Date(), "Thời gian ket thúc thuê không hợp lệ")
-      .required("Thời gian ket thúc thuê không được để trống")
-      .test(
-        "is-before-end-datetime",
-        "Thời gian ket thúc thuê phải sau thời gian bắt đầu thuê",
-        function (value) {
-          const { rentalStartDate } = this.parent; // Access sibling field estimatedTimeOfArrival
-          return !rentalStartDate || value > rentalStartDate;
-        },
-      ),
-
-    detailFile: Yup.mixed()
-      .required("Vui lồng tải lên tệp chi tiết")
-      .test(
-        "fileSize",
-        "Dung lượng file tối đa 5MB",
-        (value) => value && value.size <= 5 * 1024 * 1024,
-      )
-      .test(
-        "fileType",
-        "Chỉ chấp nhận file PDF, DOC, DOCX, XLSX, XLS",
-        (value) =>
-          value &&
-          [
-            "application/pdf",
-            "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "application/vnd.ms-excel",
-          ].includes(value.type),
-      ),
-    shipInfo: Yup.object().shape({
-      name: Yup.string().required("Tên cửa tàu không được để trống"),
-      IMONumber: Yup.string().required("Số IMO của tàu không được để trống"),
-      type: Yup.string().required("Loại tàu không được để trống"),
-      description: Yup.string(),
-      image: Yup.mixed()
-        .required("Vui lồng tải lên hình ảnh tàu")
-        .test(
-          "fileSize",
-          "Dung lượng file tối đa 5MB",
-          (value) => value && value.size <= 5 * 1024 * 1024,
-        )
-        .test(
-          "fileType",
-          "Chỉ chấp nhận file jpeg, png, jpg",
-          (value) =>
-            value &&
-            ["image/jpeg", "image/png", "image/jpg"].includes(value.type),
-        ),
-    }),
-  });
+const SupplyRequestForm = ({
+  title,
+  subtitle,
+  initialValues,
+  validationSchema,
+  onSubmit,
+  submitLabel = "Gửi yêu cầu",
+  submittingLabel = "Đang gửi...",
+}) => {
   return (
     <Formik
       validateOnChange={false}
       initialValues={initialValues}
-      validationSchema={SUPPLY_REQUEST_SCHEMA}
-      onSubmit={handleCreateRequestSubmit}
+      validationSchema={validationSchema}
+      onSubmit={onSubmit}
     >
       {({
         values,
@@ -191,10 +67,7 @@ const CreateSupplyRequest = () => {
             alignItems="flex-end"
             mb={4}
           >
-            <PageTitle
-              title="GỬI YÊU CẦU CUNG ỨNG"
-              subtitle="Tạo và gửi yêu cầu cung ứng cho công ty INLACO Hải Phòng"
-            />
+            <PageTitle title={title} subtitle={subtitle} />
 
             <Button
               type="submit"
@@ -226,18 +99,18 @@ const CreateSupplyRequest = () => {
                     size={18}
                     sx={{ color: Color.PrimaryBlack }}
                   />
-                  <Typography fontWeight={600}>Đang gửi...</Typography>
+                  <Typography fontWeight={600}>{submittingLabel}</Typography>
                 </Stack>
               ) : (
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <ScheduleSendRoundedIcon />
-                  <Typography fontWeight={700}>Gửi yêu cầu</Typography>
+                  <Typography fontWeight={700}>{submitLabel}</Typography>
                 </Stack>
               )}
             </Button>
           </Box>
 
-          {/* ===== SECTION: COMPANY INFO ===== */}
+          {/* ===== COMPANY INFO ===== */}
           <SectionWrapper title="Thông tin công ty">
             <Grid container spacing={2} rowSpacing={3}>
               <Grid size={4}>
@@ -342,7 +215,7 @@ const CreateSupplyRequest = () => {
             </Grid>
           </SectionWrapper>
 
-          {/* ===== SECTION: SCHEDULE ===== */}
+          {/* ===== REQUEST INFO ===== */}
           <SectionWrapper title="Thông tin yêu cầu">
             <Grid container spacing={2} rowSpacing={3}>
               <Grid size={4}>
@@ -381,8 +254,8 @@ const CreateSupplyRequest = () => {
 
               <Grid size={12}>
                 <FileUploadField
-                  accept=".doc,.docx,.pdf,.xls,.xlsx"
                   required
+                  accept=".doc,.docx,.pdf,.xls,.xlsx"
                   label="Danh sách số lượng cần cung ứng"
                   name="detailFile"
                   helperText={touched.detailFile && errors.detailFile}
@@ -391,21 +264,20 @@ const CreateSupplyRequest = () => {
             </Grid>
           </SectionWrapper>
 
-          {/* ===== SECTION: SHIP INFO ===== */}
+          {/* ===== SHIP INFO ===== */}
           <SectionWrapper title="Thông tin tàu">
             <Grid container spacing={3}>
               <Grid size={6}>
                 <ImageUploadField
                   required
-                  helperText={touched.shipInfo?.image && errors.shipInfo?.image}
                   name="shipInfo.image"
+                  helperText={touched.shipInfo?.image && errors.shipInfo?.image}
                 />
               </Grid>
 
               <Grid size={6} container direction="column" rowSpacing={3}>
                 <InfoTextField
                   label="IMO"
-                  fullWidth
                   name="shipInfo.IMONumber"
                   value={values.shipInfo?.IMONumber}
                   error={
@@ -422,7 +294,6 @@ const CreateSupplyRequest = () => {
 
                 <InfoTextField
                   label="Tên tàu"
-                  fullWidth
                   name="shipInfo.name"
                   value={values.shipInfo?.name}
                   error={!!touched.shipInfo?.name && !!errors.shipInfo?.name}
@@ -434,16 +305,8 @@ const CreateSupplyRequest = () => {
 
                 <NationalityTextField
                   label="Quốc tịch"
-                  fullWidth
                   name="shipInfo.countryISO"
                   value={values.shipInfo?.countryISO}
-                  error={
-                    !!touched.shipInfo?.countryISO &&
-                    !!errors.shipInfo?.countryISO
-                  }
-                  helperText={
-                    touched.shipInfo?.countryISO && errors.shipInfo?.countryISO
-                  }
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={SHARED_SX}
@@ -451,28 +314,17 @@ const CreateSupplyRequest = () => {
 
                 <InfoTextField
                   label="Loại tàu"
-                  fullWidth
                   name="shipInfo.type"
                   value={values.shipInfo?.type}
-                  error={!!touched.shipInfo?.type && !!errors.shipInfo?.type}
-                  helperText={touched.shipInfo?.type && errors.shipInfo?.type}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={SHARED_SX}
                 />
+
                 <InfoTextField
                   label="Mô tả"
-                  fullWidth
                   name="shipInfo.description"
                   value={values.shipInfo?.description}
-                  error={
-                    !!touched.shipInfo?.description &&
-                    !!errors.shipInfo?.description
-                  }
-                  helperText={
-                    touched.shipInfo?.description &&
-                    errors.shipInfo?.description
-                  }
                   onChange={handleChange}
                   onBlur={handleBlur}
                   sx={SHARED_SX}
@@ -486,4 +338,4 @@ const CreateSupplyRequest = () => {
   );
 };
 
-export default CreateSupplyRequest;
+export default SupplyRequestForm;

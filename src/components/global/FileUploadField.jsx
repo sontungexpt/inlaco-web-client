@@ -57,7 +57,6 @@ const FileUploadField = ({
   const { setFieldValue, setFieldTouched } = useFormikContext();
   const [field, meta] = useField(name);
   const [dragOver, setDragOver] = useState(false);
-  const inputId = id || `file-upload-${name}`;
   const inputRef = useRef(null);
 
   const acceptLabel = useMemo(() => formatAcceptLabel(accept), [accept]);
@@ -114,11 +113,11 @@ const FileUploadField = ({
 
       <input
         hidden
+        id={id}
         ref={inputRef}
         type="file"
         accept={accept}
         disabled={disabled}
-        id={inputId}
         onChange={(e) => {
           handleFileChanged(e.target.files[0]);
           e.target.value = "";

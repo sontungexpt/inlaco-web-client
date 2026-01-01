@@ -54,40 +54,25 @@ export const reviewSupplyReqAPI = async (supplyReqID, accepted) => {
   }
 };
 
-export const createSupplyRequestAPI = async (supplyReqInfo) => {
+export const createSupplyRequest = async (
+  request,
+  detailFileAssetId,
+  shipImageAssetId,
+) => {
   try {
-    const response = await privateRequest.post(`${GENERAL}`, {
-      totalCrewNeeded: 1,
-      positionDetail: {}, //
-      companyName: supplyReqInfo.compInfo.compName,
-      companyAddress: supplyReqInfo.compInfo.compAddress,
-      companyPhone: supplyReqInfo.compInfo.compPhoneNumber,
-      companyEmail: supplyReqInfo.compInfo.compEmail,
-      representativeName: supplyReqInfo.compInfo.representative,
-      representativeTitle: supplyReqInfo.compInfo.representativePos,
-
-      estimatedDepartureTime: dateTimeStringToISOString(
-        supplyReqInfo.requestInfo.timeOfDeparture,
-      ),
-      departurePoint: supplyReqInfo.requestInfo.departureLocation,
-      departureUNLOCODE: supplyReqInfo.requestInfo.UN_LOCODE_DepartureLocation,
-
-      estimatedArrivalTime: dateTimeStringToISOString(
-        supplyReqInfo.requestInfo.estimatedTimeOfArrival,
-      ),
-      arrivalPoint: supplyReqInfo.requestInfo.arrivalLocation,
-      arrivalUNLOCODE: supplyReqInfo.requestInfo.UN_LOCODE_ArrivalLocation,
-      shipInfo: {
-        // imageUrl: supplyReqInfo.requestInfo.shipImage, //
-        imonumber: supplyReqInfo.requestInfo.shipIMO,
-        countryISO: supplyReqInfo.requestInfo.shipNationality,
-        name: supplyReqInfo.requestInfo.shipName,
-        shipType: supplyReqInfo.requestInfo.shipType,
+    const response = await privateRequest.post(
+      SupplyRequestEndpoint.CREATE_SUPPLY_REQUEST,
+      request,
+      {
+        params: {
+          detailFileAssetId,
+          shipImageAssetId,
+        },
       },
-      status: "PENDING",
-    });
-    return response;
+    );
+    return response.data;
   } catch (err) {
-    return err.response;
+    console.debug(err);
+    throw err;
   }
 };

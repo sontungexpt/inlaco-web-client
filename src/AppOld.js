@@ -23,14 +23,14 @@ import CrewContractDetail from "./pages/contracts/CrewContractDetail";
 import CrewContractAddendum from "./pages/crewContractAddendum";
 
 import SupplyContract from "./pages/contracts/SupplyContract";
-import CreateSupplyContract from "./pages/createSupplyContract";
+import CreateSupplyContract from "./pages/contracts/CreateSupplyContract";
 import SupplyContractDetail from "./pages/contracts/SupplyContractDetail";
 import SupplyContractAddendum from "./pages/supplyContractAddendum";
 
 import ContractTemplate from "./pages/contracts/ContractTemplate";
 
 import SupplyRequest from "./pages/supplication/SupplyRequest";
-import AdminSupplyRequestDetail from "./pages/adminSupplyRequestDetail";
+import AdminSupplyRequestDetail from "./pages/supplication/SupplyRequestDetail";
 import UserSupplyRequestDetail from "./pages/UserSupplyRequestDetail";
 import CreateSupplyRequest from "./pages/supplication/CreateSupplyRequest";
 

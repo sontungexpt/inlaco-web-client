@@ -1,5 +1,4 @@
-import { Box } from "@mui/material";
-import { COLOR } from "../../assets/Color";
+import { Box, Typography, Stack, Avatar } from "@mui/material";
 import { useState } from "react";
 
 const ShipInfoCell = ({
@@ -7,79 +6,65 @@ const ShipInfoCell = ({
   name,
   countryCode,
   type,
+  description,
   imageUrl,
   backgroundColor,
-  color = COLOR.PrimaryBlack,
   sx = [],
 }) => {
-  //   console.log(IMONumber);
-
   const [imageError, setImageError] = useState(false);
 
   return (
     <Box
-      backgroundColor={backgroundColor}
       sx={[
-        ...(Array.isArray(sx) ? sx : [sx]),
         {
           display: "flex",
-          flexDirection: "column",
-          alignItem: "center",
-          justifyContent: "center",
+          alignItems: "center",
+          gap: 2,
+          py: 1,
+          backgroundColor,
+          minWidth: 0,
         },
+        ...(Array.isArray(sx) ? sx : [sx]),
       ]}
     >
-      <Box
+      {/* Image */}
+      <Avatar
+        variant="rounded"
+        src={
+          imageError ? require("@assets/images/no-ship-photo.png") : imageUrl
+        }
+        alt="Ship"
         sx={{
-          flex: 1,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          width: 120,
+          height: 70,
+          borderRadius: 2,
+          bgcolor: "grey.100",
+          flexShrink: 0,
         }}
-      >
-        {imageUrl && (
-          <img
-            src={
-              imageError
-                ? require("../../assets/images/no-ship-photo.png")
-                : imageUrl
-            }
-            alt="Ship"
-            style={{
-              width: 160,
-              height: 90,
-              alignSelf: "center",
-              marginTop: 10,
-              marginBottom: 10,
-            }}
-            onError={() => {
-              setImageError(true);
-            }}
-          />
-        )}
-      </Box>
-      <Box
-        sx={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          color: COLOR.PrimaryBlack,
-        }}
-      >
-        <p style={{ margin: 0, textAlign: "left", overflow: "hidden" }}>
-          <strong>IMO:</strong> {IMONumber}
-        </p>
-        <p style={{ margin: 0, textAlign: "left", overflow: "hidden" }}>
+        onError={() => setImageError(true)}
+      />
+
+      {/* Info */}
+      <Stack spacing={0.3} minWidth={0}>
+        <Typography variant="body2" fontWeight={600} noWrap>
+          IMO: {IMONumber}
+        </Typography>
+
+        <Typography variant="body2" noWrap>
           <strong>Tên tàu:</strong> {name}
-        </p>
-        <p style={{ margin: 0, textAlign: "left", overflow: "hidden" }}>
-          <strong>Quốc tịch:</strong> {countryCode}
-        </p>
-        <p style={{ margin: 0, textAlign: "left", overflow: "hidden" }}>
-          <strong>Loại tàu:</strong> {type}
-        </p>
-      </Box>
+        </Typography>
+
+        <Typography variant="body2" color="text.secondary" noWrap>
+          Quốc tịch: {countryCode}
+        </Typography>
+
+        <Typography variant="body2" color="text.secondary" noWrap>
+          Loại tàu: {type}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" noWrap>
+          Mô tả: {description}
+        </Typography>
+      </Stack>
     </Box>
   );
 };

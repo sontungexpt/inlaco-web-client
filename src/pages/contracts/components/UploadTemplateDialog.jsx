@@ -46,11 +46,10 @@ const UploadTemplateDialog = ({
       .required("Vui lòng chọn file template")
       .test(
         "fileType",
-        "Chỉ chấp nhận file PDF, DOC hoặc DOCX",
+        "Chỉ chấp nhận file DOC hoặc DOCX",
         (value) =>
           value &&
           [
-            "application/pdf",
             "application/msword",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
           ].includes(value.type),

@@ -51,3 +51,27 @@ export function isoToLocalDatetime(isoString, format = "dd/mm/yyyy HH:MM") {
     return null;
   }
 }
+
+export function datetimeToISO(input) {
+  try {
+    if (!input) throw new Error("Empty date string");
+    const normalized = String(input).trim().replace(/\s+/, "T");
+
+    const [datePart, timePart = "00:00:00"] = normalized.split("T");
+    const [year, month, day] = datePart.split("-").map(Number);
+    const [hours = 0, minutes = 0, seconds = 0] = timePart
+      .split(":")
+      .map(Number);
+
+    // Create as UTC to avoid timezone j
+    const date = new Date(
+      Date.UTC(year, month - 1, day, hours, minutes, seconds),
+    );
+
+    if (isNaN(date.getTime())) throw new Error("Invalid datetime");
+    return date.toISOString();
+  } catch (error) {
+    console.error("Error converting to ISOString:", error);
+    return null;
+  }
+}

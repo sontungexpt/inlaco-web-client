@@ -3,11 +3,10 @@ import {
   PageTitle,
   SectionDivider,
   InfoTextField,
-  HorizontalImageInput,
+  ImageUploadField,
   EditableDataGrid,
 } from "../components/global";
 import { NationalityTextField } from "../components/mobilization";
-import { FileUploadField } from "../components/contract";
 import { Grid, Box, Button, Typography, CircularProgress } from "@mui/material";
 import { COLOR } from "../assets/Color";
 import SaveIcon from "@mui/icons-material/Save";
@@ -475,7 +474,7 @@ const CreateMobilization = () => {
                 size={12}
                 sx={{ display: "flex", justifyContent: "center" }}
               >
-                <HorizontalImageInput
+                <ImageUploadField
                   id="social-ins-image"
                   width={300}
                   height={180}

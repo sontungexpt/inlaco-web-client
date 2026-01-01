@@ -110,7 +110,7 @@ const CreateCrewContract = () => {
             },
           ],
         },
-        uploadRespone?.public_id,
+        uploadRespone?.asset_id,
       );
       resetForm();
       navigate(`/crew-contracts/${contract.id}`);

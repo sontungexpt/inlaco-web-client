@@ -38,7 +38,7 @@ const ContractTemplate = () => {
           description,
           type: contractType,
         },
-        cldResponse.public_id,
+        cldResponse.asset_id,
       );
 
       toast.success("Upload template thành công");

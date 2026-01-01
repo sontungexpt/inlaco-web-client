@@ -23,10 +23,8 @@ import toast from "react-hot-toast";
 const ApplyRecruitment = () => {
   const navigate = useNavigate();
   const { recruitmentId } = useParams();
-  const [isPending, setIsPending] = useState(false);
 
   const handleSubmit = async (values, { resetForm }) => {
-    setIsPending(true);
     try {
       const uploadResponse = await cloudinaryUpload(
         values.cvFile,
@@ -44,16 +42,13 @@ const ApplyRecruitment = () => {
           languageSkills: values.languageSkills,
           experiences: values.experiences,
         },
-        uploadResponse.public_id,
+        uploadResponse.asset_id,
       );
       resetForm();
-      console.log(candidate);
       navigate(`/recruitment/candidates/${candidate.id}`);
     } catch (error) {
-      console.log(error);
       toast.error("Ứng tuyển thất bại");
     }
-    setIsPending(false);
   };
 
   const GENDERS = [
@@ -116,6 +111,7 @@ const ApplyRecruitment = () => {
         touched,
         isValid,
         dirty,
+        isSubmitting,
         handleBlur,
         handleChange,
         handleSubmit,
@@ -145,7 +141,7 @@ const ApplyRecruitment = () => {
                 <Button
                   variant="contained"
                   type="submit"
-                  disabled={!isValid || !dirty}
+                  disabled={!isValid || !dirty || isSubmitting}
                   sx={{
                     width: "12%",
                     padding: 1,
@@ -154,7 +150,7 @@ const ApplyRecruitment = () => {
                     minWidth: 130,
                   }}
                 >
-                  {isPending ? (
+                  {isSubmitting ? (
                     <CircularProgress size={24} color={Color.PrimaryBlack} />
                   ) : (
                     <Box sx={{ display: "flex", alignItems: "end" }}>

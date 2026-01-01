@@ -1,6 +1,10 @@
 import { useState } from "react";
-import { PageTitle, SectionDivider, InfoTextField } from "../components/global";
-import { FileUploadField } from "../components/contract";
+import {
+  PageTitle,
+  SectionDivider,
+  InfoTextField,
+} from "../../components/global";
+import { FileUploadField } from "../../components/contract";
 import {
   Box,
   Button,
@@ -9,14 +13,14 @@ import {
   CircularProgress,
   InputAdornment,
 } from "@mui/material";
-import { COLOR } from "../assets/Color";
+import { COLOR } from "../../assets/Color";
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams } from "react-router";
-import { createSupplyContractAPI } from "../services/contractServices";
-import HttpStatusCode from "../constants/HttpStatusCode";
-import { dateStringToISOString } from "../utils/converter";
+import { createSupplyContractAPI } from "../../services/contractServices";
+import HttpStatusCode from "../../constants/HttpStatusCode";
+import { dateStringToISOString } from "../../utils/converter";
 
 const CreateSupplyContract = () => {
   const navigate = useNavigate();

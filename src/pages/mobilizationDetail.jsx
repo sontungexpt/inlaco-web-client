@@ -3,7 +3,7 @@ import {
   PageTitle,
   SectionDivider,
   InfoTextField,
-  HorizontalImageInput,
+  ImageUploadField,
   NoValuesOverlay,
 } from "@components/global";
 import { NationalityTextField } from "@components/mobilization";
@@ -754,7 +754,7 @@ const MobilizationDetail = () => {
                 size={12}
                 sx={{ display: "flex", justifyContent: "center" }}
               >
-                <HorizontalImageInput
+                <ImageUploadField
                   id="social-ins-image"
                   disabled={!isEditable}
                   width={300}

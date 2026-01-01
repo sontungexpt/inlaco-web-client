@@ -3,15 +3,14 @@ import {
   PageTitle,
   SectionDivider,
   InfoTextField,
-  HorizontalImageInput,
-} from "../components/global";
-import { CardPhotoInput } from "../components/contract";
+  ImageUploadField,
+} from "@components/global";
+import { CardPhotoInput } from "@components/contract";
 import {
   Box,
   Button,
   Grid,
   Typography,
-  TextField,
   MenuItem,
   InputAdornment,
   CircularProgress,
@@ -640,7 +639,7 @@ const CrewMemberDetail = () => {
                   >
                     Ảnh chụp BHXH hoặc tra cứu BHXH:{" "}
                   </Typography>
-                  <HorizontalImageInput
+                  <ImageUploadField
                     disabled={!isEditable}
                     id="social-ins-image"
                     name="insuranceInfo.socialInsImage"
@@ -701,7 +700,7 @@ const CrewMemberDetail = () => {
                   >
                     Ảnh chụp BHTN hoặc tra cứu BHTN:{" "}
                   </Typography>
-                  <HorizontalImageInput
+                  <ImageUploadField
                     disabled={!isEditable}
                     id="accident-ins-image"
                     name="insuranceInfo.accidentInsImage"
@@ -785,7 +784,7 @@ const CrewMemberDetail = () => {
                   >
                     Ảnh chụp BHYT hoặc tra cứu BHYT:{" "}
                   </Typography>
-                  <HorizontalImageInput
+                  <ImageUploadField
                     disabled={!isEditable}
                     id="health-ins-image"
                     name="insuranceInfo.healthInsImage"

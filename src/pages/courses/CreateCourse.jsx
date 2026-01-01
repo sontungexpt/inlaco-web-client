@@ -2,7 +2,7 @@ import {
   PageTitle,
   SectionDivider,
   InfoTextField,
-  HorizontalImageInput,
+  ImageUploadField,
 } from "@components/global";
 import { LogoInput } from "@components/other";
 import {
@@ -470,7 +470,7 @@ const CreateCourse = () => {
                 />
               </Grid>
               <Grid size={12}>
-                <HorizontalImageInput
+                <ImageUploadField
                   id="course-wallpaper"
                   name="courseWallpaper"
                   width="100%"
