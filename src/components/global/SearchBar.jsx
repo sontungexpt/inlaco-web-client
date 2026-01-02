@@ -1,13 +1,13 @@
 import { Box, IconButton } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
-import { COLOR } from "../../assets/Color";
+import Color from "@constants/Color";
 
 const SearchBar = ({
   placeholder,
   value,
-  backgroundColor = COLOR.PrimaryWhite,
-  color = COLOR.PrimaryBlack,
+  backgroundColor = Color.PrimaryWhite,
+  color = Color.PrimaryBlack,
   sx = [],
   onChange,
   onSearchClick,
