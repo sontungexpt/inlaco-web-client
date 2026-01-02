@@ -1,23 +1,16 @@
 import React from "react";
 import { TextField } from "@mui/material";
 import Color from "@constants/Color";
-
-const InfoTextField = ({
+export default function ViewTextField({
+  fullWidth = true,
   sx,
-  disabled,
   slotProps,
-  multiline,
-  minRow,
-  maxRow,
-  rows,
   ...props
-}) => {
+}) {
   return (
     <TextField
       {...props}
-      disabled={disabled}
-      multiline={multiline}
-      rows={rows}
+      fullWidth={fullWidth}
       sx={[
         { backgroundColor: "#FFF", marginBottom: 1 },
         ...(Array.isArray(sx) ? sx : [sx]),
@@ -42,11 +35,11 @@ const InfoTextField = ({
             backgroundColor: Color.PrimaryWhite,
           },
         },
-        input: {},
-        ...slotProps, // Merging slotProps with spread operator
+        input: {
+          readOnly: true,
+        },
+        ...slotProps,
       }}
     />
   );
-};
-
-export default InfoTextField;
+}

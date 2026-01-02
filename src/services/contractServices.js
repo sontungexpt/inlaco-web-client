@@ -7,36 +7,25 @@ export const fetchCrewContracts = async ({
   signed,
   type = "LABOR_CONTRACT",
 }) => {
-  try {
-    const response = await privateRequest.get(
-      ContractEndpoint.GET_ALL_CONTRACTS,
-      {
-        params: {
-          page,
-          size,
-          signed,
-          type,
-        },
+  const response = await privateRequest.get(
+    ContractEndpoint.GET_ALL_CONTRACTS,
+    {
+      params: {
+        page,
+        size,
+        signed,
+        type,
       },
-    );
-    return response.data;
-  } catch (err) {
-    console.debug(err);
-    throw err;
-  }
+    },
+  );
+  return response.data;
 };
 
 export const fetchUniqueContract = async (contractID) => {
-  try {
-    const response = await privateRequest.get(
-      ContractEndpoint.GET_CONTRACT_BY_ID(contractID),
-    );
-    console.log(response);
-    return response.data;
-  } catch (err) {
-    console.debug(err);
-    throw err;
-  }
+  const response = await privateRequest.get(
+    ContractEndpoint.GET_CONTRACT_BY_ID(contractID),
+  );
+  return response.data;
 };
 
 export const getCrewContractByID_API = async (contractID) => {
@@ -66,48 +55,27 @@ export const createLaborContract = async (
   contract,
   contractFilePubId,
 ) => {
-  try {
-    const response = await privateRequest.post(
-      ContractEndpoint.CREATE_LABOR_CONTRACT(crewMemberID),
-      {
-        ...contract,
-        type: "LABOR_CONTRACT",
+  const response = await privateRequest.post(
+    ContractEndpoint.CREATE_LABOR_CONTRACT(crewMemberID),
+    {
+      ...contract,
+      type: "LABOR_CONTRACT",
+    },
+    {
+      params: {
+        contractFilePubId,
       },
-      {
-        params: {
-          contractFilePubId,
-        },
-      },
-    );
-    return response.data;
-  } catch (err) {
-    console.debug(err);
-    throw err;
-  }
+    },
+  );
+  return response.data;
 };
 
-export const createSupplyContractAPI = async (
-  supplyReqID,
-  supplyContractInfo,
-) => {
-  try {
-    const response = await privateRequest.post(
-      `${ContractEndpoint.SUPPLY_GENERAL}/${supplyReqID}`,
-      {
-        title: supplyContractInfo.title,
-        initiator: supplyContractInfo.initiator,
-        signedPartners: supplyContractInfo.signedPartners,
-        terms: ["Terms 1"],
-        activationDate: supplyContractInfo.activationDate,
-        expiredDate: supplyContractInfo.expiredDate,
-        type: "SUPPLY_CONTRACT",
-        customAttributes: supplyContractInfo.customAttributes,
-      },
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
+export const createSupplyContract = async (supplyRequestId, contract) => {
+  const response = await privateRequest.post(
+    ContractEndpoint.CREATE_SUPPLY_CONTRACT(supplyRequestId),
+    contract,
+  );
+  return response.data;
 };
 
 export const editCrewContractAPI = async (contractID, contractInfo) => {

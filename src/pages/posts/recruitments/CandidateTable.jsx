@@ -1,12 +1,12 @@
 import React from "react";
-import { Box, Button, CircularProgress, Select, MenuItem } from "@mui/material";
-import { DataGrid, GridFooter, GridFooterContainer } from "@mui/x-data-grid";
+import { Box, Button, Select, MenuItem } from "@mui/material";
+import { GridFooter, GridFooterContainer } from "@mui/x-data-grid";
 import Color from "@constants/Color";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import { isoStringToAppDateString } from "@/utils/converter";
-import { NoValuesOverlay } from "@/components/global";
 import CandidateStatus from "@/constants/CandidateStatus";
+import { BaseDataGrid } from "@/components/common";
 
 const CustomFooter = ({ filterStatus, onFilterStatusChange }) => {
   const STATUS_FILTERS = [
@@ -252,60 +252,23 @@ const CandidateTable = ({
     },
   ];
 
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          height: 300,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return (
-    <Box m="8px 0 0 0" height="80vh" maxHeight={550} maxWidth={1600}>
-      <DataGrid
-        disableRowSelectionOnClick
-        disableColumnMenu
-        disableColumnResize
-        getRowHeight={() => "auto"}
-        paginationModel={paginationModel}
-        onPaginationModelChange={onPaginationModelChange}
-        paginationMode="server" // QUAN TRỌNG!
-        rowCount={totalCandidates}
-        rows={candidates}
-        columns={columns}
-        slots={{
-          footer: () => (
-            <CustomFooter
-              filterStatus={filterStatus}
-              onFilterStatusChange={onFilterStatusChange}
-            />
-          ),
-          noRowsOverlay: NoValuesOverlay,
-        }}
-        sx={{
-          headerAlign: "center",
-          "& .MuiDataGrid-columnHeaderTitle": {
-            fontSize: 16,
-            fontWeight: 700,
-          },
-          "& .MuiTablePagination-root": {
-            color: Color.PrimaryWhite + " !important",
-            backgroundColor: Color.SecondaryBlue,
-          },
-          "& .MuiDataGrid-columnHeader": {
-            color: Color.PrimaryWhite + " !important",
-            backgroundColor: Color.SecondaryBlue,
-          },
-        }}
-      />
-    </Box>
+    <BaseDataGrid
+      loading={loading}
+      paginationModel={paginationModel}
+      onPaginationModelChange={onPaginationModelChange}
+      rowCount={totalCandidates}
+      rows={candidates}
+      columns={columns}
+      slots={{
+        footer: () => (
+          <CustomFooter
+            filterStatus={filterStatus}
+            onFilterStatusChange={onFilterStatusChange}
+          />
+        ),
+      }}
+    />
   );
 };
 

@@ -1,10 +1,12 @@
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Divider } from "@mui/material";
 import Color from "@constants/Color";
 
 const SectionDivider = ({
   sectionName,
   title,
   color = Color.PrimaryBlackPlaceHolder,
+  dividerColor,
+  dividerProps,
   my = 3,
   sx,
   ...props
@@ -21,15 +23,10 @@ const SectionDivider = ({
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
     >
-      <Typography sx={{ fontSize: 18, color: color, fontStyle: "italic" }}>
+      <Typography color={color} variant="h6" fontWeight={700} mb={2}>
         {title || sectionName}
       </Typography>
-      <Box
-        sx={{
-          width: "100%",
-          borderBottom: `2px solid ${color}`,
-        }}
-      />
+      <Divider color={dividerColor} {...dividerProps} />
     </Box>
   );
 };

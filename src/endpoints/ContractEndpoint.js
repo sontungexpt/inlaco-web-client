@@ -5,6 +5,7 @@ const ContractEndpoint = {
   CREATE_LABOR_CONTRACT: (id) => `/v1/contracts/labors/${id}`,
   LABOR_GENERAL: "/v1/contracts/labors",
   SUPPLY_GENERAL: "/v1/contracts/supplies",
+  CREATE_SUPPLY_CONTRACT: (id) => `/v1/contracts/supplies/${id}`,
   ACTIVE: "/v1/contracts/active",
 };
 

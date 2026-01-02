@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { PageTitle, SectionDivider, InfoTextField } from "@components/global";
+import {
+  SectionWrapper,
+  PageTitle,
+  SectionDivider,
+  InfoTextField,
+} from "@components/common";
 import {
   Box,
   Typography,
@@ -22,8 +27,6 @@ import { saveAs } from "file-saver";
 import JSZipUtils from "jszip-utils";
 import { formatDateString } from "@utils/converter";
 import { useContract } from "@/hooks/services/contract";
-import SubSegmentWrapper from "./components/SubSegmentWrapper";
-import SectionWrapper from "@components/global/SectionWrapper";
 
 /* ==== FORCE DOWNLOAD ==== */
 const forceDownload = (url, filename) => {
@@ -426,7 +429,14 @@ const CrewContractDetail = () => {
             />
           </Grid>
           <Grid size={12}>
-            <SubSegmentWrapper title="Thông tin Căn cước công dân">
+            <SectionWrapper
+              variant="outlined"
+              title="Thông tin Căn cước công dân"
+              sx={{
+                background:
+                  "linear-gradient(135deg, rgba(255,215,0,0.15), transparent)",
+              }}
+            >
               <Grid container spacing={2}>
                 <Grid size={4}>
                   <InfoTextField
@@ -465,7 +475,7 @@ const CrewContractDetail = () => {
                   />
                 </Grid>
               </Grid>
-            </SubSegmentWrapper>
+            </SectionWrapper>
           </Grid>
         </Grid>
       </SectionWrapper>

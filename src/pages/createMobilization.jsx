@@ -6,7 +6,7 @@ import {
   ImageUploadField,
   EditableDataGrid,
 } from "../components/global";
-import { NationalityTextField } from "../components/mobilization";
+import { NationalityTextField } from "@components/common";
 import { Grid, Box, Button, Typography, CircularProgress } from "@mui/material";
 import { COLOR } from "../assets/Color";
 import SaveIcon from "@mui/icons-material/Save";

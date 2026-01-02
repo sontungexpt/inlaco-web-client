@@ -3,18 +3,14 @@ import CrewEndpoints from "../endpoints/crewEndpoints";
 import { dateStringToISOString } from "../utils/converter";
 
 export const fetchCrewMembers = async ({ page, size, official }) => {
-  try {
-    const response = await privateRequest.get(CrewEndpoints.GENERAL, {
-      params: {
-        page,
-        size,
-        official,
-      },
-    });
-    return response.data;
-  } catch (err) {
-    return err.response;
-  }
+  const response = await privateRequest.get(CrewEndpoints.GENERAL, {
+    params: {
+      page,
+      size,
+      official,
+    },
+  });
+  return response.data;
 };
 
 export const getCrewMemberByID_API = async (crewMemberID) => {

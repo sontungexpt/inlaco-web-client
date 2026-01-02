@@ -1,15 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { PageTitle, NoValuesOverlay } from "@components/global";
-import {
-  Box,
-  Button,
-  Typography,
-  CircularProgress,
-  Stack,
-  Link,
-} from "@mui/material";
-
-import { DataGrid } from "@mui/x-data-grid";
+import { Box, Button, Typography, Link, Stack } from "@mui/material";
 import { ShipInfoCell } from "@components/mobilization";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
@@ -18,35 +8,37 @@ import { isoToLocalDatetime } from "@/utils/converter";
 import Color from "@constants/Color";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import { useSupplyRequests } from "@/hooks/services/supplyRequest";
+import { PageTitle, BaseDataGrid } from "@/components/common";
 
-const SupplyRequest = () => {
+const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
   const navigate = useNavigate();
   const isAdmin = useAllowedRole("ADMIN");
-  const PAGE_SIZE = 10;
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: PAGE_SIZE,
   });
-  const {
-    data: { content, totalElements: totalRequests = 0 } = {},
-    isLoading,
-  } = useSupplyRequests({
-    page: paginationModel.page,
-    sizePerPage: paginationModel.pageSize,
-  });
+  const { data: { content, totalElements: totalRequests } = {}, isLoading } =
+    useSupplyRequests({
+      page: paginationModel.page,
+      pageSize: paginationModel.pageSize,
+    });
 
   const supplyRequests = useMemo(
     () =>
       content?.map((r) => ({
+        raw: r,
         id: r.id,
-        company: {
-          name: r.companyName,
-          representor: {
+        detail: {
+          companyName: r.companyName,
+          companyRepresentor: {
             name: r.companyRepresentor,
             email: r.companyEmail,
             phone: r.companyPhone,
           },
+          rentalStartDate: r.rentalStartDate,
+          rentalEndDate: r.rentalEndDate,
+          detailFileUrl: r.detailFile?.url,
         },
         shipInfo: {
           IMONumber: r.shipInfo.IMONumber,
@@ -56,52 +48,74 @@ const SupplyRequest = () => {
           type: r.shipInfo.type,
           description: r.shipInfo.description,
         },
-        detail: {
-          rentalStartDate: r.rentalStartDate,
-          rentalEndDate: r.rentalEndDate,
-          detailFileUrl: r.detailFile?.url,
-        },
       })),
     [content],
   );
 
-  const onRequestDetailClick = (id) => {
-    const type = isAdmin ? "admin" : "user";
-    navigate(`/supply-requests/${id}/${type}`);
-  };
-
   const columns = useMemo(
     () => [
       {
-        field: "company",
-        headerName: "Công ty",
+        field: "detail",
+        headerName: "Thông tin thuê",
         flex: 2,
         headerAlign: "center",
         sortable: false,
-        renderCell: ({ value: company }) => (
-          <Box>
-            <Typography fontWeight={600} noWrap>
-              Công ty: {company.name}
+        renderCell: ({
+          value: {
+            companyName,
+            companyRepresentor,
+            rentalStartDate,
+            rentalEndDate,
+            detailFileUrl,
+          } = {},
+        }) => (
+          <Stack spacing={0.3} minWidth={0}>
+            <Typography fontWeight={600} fontSize={14} noWrap>
+              Công ty {companyName}
             </Typography>
 
-            <Typography variant="body2" color="text.secondary" noWrap>
-              Người đại diện: {company.representor.name}
+            {/* Representative */}
+            <Typography ml={2} variant="body2" color="text.secondary" noWrap>
+              Đại diện {companyRepresentor.name}
+            </Typography>
+            <Typography ml={2} variant="body2" color="text.secondary" noWrap>
+              Điện thoại: {companyRepresentor.phone}
+            </Typography>
+            {/* Email */}
+            <Typography ml={2} variant="body2" color="text.secondary" noWrap>
+              Email: {companyRepresentor.email}
             </Typography>
 
-            <Typography variant="body2" color="text.secondary" noWrap>
-              Email: {company.representor.email}
+            {/* Rental time */}
+            <Typography fontWeight={600} fontSize={14} noWrap>
+              Thời gian thuê
+            </Typography>
+            <Typography ml={2} variant="body2" color="text.secondary" noWrap>
+              Bắt đầu: {isoToLocalDatetime(rentalStartDate)}
+            </Typography>
+            <Typography ml={2} variant="body2" color="text.secondary" noWrap>
+              Kết thúc: {isoToLocalDatetime(rentalEndDate)}
             </Typography>
 
-            <Typography variant="body2" color="text.secondary" noWrap>
-              SĐT: {company.representor.phone}
-            </Typography>
-          </Box>
+            {/* Detail link */}
+            <Link
+              ml={2}
+              href={detailFileUrl}
+              target="_blank"
+              rel="noopener"
+              underline="hover"
+              variant="caption"
+              sx={{ display: "inline-block" }}
+            >
+              Attach
+            </Link>
+          </Stack>
         ),
       },
       {
         field: "shipInfo",
         headerName: "Thông tin Tàu",
-        flex: 3,
+        flex: 2.5,
         headerAlign: "center",
         sortable: false,
         renderCell: ({ value: shipInfo }) => (
@@ -113,42 +127,6 @@ const SupplyRequest = () => {
             description={shipInfo.description}
             IMONumber={shipInfo.IMONumber}
           />
-        ),
-      },
-      {
-        field: "detail",
-        headerName: "Thông tin thuê",
-        flex: 2,
-        headerAlign: "center",
-        sortable: false,
-        renderCell: ({
-          value: { rentalStartDate, rentalEndDate, detailFileUrl },
-        }) => (
-          <Box sx={{ py: 0.5, minWidth: 0 }}>
-            <Stack spacing={0.5}>
-              <Typography variant="body2" color="text.secondary" noWrap>
-                Từ: {isoToLocalDatetime(rentalStartDate)}
-              </Typography>
-
-              <Typography variant="body2" color="text.secondary" noWrap>
-                Đến: {isoToLocalDatetime(rentalEndDate)}
-              </Typography>
-
-              <Typography variant="body2" color="text.secondary" noWrap>
-                Chi tiết:{" "}
-                <Link
-                  href={detailFileUrl}
-                  target="_blank"
-                  rel="noopener"
-                  underline="hover"
-                  variant="body2"
-                  noWrap
-                >
-                  Detail file
-                </Link>
-              </Typography>
-            </Stack>
-          </Box>
         ),
       },
       {
@@ -170,7 +148,7 @@ const SupplyRequest = () => {
             <Button
               variant="contained"
               size="small"
-              onClick={() => onRequestDetailClick(params.id)}
+              onClick={() => navigate(`/supply-requests/${params.id}`)}
               sx={{
                 backgroundColor: Color.PrimaryGreen,
                 display: "flex",
@@ -187,23 +165,8 @@ const SupplyRequest = () => {
         ),
       },
     ],
-    [],
+    [content],
   );
-
-  if (isLoading) {
-    return (
-      <Box
-        sx={{
-          height: "80vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   return (
     <Box p="20px">
@@ -224,7 +187,7 @@ const SupplyRequest = () => {
               px: 2,
               py: 1,
             }}
-            onClick={() => navigate("/supply-requests/user/create")}
+            onClick={() => navigate("/supply-requests/create")}
           >
             <AddCircleRoundedIcon sx={{ mr: 1 }} />
             Gửi yêu cầu cung ứng
@@ -232,42 +195,14 @@ const SupplyRequest = () => {
         </Box>
       )}
 
-      <Box
-        mt={3}
-        sx={{
-          height: isAdmin ? "72vh" : "65vh",
-          maxWidth: 1600,
-          bgcolor: "#FFF",
-          borderRadius: 2,
-          overflow: "hidden",
-          boxShadow: "0px 3px 12px rgba(0,0,0,0.1)",
-        }}
-      >
-        <DataGrid
-          disableRowSelectionOnClick
-          disableColumnMenu
-          disableColumnResize
-          getRowHeight={() => "auto"}
-          columns={columns}
-          paginationMode="server" // QUAN TRỌNG!
-          rowCount={totalRequests}
-          rows={supplyRequests}
-          slots={{ noRowsOverlay: NoValuesOverlay }}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          sx={{
-            "& .MuiDataGrid-columnHeader": {
-              backgroundColor: Color.SecondaryBlue,
-              color: Color.PrimaryWhite,
-              fontWeight: 700,
-            },
-            "& .MuiTablePagination-root": {
-              backgroundColor: Color.SecondaryBlue,
-              color: Color.PrimaryWhite,
-            },
-          }}
-        />
-      </Box>
+      <BaseDataGrid
+        loading={isLoading}
+        columns={columns}
+        rowCount={totalRequests}
+        rows={supplyRequests}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+      />
     </Box>
   );
 };

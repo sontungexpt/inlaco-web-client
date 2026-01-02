@@ -18,7 +18,6 @@ const ShipInfoCell = ({
       sx={[
         {
           display: "flex",
-          alignItems: "center",
           gap: 2,
           py: 1,
           backgroundColor,
@@ -35,8 +34,8 @@ const ShipInfoCell = ({
         }
         alt="Ship"
         sx={{
-          width: 120,
-          height: 70,
+          width: 150,
+          height: "100%",
           borderRadius: 2,
           bgcolor: "grey.100",
           flexShrink: 0,

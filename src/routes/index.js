@@ -12,14 +12,8 @@ import CreateSupplyContract from "@/pages/contracts/CreateSupplyContract";
 import SupplyContractDetail from "@pages/contracts/SupplyContractDetail";
 import SupplyContractAddendum from "@pages/supplyContractAddendum";
 
-import SupplyRequest from "@pages/supplication/SupplyRequest";
-import AdminSupplyRequestDetail from "@/pages/supplication/SupplyRequestDetail";
-import UserSupplyRequestDetail from "@pages/UserSupplyRequestDetail";
-import CreateSupplyRequest from "@/pages/supplication/CreateSupplyRequest";
-
 import CrewRecruitment from "@pages/posts/recruitments/CrewRecruitment";
 import CandidateProfileDetail from "@/pages/candidates/CandidateProfileDetail";
-import UserCandidateDetail from "@/pages/candidates/UserCandidateDetail";
 import ApplyRecruitment from "@pages/posts/recruitments/ApplyRecruitment";
 import CreateRecruitment from "@pages/posts/recruitments/CreateRecruitment";
 import RecruitmentDetail from "@pages/posts/recruitments/RecruitmentDetail";
@@ -55,6 +49,14 @@ const CrewMemberDetail = lazy(() => import("@pages/CrewMemberDetail"));
 const CrewProfile = lazy(() => import("@pages/CrewProfile"));
 const TemplateContract = lazy(
   () => import("@/pages/contracts/ContractTemplate"),
+);
+
+const SupplyRequest = lazy(() => import("@/pages/supplication/SupplyRequest"));
+const SupplyRequestDetail = lazy(
+  () => import("@/pages/supplication/SupplyRequestDetail"),
+);
+const CreateSupplyRequest = lazy(
+  () => import("@/pages/supplication/CreateSupplyRequest"),
 );
 
 const ADMIN_SAILOR = [UserRole.ADMIN, UserRole.SAILOR];
@@ -133,7 +135,7 @@ export const AppRoutes = [
     roles: ADMIN_SAILOR,
     children: [
       { index: true, element: SupplyContract },
-      { path: "create/:supplyReqID", element: CreateSupplyContract },
+      { path: "create/:id", element: CreateSupplyContract },
       { path: ":id", element: SupplyContractDetail },
       { path: ":id/create-addendum", element: SupplyContractAddendum },
     ],
@@ -152,9 +154,8 @@ export const AppRoutes = [
       (hasRole(UserRole.USER) && !hasRole(UserRole.SAILOR)),
     children: [
       { index: true, element: SupplyRequest },
-      { path: ":id/admin", element: AdminSupplyRequestDetail },
-      { path: ":id/user", element: UserSupplyRequestDetail },
-      { path: "user/create", element: CreateSupplyRequest },
+      { path: ":id", element: SupplyRequestDetail },
+      { path: "create", element: CreateSupplyRequest },
     ],
   },
 

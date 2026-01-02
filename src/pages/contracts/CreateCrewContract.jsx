@@ -1,16 +1,18 @@
 import React, { useState } from "react";
-import { PageTitle, SectionDivider, InfoTextField } from "@components/global";
-import { FileUploadField } from "@components/contract";
+import {
+  SectionWrapper,
+  FileUploadField,
+  PageTitle,
+  SectionDivider,
+  InfoTextField,
+} from "@components/common";
 import {
   Box,
   Button,
-  Dialog,
-  Typography,
   Grid,
   MenuItem,
   CircularProgress,
   InputAdornment,
-  IconButton,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
@@ -21,13 +23,9 @@ import { createLaborContract } from "@/services/contractServices";
 import { dateStringToISOString } from "@utils/converter";
 import Regex from "@/constants/Regex";
 import { now, yesterday } from "@/utils/date";
-import SubSegmentWrapper from "./components/SubSegmentWrapper";
-import SectionWrapper from "@components/global/SectionWrapper";
 import cloudinaryUpload from "@/services/cloudinaryServices";
 import UploadStrategy from "@/constants/UploadStrategy";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import TemplateContractCard from "./components/TemplateContractCard";
-import TemplateContractList from "./components/TemplateContractList";
+import TemplateDialog from "./components/TemplateDialog";
 
 const CreateCrewContract = () => {
   const navigate = useNavigate();
@@ -286,7 +284,7 @@ const CreateCrewContract = () => {
       }) => (
         <Box p={2} component="form" onSubmit={handleSubmit}>
           {/* ===== Sticky Header ===== */}
-          <Box
+          <SectionWrapper
             sx={{
               position: "sticky",
               top: 0,
@@ -298,58 +296,50 @@ const CreateCrewContract = () => {
               mb: 3,
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                px: 2,
-              }}
-            >
-              <PageTitle
-                title="TẠO HỢP ĐỒNG THUYỀN VIÊN"
-                subtitle="Tạo và lưu hợp đồng mới vào hệ thống"
-              />
+            <PageTitle
+              mb={2}
+              title="TẠO HỢP ĐỒNG THUYỀN VIÊN"
+              subtitle="Tạo và lưu hợp đồng mới vào hệ thống"
+            />
 
-              <Box sx={{ display: "flex", gap: 1 }}>
-                <Button
-                  onClick={() => setOpenTemplateDialog(true)}
-                  variant="contained"
-                  sx={{
-                    minWidth: 150,
-                    px: 3,
-                    fontWeight: 700,
-                    backgroundColor: Color.PrimaryBlue,
-                    color: Color.PrimaryWhite,
-                  }}
-                >
-                  Tải template
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={!isValid || !dirty || creating}
-                  startIcon={!creating && <SaveIcon />}
-                  sx={{
-                    minWidth: 150,
-                    px: 3,
-                    fontWeight: 700,
-                    backgroundColor: Color.PrimaryGold,
-                    color: Color.PrimaryBlack,
-                  }}
-                >
-                  {creating ? (
-                    <CircularProgress
-                      size={22}
-                      sx={{ color: Color.PrimaryBlack }}
-                    />
-                  ) : (
-                    "Tạo hợp đồng"
-                  )}
-                </Button>
-              </Box>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button
+                onClick={() => setOpenTemplateDialog(true)}
+                variant="contained"
+                sx={{
+                  minWidth: 150,
+                  px: 3,
+                  fontWeight: 700,
+                  backgroundColor: Color.PrimaryBlue,
+                  color: Color.PrimaryWhite,
+                }}
+              >
+                Tải template
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={!isValid || !dirty || creating}
+                startIcon={!creating && <SaveIcon />}
+                sx={{
+                  minWidth: 150,
+                  px: 3,
+                  fontWeight: 700,
+                  backgroundColor: Color.PrimaryGold,
+                  color: Color.PrimaryBlack,
+                }}
+              >
+                {creating ? (
+                  <CircularProgress
+                    size={22}
+                    sx={{ color: Color.PrimaryBlack }}
+                  />
+                ) : (
+                  "Tạo hợp đồng"
+                )}
+              </Button>
             </Box>
-          </Box>
+          </SectionWrapper>
 
           {/* ===== Title ===== */}
           <SectionWrapper>
@@ -604,7 +594,7 @@ const CreateCrewContract = () => {
                 />
               </Grid>
               <Grid size={12}>
-                <SubSegmentWrapper title="Thông tin Căn cước công dân">
+                <SectionWrapper title="Thông tin Căn cước công dân">
                   <Grid container spacing={2}>
                     <Grid size={4}>
                       <InfoTextField
@@ -672,7 +662,7 @@ const CreateCrewContract = () => {
                       />
                     </Grid>
                   </Grid>
-                </SubSegmentWrapper>
+                </SectionWrapper>
               </Grid>
             </Grid>
           </SectionWrapper>
@@ -965,51 +955,14 @@ const CreateCrewContract = () => {
             />
           </SectionWrapper>
 
-          <Dialog
+          <TemplateDialog
             open={openTemplateDialog}
             onClose={() => setOpenTemplateDialog(false)}
+            title="Chọn template hợp đồng"
+            initialData={() => values}
             fullWidth
             maxWidth="lg"
-          >
-            {/* ===== HEADER ===== */}
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                px: 2.5,
-                py: 1.5,
-                borderBottom: "1px solid rgba(0,0,0,0.08)",
-              }}
-            >
-              <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
-                Chọn template hợp đồng
-              </Typography>
-
-              <IconButton onClick={() => setOpenTemplateDialog(false)}>
-                <CloseRoundedIcon />
-              </IconButton>
-            </Box>
-
-            {/* ===== CONTENT ===== */}
-            <Box sx={{ p: 3 }}>
-              <Grid container spacing={3}>
-                {/* Template list */}
-                <TemplateContractList
-                  render={(item) => (
-                    <TemplateContractCard
-                      url={item.metadata?.url}
-                      key={item.id}
-                      title={item.name}
-                      initialData={() => values}
-                      dowloadFileName={item.name}
-                      type={item.type}
-                    />
-                  )}
-                />
-              </Grid>
-            </Box>
-          </Dialog>
+          />
         </Box>
       )}
     </Formik>

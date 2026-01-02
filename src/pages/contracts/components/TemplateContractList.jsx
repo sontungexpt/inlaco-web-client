@@ -9,9 +9,21 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useImperativeHandle, useState } from "react";
+import TemplateContractCard from "./TemplateContractCard";
 
 const TemplateContractList = ({
-  render,
+  type,
+  initialData,
+  render = (item) => (
+    <TemplateContractCard
+      key={item.id}
+      url={item.metadata?.url}
+      title={item.name}
+      initialData={initialData}
+      dowloadFileName={item.name}
+      type={item.type}
+    />
+  ),
   pageSize,
   emptyText = "Không có template nào",
   ref,
@@ -25,6 +37,7 @@ const TemplateContractList = ({
   } = useContractTemplates({
     page,
     pageSize: pageSize,
+    type,
   });
 
   useImperativeHandle(ref, () => ({

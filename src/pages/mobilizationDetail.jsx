@@ -6,7 +6,7 @@ import {
   ImageUploadField,
   NoValuesOverlay,
 } from "@components/global";
-import { NationalityTextField } from "@components/mobilization";
+import { NationalityTextField } from "@components/common";
 import {
   Box,
   Button,

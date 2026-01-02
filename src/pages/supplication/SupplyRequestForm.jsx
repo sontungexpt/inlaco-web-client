@@ -12,7 +12,7 @@ import Grid from "@mui/material/Grid2";
 import ScheduleSendRoundedIcon from "@mui/icons-material/ScheduleSendRounded";
 
 import { PageTitle } from "@components/global";
-import SectionWrapper from "@/components/global/SectionWrapper";
+import SectionWrapper from "@/components/common/SectionWrapper";
 
 import {
   InfoTextField,

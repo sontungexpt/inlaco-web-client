@@ -1,57 +1,38 @@
-import { dateTimeStringToISOString } from "../utils/converter";
 import SupplyRequestEndpoint from "@/endpoints/SupplyRequestEndpoint";
 import { privateRequest } from "@/utils/request";
 
-const GENERAL = "/v1/crew-rental-requests";
-
-export const fetchSupplyRequests = async ({ page, size, status }) => {
-  try {
-    const response = await privateRequest.get(
-      SupplyRequestEndpoint.GET_SUPPLY_REQUESTS,
-      {
-        params: {
-          page,
-          size,
-          status,
-        },
+export const fetchSupplyRequests = async ({ page, pageSize, status }) => {
+  const response = await privateRequest.get(
+    SupplyRequestEndpoint.GET_SUPPLY_REQUESTS,
+    {
+      params: {
+        page,
+        size: pageSize,
+        status,
       },
-    );
-    return response.data;
-  } catch (err) {
-    console.debug(err);
-    throw err;
-  }
+    },
+  );
+  return response.data;
 };
 
-export const getAllSupplyRequestAPI = async (page, size, status) => {
-  try {
-    const response = await privateRequest.get(
-      `${GENERAL}?page=${page}&size=${size}&status=${status}`,
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
+export const fetchUniqueSupplyRequest = async (id) => {
+  const response = await privateRequest.get(
+    SupplyRequestEndpoint.GET_UNIQUE_SUPPLY_REQUEST(id),
+  );
+  return response.data;
 };
 
-export const getSupplyReqByID_API = async (supplyReqID) => {
-  try {
-    const response = await privateRequest.get(`${GENERAL}/${supplyReqID}`);
-    return response;
-  } catch (err) {
-    return err.response;
-  }
-};
-
-export const reviewSupplyReqAPI = async (supplyReqID, accepted) => {
-  try {
-    const response = await privateRequest.post(
-      `${GENERAL}/${supplyReqID}/review?accepted=${accepted}`,
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
+export const reviewSupplyRequest = async (id, accepted) => {
+  const response = await privateRequest.post(
+    SupplyRequestEndpoint.REVIEW_SUPPLY_REQUEST(id),
+    null,
+    {
+      params: {
+        accepted,
+      },
+    },
+  );
+  return response.data;
 };
 
 export const createSupplyRequest = async (
@@ -59,20 +40,15 @@ export const createSupplyRequest = async (
   detailFileAssetId,
   shipImageAssetId,
 ) => {
-  try {
-    const response = await privateRequest.post(
-      SupplyRequestEndpoint.CREATE_SUPPLY_REQUEST,
-      request,
-      {
-        params: {
-          detailFileAssetId,
-          shipImageAssetId,
-        },
+  const response = await privateRequest.post(
+    SupplyRequestEndpoint.CREATE_SUPPLY_REQUEST,
+    request,
+    {
+      params: {
+        detailFileAssetId,
+        shipImageAssetId,
       },
-    );
-    return response.data;
-  } catch (err) {
-    console.debug(err);
-    throw err;
-  }
+    },
+  );
+  return response.data;
 };

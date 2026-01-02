@@ -1,6 +1,5 @@
 import { PageTitle, InfoTextField, ImageUploadField } from "@components/global";
-import { NationalityTextField } from "@components/mobilization";
-import { FileUploadField } from "@components/contract";
+import { NationalityTextField, FileUploadField } from "@components/common";
 import {
   Stack,
   Box,
@@ -16,7 +15,7 @@ import { useNavigate } from "react-router";
 import { createSupplyRequest } from "@/services/supplyReqServices";
 import Color from "@constants/Color";
 import Regex from "@/constants/Regex";
-import SectionWrapper from "@/components/global/SectionWrapper";
+import SectionWrapper from "@/components/common/SectionWrapper";
 import toast from "react-hot-toast";
 import cloudinaryUpload from "@/services/cloudinaryServices";
 import UploadStrategy from "@/constants/UploadStrategy";
@@ -45,10 +44,9 @@ const CreateSupplyRequest = () => {
         detailFileUploadRes.asset_id,
         shipImageUploadRes.asset_id,
       );
-      // resetForm();
-      // navigate("/supply-requests");
+      resetForm();
+      navigate("/supply-requests");
     } catch (err) {
-      console.log("Error when creating supply request: ", err);
       toast.error("Tạo yêu cầu thất bại!");
     }
   };
