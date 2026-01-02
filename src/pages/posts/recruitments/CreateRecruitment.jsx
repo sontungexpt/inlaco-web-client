@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageTitle } from "@components/global";
+import { PageTitle } from "@components/common";
 import { Box } from "@mui/material";
 import { createPost } from "@/services/postServices";
 import { useNavigate } from "react-router";

@@ -4,9 +4,9 @@ import {
   SectionDivider,
   InfoTextField,
   ImageUploadField,
-  DoubleTabBar,
+  BaseTabBar,
   NoValuesOverlay,
-} from "@components/global";
+} from "@components/common";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import SaveIcon from "@mui/icons-material/Save";
@@ -527,11 +527,17 @@ const CourseDetail = () => {
             </Box>
             <>
               {isAdmin && (
-                <DoubleTabBar
-                  tabLabel1={"Thông tin bài đăng"}
-                  tabLabel2={"Danh sách ứng viên"}
+                <BaseTabBar
+                  tabs={[
+                    {
+                      label: "Thông tin bài đăng",
+                    },
+                    {
+                      label: "Danh sách công việc",
+                    },
+                  ]}
                   variant={"fullWidth"}
-                  onTabChange={(newValue) => handleTabChange(newValue)}
+                  onChange={(newValue) => handleTabChange(newValue)}
                   color={Color.SecondaryBlue}
                   sx={{
                     backgroundColor: Color.SecondaryWhite,

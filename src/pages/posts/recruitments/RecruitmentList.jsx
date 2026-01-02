@@ -1,9 +1,16 @@
-import { Box, Grid, Pagination, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  Pagination,
+  Typography,
+} from "@mui/material";
 import RecruitmentCard from "./RecruitmentCard";
 import { isoToLocalDatetime } from "@/utils/converter";
 
 export default function RecruitmentList({
   posts,
+  loading,
   isAdmin,
   totalPages,
   page,
@@ -12,13 +19,19 @@ export default function RecruitmentList({
   onApplyNow,
   onViewDetail,
 }) {
+  if (loading)
+    return (
+      <Box sx={{ textAlign: "center", mt: 6 }}>
+        <CircularProgress />
+      </Box>
+    );
+
   if (posts.length === 0)
     return (
       <Typography sx={{ textAlign: "center", mt: 2, fontWeight: "bold" }}>
         Chưa có bài đăng tuyển dụng nào
       </Typography>
     );
-  console.log("posts", posts);
 
   return (
     <>

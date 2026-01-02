@@ -3,8 +3,8 @@ import {
   PageTitle,
   NoValuesOverlay,
   SearchBar,
-  DoubleTabBar,
-} from "@components/global";
+  BaseTabBar,
+} from "@components/common";
 import { Box, Button, Typography, CircularProgress } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
@@ -291,11 +291,17 @@ const CrewInfos = () => {
             subtitle="Danh sách Thuyền viên công ty"
           />
         </Box>
-        <DoubleTabBar
-          tabLabel1={"Danh sách Thuyền viên chính thức"}
-          tabLabel2={"Danh sách Thuyền viên chưa chính thức"}
+        <BaseTabBar
+          tabs={[
+            {
+              label: "Danh sách Thuyền viên chính thức",
+            },
+            {
+              label: "Danh sách Thuyền viên chưa chính thức",
+            },
+          ]}
           variant={"fullWidth"}
-          onTabChange={(newValue) => handleTabChange(newValue)}
+          onChange={(newValue) => handleTabChange(newValue)}
           color={Color.SecondaryBlue}
           sx={{
             backgroundColor: Color.SecondaryWhite,

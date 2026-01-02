@@ -11,13 +11,10 @@ import {
 } from "@mui/material";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { useState } from "react";
 import Color from "@constants/Color";
-import PizZip from "pizzip";
-import Docxtemplater from "docxtemplater";
-import { saveAs } from "file-saver";
 import toast from "react-hot-toast";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { downloadFile } from "@/utils/docDownload";
 
 const TemplateContractCard = ({
@@ -87,7 +84,7 @@ const TemplateContractCard = ({
     if (onDownload) return await onDownload(e);
 
     try {
-      await downloadFile({ url, initialData });
+      await downloadFile({ url, initialData, dowloadFileName });
     } catch (err) {
       if (err.properties?.errors) {
         console.table(

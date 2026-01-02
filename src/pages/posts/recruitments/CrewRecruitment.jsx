@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Box, Button, CircularProgress, Stack } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
-import { PageTitle, DoubleTabBar } from "@components/global";
+import { PageTitle, BaseTabBar } from "@components/common";
 import { useNavigate, useLocation } from "react-router";
 import Color from "@constants/Color";
 
@@ -95,13 +95,19 @@ export default function CrewRecruitment() {
           )}
         </Stack>
         {isAdmin && (
-          <DoubleTabBar
-            tabLabel1={"Danh sách bài đăng"}
-            tabLabel2={"Danh sách đơn ứng tuyển"}
+          <BaseTabBar
+            tabs={[
+              {
+                label: "Danh sách bài đăng",
+              },
+              {
+                label: "Danh sách đơn ứng tuyển",
+              },
+            ]}
             variant={"fullWidth"}
-            initialTab={tab}
-            isSingleTab={Boolean(INITITAL_TAB)}
-            onTabChange={setTab}
+            value={tab}
+            singleTab={Boolean(INITITAL_TAB)}
+            onChange={setTab}
             color={Color.SecondaryBlue}
             sx={{
               backgroundColor: Color.SecondaryWhite,
@@ -112,50 +118,40 @@ export default function CrewRecruitment() {
       </Box>
 
       {/* ===== TAB 1: BÀI ĐĂNG ===== */}
-      {tab === 0 &&
-        (postsLoading ? (
-          <Box sx={{ textAlign: "center", mt: 6 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <RecruitmentList
-            posts={posts}
-            isAdmin={isAdmin}
-            totalPages={postData?.totalPages || 1}
-            page={postPage + 1}
-            onPageChange={(e, value) => setPostPage(value - 1)}
-            onPostClick={(post) => navigate(`/recruitment/${post.id}`)}
-            onViewDetail={(post) => navigate(`/recruitment/${post.id}`)}
-            onApplyNow={(post) => navigate(`/recruitment/apply/${post.id}`)}
-          />
-        ))}
+      {tab === 0 && (
+        <RecruitmentList
+          loading={postsLoading}
+          posts={posts}
+          isAdmin={isAdmin}
+          totalPages={postData?.totalPages || 1}
+          page={postPage + 1}
+          onPageChange={(e, value) => setPostPage(value - 1)}
+          onPostClick={(post) => navigate(`/recruitment/${post.id}`)}
+          onViewDetail={(post) => navigate(`/recruitment/${post.id}`)}
+          onApplyNow={(post) => navigate(`/recruitment/apply/${post.id}`)}
+        />
+      )}
 
       {/* ===== TAB 2: ỨNG VIÊN ===== */}
-      {tab === 1 &&
-        (candidateLoading ? (
-          <Box sx={{ textAlign: "center", mt: 6 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <CandidateTable
-            filterStatus={filterCandidateStatus}
-            onAdminMemberDetailClick={(id) =>
-              navigate(`/recruitment/candidates/${id}`)
-            }
-            onCreateCrewMemberClick={(candidateId) =>
-              navigate(`/crews/add/${candidateId}`, {
-                state: { candidateInfo: candidateId },
-              })
-            }
-            onFilterStatusChange={setFilterCandidateStatus}
-            candidates={candidates}
-            totalCandidates={candidateData.totalElements}
-            paginationModel={paginationModel}
-            onPaginationModelChange={(model) => {
-              setPaginationModel({ ...model });
-            }}
-          />
-        ))}
+      {tab === 1 && (
+        <CandidateTable
+          loading={candidateLoading}
+          filterStatus={filterCandidateStatus}
+          onAdminMemberDetailClick={(id) =>
+            navigate(`/recruitment/candidates/${id}`)
+          }
+          onCreateCrewMemberClick={(candidateId) =>
+            navigate(`/crews/add/${candidateId}`, {
+              state: { candidateInfo: candidateId },
+            })
+          }
+          onFilterStatusChange={setFilterCandidateStatus}
+          candidates={candidates}
+          totalCandidates={candidateData.totalElements}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+        />
+      )}
     </Box>
   );
 }

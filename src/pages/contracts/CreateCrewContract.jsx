@@ -34,11 +34,9 @@ const CreateCrewContract = () => {
 
   const RECEIVE_METHOD = ["Tiền mặt", "Chuyển khoản ngân hàng"];
 
-  const [creating, setCreating] = useState(false);
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
 
   const createContract = async (values, { resetForm }) => {
-    setCreating(true);
     try {
       const uploadRespone = await cloudinaryUpload(
         values.contractFile,
@@ -113,7 +111,6 @@ const CreateCrewContract = () => {
       resetForm();
       navigate(`/crew-contracts/${contract.id}`);
     } catch (err) {}
-    setCreating(false);
   };
 
   const initialValues = {
@@ -278,6 +275,7 @@ const CreateCrewContract = () => {
         touched,
         isValid,
         dirty,
+        isSubmitting,
         handleBlur,
         handleChange,
         handleSubmit,
@@ -319,8 +317,8 @@ const CreateCrewContract = () => {
               <Button
                 type="submit"
                 variant="contained"
-                disabled={!isValid || !dirty || creating}
-                startIcon={!creating && <SaveIcon />}
+                disabled={!isValid || !dirty || isSubmitting}
+                startIcon={!isSubmitting && <SaveIcon />}
                 sx={{
                   minWidth: 150,
                   px: 3,
@@ -329,14 +327,14 @@ const CreateCrewContract = () => {
                   color: Color.PrimaryBlack,
                 }}
               >
-                {creating ? (
+                {isSubmitting && (
                   <CircularProgress
                     size={22}
+                    mr={2}
                     sx={{ color: Color.PrimaryBlack }}
                   />
-                ) : (
-                  "Tạo hợp đồng"
                 )}
+                "Tạo hợp đồng"
               </Button>
             </Box>
           </SectionWrapper>
@@ -361,8 +359,7 @@ const CreateCrewContract = () => {
           </SectionWrapper>
 
           {/* ===== Party A ===== */}
-          <SectionWrapper>
-            <SectionDivider sectionName="Người sử dụng lao động (Bên A)" />
+          <SectionWrapper title="Người sử dụng lao động (Bên A)">
             <Grid container spacing={2} mt={1}>
               <Grid size={4}>
                 <InfoTextField
@@ -464,8 +461,7 @@ const CreateCrewContract = () => {
           </SectionWrapper>
 
           {/* ===== Party B ===== */}
-          <SectionWrapper>
-            <SectionDivider sectionName="Người lao động (Bên B)" />
+          <SectionWrapper title="Người lao động (Bên B)">
             <Grid container spacing={2} mt={1}>
               <Grid size={6}>
                 <InfoTextField
@@ -668,8 +664,7 @@ const CreateCrewContract = () => {
           </SectionWrapper>
 
           {/* ===== Job Info ===== */}
-          <SectionWrapper>
-            <SectionDivider sectionName="Thông tin công việc" />
+          <SectionWrapper title="Thông tin công việc">
             <Grid container spacing={2} mt={1}>
               <Grid size={4}>
                 <InfoTextField
@@ -713,7 +708,6 @@ const CreateCrewContract = () => {
 
               <Grid size={4}>
                 <InfoTextField
-                  id="position"
                   label="Vị trí chuyên môn"
                   margin="none"
                   required
@@ -776,6 +770,7 @@ const CreateCrewContract = () => {
 
           {/* ===== Salary ===== */}
           <SectionWrapper
+            title="Thống tin lương"
             sx={{
               p: 3,
               mb: 3,
@@ -784,7 +779,6 @@ const CreateCrewContract = () => {
                 "linear-gradient(135deg, rgba(255,215,0,0.15), transparent)",
             }}
           >
-            <SectionDivider sectionName="Thông tin lương" />
             <Grid container spacing={2} mt={1}>
               <Grid size={3}>
                 <InfoTextField
@@ -945,11 +939,9 @@ const CreateCrewContract = () => {
             </Grid>
           </SectionWrapper>
 
-          <SectionWrapper>
-            <SectionDivider sectionName="Bản mềm" />
+          <SectionWrapper title="Hợp đồng">
             <FileUploadField
               required
-              id="contractFile"
               name="contractFile"
               helperText={touched.contractFile && errors.contractFile}
             />

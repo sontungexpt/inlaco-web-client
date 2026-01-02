@@ -8,7 +8,6 @@ import {
 import {
   Box,
   Button,
-  Typography,
   Grid,
   CircularProgress,
   InputAdornment,
@@ -18,9 +17,8 @@ import Color from "@constants/Color";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { createSupplyContract } from "../../services/contractServices";
-import HttpStatusCode from "../../constants/HttpStatusCode";
-import { dateStringToISOString, datetimeToISO } from "../../utils/converter";
+import { createSupplyContract } from "@/services/contractServices";
+import { datetimeToISO } from "@utils/converter";
 import Regex from "@/constants/Regex";
 import { yesterday } from "@/utils/date";
 import TemplateDialog from "./components/TemplateDialog";
@@ -29,10 +27,9 @@ const CreateSupplyContract = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { state: requestInfo } = useLocation();
-  console.log(requestInfo, id);
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
 
-  const handleCreateSupplyContractSubmit = async (values, { resetForm }) => {
+  const createContract = async (values, { resetForm }) => {
     try {
       //Calling API to create a new crew member
       const response = await createSupplyContract(id, {
@@ -189,6 +186,25 @@ const CreateSupplyContract = () => {
         name: Yup.string().required("Tên tàu không được trống"),
         type: Yup.string().required("Loại tàu không được trống"),
       }),
+
+      contractFile: Yup.mixed()
+        .required("Vui lòng tải lên hợp đồng bản giấy")
+        .test(
+          "fileSize",
+          "Dung lượng file tối đa 5MB",
+          (value) => value && value.size <= 5 * 1024 * 1024,
+        )
+        .test(
+          "fileType",
+          "Chỉ chấp nhận file PDF, DOC hoặc DOCX",
+          (value) =>
+            value &&
+            [
+              "application/pdf",
+              "application/msword",
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            ].includes(value.type),
+        ),
     }),
   });
 
@@ -197,7 +213,7 @@ const CreateSupplyContract = () => {
       validateOnChange={false}
       initialValues={initialValues}
       validationSchema={SCHEMA}
-      onSubmit={handleCreateSupplyContractSubmit}
+      onSubmit={createContract}
     >
       {({
         values,
@@ -212,16 +228,7 @@ const CreateSupplyContract = () => {
       }) => (
         <Box m="20px" component="form" onSubmit={handleSubmit}>
           {/* ===== Sticky Header ===== */}
-          <SectionWrapper
-            sx={
-              {
-                // position: "sticky",
-                // top: 0,
-                // zIndex: 10,
-                // backgroundColor: "background.paper",
-              }
-            }
-          >
+          <SectionWrapper>
             <PageTitle
               title="TẠO HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN"
               subtitle="Tạo và lưu Hợp đồng cung ứng thuyền viên mới vào hệ thống"
@@ -255,14 +262,14 @@ const CreateSupplyContract = () => {
                   color: Color.PrimaryBlack,
                 }}
               >
-                {isSubmitting ? (
+                {isSubmitting && (
                   <CircularProgress
+                    mr={2}
                     size={22}
                     sx={{ color: Color.PrimaryBlack }}
                   />
-                ) : (
-                  "Tạo hợp đồng"
                 )}
+                Tạo hợp đồng
               </Button>
             </Box>
           </SectionWrapper>
@@ -307,7 +314,6 @@ const CreateSupplyContract = () => {
               </Grid>
               <Grid size={6}>
                 <InfoTextField
-                  id="company-address"
                   label="Địa chỉ"
                   margin="none"
                   required
@@ -327,7 +333,6 @@ const CreateSupplyContract = () => {
               </Grid>
               <Grid size={2}>
                 <InfoTextField
-                  id="company-phone-number"
                   label="Số điện thoại"
                   margin="none"
                   required
@@ -348,7 +353,6 @@ const CreateSupplyContract = () => {
               </Grid>
               <Grid size={4}>
                 <InfoTextField
-                  id="representative"
                   label="Người đại diện"
                   margin="none"
                   required
@@ -369,7 +373,6 @@ const CreateSupplyContract = () => {
               </Grid>
               <Grid size={3}>
                 <InfoTextField
-                  id="representative-position"
                   label="Chức vụ"
                   margin="none"
                   required
@@ -394,7 +397,6 @@ const CreateSupplyContract = () => {
             <Grid container spacing={2}>
               <Grid size={4}>
                 <InfoTextField
-                  id="company-name"
                   label="Tên công ty"
                   size="small"
                   margin="none"
@@ -414,7 +416,6 @@ const CreateSupplyContract = () => {
               </Grid>
               <Grid size={6}>
                 <InfoTextField
-                  id="company-address"
                   label="Địa chỉ"
                   size="small"
                   margin="none"
@@ -435,7 +436,6 @@ const CreateSupplyContract = () => {
               </Grid>
               <Grid size={2}>
                 <InfoTextField
-                  id="company-phone-number"
                   label="Số điện thoại"
                   size="small"
                   margin="none"
@@ -457,7 +457,6 @@ const CreateSupplyContract = () => {
               </Grid>
               <Grid size={4}>
                 <InfoTextField
-                  id="representative"
                   label="Người đại diện"
                   size="small"
                   margin="none"
@@ -479,7 +478,6 @@ const CreateSupplyContract = () => {
               </Grid>
               <Grid size={3}>
                 <InfoTextField
-                  id="representative-position"
                   label="Chức vụ"
                   size="small"
                   margin="none"
@@ -507,7 +505,6 @@ const CreateSupplyContract = () => {
             <Grid container spacing={2}>
               <Grid size={3}>
                 <InfoTextField
-                  id="start-date"
                   type="date"
                   label="Ngày bắt đầu"
                   size="small"
@@ -535,7 +532,6 @@ const CreateSupplyContract = () => {
               </Grid>
               <Grid size={3}>
                 <InfoTextField
-                  id="end-date"
                   type="date"
                   label="Ngày kết thúc"
                   size="small"
@@ -563,7 +559,6 @@ const CreateSupplyContract = () => {
               </Grid>
               <Grid size={4}>
                 <InfoTextField
-                  id="num-of-crew-member"
                   type="number"
                   label="Tổng số nhân lực cần cung ứng"
                   size="small"
@@ -606,7 +601,6 @@ const CreateSupplyContract = () => {
           <SectionWrapper title="Bản mềm">
             <FileUploadField
               required
-              id="contractFile"
               name="contractFile"
               helperText={touched.contractFile && errors.contractFile}
             />
