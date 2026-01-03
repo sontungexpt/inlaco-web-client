@@ -42,7 +42,6 @@ const InfoTextField = ({
             backgroundColor: Color.PrimaryWhite,
           },
         },
-        input: {},
         ...slotProps, // Merging slotProps with spread operator
       }}
       {...props}

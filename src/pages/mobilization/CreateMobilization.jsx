@@ -5,17 +5,17 @@ import {
   InfoTextField,
   ImageUploadField,
   EditableDataGrid,
-} from "../components/global";
+} from "@components/common";
 import { NationalityTextField } from "@components/common";
 import { Grid, Box, Button, Typography, CircularProgress } from "@mui/material";
-import { COLOR } from "../assets/Color";
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router";
-import { createMobilizationAPI } from "../services/mobilizationServices";
-import HttpStatusCode from "../constants/HttpStatusCode";
-import { dateTimeStringToISOString } from "../utils/converter";
+import { createMobilizationAPI } from "@/services/mobilizationServices";
+import HttpStatusCode from "@constants/HttpStatusCode";
+import { dateTimeStringToISOString } from "@utils/converter";
+import Color from "@constants/Color";
 
 const CreateMobilization = () => {
   const navigate = useNavigate();
@@ -194,13 +194,13 @@ const CreateMobilization = () => {
                     sx={{
                       width: "10%",
                       padding: 1,
-                      color: COLOR.PrimaryBlack,
-                      backgroundColor: COLOR.PrimaryGold,
+                      color: Color.PrimaryBlack,
+                      backgroundColor: Color.PrimaryGold,
                       minWidth: 130,
                     }}
                   >
                     {createMobilizationLoading ? (
-                      <CircularProgress size={24} color={COLOR.PrimaryBlack} />
+                      <CircularProgress size={24} color={Color.PrimaryBlack} />
                     ) : (
                       <Box sx={{ display: "flex", alignItems: "end" }}>
                         <SaveIcon
@@ -251,10 +251,10 @@ const CreateMobilization = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -279,10 +279,10 @@ const CreateMobilization = () => {
                   onBlur={handleBlur}
                   sx={{
                     "& .MuiInputBase-input.Mui-disabled": {
-                      color: COLOR.PrimaryBlack,
+                      color: Color.PrimaryBlack,
                     },
                     "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-                      borderColor: COLOR.PrimaryBlack,
+                      borderColor: Color.PrimaryBlack,
                     },
                   }}
                 />
@@ -295,7 +295,7 @@ const CreateMobilization = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.PrimaryBlackPlaceHolder,
+                color: Color.PrimaryBlackPlaceHolder,
               }}
             >
               Lịch trình dự kiến:
@@ -464,7 +464,7 @@ const CreateMobilization = () => {
                 fontSize: 18,
                 textDecoration: "underline",
                 fontStyle: "italic",
-                color: COLOR.PrimaryBlackPlaceHolder,
+                color: Color.PrimaryBlackPlaceHolder,
               }}
             >
               Thông tin Tàu:

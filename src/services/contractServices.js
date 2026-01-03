@@ -3,7 +3,7 @@ import ContractEndpoint from "@/endpoints/ContractEndpoint";
 
 export const fetchCrewContracts = async ({
   page,
-  size,
+  pageSize,
   signed,
   type = "LABOR_CONTRACT",
 }) => {
@@ -12,7 +12,7 @@ export const fetchCrewContracts = async ({
     {
       params: {
         page,
-        size,
+        size: pageSize,
         signed,
         type,
       },

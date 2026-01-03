@@ -20,11 +20,13 @@ export default function CrewRecruitment() {
 
   // If had initital tab then only show one bar
   const INITITAL_TAB = state?.tab === "CANDIDATE" ? 1 : state?.tab;
+  const INITIAL_RECRUIMENT_POST_ID =
+    state?.candidate?.recruitmentPostId || null;
+  const INITIAL_STATUS = state?.candidate?.status || "APPLIED";
+  const INITIAL_POST_PAGE = state?.post?.page || 0;
 
   const [tab, setTab] = useState(INITITAL_TAB || 0);
-
-  // post state
-  const [postPage, setPostPage] = useState(state?.post?.page || 0);
+  const [postPage, setPostPage] = useState(INITIAL_POST_PAGE);
 
   const { data: postData, isLoading: postsLoading } = useRecruitmentPosts(
     postPage,
@@ -35,25 +37,24 @@ export default function CrewRecruitment() {
 
   // candidate state
 
-  const [filterCandidateStatus, setFilterCandidateStatus] = useState(
-    state?.candidate?.status || "APPLIED",
-  );
+  const [filterCandidateStatus, setFilterCandidateStatus] =
+    useState(INITIAL_STATUS);
 
   const [paginationModel, setPaginationModel] = useState({
     page: state?.candidate?.page || 0,
     pageSize: NUMBER_CANDIDATE_PER_PAGE,
   });
 
-  const INITIAL_RECRUIMENT_POST_ID =
-    state?.candidate?.recruitmentPostId || null;
-  const { data: candidateData, isLoading: candidateLoading } = useCandidates({
+  const {
+    data: { content: candidates = [], totalElements: totalCandidates = 0 } = {},
+    isLoading: candidateLoading,
+  } = useCandidates({
     status: filterCandidateStatus,
     recruitmentPostId: INITIAL_RECRUIMENT_POST_ID,
     page: paginationModel.page,
     sizePerPage: paginationModel.pageSize,
   });
 
-  const candidates = candidateData?.content || [];
   return (
     <Box m="20px">
       <Box
@@ -86,7 +87,7 @@ export default function CrewRecruitment() {
                 py: 1.2,
                 textTransform: "none",
                 "&:hover": {
-                  backgroundColor: Color.PrimaryGoldHover,
+                  backgroundColor: Color.PrimaryLightGold,
                 },
               }}
             >
@@ -147,7 +148,7 @@ export default function CrewRecruitment() {
           }
           onFilterStatusChange={setFilterCandidateStatus}
           candidates={candidates}
-          totalCandidates={candidateData.totalElements}
+          totalCandidates={totalCandidates}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
         />

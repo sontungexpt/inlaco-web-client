@@ -56,7 +56,7 @@ export const fetchUniquePost = async (postID) => {
 
 export const fetchCandidates = async ({
   page,
-  sizePerPage = 10,
+  pageSize = 10,
   status,
   recruitmentPostId,
   sort = null,
@@ -65,7 +65,7 @@ export const fetchCandidates = async ({
     params: {
       page,
       recruitmentPostId,
-      size: sizePerPage,
+      size: pageSize,
       status,
       sort,
     },

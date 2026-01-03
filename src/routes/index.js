@@ -4,7 +4,7 @@ import { lazy } from "react";
 import HomePage from "@pages/HomePage";
 
 import CrewMobilization from "@pages/crewMobilization";
-import CreateMobilization from "@pages/createMobilization";
+import CreateMobilization from "@pages/mobilization/CreateMobilization";
 import MobilizationDetail from "@pages/mobilizationDetail";
 
 import SupplyContract from "@/pages/contracts/SupplyContract";
@@ -27,12 +27,14 @@ import CreatePost from "@/pages/posts/CreatePost";
 import PostDetail from "@/pages/posts/PostDetail";
 import UpdatePost from "@/pages/posts/UpdatePost";
 
-import CrewContract from "@/pages/contracts/CrewContract";
-import CrewContractDetail from "@/pages/contracts/CrewContractDetail";
 import CrewContractAddendum from "@pages/crewContractAddendum";
 
+const CrewContract = lazy(() => import("@/pages/contracts/CrewContract"));
 const CreateCrewContract = lazy(
   () => import("@pages/contracts/CreateCrewContract"),
+);
+const CrewContractDetail = lazy(
+  () => import("@/pages/contracts/CrewContractDetail"),
 );
 
 const E404 = lazy(() => import("@/pages/E404"));

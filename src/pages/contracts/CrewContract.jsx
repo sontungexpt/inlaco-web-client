@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import {
+  BaseDataGrid,
   PageTitle,
-  NoValuesOverlay,
   SearchBar,
   InfoTextField,
-} from "@components/global";
-import { Box, Button, CircularProgress, MenuItem } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+} from "@components/common";
+import { Box, Button, MenuItem } from "@mui/material";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import Color from "@constants/Color";
 import { useNavigate } from "react-router";
 import { isoToLocalDatetime } from "@utils/converter";
-import Color from "@constants/Color";
 import { useContracts } from "@/hooks/services/contract";
 
 const CrewContract = () => {
@@ -117,25 +116,20 @@ const CrewContract = () => {
           subtitle="Danh sách các hợp đồng của Thuyền viên"
         />
       </Box>
-      <Box m="40px 0 0 0" height="62vh" maxHeight={550} maxWidth={1600}>
+      <Box mt="40px" maxWidth={1600}>
         <Box
           sx={{
             display: "flex",
             flexDirection: "row",
-            width: "100%",
-            paddingBottom: 2,
             justifyContent: "space-between",
+            gap: 2,
           }}
         >
           <SearchBar
+            size="small"
             placeholder={
               "Nhập tên hoặc mã thuyền viên cần tìm kiếm (VD: Nguyễn Văn A,...)"
             }
-            color={Color.PrimaryBlack}
-            backgroundColor={Color.SecondaryWhite}
-            sx={{
-              width: "50%",
-            }}
           />
 
           <InfoTextField
@@ -146,7 +140,6 @@ const CrewContract = () => {
             label="Trạng thái"
             value={isSignedContract}
             onChange={handleStatusChange}
-            sx={{ marginTop: 1 }}
           >
             {STATUS_FILTERS.map((status) => (
               <MenuItem key={status.value} value={status.value}>
@@ -155,49 +148,14 @@ const CrewContract = () => {
             ))}
           </InfoTextField>
         </Box>
-        {!isLoading ? (
-          <DataGrid
-            disableRowSelectionOnClick
-            disableColumnMenu
-            disableColumnResize
-            columns={columns}
-            slots={{ noRowsOverlay: NoValuesOverlay }}
-            // pageSizeOptions={[5, 10, { value: -1, label: "All" }]}
-            paginationMode="server" // QUAN TRỌNG!
-            paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            rowCount={totalContracts}
-            rows={crewContracts}
-            sx={{
-              backgroundColor: "#FFF",
-              headerAlign: "center",
-              "& .MuiDataGrid-columnHeaderTitle": {
-                fontSize: 16,
-                fontWeight: 700,
-              },
-
-              "& .MuiDataGrid-columnHeader": {
-                backgroundColor: Color.SecondaryBlue,
-                color: Color.PrimaryWhite,
-              },
-              "& .MuiTablePagination-root": {
-                backgroundColor: Color.SecondaryBlue,
-                color: Color.PrimaryWhite,
-              },
-            }}
-          />
-        ) : (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "62vh",
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        )}
+        <BaseDataGrid
+          loading={isLoading}
+          columns={columns}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          rowCount={totalContracts}
+          rows={crewContracts}
+        />
       </Box>
     </Box>
   );

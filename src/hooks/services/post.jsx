@@ -30,22 +30,15 @@ export const useCandidates = ({
   status,
   recruitmentPostId,
   page,
-  sizePerPage = 20,
+  pageSize = 20,
   sort = null,
 }) => {
   return useQuery({
-    queryKey: [
-      "candidates",
-      status,
-      recruitmentPostId,
-      page,
-      sizePerPage,
-      sort,
-    ],
+    queryKey: ["candidates", status, recruitmentPostId, page, pageSize, sort],
     queryFn: async () =>
       fetchCandidates({
         page,
-        size: sizePerPage,
+        pageSize,
         status,
         sort,
         recruitmentPostId,

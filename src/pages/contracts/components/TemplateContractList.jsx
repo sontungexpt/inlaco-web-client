@@ -41,7 +41,7 @@ const TemplateContractList = ({
   });
 
   useImperativeHandle(ref, () => ({
-    refetch: () => refetchTemplates(),
+    refetch: refetchTemplates,
   }));
 
   if (isLoading) {
@@ -92,7 +92,7 @@ const TemplateContractList = ({
       </Box>
 
       <Grid container spacing={4}>
-        {templates.map((item) => render(item))}
+        {templates.map((item, ...params) => render(item, ...params))}
       </Grid>
 
       {totalPages > 1 && (

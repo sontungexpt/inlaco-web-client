@@ -41,7 +41,7 @@ const BaseDataGrid = ({
       onPaginationModelChange={onPaginationModelChange}
       sx={[
         {
-          mt: 3,
+          mt: 2,
           maxWidth: 1600,
           bgcolor: "#FFF",
           borderRadius: 2,
