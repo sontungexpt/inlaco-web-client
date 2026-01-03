@@ -1,9 +1,8 @@
 import { Routes, Route } from "react-router";
 import React, { Suspense } from "react";
 import { useAuthContext } from "./contexts/AuthContext";
-import { MainLayout } from "./components/global";
+import { MainLayout, PageCircularProgress } from "./components/common";
 import { AppRoutes } from "./routes";
-import PageCircularProgress from "./components/common/PageCircularProgress";
 
 const ProtectedRoute = ({ roles, children }) => {
   const { loading, hasRole, roles: userRoles } = useAuthContext();

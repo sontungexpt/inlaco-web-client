@@ -1,37 +1,38 @@
 import React, { useState } from "react";
 import {
+  BaseDataGrid,
   PageTitle,
-  NoValuesOverlay,
   SearchBar,
   InfoTextField,
-} from "@components/global";
-import { Box, Button, MenuItem, CircularProgress } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+  DetailCell,
+} from "@components/common";
+import { Box, Button, MenuItem } from "@mui/material";
 import Color from "@constants/Color";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useContracts } from "@/hooks/services/contract";
 import { isoToLocalDatetime } from "@/utils/converter";
+import ContractType from "@/constants/ContractTemplateType";
 
-const SupplyContract = () => {
+const SupplyContract = ({ pageSize = 10 }) => {
   const navigate = useNavigate();
-  const PAGE_SIZE = 10;
+  const { initialPage = 0 } = useLocation().state || {};
 
   const [isSignedContract, setIsSignedContract] = useState(true);
   const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: PAGE_SIZE,
+    page: initialPage || 0,
+    pageSize: pageSize,
   });
 
-  const { data, isLoading } = useContracts({
+  const {
+    data: { content: supplyContracts, totalElements: totalContracts } = {},
+    isLoading,
+  } = useContracts({
     page: paginationModel.page,
-    size: paginationModel.pageSize,
-    type: "SUPPLY_CONTRACT",
+    pageSize: paginationModel.pageSize,
+    type: ContractType.SUPPLY_CONTRACT,
     signed: isSignedContract,
   });
-
-  const supplyContracts = data?.content;
-  const totalContracts = data?.totalElements;
 
   const STATUS_FILTERS = [
     { label: "Hợp đồng chính thức", value: true },
@@ -86,59 +87,30 @@ const SupplyContract = () => {
       align: "center",
       headerAlign: "center",
       renderCell: (params) => {
-        return (
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => onContractDetailClick(params?.id)}
-            sx={{
-              backgroundColor: Color.PrimaryGreen,
-              color: Color.PrimaryBlack,
-              fontWeight: 700,
-              textTransform: "capitalize",
-            }}
-          >
-            <ArrowForwardIosRoundedIcon
-              sx={{
-                width: 15,
-                height: 15,
-                marginTop: "4px",
-                marginBottom: "4px",
-              }}
-            />
-          </Button>
-        );
+        return <DetailCell onClick={() => onContractDetailClick(params?.id)} />;
       },
     },
   ];
 
   return (
     <Box m="20px">
-      <Box>
-        <PageTitle
-          title="HỢP ĐỒNG CUNG ỨNG"
-          subtitle="Danh sách các hợp đồng cung ứng thuyền viên"
-        />
-      </Box>
-      <Box m="40px 0 0 0" height="62vh" maxHeight={550} maxWidth={1600}>
+      <PageTitle
+        title="HỢP ĐỒNG CUNG ỨNG"
+        subtitle="Danh sách các hợp đồng cung ứng thuyền viên"
+      />
+      <Box mt="40px" maxWidth={1600}>
         <Box
           sx={{
             display: "flex",
-            flexDirection: "row",
             width: "100%",
-            paddingBottom: 2,
-            justifyContent: "space-between",
+            gap: 2,
           }}
         >
           <SearchBar
             placeholder={
               "Nhập tên hoặc mã thuyền viên cần tìm kiếm (VD: Nguyễn Văn A,...)"
             }
-            color={Color.PrimaryBlack}
-            backgroundColor={Color.SecondaryWhite}
-            sx={{
-              width: "50%",
-            }}
+            size="small"
           />
           <InfoTextField
             label="Trạng thái"
@@ -146,7 +118,6 @@ const SupplyContract = () => {
             value={isSignedContract}
             size="small"
             onChange={handleStatusChange}
-            sx={{ marginTop: 1 }}
           >
             {STATUS_FILTERS.map((status) => (
               <MenuItem key={status.value} value={status.value}>
@@ -155,48 +126,14 @@ const SupplyContract = () => {
             ))}
           </InfoTextField>
         </Box>
-        {!isLoading ? (
-          <DataGrid
-            disableRowSelectionOnClick
-            disableColumnMenu
-            disableColumnResize
-            columns={columns}
-            slots={{ noRowsOverlay: NoValuesOverlay }}
-            // pageSizeOptions={[5, 10, { value: -1, label: "All" }]}
-            paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            paginationMode="server"
-            rowCount={totalContracts}
-            rows={supplyContracts}
-            sx={{
-              backgroundColor: "#FFF",
-              headerAlign: "center",
-              "& .MuiDataGrid-columnHeaderTitle": {
-                fontSize: 16,
-                fontWeight: 700,
-              },
-              "& .MuiDataGrid-columnHeader": {
-                backgroundColor: Color.SecondaryBlue,
-                color: Color.PrimaryWhite,
-              },
-              "& .MuiTablePagination-root": {
-                backgroundColor: Color.SecondaryBlue,
-                color: Color.PrimaryWhite,
-              },
-            }}
-          />
-        ) : (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "62vh",
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        )}
+        <BaseDataGrid
+          loading={isLoading}
+          columns={columns}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          rowCount={totalContracts}
+          rows={supplyContracts}
+        />
       </Box>
     </Box>
   );

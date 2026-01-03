@@ -4,6 +4,7 @@ import {
   PageTitle,
   SectionDivider,
   InfoTextField,
+  ViewTextField,
 } from "@components/common";
 import {
   Box,
@@ -27,6 +28,9 @@ import { saveAs } from "file-saver";
 import JSZipUtils from "jszip-utils";
 import { formatDateString } from "@utils/converter";
 import { useContract } from "@/hooks/services/contract";
+import { HandshakeRounded } from "@mui/icons-material";
+import { activeContract as activeContract } from "@/services/contractServices";
+import toast from "react-hot-toast";
 
 /* ==== FORCE DOWNLOAD ==== */
 const forceDownload = (url, filename) => {
@@ -124,98 +128,25 @@ const ContractFileList = ({ files = [] }) => {
 const CrewContractDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const location = useLocation();
 
-  const isOfficialContract = location.state?.signed;
-  const { data: contractInfo, isLoading } = useContract(id);
-
-  //   const [createContractLoading, setCreateContractLoading] = useState(false);
-  const [isEditable, setIsEditable] = useState(false);
+  const { data: contractInfo = {}, isLoading } = useContract(id);
+  const isFrozen = contractInfo?.freezed;
+  const partyA = contractInfo?.initiator;
+  const partyB = contractInfo?.partners?.[0];
 
   const handleAddContractAddendum = (id) => {
     navigate(`/crew-contracts/${id}/create-addendum`);
   };
 
-  const handleEditClick = () => {
-    setIsEditable(true);
+  const approveContract = async () => {
+    try {
+      const response = await activeContract(id);
+      navigate("/supply-contracts");
+    } catch (err) {
+      toast.error("Kí thất bại");
+    }
   };
 
-  const handleCancelClick = () => {
-    setIsEditable(false);
-  };
-
-  const handleDownloadPaperContractClick = (values) => {
-    const loadFile = (url, callback) => {
-      JSZipUtils.getBinaryContent(url, callback);
-    };
-
-    loadFile(
-      require("@assets/templates/template-hop-dong-thuyen-vien.docx"),
-      (error, content) => {
-        if (error) {
-          throw error;
-        }
-
-        // Initialize PizZip with the .docx content
-        const zip = new PizZip(content);
-
-        // Initialize docxtemplater
-        const doc = new Docxtemplater(zip, {
-          paragraphLoop: true,
-          linebreaks: true,
-        });
-
-        // Set dynamic values for placeholders
-        doc.setData({
-          title: values.title,
-          compName: values.partyA.compName,
-          compAddress: values.partyA.compAddress,
-          compPhoneNumber: values.partyA.compPhoneNumber,
-          representative: values.partyA.representative,
-          representativePos: values.partyA.representativePos,
-
-          fullName: values.partyB.fullName,
-          dob: formatDateString(values.partyB.dob),
-          birthplace: values.partyB.birthplace,
-          nationality: values.partyB.nationality,
-          permanentAddr: values.partyB.permanentAddr,
-          temporaryAddr: values.partyB.temporaryAddr,
-          ciNumber: values.partyB.ciNumber,
-          ciIssueDate: formatDateString(values.partyB.ciIssueDate),
-          ciIssuePlace: values.partyB.ciIssuePlace,
-
-          startDate: formatDateString(values.jobInfo.startDate),
-          endDate: formatDateString(values.jobInfo.endDate),
-          workingLocation: values.jobInfo.workingLocation,
-          position: values.jobInfo.position,
-          jobDescription: values.jobInfo.jobDescription,
-
-          basicSalary: values.salaryInfo.basicSalary,
-          allowance: values.salaryInfo.allowance,
-          receiveMethod: values.salaryInfo.receiveMethod,
-          payday: values.salaryInfo.payday,
-          salaryReviewPeriod: values.salaryInfo.salaryReviewPeriod,
-        });
-
-        try {
-          // Render the document with dynamic data
-          doc.render();
-
-          // Generate the final document
-          const out = doc.getZip().generate({
-            type: "blob",
-            mimeType:
-              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          });
-
-          // Save the file locally
-          saveAs(out, "hop-dong-thuyen-vien.docx");
-        } catch (error) {
-          console.error("Error generating document:", error);
-        }
-      },
-    );
-  };
   if (isLoading) {
     return (
       <Box
@@ -238,20 +169,10 @@ const CrewContractDetail = () => {
     boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
   };
 
-  const disabledReadableSx = {
-    "& .MuiInputBase-input.Mui-disabled": {
-      color: "#111",
-      WebkitTextFillColor: "#111",
-    },
-    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-      borderColor: "#ccc",
-    },
-  };
-
   return (
     <Box onSubmit={(e) => e.preventDefault()} p={2} sx={{ pb: 6 }}>
       {/* ================= HEADER ================= */}
-      <Box
+      <SectionWrapper
         sx={{
           position: "sticky",
           top: 0,
@@ -267,9 +188,7 @@ const CrewContractDetail = () => {
           <PageTitle
             title="CHI TIẾT HỢP ĐỒNG THUYỀN VIÊN"
             subtitle={
-              isOfficialContract
-                ? `Mã hợp đồng: ${id}`
-                : "Hợp đồng đang chờ ký kết"
+              isFrozen ? `Mã hợp đồng: ${id}` : "Hợp đồng đang chờ ký kết"
             }
           />
 
@@ -277,13 +196,23 @@ const CrewContractDetail = () => {
             <Button
               variant="contained"
               color="warning"
-              onClick={() => handleAddContractAddendum(id)}
+              // onClick={() => handleAddContractAddendum(id)}
             >
-              Thêm Phụ lục
+              {isFrozen ? `Thêm Phụ lục` : "Chỉnh sửa hợp đồng"}
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                color: Color.PrimaryWhite,
+                backgroundColor: Color.PrimaryGreen,
+              }}
+              onClick={approveContract}
+            >
+              Xác nhận ký kết
             </Button>
           </Box>
         </Box>
-      </Box>
+      </SectionWrapper>
 
       {/* ================= FILE ================= */}
       <Box px={3} mb={3}>
@@ -293,139 +222,69 @@ const CrewContractDetail = () => {
       {/* ================= BASIC INFO ================= */}
       <SectionWrapper sx={sectionPaperSx}>
         <Grid>
-          <InfoTextField
+          <ViewTextField
             label="Tiêu đề hợp đồng"
             value={contractInfo?.title ?? ""}
-            disabled
-            fullWidth
-            sx={disabledReadableSx}
           />
         </Grid>
       </SectionWrapper>
 
       {/* ================= PARTY A ================= */}
-      <SectionWrapper sx={sectionPaperSx}>
-        <SectionDivider sectionName="Người sử dụng lao động (Bên A)" />
+      <SectionWrapper title="Người sử dụng lao động (Bên A)">
         <Grid container spacing={2}>
           <Grid size={4}>
-            <InfoTextField
-              label="Tên công ty"
-              disabled
-              required
-              fullWidth
-              name="partyA.compName"
-              // value={values.partyA?.compName}
-            />
+            <ViewTextField label="Tên công ty" value={partyA?.partyName} />
           </Grid>
 
           <Grid size={6}>
-            <InfoTextField
-              label="Địa chỉ"
-              disabled
-              required
-              fullWidth
-              name="partyA.compAddress"
-              // value={values.partyA?.compAddress}
-            />
+            <ViewTextField value={partyA?.address} label="Địa chỉ" />
           </Grid>
 
           <Grid size={2}>
-            <InfoTextField
-              label="Số điện thoại"
-              required
-              fullWidth
-              name="partyA.compPhoneNumber"
-              // value={values.partyA?.compPhoneNumber}
-            />
+            <ViewTextField value={partyA?.phone} label="Số điện thoại" />
           </Grid>
 
           <Grid size={4}>
-            <InfoTextField
-              label="Người đại diện"
-              required
-              fullWidth
-              name="partyA.representative"
-              // value={values.partyA?.representative}
-            />
+            <ViewTextField label="Người đại diện" value={partyA?.representer} />
           </Grid>
 
           <Grid size={3}>
             <InfoTextField
               label="Chức vụ"
-              required
-              fullWidth
-              name="partyA.representativePos"
-              // value={values.partyA?.representativePos}
+              value={partyA?.representerPosition}
             />
           </Grid>
         </Grid>
       </SectionWrapper>
 
       {/* ================= PARTY B ================= */}
-      <SectionWrapper sx={sectionPaperSx}>
-        <SectionDivider sectionName="Người lao động (Bên B)" />
+      <SectionWrapper title="Người lao động (Bên B)">
         <Grid container spacing={2}>
           <Grid size={6}>
-            <InfoTextField
-              label="Họ và tên"
-              required
-              fullWidth
-              name="partyB.fullName"
-              // value={values.partyB?.fullName}
-            />
+            <ViewTextField label="Họ và tên" value={partyB?.fullName} />
           </Grid>
 
           <Grid size={3}>
-            <InfoTextField
-              type="date"
-              label="Ngày sinh"
-              required
-              fullWidth
-              name="partyB.dob"
-              // value={values.partyB?.dob}
-              slotProps={{ inputLabel: { shrink: true } }}
-            />
+            <ViewTextField label="Ngày sinh" value={partyB?.birthDate} />
           </Grid>
           <Grid size={3}>
-            <InfoTextField
-              id="birthplace"
-              label="Nơi sinh"
-              margin="none"
-              required
-              fullWidth
-              name="partyB.birthplace"
-              // value={values.partyB?.birthplace}
-            />
+            <ViewTextField label="Nơi sinh" value={partyB?.birthPlace} />
           </Grid>
 
           <Grid size={2}>
-            <InfoTextField
-              label="Quốc tịch"
-              required
-              fullWidth
-              name="partyB.nationality"
-              // value={values.partyB?.nationality}
-            />
+            <ViewTextField label="Quốc tịch" value={partyB?.nationality} />
           </Grid>
 
           <Grid size={5}>
-            <InfoTextField
+            <ViewTextField
               label="Địa chỉ thường trú"
-              required
-              fullWidth
-              name="partyB.permanentAddr"
-              // value={values.partyB?.permanentAddr}
+              value={partyB?.permanentAddress}
             />
           </Grid>
           <Grid size={5}>
-            <InfoTextField
-              id="temporary-address"
+            <ViewTextField
               label="Địa chỉ tạm trú"
-              margin="none"
-              required
-              fullWidth
-              name="partyB.temporaryAddr"
-              // value={values.partyB?.temporaryAddr}
+              value={partyB?.temporaryAddress}
             />
           </Grid>
           <Grid size={12}>
@@ -439,39 +298,23 @@ const CrewContractDetail = () => {
             >
               <Grid container spacing={2}>
                 <Grid size={4}>
-                  <InfoTextField
-                    id="ci-number"
+                  <ViewTextField
                     label="Số Căn cước công dân"
-                    required
-                    fullWidth
-                    name="partyB.ciNumber"
-                    // value={values.partyB?.ciNumber}
+                    value={partyB?.identificationCardId}
                   />
                 </Grid>
 
                 <Grid size={3}>
                   <InfoTextField
-                    id="ci-issue-date"
-                    type="date"
-                    label="Ngày cấp"
-                    required
-                    fullWidth
-                    name="partyB.ciIssueDate"
-                    // value={values.partyB?.ciIssueDate}
-                    slotProps={{
-                      inputLabel: { shrink: true },
-                    }}
+                    label="Ngày cấp căn cước"
+                    value={partyB?.identificationCardIssuedDate}
                   />
                 </Grid>
 
                 <Grid size={5}>
                   <InfoTextField
-                    id="ci-issue-place"
-                    label="Nơi cấp"
-                    required
-                    fullWidth
-                    name="partyB.ciIssuePlace"
-                    // value={values.partyB?.ciIssuePlace}
+                    label="Nơi cấp căn cước"
+                    value={partyB?.identificationCardIssuedPlace}
                   />
                 </Grid>
               </Grid>
@@ -481,42 +324,26 @@ const CrewContractDetail = () => {
       </SectionWrapper>
 
       {/* ================= JOB INFO ================= */}
-      <SectionWrapper sx={sectionPaperSx}>
-        <SectionDivider sectionName="Thông tin công việc" />
+      <SectionWrapper title="Thông tin công việc">
         <Grid container spacing={2}>
           <Grid size={3}>
-            <InfoTextField
-              type="date"
+            <ViewTextField
               label="Ngày bắt đầu"
-              value={contractInfo?.jobInfo?.startDate ?? ""}
-              disabled
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-              sx={disabledReadableSx}
+              value={contractInfo?.activationDate}
             />
           </Grid>
 
           <Grid size={3}>
-            <InfoTextField
-              type="date"
+            <ViewTextField
               label="Ngày kết thúc"
-              value={contractInfo?.jobInfo?.endDate ?? ""}
-              disabled
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-              sx={disabledReadableSx}
+              value={contractInfo?.expiredDate}
             />
           </Grid>
 
           <Grid size={12}>
-            <InfoTextField
+            <ViewTextField
               label="Mô tả công việc"
               value={contractInfo?.jobInfo?.jobDescription ?? ""}
-              disabled
-              fullWidth
-              multiline
-              rows={5}
-              sx={disabledReadableSx}
             />
           </Grid>
         </Grid>
@@ -531,17 +358,13 @@ const CrewContractDetail = () => {
           background:
             "linear-gradient(135deg, rgba(255,215,0,0.15), transparent)",
         }}
+        title="Thông tin lương"
       >
-        <SectionDivider sectionName="Thông tin lương" />
         <Grid container spacing={2} mt={1}>
           <Grid size={3}>
-            <InfoTextField
-              type="number"
+            <ViewTextField
               label="Lương cơ bản"
-              required
-              fullWidth
-              name="salaryInfo.basicSalary"
-              // value={values.salaryInfo?.basicSalary}
+              value={contractInfo?.basicSalary}
               slotProps={{
                 input: {
                   endAdornment: (
@@ -553,60 +376,30 @@ const CrewContractDetail = () => {
           </Grid>
 
           <Grid size={3}>
-            <InfoTextField
-              type="number"
-              label="Phụ cấp"
-              required
-              fullWidth
-              name="salaryInfo.allowance"
-              // value={values.salaryInfo?.allowance}
+            <ViewTextField label="Phụ cấp" value={contractInfo?.allowance} />
+          </Grid>
+
+          <Grid size={3}>
+            <ViewTextField
+              label="Hình thức trả lương"
+              value={contractInfo?.receiveMethod}
             />
           </Grid>
 
           <Grid size={3}>
-            <InfoTextField
-              select
-              label="Hình thức trả lương"
-              required
-              fullWidth
-              name="salaryInfo.receiveMethod"
-              // value={values.salaryInfo?.receiveMethod}
-            ></InfoTextField>
-          </Grid>
-
-          <Grid size={3}>
-            <InfoTextField
+            <ViewTextField
               label="Thời hạn trả lương"
-              required
-              fullWidth
-              name="salaryInfo.payday"
-              // value={values.salaryInfo?.payday}
+              value={contractInfo?.payday}
             />
           </Grid>
           <Grid size={4}>
-            <InfoTextField
-              id="salary-review-period"
+            <ViewTextField
               label="Thời hạn được xét nâng lương"
-              margin="none"
-              required
-              fullWidth
-              name="salaryInfo.salaryReviewPeriod"
-              // value={values.salaryInfo?.salaryReviewPeriod}
+              value={contractInfo?.salaryReviewPeriod}
             />
           </Grid>
         </Grid>
       </SectionWrapper>
-
-      {/* {isOfficialContract && ( */}
-      {/*   <Paper sx={sectionPaperSx}> */}
-      {/*     <SectionDivider sectionName="Phụ lục đính kèm" /> */}
-      {/*     <MultilineFileUploadField */}
-      {/*       label="Tải lên phụ lục" */}
-      {/*       name="addendum" */}
-      {/*       disabled */}
-      {/*     /> */}
-      {/*   </Paper> */}
-      {/* )} */}
     </Box>
   );
 };

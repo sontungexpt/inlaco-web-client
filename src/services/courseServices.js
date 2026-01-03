@@ -3,8 +3,8 @@ import CourseEndpoint from "../endpoints/CourseEndpoint";
 
 export const fetchCourses = async ({
   nonExpired = true,
-  page = 1,
-  size = 20,
+  page = 0,
+  pageSize = 20,
   sort = null,
 }) => {
   const response = await privateRequest.get(CourseEndpoint.GET_ALL_COURSES, {
@@ -12,14 +12,19 @@ export const fetchCourses = async ({
       nonExpired,
       sort,
       page,
-      size,
+      size: pageSize,
     },
   });
   return response.data;
 };
 
-export const createCourse = async (payload) => {
-  const res = await privateRequest.post(CourseEndpoint.CREATE_COURSE, payload);
+export const createCourse = async (payload, wallpaperAssetId, logoAssetId) => {
+  const res = await privateRequest.post(CourseEndpoint.CREATE_COURSE, payload, {
+    params: {
+      wallpaperAssetId,
+      logoAssetId,
+    },
+  });
   return res.data;
 };
 

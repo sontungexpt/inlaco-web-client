@@ -31,6 +31,7 @@ const BaseDataGrid = ({
       showColumnVerticalBorder
       showCellVerticalBorder
       getRowHeight={() => "auto"}
+      // pageSizeOptions={[5, 10, { value: -1, label: "All" }]}
       rows={rows}
       columns={columns}
       rowCount={stableRowCount}

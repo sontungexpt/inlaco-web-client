@@ -13,7 +13,7 @@ import { InfoTextField } from "@/components/global";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { FileUploadField } from "@/components/contract";
-import ContractTemplateType from "@/constants/ContractTemplateType";
+import ContractType from "@/constants/ContractTemplateType";
 
 const UploadTemplateDialog = ({
   open,
@@ -23,8 +23,8 @@ const UploadTemplateDialog = ({
   initialValues,
 }) => {
   const TEMPLATE_TYPES = [
-    { value: ContractTemplateType.LABOR_CONTRACT, label: "Hợp đồng lao động" },
-    { value: ContractTemplateType.SUPPLY_CONTRACT, label: "Hợp đồng cung ứng" },
+    { value: ContractType.LABOR_CONTRACT, label: "Hợp đồng lao động" },
+    { value: ContractType.SUPPLY_CONTRACT, label: "Hợp đồng cung ứng" },
   ];
 
   const initValues = {

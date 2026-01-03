@@ -1,4 +1,4 @@
-import { PageTitle } from "../../components/global";
+import { PageTitle, SectionWrapper } from "@components/common";
 import {
   Grid,
   Box,
@@ -7,7 +7,6 @@ import {
   Pagination,
   CircularProgress,
 } from "@mui/material";
-import { CourseCard } from "../../components/other";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { useNavigate } from "react-router";
 import { useState } from "react";
@@ -16,6 +15,7 @@ import { fetchCourses } from "@/services/courseServices";
 import Color from "@constants/Color";
 import { useAuthContext } from "@/contexts/AuthContext";
 import UserRole from "@/constants/UserRole";
+import CourseCard from "./components/CourseCard";
 
 const CrewCourse = () => {
   const navigate = useNavigate();
@@ -36,18 +36,22 @@ const CrewCourse = () => {
   const totalPages = data?.totalPages ?? 1;
 
   return (
-    <div>
-      <Box m="20px">
+    <Box m="20px">
+      <SectionWrapper
+        sx={{
+          backgroundColor: "background.paper",
+          borderBottom: "1px solid #e0e0e0",
+          px: 3,
+          py: 2,
+          mb: 3,
+        }}
+      >
         <PageTitle title="ĐÀO TẠO" subtitle="Danh sách các Khóa học hiện có" />
 
         {isAdmin && (
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "row",
-              width: "100%",
-              paddingBottom: 4,
-              justifyContent: "flex-end",
+              mt: 3,
             }}
           >
             <Button
@@ -87,47 +91,53 @@ const CrewCourse = () => {
             <CircularProgress size={50} thickness={4} />
           </Box>
         )}
+      </SectionWrapper>
 
-        {isError && <Typography>Lỗi khi tải dữ liệu</Typography>}
+      {isError && <Typography>Lỗi khi tải dữ liệu</Typography>}
 
-        {/* COURSE LIST */}
-        {!isLoading && (
-          <>
-            <Grid container spacing={4}>
-              {courses.map((item) => (
+      {/* COURSE LIST */}
+      {!isLoading && (
+        <>
+          <Grid container spacing={4}>
+            {courses.map((item) => (
+              <Grid item size={4}>
                 <CourseCard
                   key={item?.id}
                   name={item?.name}
                   description={item?.description}
+                  courseImagePublicId={item?.wallpaper?.publicId}
                   courseImage={item?.wallpaper?.url}
                   trainingPartner={item?.trainingProviderName}
+                  trainingPartnerLogoPublicId={
+                    item?.trainingProviderLogo?.publicId
+                  }
                   trainingPartnerLogo={item?.trainingProviderLogo}
                   limitStudent={item?.limitStudent}
-                  isCertificateCourse={item?.certified}
+                  certified={item?.certified}
                   onClick={() =>
                     navigate(`/courses/${item?.id}`, {
                       state: { isAdmin: isAdmin },
                     })
                   }
                 />
-              ))}
-            </Grid>
+              </Grid>
+            ))}
+          </Grid>
 
-            {/* PAGINATION */}
-            <Box mt={4} display="flex" justifyContent="center">
-              <Pagination
-                count={totalPages}
-                page={page + 1} // UI page = backend page + 1
-                onChange={(e, value) => setPage(value - 1)}
-                color="primary"
-                size="large"
-                shape="rounded"
-              />
-            </Box>
-          </>
-        )}
-      </Box>
-    </div>
+          {/* PAGINATION */}
+          <Box mt={4} display="flex" justifyContent="center">
+            <Pagination
+              count={totalPages}
+              page={page + 1} // UI page = backend page + 1
+              onChange={(e, value) => setPage(value - 1)}
+              color="primary"
+              size="large"
+              shape="rounded"
+            />
+          </Box>
+        </>
+      )}
+    </Box>
   );
 };
 

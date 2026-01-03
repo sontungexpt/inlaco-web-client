@@ -15,8 +15,7 @@ import {
   uploadTemplate,
 } from "@/services/contractTemplateServices";
 
-const ContractTemplate = () => {
-  const PAGE_SIZE = 8;
+const ContractTemplate = ({ PAGE_SIZE = 8 }) => {
   const [openUpload, setOpenUpload] = useState(false);
   const templateListRef = useRef(null);
   const [deletingId, setDeletingId] = useState(null);

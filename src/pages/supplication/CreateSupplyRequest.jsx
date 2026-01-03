@@ -40,6 +40,7 @@ const CreateSupplyRequest = () => {
           ...values,
           rentalStartDate: datetimeToISO(values.rentalStartDate),
           rentalEndDate: datetimeToISO(values.rentalEndDate),
+          imoNumber: values.IMONumber,
         },
         detailFileUploadRes.asset_id,
         shipImageUploadRes.asset_id,
@@ -51,17 +52,7 @@ const CreateSupplyRequest = () => {
     }
   };
 
-  const SHARED_SX = {
-    "& .MuiInputBase-input.Mui-disabled": {
-      color: Color.PrimaryBlack,
-    },
-    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-      borderColor: Color.PrimaryBlack,
-    },
-  };
-
   const initialValues = {
-    requestListFileLink: "",
     companyName: "",
     companyPhone: "",
     companyAddress: "",
@@ -73,7 +64,7 @@ const CreateSupplyRequest = () => {
     detailFile: null,
 
     shipInfo: {
-      image: "",
+      image: null,
       IMONumber: "",
       name: "",
       countryISO: "",
@@ -121,48 +112,16 @@ const CreateSupplyRequest = () => {
           return !rentalStartDate || value > rentalStartDate;
         },
       ),
-
-    detailFile: Yup.mixed()
-      .required("Vui lồng tải lên tệp chi tiết")
-      .test(
-        "fileSize",
-        "Dung lượng file tối đa 5MB",
-        (value) => value && value.size <= 5 * 1024 * 1024,
-      )
-      .test(
-        "fileType",
-        "Chỉ chấp nhận file PDF, DOC, DOCX, XLSX, XLS",
-        (value) =>
-          value &&
-          [
-            "application/pdf",
-            "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "application/vnd.ms-excel",
-          ].includes(value.type),
-      ),
+    detailFile: Yup.mixed().required("Vui lồng tải lên tệp chi tiết"),
     shipInfo: Yup.object().shape({
       name: Yup.string().required("Tên cửa tàu không được để trống"),
       IMONumber: Yup.string().required("Số IMO của tàu không được để trống"),
       type: Yup.string().required("Loại tàu không được để trống"),
       description: Yup.string(),
-      image: Yup.mixed()
-        .required("Vui lồng tải lên hình ảnh tàu")
-        .test(
-          "fileSize",
-          "Dung lượng file tối đa 5MB",
-          (value) => value && value.size <= 5 * 1024 * 1024,
-        )
-        .test(
-          "fileType",
-          "Chỉ chấp nhận file jpeg, png, jpg",
-          (value) =>
-            value &&
-            ["image/jpeg", "image/png", "image/jpg"].includes(value.type),
-        ),
+      image: Yup.mixed().required("Vui lồng tải lên hình ảnh tàu"),
     }),
   });
+
   return (
     <Formik
       validateOnChange={false}
@@ -249,7 +208,6 @@ const CreateSupplyRequest = () => {
                   helperText={touched.companyName && errors.companyName}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
               </Grid>
 
@@ -264,7 +222,6 @@ const CreateSupplyRequest = () => {
                   helperText={touched.companyAddress && errors.companyAddress}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
               </Grid>
 
@@ -279,7 +236,6 @@ const CreateSupplyRequest = () => {
                   helperText={touched.companyPhone && errors.companyPhone}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
               </Grid>
 
@@ -294,7 +250,6 @@ const CreateSupplyRequest = () => {
                   helperText={touched.companyEmail && errors.companyEmail}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
               </Grid>
 
@@ -313,7 +268,6 @@ const CreateSupplyRequest = () => {
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
               </Grid>
 
@@ -334,7 +288,6 @@ const CreateSupplyRequest = () => {
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
               </Grid>
             </Grid>
@@ -355,7 +308,6 @@ const CreateSupplyRequest = () => {
                   helperText={touched.rentalStartDate && errors.rentalStartDate}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={SHARED_SX}
                   slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
@@ -372,7 +324,6 @@ const CreateSupplyRequest = () => {
                   helperText={touched.rentalEndDate && errors.rentalEndDate}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={SHARED_SX}
                   slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
@@ -415,7 +366,6 @@ const CreateSupplyRequest = () => {
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
 
                 <InfoTextField
@@ -427,7 +377,6 @@ const CreateSupplyRequest = () => {
                   helperText={touched.shipInfo?.name && errors.shipInfo?.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
 
                 <NationalityTextField
@@ -444,7 +393,6 @@ const CreateSupplyRequest = () => {
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
 
                 <InfoTextField
@@ -456,7 +404,6 @@ const CreateSupplyRequest = () => {
                   helperText={touched.shipInfo?.type && errors.shipInfo?.type}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
                 <InfoTextField
                   label="Mô tả"
@@ -473,7 +420,6 @@ const CreateSupplyRequest = () => {
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
               </Grid>
             </Grid>

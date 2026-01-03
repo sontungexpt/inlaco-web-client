@@ -1,6 +1,13 @@
 import { privateRequest } from "@/utils/request";
 import ContractEndpoint from "@/endpoints/ContractEndpoint";
 
+export const activeContract = async (contractID) => {
+  const response = await privateRequest.post(
+    ContractEndpoint.ACTIVE(contractID),
+  );
+  return response.data;
+};
+
 export const fetchCrewContracts = async ({
   page,
   pageSize,
@@ -70,10 +77,21 @@ export const createLaborContract = async (
   return response.data;
 };
 
-export const createSupplyContract = async (supplyRequestId, contract) => {
+export const createSupplyContract = async (
+  supplyRequestId,
+  contract,
+  contractFileAssetId,
+  shipImageAssetId,
+) => {
   const response = await privateRequest.post(
     ContractEndpoint.CREATE_SUPPLY_CONTRACT(supplyRequestId),
-    contract,
+    { ...contract, type: "SUPPLY_CONTRACT" },
+    {
+      params: {
+        contractFileAssetId,
+        shipImageAssetId,
+      },
+    },
   );
   return response.data;
 };
@@ -113,17 +131,6 @@ export const editSupplyContractAPI = async (contractID, contractInfo) => {
         type: "SUPPLY_CONTRACT",
         customAttributes: contractInfo.customAttributes,
       },
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
-};
-
-export const activeContractByID_API = async (contractID) => {
-  try {
-    const response = await privateRequest.post(
-      `${ContractEndpoint.ACTIVE}/${contractID}`,
     );
     return response;
   } catch (err) {

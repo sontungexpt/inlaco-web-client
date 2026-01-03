@@ -8,7 +8,7 @@ import { isoToLocalDatetime } from "@/utils/converter";
 import Color from "@constants/Color";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import { useSupplyRequests } from "@/hooks/services/supplyRequest";
-import { PageTitle, BaseDataGrid } from "@/components/common";
+import { PageTitle, BaseDataGrid, DetailCell } from "@/components/common";
 
 const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
           IMONumber: r.shipInfo.IMONumber,
           name: r.shipInfo.name,
           countryCode: r.shipInfo.countryISO,
-          imageUrl: r.shipInfo.image?.url,
+          image: r.shipInfo.image,
           type: r.shipInfo.type,
           description: r.shipInfo.description,
         },
@@ -120,12 +120,13 @@ const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
         sortable: false,
         renderCell: ({ value: shipInfo }) => (
           <ShipInfoCell
+            imagePublicId={shipInfo?.image?.publicId}
             name={shipInfo.name}
             countryCode={shipInfo.countryCode}
             type={shipInfo.type}
             imageUrl={shipInfo.imageUrl}
             description={shipInfo.description}
-            IMONumber={shipInfo.IMONumber}
+            IMONumber={shipInfo.imoNumber}
           />
         ),
       },
@@ -136,32 +137,9 @@ const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
         align: "center",
         sortable: false,
         renderCell: (params) => (
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() => navigate(`/supply-requests/${params.id}`)}
-              sx={{
-                backgroundColor: Color.PrimaryGreen,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                color: Color.PrimaryBlack,
-                borderRadius: "6px",
-                minWidth: "36px",
-              }}
-            >
-              <ArrowForwardIosRoundedIcon sx={{ width: 16, height: 16 }} />
-            </Button>
-          </div>
+          <DetailCell
+            onClick={() => navigate(`/supply-requests/${params.id}`)}
+          />
         ),
       },
     ],

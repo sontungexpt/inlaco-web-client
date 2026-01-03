@@ -5,6 +5,7 @@ import Color from "@constants/Color";
 const InfoTextField = ({
   sx,
   disabled,
+  fullWidth = true,
   slotProps,
   multiline,
   minRow,
@@ -15,12 +16,11 @@ const InfoTextField = ({
   return (
     <TextField
       disabled={disabled}
-      rea
+      fullWidth={fullWidth}
       multiline={multiline}
       rows={rows}
       sx={[
         { backgroundColor: "#FFF", marginBottom: 1 },
-        ...(Array.isArray(sx) ? sx : [sx]),
         {
           "& .MuiInputBase-input.Mui-disabled": {
             WebkitTextFillColor: Color.PrimaryBlack,
@@ -32,6 +32,7 @@ const InfoTextField = ({
             WebkitTextFillColor: Color.PrimaryBlack,
           },
         },
+        ...(Array.isArray(sx) ? sx : [sx]),
       ]} // Merging styles with spread operator
       slotProps={{
         formHelperText: {

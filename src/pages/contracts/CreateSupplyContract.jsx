@@ -4,6 +4,8 @@ import {
   PageTitle,
   InfoTextField,
   SectionWrapper,
+  NationalityTextField,
+  ImageUploadField,
 } from "@components/common";
 import {
   Box,
@@ -22,6 +24,9 @@ import { datetimeToISO } from "@utils/converter";
 import Regex from "@/constants/Regex";
 import { yesterday } from "@/utils/date";
 import TemplateDialog from "./components/TemplateDialog";
+import cloudinaryUpload from "@/services/cloudinaryServices";
+import UploadStrategy from "@/constants/UploadStrategy";
+import toast from "react-hot-toast";
 
 const CreateSupplyContract = () => {
   const navigate = useNavigate();
@@ -31,39 +36,55 @@ const CreateSupplyContract = () => {
 
   const createContract = async (values, { resetForm }) => {
     try {
+      const [detailFileUploadRes, shipImageUploadRes] = await Promise.all([
+        cloudinaryUpload(values.contractFile, UploadStrategy.CONTRACT_FILE),
+        cloudinaryUpload(values.shipInfo.image, UploadStrategy.SHIP_IMAGE),
+      ]);
+
       //Calling API to create a new crew member
-      const response = await createSupplyContract(id, {
-        title: values.title,
-        initiator: {
-          partyName: values.partyA.compName,
-          address: values.partyA.compAddress,
-          phone: values.partyA.compPhoneNumber,
-          representer: values.partyA.representative,
-          representerPosition: values.partyA.representativePos,
-          email: "thong2046@gmail.com",
-          type: "STATIC",
-        },
-        signedPartners: [
-          {
-            partyName: values.partyB.compName,
-            address: values.partyB.compAddress,
-            phone: values.partyB.compPhoneNumber,
-            representer: values.partyB.representative,
-            representerPosition: values.partyB.representativePos,
+      const response = await createSupplyContract(
+        id,
+        {
+          title: values.title,
+          initiator: {
+            partyName: values.partyA.compName,
+            address: values.partyA.compAddress,
+            phone: values.partyA.compPhoneNumber,
+            representer: values.partyA.representative,
+            representerPosition: values.partyA.representativePos,
+            email: "thong2046@gmail.com",
             type: "STATIC",
           },
-        ],
-        activationDate: datetimeToISO(values.contractInfo.startDate),
-        expiredDate: datetimeToISO(values.contractInfo.endDate),
-        numOfCrews: values.contractInfo.numOfCrewMember,
+          signedPartners: [
+            {
+              partyName: values.partyB.compName,
+              address: values.partyB.compAddress,
+              phone: values.partyB.compPhoneNumber,
+              representer: values.partyB.representative,
+              representerPosition: values.partyB.representativePos,
+              type: "STATIC",
+            },
+          ],
+          activationDate: datetimeToISO(values.contractInfo.startDate),
+          expiredDate: datetimeToISO(values.contractInfo.endDate),
+          numOfCrews: values.contractInfo.numOfCrewMember,
 
-        shipInfo: {},
-      });
+          shipInfo: {
+            imoNumber: values.shipInfo.IMONumber,
+            name: values.shipInfo.name,
+            countryISO: values.shipInfo.countryISO,
+            type: values.shipInfo.type,
+            description: values.shipInfo.description,
+          },
+        },
+        detailFileUploadRes.asset_id,
+        shipImageUploadRes.asset_id,
+      );
 
       resetForm();
-      navigate("/supply-contracts");
+      navigate(`/supply-contracts/${response.id}`);
     } catch (err) {
-      console.log("Error when creating supply contract: ", err);
+      toast.error("Tạo hợp đồng thất bại");
     }
   };
 
@@ -88,22 +109,16 @@ const CreateSupplyContract = () => {
       startDate: "",
       endDate: "",
       numOfCrewMember: "",
-      rentalStartDate: requestInfo?.rentalStartDate,
-      rentalEndDate: requestInfo?.rentalEndDate,
-
-      shipInfo: {
-        image: "",
-        IMONumber: "",
-        name: "",
-        countryISO: "",
-        type: "",
-        description: "",
-      },
+    },
+    shipInfo: {
+      image: null,
+      IMONumber: requestInfo?.shipInfo?.IMONumber,
+      name: requestInfo?.shipInfo?.name,
+      countryISO: requestInfo?.shipInfo.countryISO,
+      type: requestInfo?.shipInfo.type,
+      description: requestInfo?.shipInfo.description,
     },
   };
-
-  const ytd = yesterday();
-  const now = new Date();
 
   const SCHEMA = Yup.object().shape({
     title: Yup.string().required("Tiêu đề không được để trống"),
@@ -133,7 +148,7 @@ const CreateSupplyContract = () => {
 
     contractInfo: Yup.object().shape({
       startDate: Yup.date()
-        .min(ytd, "Ngày bắt đầu không hợp lệ")
+        .min(new Date(), "Ngày bắt đầu không hợp lệ")
         .required("Ngày bắt đầu không được để trống")
         .test(
           "is-before-end-date",
@@ -145,6 +160,7 @@ const CreateSupplyContract = () => {
         ),
 
       endDate: Yup.date()
+        .min(new Date(), "Ngày kết thúc không hợp lệ")
         .required("Ngày kết thúc không được để trống")
         .test(
           "is-after-start-date",
@@ -158,59 +174,20 @@ const CreateSupplyContract = () => {
       numOfCrewMember: Yup.number()
         .min(1, "Tổng số nhân lực cần cung ứng không hợp lệ")
         .required("Tổng số nhân lực cần cung ứng không được để trống"),
-
-      rentalStartDate: Yup.date()
-        .min(now, "Ngày bắt đầu không hợp lệ")
-        .required("Ngày bắt đầu không được để trống")
-        .test(
-          "is-before-end-date",
-          "Ngày bắt đầu phải trước ngày kết thúc",
-          function (value) {
-            const { rentalEndDate } = this.parent; // Access sibling field endDate
-            return !rentalEndDate || value < rentalEndDate;
-          },
-        ),
-      rentalEndDate: Yup.date()
-        .min(now, "Ngày bắt đầu không hợp lệ")
-        .required("Ngày kết thúc không đượcể trống")
-        .test(
-          "is-after-start-date",
-          "Ngày kết thúc phải sau ngày bắt đầu",
-          function (value) {
-            const { rentalStartDate } = this.parent; // Access sibling field startDate
-            return !rentalStartDate || value > rentalStartDate;
-          },
-        ),
-
-      shipInfo: Yup.object().shape({
-        name: Yup.string().required("Tên tàu không được trống"),
-        type: Yup.string().required("Loại tàu không được trống"),
-      }),
-
-      contractFile: Yup.mixed()
-        .required("Vui lòng tải lên hợp đồng bản giấy")
-        .test(
-          "fileSize",
-          "Dung lượng file tối đa 5MB",
-          (value) => value && value.size <= 5 * 1024 * 1024,
-        )
-        .test(
-          "fileType",
-          "Chỉ chấp nhận file PDF, DOC hoặc DOCX",
-          (value) =>
-            value &&
-            [
-              "application/pdf",
-              "application/msword",
-              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            ].includes(value.type),
-        ),
+    }),
+    contractFile: Yup.mixed().required("Vui lòng tải lên hợp đồng bản giấy"),
+    shipInfo: Yup.object().shape({
+      name: Yup.string().required("Tên cửa tàu không được để trống"),
+      IMONumber: Yup.string().required("Số IMO của tàu không được để trống"),
+      type: Yup.string().required("Loại tàu không được để trống"),
+      description: Yup.string(),
+      image: Yup.mixed().required("Vui lồng tải lên hình ảnh tàu"),
     }),
   });
 
   return (
     <Formik
-      validateOnChange={false}
+      validateOnChange={true}
       initialValues={initialValues}
       validationSchema={SCHEMA}
       onSubmit={createContract}
@@ -264,16 +241,18 @@ const CreateSupplyContract = () => {
               >
                 {isSubmitting && (
                   <CircularProgress
-                    mr={2}
                     size={22}
-                    sx={{ color: Color.PrimaryBlack }}
+                    sx={{
+                      mr: 2,
+                      color: Color.PrimaryBlack,
+                    }}
                   />
                 )}
                 Tạo hợp đồng
               </Button>
             </Box>
           </SectionWrapper>
-          <SectionWrapper title="Tiêu đề">
+          <SectionWrapper>
             <Grid container spacing={2}>
               <Grid size={6}>
                 <InfoTextField
@@ -312,7 +291,7 @@ const CreateSupplyContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
-              <Grid size={6}>
+              <Grid size={5}>
                 <InfoTextField
                   label="Địa chỉ"
                   margin="none"
@@ -331,7 +310,7 @@ const CreateSupplyContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
-              <Grid size={2}>
+              <Grid size={3}>
                 <InfoTextField
                   label="Số điện thoại"
                   margin="none"
@@ -351,7 +330,7 @@ const CreateSupplyContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
-              <Grid size={4}>
+              <Grid item size={4}>
                 <InfoTextField
                   label="Người đại diện"
                   margin="none"
@@ -371,7 +350,7 @@ const CreateSupplyContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
-              <Grid size={3}>
+              <Grid item size={5}>
                 <InfoTextField
                   label="Chức vụ"
                   margin="none"
@@ -398,7 +377,6 @@ const CreateSupplyContract = () => {
               <Grid size={4}>
                 <InfoTextField
                   label="Tên công ty"
-                  size="small"
                   margin="none"
                   required
                   fullWidth
@@ -414,10 +392,9 @@ const CreateSupplyContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
-              <Grid size={6}>
+              <Grid size={5}>
                 <InfoTextField
                   label="Địa chỉ"
-                  size="small"
                   margin="none"
                   required
                   fullWidth
@@ -434,10 +411,9 @@ const CreateSupplyContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
-              <Grid size={2}>
+              <Grid size={3}>
                 <InfoTextField
                   label="Số điện thoại"
-                  size="small"
                   margin="none"
                   required
                   fullWidth
@@ -455,10 +431,9 @@ const CreateSupplyContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
-              <Grid size={4}>
+              <Grid item size={4}>
                 <InfoTextField
                   label="Người đại diện"
-                  size="small"
                   margin="none"
                   required
                   fullWidth
@@ -476,10 +451,9 @@ const CreateSupplyContract = () => {
                   onBlur={handleBlur}
                 />
               </Grid>
-              <Grid size={3}>
+              <Grid item size={5}>
                 <InfoTextField
                   label="Chức vụ"
-                  size="small"
                   margin="none"
                   required
                   fullWidth
@@ -492,8 +466,6 @@ const CreateSupplyContract = () => {
                   helperText={
                     touched.partyB?.representativePos &&
                     errors.partyB?.representativePos
-                      ? errors.partyB?.representativePos
-                      : " "
                   }
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -503,11 +475,10 @@ const CreateSupplyContract = () => {
           </SectionWrapper>
           <SectionWrapper title="Thông tin hợp đồng*: ">
             <Grid container spacing={2}>
-              <Grid size={3}>
+              <Grid item size={6}>
                 <InfoTextField
-                  type="date"
-                  label="Ngày bắt đầu"
-                  size="small"
+                  type="datetime-local"
+                  label="Ngày bắt đầu hợp đồng"
                   margin="none"
                   required
                   fullWidth
@@ -530,11 +501,10 @@ const CreateSupplyContract = () => {
                   }}
                 />
               </Grid>
-              <Grid size={3}>
+              <Grid item size={6}>
                 <InfoTextField
-                  type="date"
-                  label="Ngày kết thúc"
-                  size="small"
+                  type="datetime-local"
+                  label="Ngày kết thúc hợp đồng"
                   margin="none"
                   required
                   fullWidth
@@ -557,11 +527,10 @@ const CreateSupplyContract = () => {
                   }}
                 />
               </Grid>
-              <Grid size={4}>
+              <Grid size={6}>
                 <InfoTextField
                   type="number"
                   label="Tổng số nhân lực cần cung ứng"
-                  size="small"
                   margin="none"
                   required
                   fullWidth
@@ -593,6 +562,90 @@ const CreateSupplyContract = () => {
                       MozAppearance: "textfield",
                     },
                   }}
+                />
+              </Grid>
+            </Grid>
+          </SectionWrapper>
+          {/* ===== SECTION: SHIP INFO ===== */}
+          <SectionWrapper title="Thông tin tàu">
+            <Grid container spacing={3}>
+              <Grid size={6}>
+                <ImageUploadField
+                  required
+                  helperText={touched.shipInfo?.image && errors.shipInfo?.image}
+                  name="shipInfo.image"
+                />
+              </Grid>
+
+              <Grid size={6} container direction="column" rowSpacing={3}>
+                <InfoTextField
+                  label="IMO"
+                  fullWidth
+                  name="shipInfo.IMONumber"
+                  value={values.shipInfo?.IMONumber}
+                  error={
+                    !!touched.shipInfo?.IMONumber &&
+                    !!errors.shipInfo?.IMONumber
+                  }
+                  helperText={
+                    touched.shipInfo?.IMONumber && errors.shipInfo?.IMONumber
+                  }
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+
+                <InfoTextField
+                  label="Tên tàu"
+                  fullWidth
+                  name="shipInfo.name"
+                  value={values.shipInfo?.name}
+                  error={!!touched.shipInfo?.name && !!errors.shipInfo?.name}
+                  helperText={touched.shipInfo?.name && errors.shipInfo?.name}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+
+                <NationalityTextField
+                  label="Quốc tịch"
+                  fullWidth
+                  name="shipInfo.countryISO"
+                  value={values.shipInfo?.countryISO}
+                  error={
+                    !!touched.shipInfo?.countryISO &&
+                    !!errors.shipInfo?.countryISO
+                  }
+                  helperText={
+                    touched.shipInfo?.countryISO && errors.shipInfo?.countryISO
+                  }
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+
+                <InfoTextField
+                  label="Loại tàu"
+                  fullWidth
+                  name="shipInfo.type"
+                  value={values.shipInfo?.type}
+                  error={!!touched.shipInfo?.type && !!errors.shipInfo?.type}
+                  helperText={touched.shipInfo?.type && errors.shipInfo?.type}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                <InfoTextField
+                  label="Mô tả"
+                  fullWidth
+                  name="shipInfo.description"
+                  value={values.shipInfo?.description}
+                  error={
+                    !!touched.shipInfo?.description &&
+                    !!errors.shipInfo?.description
+                  }
+                  helperText={
+                    touched.shipInfo?.description &&
+                    errors.shipInfo?.description
+                  }
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                 />
               </Grid>
             </Grid>

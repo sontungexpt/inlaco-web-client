@@ -7,9 +7,9 @@ import TemplateContractCard from "./TemplateContractCard";
 export default function TemplateDialog({
   open,
   type,
+  initialData,
   onClose,
   title,
-  initialData,
   render,
   ...props
 }) {
@@ -34,11 +34,19 @@ export default function TemplateDialog({
         </IconButton>
       </Box>
 
-      <Box sx={{ p: 3 }}>
-        <Grid container spacing={3}>
-          <TemplateContractList render={render} />
-        </Grid>
-      </Box>
+      <TemplateContractList
+        p={3}
+        render={(item) => (
+          <TemplateContractCard
+            key={item.id}
+            url={item.metadata?.url}
+            title={item.name}
+            type={item.type}
+            dowloadFileName={item.name}
+            initialData={initialData}
+          />
+        )}
+      />
     </Dialog>
   );
 }

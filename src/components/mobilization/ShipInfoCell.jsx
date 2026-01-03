@@ -1,5 +1,5 @@
-import { Box, Typography, Stack, Avatar } from "@mui/material";
-import { useState } from "react";
+import { Box, Typography, Stack } from "@mui/material";
+import { CloudinaryImage } from "@components/common";
 
 const ShipInfoCell = ({
   IMONumber,
@@ -8,18 +8,16 @@ const ShipInfoCell = ({
   type,
   description,
   imageUrl,
+  imagePublicId,
   backgroundColor,
   sx = [],
 }) => {
-  const [imageError, setImageError] = useState(false);
-
   return (
     <Box
       sx={[
         {
           display: "flex",
           gap: 2,
-          py: 1,
           backgroundColor,
           minWidth: 0,
         },
@@ -27,20 +25,16 @@ const ShipInfoCell = ({
       ]}
     >
       {/* Image */}
-      <Avatar
+      <CloudinaryImage
+        publicId={imagePublicId}
+        src={imageUrl}
         variant="rounded"
-        src={
-          imageError ? require("@assets/images/no-ship-photo.png") : imageUrl
-        }
         alt="Ship"
         sx={{
           width: 150,
-          height: "100%",
           borderRadius: 2,
-          bgcolor: "grey.100",
-          flexShrink: 0,
+          border: "1px solid #0000005a",
         }}
-        onError={() => setImageError(true)}
       />
 
       {/* Info */}

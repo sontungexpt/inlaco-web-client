@@ -26,7 +26,7 @@ import { saveAs } from "file-saver";
 import JSZipUtils from "jszip-utils";
 import {
   getCrewContractByID_API,
-  activeContractByID_API,
+  activeContract,
   editSupplyContractAPI,
 } from "@/services/contractServices";
 import HttpStatusCode from "@/constants/HttpStatusCode";
@@ -245,7 +245,7 @@ const SupplyContractDetail = () => {
 
   const handleApproveContract = async () => {
     try {
-      const response = await activeContractByID_API(id);
+      const response = await activeContract(id);
       if (response.status === HttpStatusCode.OK) {
         navigate("/supply-contracts");
       }

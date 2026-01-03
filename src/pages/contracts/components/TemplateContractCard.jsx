@@ -44,41 +44,6 @@ const TemplateContractCard = ({
     setOpenPreview(false);
   };
 
-  // const handleDownload = async (e) => {
-  //   e.stopPropagation();
-  //   if (onDownload) return await onDownload(e);
-
-  //   JSZipUtils.getBinaryContent(url, (error, content) => {
-  //     if (error) {
-  //       toast.error("Không tải được file");
-  //       return;
-  //     }
-
-  //     try {
-  //       const zip = new PizZip(content);
-  //       const doc = new Docxtemplater(zip, {
-  //         paragraphLoop: true,
-  //         linebreaks: true,
-  //       });
-
-  //       const data =
-  //         typeof initialData === "function" ? initialData() : initialData;
-
-  //       doc.render(data);
-
-  //       const out = doc.getZip().generate({
-  //         type: "blob",
-  //         mimeType:
-  //           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  //       });
-
-  //       saveAs(out, dowloadFileName);
-  //     } catch (err) {
-  //       console.log(err);
-  //       toast.error("Download file thất bại");
-  //     }
-  //   });
-  // };
   const handleDownload = async (e) => {
     e.stopPropagation();
     if (onDownload) return await onDownload(e);

@@ -41,6 +41,28 @@ const formatAcceptLabel = (accept) => {
     .join(", ");
 };
 
+const formatSizeMB = (bytes) => `${Math.round(bytes / 1024 / 1024)}MB`;
+
+const isValidFileType = (file, accept) => {
+  if (!accept || accept === "*") return true;
+
+  return accept.split(",").some((rule) => {
+    rule = rule.trim().toLowerCase();
+
+    // .pdf .docx
+    if (rule.startsWith(".")) {
+      return file.name.toLowerCase().endsWith(rule);
+    }
+
+    // application/pdf
+    if (rule.includes("/")) {
+      return file.type === rule;
+    }
+
+    return false;
+  });
+};
+
 /* ---------- component ---------- */
 
 const FileUploadField = ({
@@ -48,13 +70,16 @@ const FileUploadField = ({
   id,
   label,
   accept = ".doc,.docx,.pdf",
+  maxSize = 5 * 1024 * 1024,
   helperText,
+  invalidFormatText,
+  invalidSizeText,
   required = false,
   disabled,
   sx = [],
   ...props
 }) => {
-  const { setFieldValue, setFieldTouched } = useFormikContext();
+  const { setFieldValue, setFieldTouched, setFieldError } = useFormikContext();
   const [field, meta] = useField(name);
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef(null);
@@ -62,8 +87,33 @@ const FileUploadField = ({
   const acceptLabel = useMemo(() => formatAcceptLabel(accept), [accept]);
 
   const handleFileChanged = (file) => {
-    if (!file) return;
+    if (!file || disabled) return;
+
     setFieldTouched(name, true, false);
+
+    // invalid format
+    if (!isValidFileType(file, accept)) {
+      setFieldError(
+        name,
+        invalidFormatText ||
+          `Chỉ chấp nhận file định dạng ${formatAcceptLabel(accept)}`,
+      );
+      setFieldValue(name, null, false);
+      return;
+    }
+
+    // invalid size
+    if (file.size > maxSize) {
+      setFieldError(
+        name,
+        invalidSizeText || `Dung lượng file tối đa ${formatSizeMB(maxSize)}`,
+      );
+      setFieldValue(name, null, false);
+      return;
+    }
+
+    // valid
+    setFieldError(name, undefined);
     setFieldValue(name, file, true);
   };
 
@@ -78,7 +128,7 @@ const FileUploadField = ({
     e.preventDefault();
     setDragOver(false);
     if (disabled) return;
-    handleFileChanged(e.dataTransfer.files[0]);
+    handleFileChanged(e.dataTransfer.files?.[0]);
   };
 
   const handleDelete = (e) => {

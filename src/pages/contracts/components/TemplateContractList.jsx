@@ -9,24 +9,14 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useImperativeHandle, useState } from "react";
-import TemplateContractCard from "./TemplateContractCard";
 
 const TemplateContractList = ({
   type,
-  initialData,
-  render = (item) => (
-    <TemplateContractCard
-      key={item.id}
-      url={item.metadata?.url}
-      title={item.name}
-      initialData={initialData}
-      dowloadFileName={item.name}
-      type={item.type}
-    />
-  ),
+  render,
   pageSize,
   emptyText = "Không có template nào",
   ref,
+  ...props
 }) => {
   const [page, setPage] = useState(0);
 
@@ -68,7 +58,7 @@ const TemplateContractList = ({
   }
 
   return (
-    <Box>
+    <Box {...props}>
       {/* ===== Search ===== */}
       <Box
         sx={{
@@ -80,15 +70,7 @@ const TemplateContractList = ({
           justifyContent: "space-between",
         }}
       >
-        <SearchBar
-          placeholder="Nhập thông tin template hợp đồng"
-          color={Color.PrimaryBlack}
-          backgroundColor={Color.SecondaryWhite}
-          sx={{
-            width: "420px",
-            borderRadius: 2,
-          }}
-        />
+        <SearchBar placeholder="Nhập thông tin template hợp đồng" />
       </Box>
 
       <Grid container spacing={4}>

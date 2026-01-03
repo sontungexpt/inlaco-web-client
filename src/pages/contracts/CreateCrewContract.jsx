@@ -19,7 +19,7 @@ import * as Yup from "yup";
 import { useLocation, useNavigate, useParams } from "react-router";
 import Color from "@constants/Color";
 import { createLaborContract } from "@/services/contractServices";
-import { dateStringToISOString } from "@utils/converter";
+import { datetimeToISO } from "@utils/converter";
 import Regex from "@/constants/Regex";
 import { now, yesterday } from "@/utils/date";
 import cloudinaryUpload from "@/services/cloudinaryServices";
@@ -63,11 +63,11 @@ const CreateCrewContract = () => {
               phone: values.partyB.phone,
               type: "LABOR",
               birthPlace: values.partyB.birthPlace,
-              birthDate: dateStringToISOString(values.partyB.dob),
+              birthDate: datetimeToISO(values.partyB.dob),
               nationality: values.partyB.nationality,
               temporaryAddress: values.partyB.temporaryAddr,
               identificationCardId: values.partyB.ciNumber,
-              identificationCardIssuedDate: dateStringToISOString(
+              identificationCardIssuedDate: datetimeToISO(
                 values.partyB.ciIssueDate,
               ),
               identificationCardIssuedPlace: values.partyB.ciIssuePlace,
@@ -75,8 +75,8 @@ const CreateCrewContract = () => {
               bankName: values.salaryInfo.bankName,
             },
           ],
-          activationDate: dateStringToISOString(values.jobInfo.startDate),
-          expiredDate: dateStringToISOString(values.jobInfo.endDate),
+          activationDate: datetimeToISO(values.jobInfo.startDate),
+          expiredDate: datetimeToISO(values.jobInfo.endDate),
           position: values.jobInfo.position,
           workingLocation: values.jobInfo.workingLocation,
           basicSalary: values.salaryInfo.basicSalary,
@@ -667,7 +667,7 @@ const CreateCrewContract = () => {
             <Grid container spacing={2} mt={1}>
               <Grid size={4}>
                 <InfoTextField
-                  type="date"
+                  type="datetime-local"
                   label="Ngày bắt đầu"
                   required
                   fullWidth
@@ -687,7 +687,7 @@ const CreateCrewContract = () => {
 
               <Grid size={4}>
                 <InfoTextField
-                  type="date"
+                  type="datetime-local"
                   label="Ngày kết thúc"
                   required
                   fullWidth

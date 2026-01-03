@@ -75,3 +75,16 @@ export function datetimeToISO(input) {
     return null;
   }
 }
+
+export function isoToLocaleString(
+  isoString,
+  type = "datetime",
+  locale = "vi-VN",
+) {
+  const map = {
+    date: "toDateString",
+    datetime: "toLocaleString",
+    time: "toLocaleTimeString",
+  };
+  return new Date(isoString)[map[type]](locale);
+}

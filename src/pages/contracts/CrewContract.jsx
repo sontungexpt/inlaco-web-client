@@ -4,32 +4,31 @@ import {
   PageTitle,
   SearchBar,
   InfoTextField,
+  DetailCell,
 } from "@components/common";
-import { Box, Button, MenuItem } from "@mui/material";
-import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
-import Color from "@constants/Color";
-import { useNavigate } from "react-router";
+import { Box, MenuItem } from "@mui/material";
+import { useLocation, useNavigate } from "react-router";
 import { isoToLocalDatetime } from "@utils/converter";
 import { useContracts } from "@/hooks/services/contract";
 
-const CrewContract = () => {
+const CrewContract = ({ pageSize = 10 }) => {
   const navigate = useNavigate();
-  const PAGE_SIZE = 10;
+  const { initialPage = 0 } = useLocation().state || {};
 
   const [isSignedContract, setIsSignedContract] = useState(true);
   const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: PAGE_SIZE,
+    page: initialPage || 0,
+    pageSize: pageSize,
   });
 
-  const { data, isLoading } = useContracts({
+  const {
+    data: { content: crewContracts, totalElements: totalContracts } = {},
+    isLoading,
+  } = useContracts({
     page: paginationModel.page,
-    size: paginationModel.pageSize,
+    pageSize: paginationModel.pageSize,
     signed: isSignedContract,
   });
-
-  const crewContracts = data?.content;
-  const totalContracts = data?.totalElements;
 
   const handleStatusChange = (event) => {
     setIsSignedContract(event.target.value);
@@ -82,40 +81,17 @@ const CrewContract = () => {
       align: "center",
       headerAlign: "center",
       renderCell: (params) => {
-        return (
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => onContractDetailClick(params?.id)}
-            sx={{
-              backgroundColor: Color.PrimaryGreen,
-              color: Color.PrimaryBlack,
-              fontWeight: 700,
-              textTransform: "capitalize",
-            }}
-          >
-            <ArrowForwardIosRoundedIcon
-              sx={{
-                width: 15,
-                height: 15,
-                marginTop: "4px",
-                marginBottom: "4px",
-              }}
-            />
-          </Button>
-        );
+        return <DetailCell onClick={() => onContractDetailClick(params?.id)} />;
       },
     },
   ];
 
   return (
     <Box m="20px">
-      <Box>
-        <PageTitle
-          title="HỢP ĐỒNG THUYỀN VIÊN"
-          subtitle="Danh sách các hợp đồng của Thuyền viên"
-        />
-      </Box>
+      <PageTitle
+        title="HỢP ĐỒNG THUYỀN VIÊN"
+        subtitle="Danh sách các hợp đồng của Thuyền viên"
+      />
       <Box mt="40px" maxWidth={1600}>
         <Box
           sx={{
