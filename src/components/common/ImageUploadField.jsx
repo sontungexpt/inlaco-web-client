@@ -10,15 +10,17 @@ import { useField, useFormikContext } from "formik";
 import { styled } from "@mui/system";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import { useRef, useMemo, useEffect } from "react";
+import { useRef, useMemo, useEffect, useState } from "react";
 
-/* ---------- styled ---------- */
+/* ======================================================
+ * Styled
+ * ====================================================== */
 
 const Input = styled("input")({
   display: "none",
 });
 
-const Overlay = styled(Box)(({ theme }) => ({
+const Overlay = styled(Box)({
   position: "absolute",
   inset: 0,
   display: "flex",
@@ -33,132 +35,169 @@ const Overlay = styled(Box)(({ theme }) => ({
     opacity: 1,
     pointerEvents: "auto",
   },
-}));
+});
 
-/* ---------- helpers ---------- */
+/* ======================================================
+ * Helpers
+ * ====================================================== */
+
+const normalizeToArray = (value) => {
+  if (!value) return [];
+  return Array.isArray(value) ? value : [value];
+};
+
+const normalizeImage = (item) => {
+  if (item instanceof File) {
+    return {
+      file: item,
+      name: item.name,
+      size: item.size,
+      type: item.type,
+      url: URL.createObjectURL(item),
+    };
+  }
+
+  if (typeof item === "string") {
+    return { url: item };
+  }
+
+  return item; // { url, publicId, ... }
+};
 
 const isValidFileType = (file, accept) => {
   if (!accept || accept === "*") return true;
-
   return accept.split(",").some((rule) => {
     rule = rule.trim().toLowerCase();
-
-    // image/*
     if (rule.endsWith("/*")) {
       return file.type.startsWith(rule.replace("/*", ""));
     }
-
-    // .png .jpg
     if (rule.startsWith(".")) {
       return file.name.toLowerCase().endsWith(rule);
     }
-
-    // image/png
     return file.type === rule;
   });
 };
 
-/* ---------- component ---------- */
+const formatSizeMB = (bytes) => `${Math.round(bytes / 1024 / 1024)}MB`;
 
-const formatAcceptText = (accept) => {
-  if (!accept || accept === "*") return "mọi định dạng";
-  return accept
-    .split(",")
-    .map((t) => t.replace("image/", "").replace(".", "").toUpperCase())
-    .join(", ");
-};
-
-const formatFileSizeMB = (bytes) => `${Math.round(bytes / 1024 / 1024)}MB`;
-
-const defaultInvalidFormatText = (accept) =>
-  `Chỉ chấp nhận file định dạng ${formatAcceptText(accept)}`;
-
-const defaultInvalidSizeText = (maxSize) =>
-  `Dung lượng file tối đa ${formatFileSizeMB(maxSize)}`;
+/* ======================================================
+ * Component
+ * ====================================================== */
 
 const ImageUploadField = ({
   name,
   label,
   required = false,
-  borderRadius,
-  maxSize = 5 * 1024 * 1024,
-  helperText,
   disabled,
+  multiple = false,
+  maxSize = 5 * 1024 * 1024,
+  accept = "image/*",
+  helperText,
+  error,
+  invalidFormatText,
+  invalidSizeText,
   variant = "rect",
   size,
   width,
   height,
-  accept = "image/*",
-  invalidFormatText = `Chỉ chấp nhận file có định dạng ${accept}`,
-  invalidSizeText = `Chỉ chấp nhận file có kích thước nhỏ hơn ${maxSize}`,
-  sx = [],
+  borderRadius = 2,
   placeholderImage,
-  ...props
+  sx = [],
 }) => {
   const isCircle = variant === "circle";
-
   const resolvedWidth = isCircle ? size : width;
   const resolvedHeight = isCircle ? size : height;
+  const resolvedRadius = isCircle ? "50%" : borderRadius;
 
-  const resolvedRadius = isCircle ? "50%" : borderRadius || 2;
   const inputRef = useRef(null);
   const { setFieldValue, setFieldTouched, setFieldError } = useFormikContext();
   const [field, meta] = useField(name);
+  const showFormikError = meta.touched && Boolean(meta.error);
+  const finalError = typeof error === "boolean" ? error : showFormikError;
+  const finalHelperText = helperText !== undefined ? helperText : meta.error;
 
-  const previewUrl = useMemo(() => {
-    if (!field.value) return null;
-    else if (typeof field.value === "string") return field.value;
-    else if (field.value instanceof File)
-      return URL.createObjectURL(field.value);
-  }, [field.value]);
+  const images = useMemo(
+    () => normalizeToArray(field.value).map(normalizeImage),
+    [field.value],
+  );
 
+  /* cleanup blob urls */
   useEffect(() => {
     return () => {
-      if (previewUrl?.startsWith("blob:")) {
-        URL.revokeObjectURL(previewUrl);
-      }
+      images.forEach((img) => {
+        if (img?.url?.startsWith("blob:")) {
+          URL.revokeObjectURL(img.url);
+        }
+      });
     };
-  }, [previewUrl]);
+  }, [images]);
 
-  const showError = meta.touched && meta.error;
+  /* ================= handlers ================= */
 
-  const handleOpenDialog = () => {
-    if (disabled) return;
-    setFieldTouched(name, true, false);
-    inputRef.current?.click();
+  const openDialog = () => {
+    if (!disabled) {
+      setFieldTouched(name, true, false);
+      inputRef.current?.click();
+    }
   };
 
   const handleChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
 
     setFieldTouched(name, true, false);
-
-    if (!isValidFileType(file, accept)) {
-      setFieldError(
-        name,
-        invalidFormatText || defaultInvalidFormatText(accept),
-      );
-      setFieldValue(name, null, false);
-      return;
-    }
-
-    if (file.size > maxSize) {
-      setFieldError(name, invalidSizeText || defaultInvalidSizeText(maxSize));
-      setFieldValue(name, null, false);
-      return;
-    }
-
-    // clear error nếu trước đó có lỗi
     setFieldError(name, undefined);
-    setFieldValue(name, file, true);
+
+    const valid = [];
+
+    for (const file of files) {
+      if (!isValidFileType(file, accept)) {
+        setFieldError(
+          name,
+          invalidFormatText || `${file.name} không đúng định dạng`,
+        );
+        continue;
+      }
+
+      if (file.size > maxSize) {
+        setFieldError(
+          name,
+          invalidSizeText || `${file.name} vượt quá ${formatSizeMB(maxSize)}`,
+        );
+        continue;
+      }
+
+      valid.push({
+        file,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        url: URL.createObjectURL(file),
+      });
+    }
+
+    if (!valid.length) return;
+
+    const nextValue = multiple ? [...images, ...valid] : valid[0];
+
+    setFieldValue(name, nextValue, true);
+    e.target.value = "";
   };
 
-  const handleDelete = (e) => {
-    e.stopPropagation();
+  const handleRemove = (index) => {
     setFieldTouched(name, true, false);
-    setFieldValue(name, null, true);
+
+    if (!multiple) {
+      setFieldValue(name, null, true);
+      return;
+    }
+
+    const next = [...images];
+    next.splice(index, 1);
+    setFieldValue(name, next.length ? next : null, true);
   };
+
+  /* ================= render ================= */
 
   return (
     <Box
@@ -166,17 +205,14 @@ const ImageUploadField = ({
         {
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
-          borderRadius: borderRadius,
           width: resolvedWidth,
-          height: resolvedHeight,
+          gap: 0.5,
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
     >
-      {/* Label */}
       {label && (
-        <Typography fontSize={14}>
+        <Typography fontSize={14} fontWeight={600}>
           {label}
           {required && (
             <Box component="span" color="error.main" ml={0.5}>
@@ -186,75 +222,73 @@ const ImageUploadField = ({
         </Typography>
       )}
 
-      <Card
-        onClick={handleOpenDialog}
-        sx={{
-          flex: 1,
-          position: "relative",
-          overflow: "hidden",
-          cursor: disabled ? "default" : "pointer",
-          border: "2px solid",
-          borderColor: showError ? "error.main" : "divider",
-          borderRadius: resolvedRadius,
-          width: "100%",
-          height: "100%",
-        }}
-      >
-        <Input
-          ref={inputRef}
-          type="file"
-          accept={accept}
-          disabled={disabled}
-          borderRadius={borderRadius}
-          onChange={(e, ...props) => {
-            handleChange(e, ...props);
-            e.target.value = "";
-          }}
-          {...props}
-        />
+      <Input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        multiple={multiple}
+        disabled={disabled}
+        onChange={handleChange}
+      />
 
-        <CardMedia
-          component="img"
-          image={
-            previewUrl ||
-            placeholderImage ||
-            require("@assets/images/no-ship-photo.png")
-          }
-          alt="Preview"
-          sx={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            borderRadius: resolvedRadius,
-          }}
-        />
+      <Box display="flex" gap={1} flexWrap="wrap">
+        {(images.length ? images : [{}]).map((img, idx) => (
+          <Card
+            key={img.publicId || img.url || idx}
+            onClick={openDialog}
+            sx={{
+              position: "relative",
+              overflow: "hidden",
+              cursor: disabled ? "default" : "pointer",
+              border: "2px solid",
+              borderColor: finalError ? "error.main" : "divider",
+              borderRadius: resolvedRadius,
+              width: resolvedWidth,
+              height: resolvedHeight,
+            }}
+          >
+            <CardMedia
+              component="img"
+              image={
+                img.url ||
+                placeholderImage ||
+                require("@assets/images/no-ship-photo.png")
+              }
+              sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
 
-        {!disabled && (
-          <Overlay>
-            <Fade in>
-              <Box display="flex" gap={1}>
-                <IconButton color="primary">
-                  <AddCircleRoundedIcon sx={{ fontSize: 36 }} />
-                </IconButton>
+            {!disabled && (
+              <Overlay>
+                <Fade in>
+                  <Box display="flex" gap={1}>
+                    <IconButton color="primary">
+                      <AddCircleRoundedIcon />
+                    </IconButton>
+                    {img.url && (
+                      <IconButton
+                        color="error"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemove(idx);
+                        }}
+                      >
+                        <DeleteForeverRoundedIcon />
+                      </IconButton>
+                    )}
+                  </Box>
+                </Fade>
+              </Overlay>
+            )}
+          </Card>
+        ))}
+      </Box>
 
-                {field.value && (
-                  <IconButton color="error" onClick={handleDelete}>
-                    <DeleteForeverRoundedIcon />
-                  </IconButton>
-                )}
-              </Box>
-            </Fade>
-          </Overlay>
-        )}
-      </Card>
-
-      {/* Helper / Error */}
-      {(helperText || showError) && (
+      {finalError && (
         <Typography
           variant="caption"
-          color={showError ? "error" : "text.secondary"}
+          color={finalError ? "error" : "text.secondary"}
         >
-          {showError ? meta.error : helperText}
+          {finalHelperText}
         </Typography>
       )}
     </Box>

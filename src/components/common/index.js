@@ -2,10 +2,13 @@ export * from "../global";
 export { default as PageTitle } from "./PageTitle";
 export { default as StatusLabel } from "./StatusLabel";
 export { default as NoValuesOverlay } from "./NoValuesOverlay";
-export { default as ConfirmDialog } from "./ConfirmDialog";
+
 export { default as SearchBar } from "./SearchBar";
 export { default as DetailCell } from "./DetailCell";
 export { default as PageCircularProgress } from "./PageCircularProgress";
+
+export { default as ConfirmDialog } from "./ConfirmDialog";
+export { default as ConfirmButton } from "./ConfirmButton";
 
 export { default as BaseDataGrid } from "./BaseDataGrid";
 export { default as BaseTabBar } from "./BaseTabBar";

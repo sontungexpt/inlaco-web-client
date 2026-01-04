@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import {
   SectionWrapper,
   PageTitle,
-  SectionDivider,
   InfoTextField,
   ViewTextField,
+  ConfirmDialog,
+  ConfirmButton,
 } from "@components/common";
 import {
   Box,
@@ -22,14 +23,8 @@ import Color from "@constants/Color";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
 import { useNavigate, useParams, useLocation } from "react-router";
-import PizZip from "pizzip";
-import Docxtemplater from "docxtemplater";
-import { saveAs } from "file-saver";
-import JSZipUtils from "jszip-utils";
-import { formatDateString } from "@utils/converter";
 import { useContract } from "@/hooks/services/contract";
-import { HandshakeRounded } from "@mui/icons-material";
-import { activeContract as activeContract } from "@/services/contractServices";
+import { activeContract } from "@/services/contractServices";
 import toast from "react-hot-toast";
 
 /* ==== FORCE DOWNLOAD ==== */
@@ -200,16 +195,15 @@ const CrewContractDetail = () => {
             >
               {isFrozen ? `Thêm Phụ lục` : "Chỉnh sửa hợp đồng"}
             </Button>
-            <Button
+
+            <ConfirmButton
               variant="contained"
-              sx={{
-                color: Color.PrimaryWhite,
-                backgroundColor: Color.PrimaryGreen,
-              }}
-              onClick={approveContract}
+              confirmTitle="Xác nhận kí kết hợp đồng"
+              confirmDescription="Hợp đồng sẽ bị đóng băng và không thể chỉnh sửa trực tiếp"
+              onConfirm={approveContract}
             >
               Xác nhận ký kết
-            </Button>
+            </ConfirmButton>
           </Box>
         </Box>
       </SectionWrapper>

@@ -26,14 +26,19 @@ const CrewCourse = () => {
   const [page, setPage] = useState(0);
   const size = 12;
 
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data: {
+      content: courses = [],
+      totalElements: totalCourses,
+      totalPages,
+    } = {},
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["courses", page, size],
     queryFn: () => fetchCourses({ page, size }),
     staleTime: 1000 * 30,
   });
-
-  const courses = data?.content ?? [];
-  const totalPages = data?.totalPages ?? 1;
 
   return (
     <Box m="20px">
@@ -93,8 +98,6 @@ const CrewCourse = () => {
         )}
       </SectionWrapper>
 
-      {isError && <Typography>Lỗi khi tải dữ liệu</Typography>}
-
       {/* COURSE LIST */}
       {!isLoading && (
         <>
@@ -126,14 +129,20 @@ const CrewCourse = () => {
 
           {/* PAGINATION */}
           <Box mt={4} display="flex" justifyContent="center">
-            <Pagination
-              count={totalPages}
-              page={page + 1} // UI page = backend page + 1
-              onChange={(e, value) => setPage(value - 1)}
-              color="primary"
-              size="large"
-              shape="rounded"
-            />
+            {totalCourses > 0 ? (
+              <Pagination
+                count={totalPages}
+                page={page + 1} // UI page = backend page + 1
+                onChange={(e, value) => setPage(value - 1)}
+                color="primary"
+                size="large"
+                shape="rounded"
+              />
+            ) : (
+              <Typography>
+                {isError ? "Lỗi khi tải khoá học" : "Chưa có khoá học nào"}
+              </Typography>
+            )}
           </Box>
         </>
       )}

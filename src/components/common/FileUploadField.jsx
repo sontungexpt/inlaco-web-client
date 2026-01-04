@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Typography,
-  IconButton,
-  Paper,
-  Fade,
-} from "@mui/material";
+import { Box, Typography, IconButton, Paper, Fade, Link } from "@mui/material";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
@@ -13,17 +6,43 @@ import PictureAsPdfRoundedIcon from "@mui/icons-material/PictureAsPdfRounded";
 import TableChartRoundedIcon from "@mui/icons-material/TableChartRounded";
 import { useField, useFormikContext } from "formik";
 import Color from "@constants/Color";
-import { useState, useMemo, useRef } from "react";
-import toast from "react-hot-toast";
+import { useMemo, useRef, useState } from "react";
 
-/* ---------- helpers ---------- */
+/* ======================================================
+ * Helpers
+ * ====================================================== */
 
-const getFileIcon = (fileName) => {
-  if (!fileName) return <DescriptionRoundedIcon />;
-  if (fileName.endsWith(".pdf")) return <PictureAsPdfRoundedIcon />;
-  if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx"))
-    return <TableChartRoundedIcon />;
-  return <DescriptionRoundedIcon />;
+const FILE_ICON_MAP = [
+  {
+    match: [".pdf"],
+    icon: PictureAsPdfRoundedIcon,
+    color: "#E53935",
+  },
+  {
+    match: [".xls", ".xlsx"],
+    icon: TableChartRoundedIcon,
+    color: "#2E7D32",
+  },
+  {
+    match: [".doc", ".docx"],
+    icon: DescriptionRoundedIcon,
+    color: "#1565C0",
+  },
+];
+
+const getFileIcon = (fileName = "") => {
+  const name = fileName.toLowerCase();
+
+  const found = FILE_ICON_MAP.find((f) =>
+    f.match.some((ext) => name.endsWith(ext)),
+  );
+
+  if (!found) {
+    return <DescriptionRoundedIcon sx={{ color: "text.secondary" }} />;
+  }
+
+  const Icon = found.icon;
+  return <Icon sx={{ color: found.color }} />;
 };
 
 const formatSize = (bytes) => {
@@ -33,37 +52,59 @@ const formatSize = (bytes) => {
     : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-const formatAcceptLabel = (accept) => {
-  if (!accept) return "";
-  return accept
+const formatAcceptLabel = (accept = "") =>
+  accept
     .split(",")
     .map((t) => t.replace(".", "").toUpperCase())
     .join(", ");
-};
 
 const formatSizeMB = (bytes) => `${Math.round(bytes / 1024 / 1024)}MB`;
 
 const isValidFileType = (file, accept) => {
   if (!accept || accept === "*") return true;
-
   return accept.split(",").some((rule) => {
     rule = rule.trim().toLowerCase();
-
-    // .pdf .docx
-    if (rule.startsWith(".")) {
-      return file.name.toLowerCase().endsWith(rule);
-    }
-
-    // application/pdf
-    if (rule.includes("/")) {
-      return file.type === rule;
-    }
-
+    if (rule.startsWith(".")) return file.name.toLowerCase().endsWith(rule);
+    if (rule.includes("/")) return file.type === rule;
     return false;
   });
 };
 
-/* ---------- component ---------- */
+/* ======================================================
+ * Normalize (KHÔNG PHÁ API)
+ * ====================================================== */
+
+const normalizeValueToArray = (value) => {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  return [value];
+};
+
+const normalizeFile = (item) => {
+  // File từ input
+  if (item instanceof File) {
+    return {
+      name: item.name,
+      size: item.size,
+      type: item.type,
+      file: item,
+    };
+  }
+
+  // File từ initialValues (server)
+  return {
+    name: item.name,
+    size: item.size,
+    type: item.type,
+    file: item.file,
+    publicId: item.publicId,
+    url: item.url,
+  };
+};
+
+/* ======================================================
+ * Component
+ * ====================================================== */
 
 const FileUploadField = ({
   name,
@@ -71,85 +112,110 @@ const FileUploadField = ({
   label,
   accept = ".doc,.docx,.pdf",
   maxSize = 5 * 1024 * 1024,
+
+  error = false,
   helperText,
+
   invalidFormatText,
   invalidSizeText,
   required = false,
   disabled,
+  multiple = false,
   sx = [],
   ...props
 }) => {
   const { setFieldValue, setFieldTouched, setFieldError } = useFormikContext();
   const [field, meta] = useField(name);
-  const [dragOver, setDragOver] = useState(false);
+  const showFormikError = meta.touched && Boolean(meta.error);
+  const finalError = typeof error === "boolean" ? error : showFormikError;
+  const finalHelperText = helperText !== undefined ? helperText : meta.error;
+
   const inputRef = useRef(null);
+  const [dragOver, setDragOver] = useState(false);
+
+  const files = useMemo(
+    () => normalizeValueToArray(field.value).map(normalizeFile),
+    [field.value],
+  );
 
   const acceptLabel = useMemo(() => formatAcceptLabel(accept), [accept]);
 
-  const handleFileChanged = (file) => {
-    if (!file || disabled) return;
+  /* ---------------- handlers ---------------- */
+
+  const handleFilesAdded = (fileList) => {
+    if (!fileList || disabled) return;
 
     setFieldTouched(name, true, false);
-
-    // invalid format
-    if (!isValidFileType(file, accept)) {
-      setFieldError(
-        name,
-        invalidFormatText ||
-          `Chỉ chấp nhận file định dạng ${formatAcceptLabel(accept)}`,
-      );
-      setFieldValue(name, null, false);
-      return;
-    }
-
-    // invalid size
-    if (file.size > maxSize) {
-      setFieldError(
-        name,
-        invalidSizeText || `Dung lượng file tối đa ${formatSizeMB(maxSize)}`,
-      );
-      setFieldValue(name, null, false);
-      return;
-    }
-
-    // valid
     setFieldError(name, undefined);
-    setFieldValue(name, file, true);
+
+    const incoming = Array.from(fileList);
+    const validFiles = [];
+
+    for (const file of incoming) {
+      if (!isValidFileType(file, accept)) {
+        setFieldError(
+          name,
+
+          typeof invalidFormatText == "function"
+            ? invalidFormatText(file)
+            : invalidFormatText ||
+                `${file.name} không hợp lệ. Chỉ chấp nhận ${acceptLabel}`,
+        );
+        continue;
+      }
+
+      if (file.size > maxSize) {
+        setFieldError(
+          name,
+          typeof invalidSizeText == "function"
+            ? invalidSizeText(file)
+            : invalidSizeText ||
+                `Dung lượng ${file.name} tối đa ${formatSizeMB(maxSize)}`,
+        );
+        continue;
+      }
+
+      validFiles.push({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        file,
+      });
+    }
+
+    if (!validFiles.length) return;
+
+    const nextValue = multiple ? [...files, ...validFiles] : validFiles[0];
+    setFieldValue(name, nextValue, true);
   };
 
-  const handleFileDialogOpened = () => {
-    if (disabled) return;
+  const handleRemove = (index) => {
     setFieldTouched(name, true, false);
-    setFieldValue(name, field.value ?? null, true);
-    inputRef.current?.click();
+
+    if (!multiple) {
+      setFieldValue(name, null, true);
+      return;
+    }
+
+    const next = [...files];
+    next.splice(index, 1);
+    setFieldValue(name, next.length ? next : null, true);
   };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setDragOver(false);
-    if (disabled) return;
-    handleFileChanged(e.dataTransfer.files?.[0]);
+  const openFileDialog = () => {
+    if (!disabled) inputRef.current?.click();
   };
 
-  const handleDelete = (e) => {
-    e.stopPropagation();
-    setFieldTouched(name, true, false);
-    setFieldValue(name, null, true);
-  };
+  /* ---------------- render ---------------- */
 
   return (
     <Box
       {...props}
       sx={[
-        {
-          display: "flex",
-          flexDirection: "column",
-          gap: 0.75,
-        },
+        { display: "flex", flexDirection: "column", gap: 0.75 },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
     >
-      {/* Label */}
       {label && (
         <Typography fontSize={14} fontWeight={600}>
           {label}
@@ -167,13 +233,14 @@ const FileUploadField = ({
         ref={inputRef}
         type="file"
         accept={accept}
+        multiple={multiple}
         disabled={disabled}
         onChange={(e) => {
-          handleFileChanged(e.target.files[0]);
+          handleFilesAdded(e.target.files);
           e.target.value = "";
         }}
       />
-      {/* Upload box */}
+
       <Paper
         elevation={0}
         onDragOver={(e) => {
@@ -181,7 +248,11 @@ const FileUploadField = ({
           setDragOver(true);
         }}
         onDragLeave={() => setDragOver(false)}
-        onDrop={handleDrop}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragOver(false);
+          handleFilesAdded(e.dataTransfer.files);
+        }}
         sx={{
           borderRadius: 2.5,
           border: "2px dashed",
@@ -196,89 +267,62 @@ const FileUploadField = ({
             : disabled
               ? "action.disabledBackground"
               : "background.paper",
-          transition: "all 0.25s ease",
         }}
+        onClick={openFileDialog}
       >
-        {!field.value ? (
-          <Box p={2} textAlign="center">
-            <UploadFileRoundedIcon
-              sx={{ fontSize: 36, color: "primary.main", mb: 1 }}
-            />
-            <Typography fontWeight={500}>Kéo & thả file vào đây</Typography>
-            <Typography variant="caption" color="text.secondary">
-              hoặc
-            </Typography>
-            <Box mt={1}>
-              <Button
-                size="small"
-                variant="contained"
-                disabled={disabled}
-                onClick={handleFileDialogOpened}
-              >
-                Chọn file
-              </Button>
-            </Box>
-            {(acceptLabel || helperText) && (
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                display="block"
-                mt={1}
-              >
-                {acceptLabel}
-                {acceptLabel && helperText ? " • " : ""}
-                {helperText}
-              </Typography>
-            )}
-          </Box>
-        ) : (
-          <Fade in>
-            <Box
-              p={2}
-              onClick={handleFileDialogOpened}
-              display="flex"
-              alignItems="center"
-              gap={1.5}
-              sx={{
-                cursor: "pointer",
-                "&:hover": {
-                  backgroundColor: "action.hover",
-                },
-              }}
-            >
-              <Box color="primary.main">{getFileIcon(field.value.name)}</Box>
+        <Box p={2} textAlign="center">
+          <UploadFileRoundedIcon
+            sx={{ fontSize: 36, color: "primary.main", mb: 1 }}
+          />
+          <Typography fontWeight={500}>Kéo & thả file</Typography>
+          <Typography variant="caption" color="text.secondary">
+            hoặc click để chọn
+          </Typography>
+        </Box>
+      </Paper>
 
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography fontSize={14} noWrap>
-                  {field.value.name}
+      {/* File list */}
+      {files.map((item, idx) => (
+        <Fade in key={item.publicId || `${item.name}-${idx}`}>
+          <Paper variant="outlined" sx={{ p: 1.5, borderRadius: 2 }}>
+            <Box display="flex" alignItems="center" gap={1.5}>
+              {getFileIcon(item.name)}
+
+              <Box flex={1} minWidth={0}>
+                <Typography noWrap fontSize={14}>
+                  {item.url ? (
+                    <Link href={item.url} target="_blank" underline="hover">
+                      {item.name}
+                    </Link>
+                  ) : (
+                    item.name
+                  )}
                 </Typography>
+
                 <Typography variant="caption" color="text.secondary">
-                  {formatSize(field.value.size)}
+                  {item.size ? formatSize(item.size) : "Đã upload"}
                 </Typography>
               </Box>
 
               {!disabled && (
                 <IconButton
-                  onClick={handleDelete}
-                  sx={{
-                    color: Color.PrimaryOrgange,
-                    "&:hover": {
-                      backgroundColor: "rgba(255,152,0,0.12)",
-                    },
-                  }}
+                  onClick={() => handleRemove(idx)}
+                  sx={{ color: Color.PrimaryOrgange }}
                 >
                   <DeleteForeverRoundedIcon />
                 </IconButton>
               )}
             </Box>
-          </Fade>
-        )}
-      </Paper>
+          </Paper>
+        </Fade>
+      ))}
 
-      {/* Error */}
-      {meta.touched && meta.error && (
-        <Typography variant="caption" color="error">
-          {meta.error}
+      {finalError && (
+        <Typography
+          variant="caption"
+          color={finalError ? "error" : "text.secondary"}
+        >
+          {finalHelperText}
         </Typography>
       )}
     </Box>
