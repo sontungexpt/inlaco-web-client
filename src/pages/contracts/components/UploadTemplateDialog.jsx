@@ -9,10 +9,9 @@ import {
   MenuItem,
 } from "@mui/material";
 import Color from "@constants/Color";
-import { InfoTextField } from "@/components/global";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { FileUploadField } from "@/components/contract";
+import { InfoTextField, FileUploadFieldFormik } from "@/components/common";
 import ContractType from "@/constants/ContractTemplateType";
 
 const UploadTemplateDialog = ({
@@ -136,7 +135,7 @@ const UploadTemplateDialog = ({
                 />
 
                 {/* File input */}
-                <FileUploadField
+                <FileUploadFieldFormik
                   required
                   id="file"
                   name="file"

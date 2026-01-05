@@ -135,7 +135,7 @@ export function dateTimeStringToISOString(dateTimeString) {
   }
 }
 
-export function isoStringToMUIDateTime(isoString) {
+export function isoToMUIDateTime(isoString, showTime = true) {
   try {
     const date = new Date(isoString);
 
@@ -148,6 +148,11 @@ export function isoStringToMUIDateTime(isoString) {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
 
+    if (!showTime) {
+      // Return in MUI date format
+      return `${year}-${month}-${day}`;
+    }
+
     // Extract time components
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
@@ -155,8 +160,7 @@ export function isoStringToMUIDateTime(isoString) {
     // Return in MUI datetime format
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   } catch (error) {
-    console.error("Error converting ISOString to MUI datetime:", error);
-    return null;
+    return "";
   }
 }
 

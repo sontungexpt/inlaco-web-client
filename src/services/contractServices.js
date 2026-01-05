@@ -1,5 +1,6 @@
 import { privateRequest } from "@/utils/request";
 import ContractEndpoint from "@/endpoints/ContractEndpoint";
+import ContractType from "@/constants/ContractTemplateType";
 
 export const activeContract = async (contractID) => {
   const response = await privateRequest.post(
@@ -96,25 +97,25 @@ export const createSupplyContract = async (
   return response.data;
 };
 
-export const editCrewContractAPI = async (contractID, contractInfo) => {
-  try {
-    const response = await privateRequest.patch(
-      `${ContractEndpoint.GENERAL}/${contractID}`,
-      {
-        title: contractInfo.title,
-        initiator: contractInfo.initiator,
-        signedPartners: contractInfo.signedPartners,
-        terms: ["Terms 1"],
-        activationDate: contractInfo.activationDate,
-        expiredDate: contractInfo.expiredDate,
-        type: "LABOR_CONTRACT",
-        customAttributes: contractInfo.customAttributes,
+export const editContract = async (
+  id,
+  newDatas,
+  type = ContractType.LABOR_CONTRACT,
+  newVersion,
+) => {
+  const response = await privateRequest.patch(
+    ContractEndpoint.UPDATE_CONTRACT(id),
+    {
+      ...newDatas,
+      type: type,
+    },
+    {
+      params: {
+        newVersion: !!newVersion,
       },
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
+    },
+  );
+  return response.data;
 };
 
 export const editSupplyContractAPI = async (contractID, contractInfo) => {

@@ -94,8 +94,18 @@ const SupplyRequestDetail = () => {
       label: "Đã kí hợp đồng",
       color: Color.PrimaryBlackPlaceHolder,
     },
+    SIGNING: {
+      label: "Đang đợi kí hợp đông",
+      color: Color.PrimaryBlue,
+    },
+    DONE: {
+      label: "Hợp đồng kết thúc",
+      color: Color.Success,
+    },
   };
+
   const status = requestInfo?.status;
+  console.log(status);
 
   return (
     <Box sx={{ m: 3 }}>
@@ -112,63 +122,62 @@ const SupplyRequestDetail = () => {
           />
 
           <StatusLabel
-            label={STATUS_MAP[status].label || "Lỗi"}
+            label={STATUS_MAP[status]?.label || "Lỗi"}
             color={STATUS_MAP[status]?.color}
           />
         </Box>
 
         {/* ===== ACTIONS ===== */}
-        {status === "PENDING" ||
-          (status === "APPROVED" && (
-            <Box mt={4} display="flex" gap={2}>
-              {status === "PENDING" && (
-                <>
-                  <Button
-                    variant="contained"
-                    onClick={approveRequest}
-                    disabled={buttonLoading}
-                    sx={{ minWidth: 150, backgroundColor: Color.PrimaryBlue }}
-                  >
-                    {buttonLoading ? (
-                      <CircularProgress size={20} />
-                    ) : (
-                      <>
-                        <CheckCircleRoundedIcon sx={{ mr: 1 }} />
-                        Chấp thuận
-                      </>
-                    )}
-                  </Button>
-
-                  <Button
-                    variant="contained"
-                    onClick={declineRequest}
-                    disabled={buttonLoading}
-                    sx={{
-                      minWidth: 150,
-                      backgroundColor: Color.PrimaryOrgange,
-                    }}
-                  >
-                    <CancelRoundedIcon sx={{ mr: 1 }} />
-                    Từ chối
-                  </Button>
-                </>
-              )}
-              {status === "APPROVED" && (
+        {(status === "PENDING" || status === "APPROVED") && (
+          <Box mt={4} display="flex" gap={2}>
+            {status === "PENDING" && (
+              <>
                 <Button
                   variant="contained"
-                  sx={{
-                    minWidth: 180,
-                    backgroundColor: Color.PrimaryGold,
-                    color: Color.PrimaryBlack,
-                  }}
-                  onClick={createContract}
+                  onClick={approveRequest}
+                  startIcon={
+                    buttonLoading ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                      <CheckCircleRoundedIcon sx={{ mr: 1 }} />
+                    )
+                  }
+                  disabled={buttonLoading}
+                  sx={{ minWidth: 150, backgroundColor: Color.PrimaryBlue }}
                 >
-                  <NoteAddRoundedIcon sx={{ mr: 1 }} />
-                  Tạo hợp đồng
+                  Chấp thuận
                 </Button>
-              )}
-            </Box>
-          ))}
+
+                <Button
+                  variant="contained"
+                  onClick={declineRequest}
+                  disabled={buttonLoading}
+                  startIcon={<CancelRoundedIcon sx={{ mr: 1 }} />}
+                  sx={{
+                    minWidth: 150,
+                    backgroundColor: Color.PrimaryOrgange,
+                  }}
+                >
+                  Từ chối
+                </Button>
+              </>
+            )}
+            {status === "APPROVED" && (
+              <Button
+                variant="contained"
+                sx={{
+                  minWidth: 180,
+                  backgroundColor: Color.PrimaryGold,
+                  color: Color.PrimaryBlack,
+                }}
+                startIcon={<NoteAddRoundedIcon sx={{ mr: 1 }} />}
+                onClick={createContract}
+              >
+                Tạo hợp đồng
+              </Button>
+            )}
+          </Box>
+        )}
       </SectionWrapper>
 
       {/* ===== COMPANY INFO ===== */}

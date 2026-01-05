@@ -1,5 +1,10 @@
-import { PageTitle, InfoTextField, ImageUploadField } from "@components/global";
-import { NationalityTextField, FileUploadField } from "@components/common";
+import {
+  PageTitle,
+  InfoTextField,
+  ImageUploadFieldFormik,
+  NationalityTextField,
+  FileUploadFieldFormik,
+} from "@components/common";
 import {
   Stack,
   Box,
@@ -329,7 +334,7 @@ const CreateSupplyRequest = () => {
               </Grid>
 
               <Grid size={12}>
-                <FileUploadField
+                <FileUploadFieldFormik
                   accept=".doc,.docx,.pdf,.xls,.xlsx"
                   required
                   label="Danh sách số lượng cần cung ứng"
@@ -344,7 +349,7 @@ const CreateSupplyRequest = () => {
           <SectionWrapper title="Thông tin tàu">
             <Grid container spacing={3}>
               <Grid size={6}>
-                <ImageUploadField
+                <ImageUploadFieldFormik
                   required
                   helperText={touched.shipInfo?.image && errors.shipInfo?.image}
                   name="shipInfo.image"

@@ -3,7 +3,7 @@ import {
   PageTitle,
   SectionDivider,
   InfoTextField,
-  ImageUploadField,
+  ImageUploadFieldFormik,
   EditableDataGrid,
 } from "@components/common";
 import { NationalityTextField } from "@components/common";
@@ -474,7 +474,7 @@ const CreateMobilization = () => {
                 size={12}
                 sx={{ display: "flex", justifyContent: "center" }}
               >
-                <ImageUploadField
+                <ImageUploadFieldFormik
                   id="social-ins-image"
                   width={300}
                   height={180}

@@ -51,6 +51,7 @@ export const useCandidates = ({
 export const useCandidate = (candidateId) => {
   return useQuery({
     queryKey: ["candidate-profile", candidateId],
+    enabled: !!candidateId,
     queryFn: () => fetchUniqueCandidate(candidateId),
     staleTime: 1000 * 60 * 2, // 2 phút cache (tùy chỉnh)
     retry: 1, // thử lại 1 lần nếu fail

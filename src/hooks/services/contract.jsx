@@ -15,6 +15,7 @@ export function useContracts({ page = 0, pageSize = 12, signed, type }) {
 export function useContract(id) {
   return useQuery({
     queryKey: ["contract", id],
+    enabled: !!id,
     queryFn: async () => fetchUniqueContract(id),
     stableTime: 1000 * 60 * 4, // cache 4 min
   });

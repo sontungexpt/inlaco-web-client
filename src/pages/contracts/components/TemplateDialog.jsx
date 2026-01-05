@@ -1,5 +1,5 @@
-import { Dialog } from "@mui/material";
-import { Box, Grid, Typography, IconButton } from "@mui/material";
+import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { Typography, IconButton } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import TemplateContractList from "./TemplateContractList";
 import TemplateContractCard from "./TemplateContractCard";
@@ -11,17 +11,28 @@ export default function TemplateDialog({
   onClose,
   title,
   render,
+  sx,
   ...props
 }) {
   return (
-    <Dialog {...props} open={open} onClose={onClose}>
-      <Box
+    <Dialog
+      sx={[
+        {
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
+      open={open}
+      onClose={onClose}
+      {...props}
+    >
+      <DialogTitle
         sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          px: 2.5,
-          py: 1.5,
           borderBottom: "1px solid rgba(0,0,0,0.08)",
         }}
       >
@@ -32,21 +43,22 @@ export default function TemplateDialog({
         <IconButton onClick={onClose}>
           <CloseRoundedIcon />
         </IconButton>
-      </Box>
+      </DialogTitle>
 
-      <TemplateContractList
-        p={3}
-        render={(item) => (
-          <TemplateContractCard
-            key={item.id}
-            url={item.metadata?.url}
-            title={item.name}
-            type={item.type}
-            dowloadFileName={item.name}
-            initialData={initialData}
-          />
-        )}
-      />
+      <DialogContent>
+        <TemplateContractList
+          render={(item) => (
+            <TemplateContractCard
+              key={item.id}
+              url={item.metadata?.url}
+              title={item.name}
+              type={item.type}
+              dowloadFileName={item.name}
+              initialData={initialData}
+            />
+          )}
+        />
+      </DialogContent>
     </Dialog>
   );
 }

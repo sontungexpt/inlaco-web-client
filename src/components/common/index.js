@@ -8,6 +8,7 @@ export { default as DetailCell } from "./DetailCell";
 export { default as PageCircularProgress } from "./PageCircularProgress";
 
 export { default as ConfirmDialog } from "./ConfirmDialog";
+export { default as DialogButton } from "./DialogButton";
 export { default as ConfirmButton } from "./ConfirmButton";
 
 export { default as BaseDataGrid } from "./BaseDataGrid";
@@ -20,7 +21,7 @@ export { default as CloudinaryImage } from "./CloudinaryImage";
 export { default as FilePreviewCard } from "./FilePreviewCard";
 
 export { default as ViewTextField } from "./ViewTextField";
-export { default as FileUploadField } from "./FileUploadField";
 export { default as InfoTextField } from "./InfoTextField";
-export { default as ImageUploadField } from "./ImageUploadField";
 export { default as NationalityTextField } from "./NationalityTextField";
+export { default as FileUploadFieldFormik } from "./FileUploadFieldFormik";
+export { default as ImageUploadFieldFormik } from "./ImageUploadFieldFormik";

@@ -8,9 +8,9 @@ import CreateMobilization from "@pages/mobilization/CreateMobilization";
 import MobilizationDetail from "@pages/mobilizationDetail";
 
 import SupplyContract from "@/pages/contracts/SupplyContract";
-import CreateSupplyContract from "@/pages/contracts/CreateSupplyContract";
+import SupplyContractForm from "@/pages/contracts/SupplyContractForm";
 import SupplyContractDetail from "@pages/contracts/SupplyContractDetail";
-import SupplyContractAddendum from "@pages/supplyContractAddendum";
+// import SupplyContractAddendum from "@pages/supplyContractAddendum";
 
 import CrewRecruitment from "@pages/posts/recruitments/CrewRecruitment";
 import CandidateProfileDetail from "@/pages/candidates/CandidateProfileDetail";
@@ -27,11 +27,11 @@ import CreatePost from "@/pages/posts/CreatePost";
 import PostDetail from "@/pages/posts/PostDetail";
 import UpdatePost from "@/pages/posts/UpdatePost";
 
-import CrewContractAddendum from "@pages/crewContractAddendum";
+// import CrewContractAddendum from "@pages/crewContractAddendum";
 
 const CrewContract = lazy(() => import("@/pages/contracts/CrewContract"));
-const CreateCrewContract = lazy(
-  () => import("@pages/contracts/CreateCrewContract"),
+const CrewContractForm = lazy(
+  () => import("@/pages/contracts/CrewContractForm"),
 );
 const CrewContractDetail = lazy(
   () => import("@/pages/contracts/CrewContractDetail"),
@@ -126,9 +126,9 @@ export const AppRoutes = [
     roles: ADMIN_SAILOR,
     children: [
       { index: true, element: CrewContract },
-      { path: "create/:candidateProfileId", element: CreateCrewContract },
+      { path: "form", element: CrewContractForm },
       { path: ":id", element: CrewContractDetail },
-      { path: ":id/create-addendum", element: CrewContractAddendum },
+      // { path: ":id/create-addendum", element: CrewContractAddendum },
     ],
   },
 
@@ -137,9 +137,9 @@ export const AppRoutes = [
     roles: ADMIN_SAILOR,
     children: [
       { index: true, element: SupplyContract },
-      { path: "create/:id", element: CreateSupplyContract },
+      { path: "create/:id", element: SupplyContractForm },
       { path: ":id", element: SupplyContractDetail },
-      { path: ":id/create-addendum", element: SupplyContractAddendum },
+      // { path: ":id/create-addendum", element: SupplyContractAddendum },
     ],
   },
 

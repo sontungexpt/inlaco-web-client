@@ -49,7 +49,7 @@ const ConfirmDialog = ({
         </Button>
 
         <Button
-          onClick={onConfirm}
+          onClick={(e) => onConfirm(e, handleClose)}
           color={confirmColor}
           variant={confirmVariant}
           disabled={loading}

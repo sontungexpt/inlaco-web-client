@@ -2,17 +2,27 @@ import React, {} from "react";
 import { Paper, Typography } from "@mui/material";
 import SectionDivider from "./SectionDivider";
 
-const SectionWrapper = ({ children, sx, title, divider, ...props }) => (
+const SectionWrapper = ({
+  elevation = 1,
+  children,
+  sx,
+  title,
+  divider,
+  ...props
+}) => (
   <Paper
-    elevation={1}
-    sx={{
-      p: 3,
-      mb: 3,
-      borderRadius: 2,
-      backgroundColor: "background.paper",
-      ...sx,
-    }}
     {...props}
+    elevation={elevation}
+    sx={[
+      {
+        px: 3,
+        py: 2,
+        mb: 3,
+        borderRadius: 2,
+        backgroundColor: "background.paper",
+      },
+      ...(Array.isArray(sx) ? sx : [sx]),
+    ]}
   >
     {title &&
       (divider ? (

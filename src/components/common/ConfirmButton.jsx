@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { Button } from "@mui/material";
 import ConfirmDialog from "./ConfirmDialog";
+import { DialogButton } from ".";
 
 const ConfirmButton = ({
   children,
@@ -20,37 +19,32 @@ const ConfirmButton = ({
   onConfirm,
   ...props
 }) => {
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const Dialog = dialog;
-
-  const handleConfirm = async () => {
+  const handleConfirm = async (e, close) => {
     await onConfirm?.();
-    setOpen(false);
+    close();
   };
 
   return (
-    <>
-      <Button {...props} onClick={handleOpen}>
-        {children}
-      </Button>
-
-      <Dialog
-        open={open}
-        title={confirmTitle}
-        description={confirmDescription}
-        confirmText={confirmText}
-        cancelText={cancelText}
-        confirmColor={confirmColor}
-        confirmVariant={confirmVariant}
-        loading={loading}
-        disableBackdropClose={disableBackdropClose}
-        onConfirm={handleConfirm}
-        onClose={handleClose}
-      />
-    </>
+    <DialogButton
+      {...props}
+      dialog={({ open, onClose }) => (
+        <ConfirmDialog
+          open={open}
+          onClose={onClose}
+          title={confirmTitle}
+          description={confirmDescription}
+          confirmText={confirmText}
+          cancelText={cancelText}
+          confirmColor={confirmColor}
+          confirmVariant={confirmVariant}
+          loading={loading}
+          disableBackdropClose={disableBackdropClose}
+          onConfirm={handleConfirm}
+        />
+      )}
+    >
+      {children}
+    </DialogButton>
   );
 };
 

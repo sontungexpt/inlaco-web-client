@@ -76,7 +76,11 @@ const CrewInfos = () => {
   };
 
   const onCreateCrewContractClick = async (id) => {
-    navigate(`/crew-contracts/create/${id}`);
+    navigate(`/crew-contracts/form/${id}`, {
+      state: {
+        type: "create",
+      },
+    });
   };
 
   const handleTabChange = async (newValue) => {

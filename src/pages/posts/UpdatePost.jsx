@@ -5,7 +5,7 @@ import Color from "@/constants/Color";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useSpecificPost } from "@/hooks/services/post";
-import { isoStringToMUIDateTime } from "@/utils/converter";
+import { isoToMUIDateTime } from "@/utils/converter";
 import { updatePost } from "@/services/postServices";
 import PostForm from "./PostForm";
 
@@ -95,10 +95,10 @@ export default function UpdatePost() {
           ...post,
           recruitmentStartDate:
             post?.recruitmentStartDate &&
-            isoStringToMUIDateTime(post.recruitmentStartDate),
+            isoToMUIDateTime(post.recruitmentStartDate),
           recruitmentEndDate:
             post?.recruitmentEndDate &&
-            isoStringToMUIDateTime(post.recruitmentEndDate),
+            isoToMUIDateTime(post.recruitmentEndDate),
         }}
         onSubmit={handleSubmit}
         snackbar={snackbar}

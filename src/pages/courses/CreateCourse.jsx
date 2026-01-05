@@ -2,7 +2,7 @@ import {
   PageTitle,
   SectionWrapper,
   InfoTextField,
-  ImageUploadField,
+  ImageUploadFieldFormik,
 } from "@components/common";
 import { Box, Button, MenuItem, Grid, CircularProgress } from "@mui/material";
 import Color from "@constants/Color";
@@ -226,7 +226,7 @@ const CreateCourse = () => {
                 }}
               >
                 <Grid size={3}>
-                  <ImageUploadField
+                  <ImageUploadFieldFormik
                     variant="circle"
                     size={120}
                     name="instituteLogo"
@@ -460,7 +460,7 @@ const CreateCourse = () => {
                   />
                 </Grid>
                 <Grid size={12}>
-                  <ImageUploadField
+                  <ImageUploadFieldFormik
                     label="Hình ảnh khoá học"
                     name="courseWallpaper"
                     width="100%"

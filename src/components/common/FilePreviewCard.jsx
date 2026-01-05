@@ -12,30 +12,32 @@ const getFileIcon = (url) => {
   return <DescriptionRoundedIcon />;
 };
 
+const handleDownload = async (url, filename = "file") => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+
+    a.remove();
+    window.URL.revokeObjectURL(blobUrl);
+  } catch (err) {
+    console.error("Download failed", err);
+  }
+};
+
 const FilePreviewCard = ({
   url,
   emptyText,
+  sx,
   name = "Tệp đính kèm",
   label = "Tài liệu",
 }) => {
-  const handleDownload = async (url, filename = "file") => {
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-
-      const blobUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-
-      a.remove();
-      window.URL.revokeObjectURL(blobUrl);
-    } catch (err) {
-      console.error("Download failed", err);
-    }
-  };
   if (!url) {
     return (
       <Typography color="text.secondary">
@@ -44,17 +46,31 @@ const FilePreviewCard = ({
     );
   }
 
+  const handlePreview = (e) => {
+    e.stopPropagation();
+    window.open(url, "_blank");
+  };
+
   return (
     <Paper
       variant="outlined"
-      sx={{
-        p: 2,
-        borderRadius: 2,
-        display: "flex",
-        alignItems: "center",
-        gap: 2,
-        borderStyle: "dashed",
-      }}
+      onClick={handlePreview}
+      sx={[
+        {
+          p: 2,
+          borderRadius: 2,
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+          borderStyle: "solid",
+          borderColor: Color.PrimaryBlue,
+          ":hover": {
+            cursor: "pointer",
+            backgroundColor: "#F5F5F5",
+          },
+        },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
     >
       <Box sx={{ color: Color.PrimaryBlue }}>{getFileIcon(url)}</Box>
 
@@ -70,7 +86,7 @@ const FilePreviewCard = ({
       <Button
         size="small"
         startIcon={<OpenInNewRoundedIcon />}
-        onClick={() => window.open(url, "_blank")}
+        onClick={handlePreview}
       >
         Xem
       </Button>

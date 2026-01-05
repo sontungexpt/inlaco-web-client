@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
-  FileUploadField,
+  FileUploadFieldFormik,
   PageTitle,
   InfoTextField,
   SectionWrapper,
   NationalityTextField,
-  ImageUploadField,
+  ImageUploadFieldFormik,
 } from "@components/common";
 import {
   Box,
@@ -22,175 +22,170 @@ import { useLocation, useNavigate, useParams } from "react-router";
 import { createSupplyContract } from "@/services/contractServices";
 import { datetimeToISO } from "@utils/converter";
 import Regex from "@/constants/Regex";
-import { yesterday } from "@/utils/date";
-import TemplateDialog from "./components/TemplateDialog";
+import TemplateDialog from "../components/TemplateDialog";
 import cloudinaryUpload from "@/services/cloudinaryServices";
 import UploadStrategy from "@/constants/UploadStrategy";
 import toast from "react-hot-toast";
 
-const CreateSupplyContract = () => {
+const SupplyContractForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { state: requestInfo } = useLocation();
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
 
-  const createContract = async (values, { resetForm }) => {
-    try {
-      const [detailFileUploadRes, shipImageUploadRes] = await Promise.all([
-        cloudinaryUpload(values.contractFile, UploadStrategy.CONTRACT_FILE),
-        cloudinaryUpload(values.shipInfo.image, UploadStrategy.SHIP_IMAGE),
-      ]);
+  /* =======================
+   * Initial Values
+   * ======================= */
+  const initialValues = useMemo(
+    () => ({
+      contractFile: null,
+      title: "",
+      partyA: {
+        compName: "Công ty INLACO Hải Phòng",
+        compAddress: "",
+        compPhoneNumber: "",
+        representative: "",
+        representativePos: "Trưởng phòng Nhân sự",
+      },
+      partyB: {
+        compName: requestInfo?.companyName || "",
+        compAddress: requestInfo?.companyAddress || "",
+        compPhoneNumber: requestInfo?.companyPhone || "",
+        representative: requestInfo?.companyRepresentor || "",
+        representativePos: requestInfo?.companyRepresentorPosition || "",
+      },
+      contractInfo: {
+        startDate: "",
+        endDate: "",
+        numOfCrewMember: "",
+      },
+      shipInfo: {
+        image: null,
+        IMONumber: requestInfo?.shipInfo?.IMONumber || "",
+        name: requestInfo?.shipInfo?.name || "",
+        countryISO: requestInfo?.shipInfo?.countryISO || "",
+        type: requestInfo?.shipInfo?.type || "",
+        description: requestInfo?.shipInfo?.description || "",
+      },
+    }),
+    [requestInfo],
+  );
 
-      //Calling API to create a new crew member
-      const response = await createSupplyContract(
-        id,
-        {
-          title: values.title,
-          initiator: {
-            partyName: values.partyA.compName,
-            address: values.partyA.compAddress,
-            phone: values.partyA.compPhoneNumber,
-            representer: values.partyA.representative,
-            representerPosition: values.partyA.representativePos,
-            email: "thong2046@gmail.com",
+  /* =======================
+   * Validation Schema
+   * ======================= */
+  const SCHEMA = Yup.object({
+    title: Yup.string().required("Tiêu đề không được để trống"),
+
+    partyA: Yup.object({
+      compName: Yup.string().required(),
+      compAddress: Yup.string().required(),
+      compPhoneNumber: Yup.string()
+        .matches(Regex.VN_PHONE, "SĐT không hợp lệ")
+        .required(),
+      representative: Yup.string().required(),
+      representativePos: Yup.string().required(),
+    }),
+
+    partyB: Yup.object({
+      compName: Yup.string().required(),
+      compAddress: Yup.string().required(),
+      compPhoneNumber: Yup.string()
+        .matches(Regex.VN_PHONE, "SĐT không hợp lệ")
+        .required(),
+      representative: Yup.string().required(),
+      representativePos: Yup.string().required(),
+    }),
+
+    contractInfo: Yup.object({
+      startDate: Yup.date().required(),
+      endDate: Yup.date()
+        .required()
+        .min(Yup.ref("startDate"), "Ngày kết thúc phải sau ngày bắt đầu"),
+      numOfCrewMember: Yup.number().min(1).required(),
+    }),
+
+    shipInfo: Yup.object({
+      image: Yup.mixed().required(),
+      IMONumber: Yup.string().required(),
+      name: Yup.string().required(),
+      countryISO: Yup.string().required(),
+      type: Yup.string().required(),
+      description: Yup.string(),
+    }),
+
+    contractFile: Yup.mixed().required("Vui lòng tải lên hợp đồng bản giấy"),
+  });
+
+  /* =======================
+   * API handler
+   * ======================= */
+  const createContract = async (values) => {
+    const [contractFileRes, shipImageRes] = await Promise.all([
+      cloudinaryUpload(values.contractFile, UploadStrategy.CONTRACT_FILE),
+      cloudinaryUpload(values.shipInfo.image, UploadStrategy.SHIP_IMAGE),
+    ]);
+
+    return createSupplyContract(
+      id,
+      {
+        title: values.title,
+        initiator: {
+          partyName: values.partyA.compName,
+          address: values.partyA.compAddress,
+          phone: values.partyA.compPhoneNumber,
+          representer: values.partyA.representative,
+          representerPosition: values.partyA.representativePos,
+          type: "STATIC",
+        },
+        signedPartners: [
+          {
+            partyName: values.partyB.compName,
+            address: values.partyB.compAddress,
+            phone: values.partyB.compPhoneNumber,
+            representer: values.partyB.representative,
+            representerPosition: values.partyB.representativePos,
             type: "STATIC",
           },
-          signedPartners: [
-            {
-              partyName: values.partyB.compName,
-              address: values.partyB.compAddress,
-              phone: values.partyB.compPhoneNumber,
-              representer: values.partyB.representative,
-              representerPosition: values.partyB.representativePos,
-              type: "STATIC",
-            },
-          ],
-          activationDate: datetimeToISO(values.contractInfo.startDate),
-          expiredDate: datetimeToISO(values.contractInfo.endDate),
-          numOfCrews: values.contractInfo.numOfCrewMember,
-
-          shipInfo: {
-            imoNumber: values.shipInfo.IMONumber,
-            name: values.shipInfo.name,
-            countryISO: values.shipInfo.countryISO,
-            type: values.shipInfo.type,
-            description: values.shipInfo.description,
-          },
+        ],
+        activationDate: datetimeToISO(values.contractInfo.startDate),
+        expiredDate: datetimeToISO(values.contractInfo.endDate),
+        numOfCrews: values.contractInfo.numOfCrewMember,
+        shipInfo: {
+          imoNumber: values.shipInfo.IMONumber,
+          name: values.shipInfo.name,
+          countryISO: values.shipInfo.countryISO,
+          type: values.shipInfo.type,
+          description: values.shipInfo.description,
         },
-        detailFileUploadRes.asset_id,
-        shipImageUploadRes.asset_id,
-      );
+      },
+      contractFileRes.asset_id,
+      shipImageRes.asset_id,
+    );
+  };
 
-      resetForm();
-      navigate(`/supply-contracts/${response.id}`);
-    } catch (err) {
+  /* =======================
+   * Submit handler
+   * ======================= */
+  const handleFormSubmission = async (values, helpers) => {
+    try {
+      const res = await createContract(values);
+      helpers.resetForm();
+      navigate(`/supply-contracts/${res.id}`);
+    } catch (e) {
       toast.error("Tạo hợp đồng thất bại");
     }
   };
 
-  const initialValues = {
-    contractFile: null,
-    title: "",
-    partyA: {
-      compName: "Công ty INLACO Hải Phòng",
-      compAddress: "",
-      compPhoneNumber: "",
-      representative: "",
-      representativePos: "Trưởng phòng Nhân sự",
-    },
-    partyB: {
-      compName: requestInfo?.companyName,
-      compAddress: requestInfo?.companyAddress,
-      compPhoneNumber: requestInfo?.companyPhone,
-      representative: requestInfo?.companyRepresentor,
-      representativePos: requestInfo?.companyRepresentorPosition,
-    },
-    contractInfo: {
-      startDate: "",
-      endDate: "",
-      numOfCrewMember: "",
-    },
-    shipInfo: {
-      image: null,
-      IMONumber: requestInfo?.shipInfo?.IMONumber,
-      name: requestInfo?.shipInfo?.name,
-      countryISO: requestInfo?.shipInfo.countryISO,
-      type: requestInfo?.shipInfo.type,
-      description: requestInfo?.shipInfo.description,
-    },
-  };
-
-  const SCHEMA = Yup.object().shape({
-    title: Yup.string().required("Tiêu đề không được để trống"),
-    partyA: Yup.object().shape({
-      compName: Yup.string().required("Tên công ty không được để trống"),
-      compAddress: Yup.string().required("Địa chỉ không được để trống"),
-      compPhoneNumber: Yup.string()
-        .matches(Regex.VN_PHONE, "SĐT không hợp lệ")
-        .required("SĐT không được để trống"),
-      representative: Yup.string().required(
-        "Người đại diện không được để trống",
-      ),
-      representativePos: Yup.string().required("Chức vụ không được để trống"),
-    }),
-
-    partyB: Yup.object().shape({
-      compName: Yup.string().required("Tên công ty không được để trống"),
-      compAddress: Yup.string().required("Địa chỉ không được để trống"),
-      compPhoneNumber: Yup.string()
-        .matches(Regex.VN_PHONE, "SĐT không hợp lệ")
-        .required("SĐT không được để trống"),
-      representative: Yup.string().required(
-        "Người đại diện không được để trống",
-      ),
-      representativePos: Yup.string().required("Chức vụ không được để trống"),
-    }),
-
-    contractInfo: Yup.object().shape({
-      startDate: Yup.date()
-        .min(new Date(), "Ngày bắt đầu không hợp lệ")
-        .required("Ngày bắt đầu không được để trống")
-        .test(
-          "is-before-end-date",
-          "Ngày bắt đầu phải trước ngày kết thúc",
-          function (value) {
-            const { endDate } = this.parent; // Access sibling field endDate
-            return !endDate || value < endDate;
-          },
-        ),
-
-      endDate: Yup.date()
-        .min(new Date(), "Ngày kết thúc không hợp lệ")
-        .required("Ngày kết thúc không được để trống")
-        .test(
-          "is-after-start-date",
-          "Ngày kết thúc phải sau ngày bắt đầu",
-          function (value) {
-            const { startDate } = this.parent; // Access sibling field startDate
-            return !startDate || value > startDate;
-          },
-        ),
-
-      numOfCrewMember: Yup.number()
-        .min(1, "Tổng số nhân lực cần cung ứng không hợp lệ")
-        .required("Tổng số nhân lực cần cung ứng không được để trống"),
-    }),
-    contractFile: Yup.mixed().required("Vui lòng tải lên hợp đồng bản giấy"),
-    shipInfo: Yup.object().shape({
-      name: Yup.string().required("Tên cửa tàu không được để trống"),
-      IMONumber: Yup.string().required("Số IMO của tàu không được để trống"),
-      type: Yup.string().required("Loại tàu không được để trống"),
-      description: Yup.string(),
-      image: Yup.mixed().required("Vui lồng tải lên hình ảnh tàu"),
-    }),
-  });
-
+  /* =======================
+   * Render
+   * ======================= */
   return (
     <Formik
-      validateOnChange={true}
       initialValues={initialValues}
+      enableReinitialize
       validationSchema={SCHEMA}
-      onSubmit={createContract}
+      onSubmit={handleFormSubmission}
     >
       {({
         values,
@@ -199,55 +194,50 @@ const CreateSupplyContract = () => {
         isValid,
         dirty,
         isSubmitting,
-        handleBlur,
         handleChange,
+        handleBlur,
         handleSubmit,
       }) => (
-        <Box m="20px" component="form" onSubmit={handleSubmit}>
+        <Box component="form" onSubmit={handleSubmit} p={2}>
           {/* ===== Sticky Header ===== */}
-          <SectionWrapper>
+          <SectionWrapper
+            sx={{
+              position: "sticky",
+              top: 0,
+              zIndex: 10,
+              backgroundColor: "background.paper",
+              borderBottom: "1px solid #e0e0e0",
+            }}
+          >
             <PageTitle
               title="TẠO HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN"
-              subtitle="Tạo và lưu Hợp đồng cung ứng thuyền viên mới vào hệ thống"
-              mb={3}
+              subtitle="Tạo và lưu hợp đồng mới"
             />
 
-            <Box display="flex" gap={2}>
+            <Box display="flex" gap={2} mt={2}>
               <Button
-                onClick={() => setOpenTemplateDialog(true)}
                 variant="contained"
+                onClick={() => setOpenTemplateDialog(true)}
                 sx={{
-                  minWidth: 150,
-                  px: 3,
-                  fontWeight: 700,
                   backgroundColor: Color.PrimaryBlue,
                   color: Color.PrimaryWhite,
                 }}
               >
                 Tải template
               </Button>
+
               <Button
                 type="submit"
-                variant="contained"
                 disabled={!isValid || !dirty || isSubmitting}
-                startIcon={!isSubmitting && <SaveIcon />}
+                variant="contained"
+                startIcon={
+                  isSubmitting ? <CircularProgress size={20} /> : <SaveIcon />
+                }
                 sx={{
-                  minWidth: 150,
-                  px: 3,
-                  fontWeight: 700,
                   backgroundColor: Color.PrimaryGold,
                   color: Color.PrimaryBlack,
                 }}
               >
-                {isSubmitting && (
-                  <CircularProgress
-                    size={22}
-                    sx={{
-                      mr: 2,
-                      color: Color.PrimaryBlack,
-                    }}
-                  />
-                )}
                 Tạo hợp đồng
               </Button>
             </Box>
@@ -570,7 +560,7 @@ const CreateSupplyContract = () => {
           <SectionWrapper title="Thông tin tàu">
             <Grid container spacing={3}>
               <Grid size={6}>
-                <ImageUploadField
+                <ImageUploadFieldFormik
                   required
                   helperText={touched.shipInfo?.image && errors.shipInfo?.image}
                   name="shipInfo.image"
@@ -652,7 +642,7 @@ const CreateSupplyContract = () => {
           </SectionWrapper>
 
           <SectionWrapper title="Bản mềm">
-            <FileUploadField
+            <FileUploadFieldFormik
               required
               name="contractFile"
               helperText={touched.contractFile && errors.contractFile}
@@ -672,4 +662,4 @@ const CreateSupplyContract = () => {
     </Formik>
   );
 };
-export default CreateSupplyContract;
+export default SupplyContractForm;

@@ -1,6 +1,10 @@
-import React, { useState } from "react";
-import { PageTitle, SectionDivider, InfoTextField } from "@components/global";
-import { FileUploadField } from "@components/contract";
+import React, {} from "react";
+import {
+  FileUploadFieldFormik,
+  PageTitle,
+  SectionDivider,
+  InfoTextField,
+} from "@components/common";
 import {
   Box,
   Button,
@@ -336,7 +340,7 @@ const ApplyRecruitment = () => {
             </Grid>
           </Grid>
           <SectionDivider sectionName="CV đính kèm*: " />
-          <FileUploadField
+          <FileUploadFieldFormik
             required
             id="cvFile"
             // label="Tải lên CV"

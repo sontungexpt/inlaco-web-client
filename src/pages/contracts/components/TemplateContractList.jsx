@@ -62,7 +62,6 @@ const TemplateContractList = ({
       {/* ===== Search ===== */}
       <Box
         sx={{
-          maxWidth: 1400,
           mx: "auto",
           mt: 3,
           mb: 4,

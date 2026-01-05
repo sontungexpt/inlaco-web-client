@@ -82,9 +82,9 @@ export function isoToLocaleString(
   locale = "vi-VN",
 ) {
   const map = {
-    date: "toDateString",
+    date: "toLocaleDateString",
     datetime: "toLocaleString",
     time: "toLocaleTimeString",
   };
-  return new Date(isoString)[map[type]](locale);
+  return new Date(isoString)[map[type] || type](locale);
 }

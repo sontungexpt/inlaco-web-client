@@ -3,9 +3,9 @@ import {
   PageTitle,
   SectionDivider,
   InfoTextField,
-  ImageUploadField,
+  ImageUploadFieldFormik,
   NoValuesOverlay,
-} from "@components/global";
+} from "@components/common";
 import { NationalityTextField } from "@components/common";
 import {
   Box,
@@ -28,7 +28,7 @@ import { useLocation, useParams } from "react-router";
 import { editMobilizationAPI } from "@/services/mobilizationServices";
 import {
   formatDate,
-  isoStringToMUIDateTime,
+  isoToMUIDateTime,
   dateTimeStringToISOString,
 } from "@utils/converter";
 import { HttpStatusCode } from "axios";
@@ -49,13 +49,13 @@ const MobilizationDetail = () => {
 
     mobilizationInfo: {
       timeOfDeparture: mobilizationInfos?.startDate
-        ? isoStringToMUIDateTime(mobilizationInfos?.startDate)
+        ? isoToMUIDateTime(mobilizationInfos?.startDate)
         : "",
       departureLocation: mobilizationInfos?.departurePoint || "",
       UN_LOCODE_DepartureLocation: mobilizationInfos?.departureUNLOCODE || "",
 
       estimatedTimeOfArrival: mobilizationInfos?.startDate
-        ? isoStringToMUIDateTime(mobilizationInfos?.estimatedEndDate)
+        ? isoToMUIDateTime(mobilizationInfos?.estimatedEndDate)
         : "",
       arrivalLocation: mobilizationInfos?.arrivalPoint || "",
       UN_LOCODE_ArrivalLocation: mobilizationInfos?.arrivalUNLOCODE || "",
@@ -754,7 +754,7 @@ const MobilizationDetail = () => {
                 size={12}
                 sx={{ display: "flex", justifyContent: "center" }}
               >
-                <ImageUploadField
+                <ImageUploadFieldFormik
                   id="social-ins-image"
                   disabled={!isEditable}
                   width={300}

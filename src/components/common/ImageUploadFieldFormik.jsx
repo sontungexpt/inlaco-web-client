@@ -84,7 +84,7 @@ const formatSizeMB = (bytes) => `${Math.round(bytes / 1024 / 1024)}MB`;
  * Component
  * ====================================================== */
 
-const ImageUploadField = ({
+const ImageUploadFieldFormik = ({
   name,
   label,
   required = false,
@@ -295,4 +295,4 @@ const ImageUploadField = ({
   );
 };
 
-export default ImageUploadField;
+export default ImageUploadFieldFormik;

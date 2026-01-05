@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { PageTitle, SectionDivider, InfoTextField } from "@components/global";
-import { FileUploadField } from "@components/contract";
+import {
+  FileUploadFieldFormik,
+  PageTitle,
+  SectionDivider,
+  InfoTextField,
+} from "@components/common";
 import {
   Box,
   Button,
@@ -32,7 +36,7 @@ import {
 import HttpStatusCode from "@/constants/HttpStatusCode";
 import {
   isoStringToDateString,
-  isoStringToMUIDateTime,
+  isoToMUIDateTime,
   formatDateString,
   dateStringToISOString,
 } from "@utils/converter";
@@ -112,7 +116,7 @@ const SupplyContractDetail = () => {
         : "", //numOfCrewMember
 
       timeOfDeparture: contractInfo.customAttributes
-        ? isoStringToMUIDateTime(contractInfo.customAttributes[1].value)
+        ? isoToMUIDateTime(contractInfo.customAttributes[1].value)
         : "", //timeOfDeparture
       UN_LOCODE_DepartureLocation: contractInfo.customAttributes
         ? contractInfo.customAttributes[2].value
@@ -122,7 +126,7 @@ const SupplyContractDetail = () => {
         : "", //departureLocation
 
       estimatedTimeOfArrival: contractInfo.customAttributes
-        ? isoStringToMUIDateTime(contractInfo.customAttributes[4].value)
+        ? isoToMUIDateTime(contractInfo.customAttributes[4].value)
         : "", //estimatedTimeOfArrival
       arrivalLocation: contractInfo.customAttributes
         ? contractInfo.customAttributes[6].value
@@ -623,7 +627,7 @@ const SupplyContractDetail = () => {
                       </Typography>
                     </Button>
                   )}
-                  <FileUploadField
+                  <FileUploadFieldFormik
                     disabled={!isEditable}
                     name="contractFileLink"
                   />

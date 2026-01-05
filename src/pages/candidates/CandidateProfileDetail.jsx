@@ -56,8 +56,11 @@ const CandidateProfileDetail = () => {
     } else if (status === CandidateStatus.APPLIED) {
       await reviewCandidate(CandidateStatus.WAIT_FOR_INTERVIEW);
     } else if (status === CandidateStatus.WAIT_FOR_INTERVIEW) {
-      navigate(`/crew-contracts/create/${candidateID}`, {
-        state: candidateInfo,
+      navigate(`/crew-contracts/form`, {
+        state: {
+          candidateProfileId: candidateID,
+          type: "create",
+        },
       });
     } else if (
       status === CandidateStatus.CONTRACT_NOT_YET_IN_FORCE ||

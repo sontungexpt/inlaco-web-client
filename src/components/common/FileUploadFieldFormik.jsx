@@ -95,7 +95,7 @@ const normalizeFile = (item) => {
   return {
     name: item.name,
     size: item.size,
-    type: item.type,
+    type: item.type || item.format,
     file: item.file,
     publicId: item.publicId,
     url: item.url,
@@ -106,14 +106,14 @@ const normalizeFile = (item) => {
  * Component
  * ====================================================== */
 
-const FileUploadField = ({
+const FileUploadFieldFormik = ({
   name,
   id,
   label,
   accept = ".doc,.docx,.pdf",
   maxSize = 5 * 1024 * 1024,
 
-  error = false,
+  error,
   helperText,
 
   invalidFormatText,
@@ -126,8 +126,8 @@ const FileUploadField = ({
 }) => {
   const { setFieldValue, setFieldTouched, setFieldError } = useFormikContext();
   const [field, meta] = useField(name);
-  const showFormikError = meta.touched && Boolean(meta.error);
-  const finalError = typeof error === "boolean" ? error : showFormikError;
+  const showError =
+    typeof error === "boolean" ? error : meta.touched && Boolean(meta.error);
   const finalHelperText = helperText !== undefined ? helperText : meta.error;
 
   const inputRef = useRef(null);
@@ -148,23 +148,17 @@ const FileUploadField = ({
     setFieldTouched(name, true, false);
     setFieldError(name, undefined);
 
-    const incoming = Array.from(fileList);
-    const validFiles = [];
-
-    for (const file of incoming) {
+    for (const file of fileList) {
       if (!isValidFileType(file, accept)) {
         setFieldError(
           name,
-
           typeof invalidFormatText == "function"
             ? invalidFormatText(file)
             : invalidFormatText ||
                 `${file.name} không hợp lệ. Chỉ chấp nhận ${acceptLabel}`,
         );
-        continue;
-      }
-
-      if (file.size > maxSize) {
+        return;
+      } else if (file.size > maxSize) {
         setFieldError(
           name,
           typeof invalidSizeText == "function"
@@ -172,21 +166,11 @@ const FileUploadField = ({
             : invalidSizeText ||
                 `Dung lượng ${file.name} tối đa ${formatSizeMB(maxSize)}`,
         );
-        continue;
+        return;
       }
-
-      validFiles.push({
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        file,
-      });
     }
 
-    if (!validFiles.length) return;
-
-    const nextValue = multiple ? [...files, ...validFiles] : validFiles[0];
-    setFieldValue(name, nextValue, true);
+    setFieldValue(name, multiple ? fileList : fileList[0], true);
   };
 
   const handleRemove = (index) => {
@@ -286,7 +270,7 @@ const FileUploadField = ({
         <Fade in key={item.publicId || `${item.name}-${idx}`}>
           <Paper variant="outlined" sx={{ p: 1.5, borderRadius: 2 }}>
             <Box display="flex" alignItems="center" gap={1.5}>
-              {getFileIcon(item.name)}
+              {getFileIcon(item.name || "")}
 
               <Box flex={1} minWidth={0}>
                 <Typography noWrap fontSize={14}>
@@ -317,10 +301,10 @@ const FileUploadField = ({
         </Fade>
       ))}
 
-      {finalError && (
+      {showError && (
         <Typography
           variant="caption"
-          color={finalError ? "error" : "text.secondary"}
+          color={showError ? "error" : "text.secondary"}
         >
           {finalHelperText}
         </Typography>
@@ -329,4 +313,4 @@ const FileUploadField = ({
   );
 };
 
-export default FileUploadField;
+export default FileUploadFieldFormik;

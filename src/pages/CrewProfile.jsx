@@ -3,8 +3,8 @@ import {
   PageTitle,
   SectionDivider,
   InfoTextField,
-  ImageUploadField,
-} from "../components/global";
+  ImageUploadFieldFormik,
+} from "@components/common";
 import { CardPhotoInput } from "../components/contract";
 import {
   Box,
@@ -697,7 +697,7 @@ const CrewProfile = () => {
                   >
                     Ảnh chụp BHXH hoặc tra cứu BHXH:{" "}
                   </Typography>
-                  <ImageUploadField
+                  <ImageUploadFieldFormik
                     disabled={true}
                     id="social-ins-image"
                     name="insuranceInfo.socialInsImage"
@@ -758,7 +758,7 @@ const CrewProfile = () => {
                   >
                     Ảnh chụp BHTN hoặc tra cứu BHTN:{" "}
                   </Typography>
-                  <ImageUploadField
+                  <ImageUploadFieldFormik
                     disabled={true}
                     id="accident-ins-image"
                     name="insuranceInfo.accidentInsImage"
@@ -842,7 +842,7 @@ const CrewProfile = () => {
                   >
                     Ảnh chụp BHYT hoặc tra cứu BHYT:{" "}
                   </Typography>
-                  <ImageUploadField
+                  <ImageUploadFieldFormik
                     disabled={true}
                     id="health-ins-image"
                     name="insuranceInfo.healthInsImage"

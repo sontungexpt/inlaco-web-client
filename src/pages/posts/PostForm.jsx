@@ -132,7 +132,9 @@ export default function PostForm({
     <Formik
       initialValues={safeInitialValues}
       validationSchema={PostSchema}
-      enableReinitialize
+      validateOnChange
+      validateOnBlur
+      validateOnMount
       onSubmit={(values, ...args) =>
         onSubmit(
           {
