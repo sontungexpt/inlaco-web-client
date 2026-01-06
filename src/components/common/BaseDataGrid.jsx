@@ -9,6 +9,7 @@ const BaseDataGrid = ({
   rowCount,
   slots,
   paginationModel,
+  pageSizeOptions = [paginationModel?.pageSize],
   onPaginationModelChange,
   loading,
   sx = {},
@@ -31,7 +32,7 @@ const BaseDataGrid = ({
       showColumnVerticalBorder
       showCellVerticalBorder
       getRowHeight={() => "auto"}
-      // pageSizeOptions={[5, 10, { value: -1, label: "All" }]}
+      pageSizeOptions={pageSizeOptions}
       rows={rows}
       columns={columns}
       rowCount={stableRowCount}
@@ -42,10 +43,7 @@ const BaseDataGrid = ({
       onPaginationModelChange={onPaginationModelChange}
       sx={[
         {
-          mt: 2,
-          maxWidth: 1600,
           bgcolor: "#FFF",
-          borderRadius: 2,
           boxShadow: "0px 3px 12px rgba(0,0,0,0.1)",
 
           "& .MuiDataGrid-cell": {

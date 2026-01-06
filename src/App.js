@@ -1,8 +1,9 @@
 import { Routes, Route } from "react-router";
 import React, { Suspense } from "react";
 import { useAuthContext } from "./contexts/AuthContext";
-import { MainLayout, PageCircularProgress } from "./components/common";
+import { PageCircularProgress } from "./components/common";
 import { AppRoutes } from "./routes";
+import MainLayout from "./layout/MainLayout";
 
 const ProtectedRoute = ({ roles, children }) => {
   const { loading, hasRole, roles: userRoles } = useAuthContext();
@@ -65,7 +66,7 @@ const renderRoute = (route, parentLayout = MainLayout) => {
 
 export default function App() {
   return (
-    <Suspense fallback={PageCircularProgress}>
+    <Suspense fallback={<PageCircularProgress />}>
       <Routes>{AppRoutes.map((route) => renderRoute(route))}</Routes>
     </Suspense>
   );

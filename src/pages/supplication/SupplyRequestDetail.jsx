@@ -24,10 +24,12 @@ const SupplyRequestDetail = () => {
     isLoading,
     refetch: refetchRequestInfo,
   } = useSupplyRequest(id);
+
   const [buttonLoading, setButtonLoading] = useState(false);
 
   const reviewRequest = async (status) => {
-    setButtonLoading(true);
+    const buttonId = status ? "approve" : "decline";
+    setButtonLoading(buttonId);
     try {
       const response = await reviewSupplyRequest(id, status);
       await refetchRequestInfo();
@@ -46,8 +48,11 @@ const SupplyRequestDetail = () => {
   };
 
   const createContract = () => {
-    navigate(`/supply-contracts/create/${id}`, {
-      state: requestInfo,
+    navigate(`/supply-contracts/form`, {
+      state: {
+        type: "create",
+        requestId: id,
+      },
     });
   };
 
@@ -105,7 +110,6 @@ const SupplyRequestDetail = () => {
   };
 
   const status = requestInfo?.status;
-  console.log(status);
 
   return (
     <Box sx={{ m: 3 }}>
@@ -118,7 +122,7 @@ const SupplyRequestDetail = () => {
         <Box display="flex" justifyContent="space-between">
           <PageTitle
             title="CHI TIẾT YÊU CẦU CUNG ỨNG"
-            subtitle={`Yêu cầu cung ứng của công ty: ${id}`}
+            subtitle={`Yêu cầu cung ứng với id: ${id}`}
           />
 
           <StatusLabel
@@ -136,7 +140,7 @@ const SupplyRequestDetail = () => {
                   variant="contained"
                   onClick={approveRequest}
                   startIcon={
-                    buttonLoading ? (
+                    buttonLoading === "approve" ? (
                       <CircularProgress size={20} />
                     ) : (
                       <CheckCircleRoundedIcon sx={{ mr: 1 }} />
@@ -152,7 +156,13 @@ const SupplyRequestDetail = () => {
                   variant="contained"
                   onClick={declineRequest}
                   disabled={buttonLoading}
-                  startIcon={<CancelRoundedIcon sx={{ mr: 1 }} />}
+                  startIcon={
+                    buttonLoading === "decline" ? (
+                      <CircularProgress sx={{ mr: 1 }} />
+                    ) : (
+                      <CancelRoundedIcon sx={{ mr: 1 }} />
+                    )
+                  }
                   sx={{
                     minWidth: 150,
                     backgroundColor: Color.PrimaryOrgange,

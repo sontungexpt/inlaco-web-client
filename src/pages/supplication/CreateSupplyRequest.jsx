@@ -26,7 +26,7 @@ import cloudinaryUpload from "@/services/cloudinaryServices";
 import UploadStrategy from "@/constants/UploadStrategy";
 import { datetimeToISO } from "@/utils/converter";
 
-const CreateSupplyRequest = () => {
+const SupplyRequestForm = () => {
   const navigate = useNavigate();
 
   const handleCreateRequestSubmit = async (values, { resetForm }) => {
@@ -435,4 +435,4 @@ const CreateSupplyRequest = () => {
   );
 };
 
-export default CreateSupplyRequest;
+export default SupplyRequestForm;

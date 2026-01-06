@@ -3,13 +3,13 @@ import { lazy } from "react";
 
 import HomePage from "@pages/HomePage";
 
-import CrewMobilization from "@pages/crewMobilization";
-import CreateMobilization from "@pages/mobilization/CreateMobilization";
-import MobilizationDetail from "@pages/mobilizationDetail";
+import Mobilization from "@/pages/mobilization/Mobilization";
+import MobiliaztionForm from "@/pages/mobilization/MobilizationForm";
+import MobilizationDetail from "@pages/mobilization/MobilizationDetail";
 
 import SupplyContract from "@/pages/contracts/SupplyContract";
 import SupplyContractForm from "@/pages/contracts/SupplyContractForm";
-import SupplyContractDetail from "@pages/contracts/SupplyContractDetail";
+import SupplyContractDetail from "@/pages/contracts/details/SupplyContractDetail";
 // import SupplyContractAddendum from "@pages/supplyContractAddendum";
 
 import CrewRecruitment from "@pages/posts/recruitments/CrewRecruitment";
@@ -34,7 +34,7 @@ const CrewContractForm = lazy(
   () => import("@/pages/contracts/CrewContractForm"),
 );
 const CrewContractDetail = lazy(
-  () => import("@/pages/contracts/CrewContractDetail"),
+  () => import("@/pages/contracts/details/CrewContractDetail"),
 );
 
 const E404 = lazy(() => import("@/pages/E404"));
@@ -57,8 +57,8 @@ const SupplyRequest = lazy(() => import("@/pages/supplication/SupplyRequest"));
 const SupplyRequestDetail = lazy(
   () => import("@/pages/supplication/SupplyRequestDetail"),
 );
-const CreateSupplyRequest = lazy(
-  () => import("@/pages/supplication/CreateSupplyRequest"),
+const SupplyRequestForm = lazy(
+  () => import("@/pages/supplication/SupplyRequestForm"),
 );
 
 const ADMIN_SAILOR = [UserRole.ADMIN, UserRole.SAILOR];
@@ -114,8 +114,8 @@ export const AppRoutes = [
     path: "/mobilizations",
     roles: ADMIN_SAILOR,
     children: [
-      { index: true, element: CrewMobilization },
-      { path: "create", element: CreateMobilization },
+      { index: true, element: Mobilization },
+      { path: "form", element: MobiliaztionForm },
       { path: ":id", element: MobilizationDetail },
       { path: "my-mobilizations", element: CrewMyMobilization },
     ],
@@ -137,7 +137,7 @@ export const AppRoutes = [
     roles: ADMIN_SAILOR,
     children: [
       { index: true, element: SupplyContract },
-      { path: "create/:id", element: SupplyContractForm },
+      { path: "form", element: SupplyContractForm },
       { path: ":id", element: SupplyContractDetail },
       // { path: ":id/create-addendum", element: SupplyContractAddendum },
     ],
@@ -157,7 +157,7 @@ export const AppRoutes = [
     children: [
       { index: true, element: SupplyRequest },
       { path: ":id", element: SupplyRequestDetail },
-      { path: "create", element: CreateSupplyRequest },
+      { path: "form", element: SupplyRequestForm },
     ],
   },
 

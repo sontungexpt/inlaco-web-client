@@ -1,32 +1,24 @@
-import privateRequest from "../utils/privateRequest";
-import MobilizationEndpoints from "../endpoints/mobilizationEndpoints";
+import { privateRequest } from "@/utils/request";
+import MobilizationEndpoint from "@/endpoints/mobilizationEndpoints";
 
-export const getMyMobilizationAPI = async (cardID) => {
-  try {
-    const response = await privateRequest.get(
-      `${MobilizationEndpoints.CURRENT_MOBILIZATION}/${cardID}`,
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
-};
-
-export const getAllMobilizationsAPI = async (page, size, status) => {
-  try {
-    const response = await privateRequest.get(
-      `${MobilizationEndpoints.GENERAL}/pagination?page=${page}&size=${size}&status=${status}`,
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
+export const fetchMobilizations = async ({ page, pageSize, status }) => {
+  const response = await privateRequest.get(
+    MobilizationEndpoint.GET_ALL_MOBILIZATIONS,
+    {
+      params: {
+        page,
+        size: pageSize,
+        status,
+      },
+    },
+  );
+  return response.data;
 };
 
 export const fetchSpecificMobilization = async (mobilizationID) => {
   try {
     const response = await privateRequest.get(
-      MobilizationEndpoints.GET_BY_ID(mobilizationID),
+      MobilizationEndpoint.GET_BY_ID(mobilizationID),
     );
     return response.data;
   } catch (err) {
@@ -35,10 +27,21 @@ export const fetchSpecificMobilization = async (mobilizationID) => {
   }
 };
 
+export const getMyMobilizationAPI = async (cardID) => {
+  try {
+    const response = await privateRequest.get(
+      `${MobilizationEndpoint.CURRENT_MOBILIZATION}/${cardID}`,
+    );
+    return response;
+  } catch (err) {
+    return err.response;
+  }
+};
+
 export const createMobilizationAPI = async (mobilizationInfo) => {
   try {
     const response = await privateRequest.post(
-      `${MobilizationEndpoints.GENERAL}`,
+      `${MobilizationEndpoint.GENERAL}`,
       mobilizationInfo,
     );
     return response;
@@ -50,7 +53,7 @@ export const createMobilizationAPI = async (mobilizationInfo) => {
 export const editMobilizationAPI = async (mobilizationID, mobilizationInfo) => {
   try {
     const response = await privateRequest.patch(
-      `${MobilizationEndpoints.GENERAL}/${mobilizationID}`,
+      `${MobilizationEndpoint.GENERAL}/${mobilizationID}`,
       mobilizationInfo,
     );
     return response;

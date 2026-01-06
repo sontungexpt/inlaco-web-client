@@ -5,21 +5,10 @@ import { datetimeToISO, isoToMUIDateTime } from "@utils/converter";
 export const mapContractToFormValues = (contractInfo) => {
   const partyA = contractInfo?.initiator;
   const partyB = contractInfo?.partners?.[0];
-  const contractFile = contractInfo?.contractFile;
 
   return {
     title: contractInfo?.title || "",
-
-    contractFile: contractFile
-      ? {
-          publicId: contractFile.publicId,
-          url: contractFile.url,
-          name: contractFile.displayName,
-          size: contractFile.bytes,
-          format: contractFile.format,
-        }
-      : null,
-
+    contractFile: null,
     partyA: {
       compName: partyA?.partyName || "",
       compAddress: partyA?.address || "",
@@ -27,7 +16,6 @@ export const mapContractToFormValues = (contractInfo) => {
       representative: partyA?.representer || "",
       representativePos: partyA?.representerPosition || "",
     },
-
     partyB: {
       fullName: partyB?.partyName,
       dob: isoToMUIDateTime(partyB?.birthDate, false),

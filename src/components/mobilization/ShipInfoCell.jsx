@@ -3,6 +3,7 @@ import { CloudinaryImage } from "@components/common";
 
 const ShipInfoCell = ({
   IMONumber,
+  imoNumber,
   name,
   countryCode,
   type,
@@ -40,7 +41,7 @@ const ShipInfoCell = ({
       {/* Info */}
       <Stack spacing={0.3} minWidth={0}>
         <Typography variant="body2" fontWeight={600} noWrap>
-          IMO: {IMONumber}
+          IMO: {imoNumber || IMONumber}
         </Typography>
 
         <Typography variant="body2" noWrap>

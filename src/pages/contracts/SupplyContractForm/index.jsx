@@ -17,109 +17,37 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import Color from "@constants/Color";
 import { Formik } from "formik";
-import * as Yup from "yup";
-import { useLocation, useNavigate, useParams } from "react-router";
-import { createSupplyContract } from "@/services/contractServices";
-import { datetimeToISO } from "@utils/converter";
-import Regex from "@/constants/Regex";
+import { useLocation, useNavigate } from "react-router";
+import {
+  createSupplyContract,
+  editContract,
+} from "@/services/contractServices";
 import TemplateDialog from "../components/TemplateDialog";
 import cloudinaryUpload from "@/services/cloudinaryServices";
 import UploadStrategy from "@/constants/UploadStrategy";
 import toast from "react-hot-toast";
+import { mapValuesToRequestBody } from "./mapper";
+import { SCHEMA } from "./schema";
+import { buildInitialValues } from "./initial";
+import { useSupplyRequest } from "@/hooks/services/supplyRequest";
+import { useContract } from "@/hooks/services/contract";
+import { keepChangedFields } from "@/utils/object";
+import InfoTextFieldFormik from "@/components/common/fields/InfoTextFieldFormik";
 
 const SupplyContractForm = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const { state: requestInfo } = useLocation();
+  const { state: { type = "create", requestId, contractId } = {} } =
+    useLocation();
+
+  const { data: requestInfo, isLoading: requestInfoLoading } =
+    useSupplyRequest(requestId);
+  const { data: contractInfo, isLoading: contractInfoLoading } =
+    useContract(contractId);
+  const freezedContract = contractInfo?.freezed;
+
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
+  const updatingForm = type === "update";
 
-  /* =======================
-   * Initial Values
-   * ======================= */
-  const initialValues = useMemo(
-    () => ({
-      contractFile: null,
-      title: "",
-      partyA: {
-        compName: "Công ty INLACO Hải Phòng",
-        compAddress: "",
-        compPhoneNumber: "",
-        representative: "",
-        representativePos: "Trưởng phòng Nhân sự",
-      },
-      partyB: {
-        compName: requestInfo?.companyName || "",
-        compAddress: requestInfo?.companyAddress || "",
-        compPhoneNumber: requestInfo?.companyPhone || "",
-        representative: requestInfo?.companyRepresentor || "",
-        representativePos: requestInfo?.companyRepresentorPosition || "",
-      },
-      contractInfo: {
-        startDate: "",
-        endDate: "",
-        numOfCrewMember: "",
-      },
-      shipInfo: {
-        image: null,
-        IMONumber: requestInfo?.shipInfo?.IMONumber || "",
-        name: requestInfo?.shipInfo?.name || "",
-        countryISO: requestInfo?.shipInfo?.countryISO || "",
-        type: requestInfo?.shipInfo?.type || "",
-        description: requestInfo?.shipInfo?.description || "",
-      },
-    }),
-    [requestInfo],
-  );
-
-  /* =======================
-   * Validation Schema
-   * ======================= */
-  const SCHEMA = Yup.object({
-    title: Yup.string().required("Tiêu đề không được để trống"),
-
-    partyA: Yup.object({
-      compName: Yup.string().required(),
-      compAddress: Yup.string().required(),
-      compPhoneNumber: Yup.string()
-        .matches(Regex.VN_PHONE, "SĐT không hợp lệ")
-        .required(),
-      representative: Yup.string().required(),
-      representativePos: Yup.string().required(),
-    }),
-
-    partyB: Yup.object({
-      compName: Yup.string().required(),
-      compAddress: Yup.string().required(),
-      compPhoneNumber: Yup.string()
-        .matches(Regex.VN_PHONE, "SĐT không hợp lệ")
-        .required(),
-      representative: Yup.string().required(),
-      representativePos: Yup.string().required(),
-    }),
-
-    contractInfo: Yup.object({
-      startDate: Yup.date().required(),
-      endDate: Yup.date()
-        .required()
-        .min(Yup.ref("startDate"), "Ngày kết thúc phải sau ngày bắt đầu"),
-      numOfCrewMember: Yup.number().min(1).required(),
-    }),
-
-    shipInfo: Yup.object({
-      image: Yup.mixed().required(),
-      IMONumber: Yup.string().required(),
-      name: Yup.string().required(),
-      countryISO: Yup.string().required(),
-      type: Yup.string().required(),
-      description: Yup.string(),
-    }),
-
-    contractFile: Yup.mixed().required("Vui lòng tải lên hợp đồng bản giấy"),
-  });
-
-  /* =======================
-   * API handler
-   * ======================= */
   const createContract = async (values) => {
     const [contractFileRes, shipImageRes] = await Promise.all([
       cloudinaryUpload(values.contractFile, UploadStrategy.CONTRACT_FILE),
@@ -127,59 +55,61 @@ const SupplyContractForm = () => {
     ]);
 
     return createSupplyContract(
-      id,
-      {
-        title: values.title,
-        initiator: {
-          partyName: values.partyA.compName,
-          address: values.partyA.compAddress,
-          phone: values.partyA.compPhoneNumber,
-          representer: values.partyA.representative,
-          representerPosition: values.partyA.representativePos,
-          type: "STATIC",
-        },
-        signedPartners: [
-          {
-            partyName: values.partyB.compName,
-            address: values.partyB.compAddress,
-            phone: values.partyB.compPhoneNumber,
-            representer: values.partyB.representative,
-            representerPosition: values.partyB.representativePos,
-            type: "STATIC",
-          },
-        ],
-        activationDate: datetimeToISO(values.contractInfo.startDate),
-        expiredDate: datetimeToISO(values.contractInfo.endDate),
-        numOfCrews: values.contractInfo.numOfCrewMember,
-        shipInfo: {
-          imoNumber: values.shipInfo.IMONumber,
-          name: values.shipInfo.name,
-          countryISO: values.shipInfo.countryISO,
-          type: values.shipInfo.type,
-          description: values.shipInfo.description,
-        },
-      },
+      requestId,
+      mapValuesToRequestBody(values),
       contractFileRes.asset_id,
       shipImageRes.asset_id,
     );
   };
 
-  /* =======================
-   * Submit handler
-   * ======================= */
+  const updateContract = async (values) => {
+    // const uploadRespone = await cloudinaryUpload(
+    //   values.contractFile,
+    //   UploadStrategy.CONTRACT_FILE,
+    // );
+    const changedValues = keepChangedFields(
+      contractInfo,
+      mapValuesToRequestBody(values, {}),
+    );
+
+    //Calling API to create a new crew member
+    const contract = await editContract(
+      contractInfo?.id,
+      changedValues,
+      freezedContract,
+    );
+
+    return contract;
+  };
+
   const handleFormSubmission = async (values, helpers) => {
     try {
-      const res = await createContract(values);
+      const contract = updatingForm
+        ? await updateContract(values, helpers)
+        : await createContract(values, helpers);
+      if (!contract?.id) return;
       helpers.resetForm();
-      navigate(`/supply-contracts/${res.id}`);
-    } catch (e) {
-      toast.error("Tạo hợp đồng thất bại");
+      navigate(`/supply-contracts/${contract.id}`);
+    } catch (err) {
+      const msg = updatingForm
+        ? freezedContract
+          ? "Thêm phụ lục thất bại"
+          : "Cập nhật hợp đồng thất bại"
+        : "Tạo hợp đồng thất bại";
+      toast.error(msg);
     }
   };
 
-  /* =======================
-   * Render
-   * ======================= */
+  const initialValues = useMemo(
+    () =>
+      buildInitialValues({
+        updatingForm,
+        requestInfo,
+        contractInfo,
+      }),
+    [updatingForm, requestInfo, contractInfo],
+  );
+
   return (
     <Formik
       initialValues={initialValues}
@@ -194,8 +124,6 @@ const SupplyContractForm = () => {
         isValid,
         dirty,
         isSubmitting,
-        handleChange,
-        handleBlur,
         handleSubmit,
       }) => (
         <Box component="form" onSubmit={handleSubmit} p={2}>
@@ -228,34 +156,45 @@ const SupplyContractForm = () => {
 
               <Button
                 type="submit"
-                disabled={!isValid || !dirty || isSubmitting}
                 variant="contained"
+                disabled={
+                  !isValid ||
+                  !dirty ||
+                  isSubmitting ||
+                  requestInfoLoading ||
+                  contractInfoLoading
+                }
                 startIcon={
-                  isSubmitting ? <CircularProgress size={20} /> : <SaveIcon />
+                  isSubmitting ? (
+                    <CircularProgress
+                      size={22}
+                      mr={2}
+                      sx={{ color: Color.PrimaryBlack }}
+                    />
+                  ) : (
+                    <SaveIcon />
+                  )
                 }
                 sx={{
+                  minWidth: 150,
+                  px: 3,
+                  fontWeight: 700,
                   backgroundColor: Color.PrimaryGold,
                   color: Color.PrimaryBlack,
                 }}
               >
-                Tạo hợp đồng
+                {updatingForm
+                  ? freezedContract
+                    ? "Thêm phụ lục"
+                    : "Sửa hợp đồng"
+                  : "Tạo hợp đồng"}
               </Button>
             </Box>
           </SectionWrapper>
           <SectionWrapper>
             <Grid container spacing={2}>
               <Grid size={6}>
-                <InfoTextField
-                  label="Tiêu đề hợp đồng"
-                  required
-                  fullWidth
-                  name="title"
-                  value={values.title}
-                  error={!!touched.title && !!errors.title}
-                  helperText={touched.title && errors.title}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
+                <InfoTextFieldFormik label="Tiêu đề hợp đồng" name="title" />
               </Grid>
             </Grid>
           </SectionWrapper>
@@ -263,101 +202,33 @@ const SupplyContractForm = () => {
           <SectionWrapper title="Công ty Cung ứng lao động (Bên A)*: ">
             <Grid container spacing={2}>
               <Grid size={4}>
-                <InfoTextField
-                  id="company-name"
+                <InfoTextFieldFormik
                   label="Tên công ty"
-                  margin="none"
-                  required
-                  fullWidth
                   name="partyA.compName"
-                  value={values.partyA?.compName}
-                  error={
-                    !!touched.partyA?.compName && !!errors.partyA?.compName
-                  }
-                  helperText={
-                    touched.partyA?.compName && errors.partyA?.compName
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
               <Grid size={5}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Địa chỉ"
-                  margin="none"
-                  required
-                  fullWidth
                   name="partyA.compAddress"
-                  value={values.partyA?.compAddress}
-                  error={
-                    !!touched.partyA?.compAddress &&
-                    !!errors.partyA?.compAddress
-                  }
-                  helperText={
-                    touched.partyA?.compAddress && errors.partyA?.compAddress
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
               <Grid size={3}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Số điện thoại"
-                  margin="none"
-                  required
-                  fullWidth
                   name="partyA.compPhoneNumber"
-                  value={values.partyA?.compPhoneNumber}
-                  error={
-                    !!touched.partyA?.compPhoneNumber &&
-                    !!errors.partyA?.compPhoneNumber
-                  }
-                  helperText={
-                    touched.partyA?.compPhoneNumber &&
-                    errors.partyA?.compPhoneNumber
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
               <Grid item size={4}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Người đại diện"
-                  margin="none"
-                  required
-                  fullWidth
                   name="partyA.representative"
-                  value={values.partyA?.representative}
-                  error={
-                    !!touched.partyA?.representative &&
-                    !!errors.partyA?.representative
-                  }
-                  helperText={
-                    touched.partyA?.representative &&
-                    errors.partyA?.representative
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
               <Grid item size={5}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Chức vụ"
-                  margin="none"
-                  required
-                  fullWidth
                   name="partyA.representativePos"
-                  value={values.partyA?.representativePos}
-                  error={
-                    !!touched.partyA?.representativePos &&
-                    !!errors.partyA?.representativePos
-                  }
-                  helperText={
-                    touched.partyA?.representativePos &&
-                    errors.partyA?.representativePos
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
             </Grid>
@@ -365,100 +236,33 @@ const SupplyContractForm = () => {
           <SectionWrapper title="Công ty yêu cầu Cung ứng lao động (Bên B)*: ">
             <Grid container spacing={2}>
               <Grid size={4}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Tên công ty"
-                  margin="none"
-                  required
-                  fullWidth
                   name="partyB.compName"
-                  value={values.partyB?.compName}
-                  error={
-                    !!touched.partyB?.compName && !!errors.partyB?.compName
-                  }
-                  helperText={
-                    touched.partyB?.compName && errors.partyB?.compName
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
               <Grid size={5}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Địa chỉ"
-                  margin="none"
-                  required
-                  fullWidth
                   name="partyB.compAddress"
-                  value={values.partyB?.compAddress}
-                  error={
-                    !!touched.partyB?.compAddress &&
-                    !!errors.partyB?.compAddress
-                  }
-                  helperText={
-                    touched.partyB?.compAddress && errors.partyB?.compAddress
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
               <Grid size={3}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Số điện thoại"
-                  margin="none"
-                  required
-                  fullWidth
                   name="partyB.compPhoneNumber"
-                  value={values.partyB?.compPhoneNumber}
-                  error={
-                    !!touched.partyB?.compPhoneNumber &&
-                    !!errors.partyB?.compPhoneNumber
-                  }
-                  helperText={
-                    touched.partyB?.compPhoneNumber &&
-                    errors.partyB?.compPhoneNumber
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
               <Grid item size={4}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Người đại diện"
-                  margin="none"
-                  required
-                  fullWidth
                   name="partyB.representative"
-                  value={values.partyB?.representative}
-                  error={
-                    !!touched.partyB?.representative &&
-                    !!errors.partyB?.representative
-                  }
-                  helperText={
-                    touched.partyB?.representative &&
-                    errors.partyB?.representative
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
               <Grid item size={5}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Chức vụ"
-                  margin="none"
-                  required
-                  fullWidth
                   name="partyB.representativePos"
-                  value={values.partyB?.representativePos}
-                  error={
-                    !!touched.partyB?.representativePos &&
-                    !!errors.partyB?.representativePos
-                  }
-                  helperText={
-                    touched.partyB?.representativePos &&
-                    errors.partyB?.representativePos
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
             </Grid>
@@ -466,76 +270,24 @@ const SupplyContractForm = () => {
           <SectionWrapper title="Thông tin hợp đồng*: ">
             <Grid container spacing={2}>
               <Grid item size={6}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   type="datetime-local"
                   label="Ngày bắt đầu hợp đồng"
-                  margin="none"
-                  required
-                  fullWidth
                   name="contractInfo.startDate"
-                  value={values.contractInfo?.startDate}
-                  error={
-                    !!touched.contractInfo?.startDate &&
-                    !!errors.contractInfo?.startDate
-                  }
-                  helperText={
-                    touched.contractInfo?.startDate &&
-                    errors.contractInfo?.startDate
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  slotProps={{
-                    inputLabel: {
-                      shrink: true,
-                    },
-                  }}
                 />
               </Grid>
               <Grid item size={6}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   type="datetime-local"
                   label="Ngày kết thúc hợp đồng"
-                  margin="none"
-                  required
-                  fullWidth
                   name="contractInfo.endDate"
-                  value={values.contractInfo?.endDate}
-                  error={
-                    !!touched.contractInfo?.endDate &&
-                    !!errors.contractInfo?.endDate
-                  }
-                  helperText={
-                    touched.contractInfo?.endDate &&
-                    errors.contractInfo?.endDate
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  slotProps={{
-                    inputLabel: {
-                      shrink: true,
-                    },
-                  }}
                 />
               </Grid>
               <Grid size={6}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   type="number"
                   label="Tổng số nhân lực cần cung ứng"
-                  margin="none"
-                  required
-                  fullWidth
                   name="contractInfo.numOfCrewMember"
-                  value={values.contractInfo?.numOfCrewMember}
-                  error={
-                    !!touched.contractInfo?.numOfCrewMember &&
-                    !!errors.contractInfo?.numOfCrewMember
-                  }
-                  helperText={
-                    touched.contractInfo?.numOfCrewMember &&
-                    errors.contractInfo?.numOfCrewMember
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                   slotProps={{
                     input: {
                       endAdornment: (
@@ -568,74 +320,17 @@ const SupplyContractForm = () => {
               </Grid>
 
               <Grid size={6} container direction="column" rowSpacing={3}>
-                <InfoTextField
-                  label="IMO"
-                  fullWidth
-                  name="shipInfo.IMONumber"
-                  value={values.shipInfo?.IMONumber}
-                  error={
-                    !!touched.shipInfo?.IMONumber &&
-                    !!errors.shipInfo?.IMONumber
-                  }
-                  helperText={
-                    touched.shipInfo?.IMONumber && errors.shipInfo?.IMONumber
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-
-                <InfoTextField
-                  label="Tên tàu"
-                  fullWidth
-                  name="shipInfo.name"
-                  value={values.shipInfo?.name}
-                  error={!!touched.shipInfo?.name && !!errors.shipInfo?.name}
-                  helperText={touched.shipInfo?.name && errors.shipInfo?.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-
+                <InfoTextFieldFormik label="IMO" name="shipInfo.IMONumber" />
+                <InfoTextFieldFormik label="Tên tàu" name="shipInfo.name" />
                 <NationalityTextField
+                  textField={InfoTextFieldFormik}
                   label="Quốc tịch"
-                  fullWidth
                   name="shipInfo.countryISO"
-                  value={values.shipInfo?.countryISO}
-                  error={
-                    !!touched.shipInfo?.countryISO &&
-                    !!errors.shipInfo?.countryISO
-                  }
-                  helperText={
-                    touched.shipInfo?.countryISO && errors.shipInfo?.countryISO
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
-
-                <InfoTextField
-                  label="Loại tàu"
-                  fullWidth
-                  name="shipInfo.type"
-                  value={values.shipInfo?.type}
-                  error={!!touched.shipInfo?.type && !!errors.shipInfo?.type}
-                  helperText={touched.shipInfo?.type && errors.shipInfo?.type}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                <InfoTextField
+                <InfoTextFieldFormik label="Loại tàu" name="shipInfo.type" />
+                <InfoTextFieldFormik
                   label="Mô tả"
-                  fullWidth
                   name="shipInfo.description"
-                  value={values.shipInfo?.description}
-                  error={
-                    !!touched.shipInfo?.description &&
-                    !!errors.shipInfo?.description
-                  }
-                  helperText={
-                    touched.shipInfo?.description &&
-                    errors.shipInfo?.description
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
             </Grid>

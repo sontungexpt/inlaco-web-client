@@ -7,6 +7,7 @@ const SectionWrapper = ({
   children,
   sx,
   title,
+  titleProps,
   divider,
   ...props
 }) => (
@@ -28,7 +29,7 @@ const SectionWrapper = ({
       (divider ? (
         <SectionDivider title={title} />
       ) : (
-        <Typography variant="h6" fontWeight={700} mb={3}>
+        <Typography variant="h6" fontWeight={700} mb={3} {...titleProps}>
           {title}
         </Typography>
       ))}

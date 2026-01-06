@@ -2,23 +2,10 @@ import React from "react";
 import { TextField } from "@mui/material";
 import Color from "@constants/Color";
 
-const InfoTextField = ({
-  sx,
-  disabled,
-  fullWidth = true,
-  slotProps,
-  multiline,
-  minRow,
-  maxRow,
-  rows,
-  ...props
-}) => {
+const InfoTextField = ({ sx, fullWidth = true, slotProps, ...props }) => {
   return (
     <TextField
-      disabled={disabled}
       fullWidth={fullWidth}
-      multiline={multiline}
-      rows={rows}
       sx={[
         { backgroundColor: "#FFF", marginBottom: 1 },
         {

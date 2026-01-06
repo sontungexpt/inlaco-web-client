@@ -5,21 +5,20 @@ import {
   Typography,
   CircularProgress,
   Stack,
+  Grid,
 } from "@mui/material";
 import { Formik } from "formik";
-import Grid from "@mui/material/Grid2";
 
 import ScheduleSendRoundedIcon from "@mui/icons-material/ScheduleSendRounded";
 
-import { PageTitle } from "@components/global";
-import SectionWrapper from "@/components/common/SectionWrapper";
-
 import {
+  PageTitle,
+  SectionWrapper,
   InfoTextField,
-  FileUploadField,
-  ImageUploadField,
+  FileUploadFieldFormik,
+  ImageUploadFieldFormik,
   NationalityTextField,
-} from "@/components/global";
+} from "@/components/common";
 
 import Color from "@constants/Color";
 
@@ -253,7 +252,7 @@ const SupplyRequestForm = ({
               </Grid>
 
               <Grid size={12}>
-                <FileUploadField
+                <FileUploadFieldFormik
                   required
                   accept=".doc,.docx,.pdf,.xls,.xlsx"
                   label="Danh sách số lượng cần cung ứng"
@@ -268,7 +267,7 @@ const SupplyRequestForm = ({
           <SectionWrapper title="Thông tin tàu">
             <Grid container spacing={3}>
               <Grid size={6}>
-                <ImageUploadField
+                <ImageUploadFieldFormik
                   required
                   name="shipInfo.image"
                   helperText={touched.shipInfo?.image && errors.shipInfo?.image}

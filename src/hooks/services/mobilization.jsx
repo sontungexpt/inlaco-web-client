@@ -1,11 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchSpecificMobilization } from "@/services/mobilizationServices";
+import {
+  fetchMobilizations,
+  fetchSpecificMobilization,
+} from "@/services/mobilizationServices";
 
-export const useMobilizationDetail = (mobilizationId, ...params) => {
+export const useMobilization = (mobilizationId, ...params) => {
   return useQuery({
     queryKey: ["mobolization", mobilizationId],
     queryFn: () => fetchSpecificMobilization(mobilizationId),
     enabled: !!mobilizationId,
     ...params,
+  });
+};
+
+export const useMobilizations = ({ page, pageSize, status }) => {
+  return useQuery({
+    queryKey: ["mobolizations", page, pageSize, status],
+    queryFn: () =>
+      fetchMobilizations({
+        page,
+        pageSize,
+        status,
+      }),
   });
 };

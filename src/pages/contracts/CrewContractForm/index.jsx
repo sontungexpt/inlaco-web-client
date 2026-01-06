@@ -81,7 +81,7 @@ const CrewContractForm = () => {
     return contract;
   };
 
-  const handleFormSubmition = async (values, helpers) => {
+  const handleFormSubmission = async (values, helpers) => {
     try {
       const contract = updatingForm
         ? await updateContract(values, helpers)
@@ -114,7 +114,7 @@ const CrewContractForm = () => {
       initialValues={initialValues}
       enableReinitialize
       validationSchema={SCHEMA}
-      onSubmit={handleFormSubmition}
+      onSubmit={handleFormSubmission}
     >
       {({
         values,

@@ -21,7 +21,12 @@ export { default as CloudinaryImage } from "./CloudinaryImage";
 export { default as FilePreviewCard } from "./FilePreviewCard";
 
 export { default as ViewTextField } from "./ViewTextField";
-export { default as InfoTextField } from "./InfoTextField";
 export { default as NationalityTextField } from "./NationalityTextField";
-export { default as FileUploadFieldFormik } from "./FileUploadFieldFormik";
-export { default as ImageUploadFieldFormik } from "./ImageUploadFieldFormik";
+
+export { default as InfoTextField } from "./fields/InfoTextField";
+export { default as InfoTextFieldFormik } from "./fields/InfoTextFieldFormik.jsx";
+
+export { default as FileUploadField } from "./fields/FileUploadField";
+export { default as FileUploadFieldFormik } from "./fields/FileUploadFieldFormik";
+export { default as ImageUploadField } from "./fields/ImageUploadField";
+export { default as ImageUploadFieldFormik } from "./fields/ImageUploadFieldFormik";

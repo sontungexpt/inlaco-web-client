@@ -6,9 +6,7 @@ import {
   InfoTextField,
   DetailCell,
 } from "@components/common";
-import { Box, Button, MenuItem } from "@mui/material";
-import Color from "@constants/Color";
-import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import { Box, MenuItem } from "@mui/material";
 import { useLocation, useNavigate } from "react-router";
 import { useContracts } from "@/hooks/services/contract";
 import { isoToLocalDatetime } from "@/utils/converter";

@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 import { Box, Button, Typography, Link, Stack } from "@mui/material";
 import { ShipInfoCell } from "@components/mobilization";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
-import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useNavigate } from "react-router";
 import { isoToLocalDatetime } from "@/utils/converter";
 import Color from "@constants/Color";
@@ -165,7 +164,13 @@ const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
               px: 2,
               py: 1,
             }}
-            onClick={() => navigate("/supply-requests/create")}
+            onClick={() =>
+              navigate("/supply-requests/form", {
+                state: {
+                  type: "create",
+                },
+              })
+            }
           >
             <AddCircleRoundedIcon sx={{ mr: 1 }} />
             Gửi yêu cầu cung ứng

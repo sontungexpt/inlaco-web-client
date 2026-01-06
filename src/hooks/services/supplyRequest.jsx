@@ -17,6 +17,7 @@ export const useSupplyRequest = (id, params) => {
   return useQuery({
     queryKey: ["supply-request", id],
     queryFn: () => fetchUniqueSupplyRequest(id),
+    enabled: !!id,
     staleTime: 1000 * 60 * 5, // cache 5 min
     ...params,
   });

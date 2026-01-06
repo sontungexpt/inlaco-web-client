@@ -1,7 +1,6 @@
 import React from "react";
 import { MenuItem } from "@mui/material";
 import { InfoTextField } from ".";
-
 import CountryCodes from "@/constants/CountryCodes";
 
 const NationalityTextField = ({
@@ -11,16 +10,18 @@ const NationalityTextField = ({
   minRow,
   maxRow,
   rows,
+  component = InfoTextField,
   ...props
 }) => {
+  const TextField = component;
   return (
-    <InfoTextField {...props} multiline={multiline} rows={rows} select>
+    <TextField {...props} multiline={multiline} rows={rows} select>
       {CountryCodes.map((country) => (
         <MenuItem key={country.code} value={country.code}>
           {`${country.code} - ${country.name}`}
         </MenuItem>
       ))}
-    </InfoTextField>
+    </TextField>
   );
 };
 

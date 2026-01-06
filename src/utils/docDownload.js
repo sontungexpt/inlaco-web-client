@@ -52,3 +52,40 @@ export const downloadFile = async ({ url, initialData, dowloadFileName }) => {
   // 7 Save
   saveAs(out, dowloadFileName);
 };
+
+// const handleDownloadExcel = (values) => {
+//   // Define the headers in Vietnamese
+//   const columnHeaders = [
+//     { header: "Mã thuyền viên", key: "cardId" },
+//     { header: "Họ và tên", key: "fullName" },
+//     { header: "Ngày sinh", key: "birthDate" },
+//     { header: "Số điện thoại", key: "phoneNumber" },
+//     { header: "Chức vụ", key: "professionalPosition" },
+//   ];
+
+//   // Map the data to include only the keys defined in headers
+//   const crewMembers = values.mobilizedCrewMembers.map((member) => ({
+//     cardId: member.cardId,
+//     fullName: member.fullName,
+//     birthDate: formatDate(member.birthDate),
+//     phoneNumber: member.phoneNumber,
+//     professionalPosition: member.professionalPosition,
+//   }));
+
+//   // Create an array with the headers and data
+//   const data = [
+//     columnHeaders.map((columnHeader) => columnHeader.header), // Add headers as the first row
+//     ...crewMembers.map((member) =>
+//       columnHeaders.map((columnHeader) => member[columnHeader.key]),
+//     ), // Add data rows
+//   ];
+
+//   // Convert the array to a worksheet
+//   const worksheet = XLSX.utils.aoa_to_sheet(data);
+//   const workbook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách thuyền viên");
+
+//   // Write the workbook to a file
+//   XLSX.writeFile(workbook, "danh-sach-thuyen-vien-duoc-dieu-dong.xlsx");
+//   console.log("Download excel file successfully");
+// };
