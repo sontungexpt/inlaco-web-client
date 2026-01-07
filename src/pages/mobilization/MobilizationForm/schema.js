@@ -1,40 +1,43 @@
 import * as Yup from "yup";
+import { requiredString, dateBefore, dateAfter } from "@/utils/yupHelper";
 
 export const SCHEMA = Yup.object().shape({
-  compName: Yup.string().required("Tên công ty không được để trống"),
-
-  mobilizationInfo: Yup.object().shape({
-    timeOfDeparture: Yup.date()
-      .min(new Date(), "Thời gian khởi hành không hợp lệ")
-      .required("Thời gian khởi hành dự kiến không được để trống")
-      .test(
-        "is-before-end-datetime",
+  partnerName: requiredString("Tên công ty không được để trống"),
+  startDate: Yup.date()
+    .min(new Date(), "Thời gian khởi hành không hợp lệ")
+    .required("Thời gian khởi hành dự kiến không được để trống")
+    .concat(
+      dateBefore(
+        "endDate",
         "Thời gian khởi hành phải trước thời gian đến nơi dự kiến",
-        function (value) {
-          const { estimatedTimeOfArrival } = this.parent; // Access sibling field estimatedTimeOfArrival
-          return !estimatedTimeOfArrival || value < estimatedTimeOfArrival;
-        },
       ),
-    UN_LOCODE_DepartureLocation: Yup.string().required(
-      "UN/LOCODE điểm khởi hành không được để trống",
-    ),
-    departureLocation: Yup.string().required(
-      "Tên điểm khởi hành không được để trống",
     ),
 
-    estimatedTimeOfArrival: Yup.date()
-      .required("Thời gian đến nơi dự kiến không được để trống")
-      .test(
-        "is-after-start-datetime",
+  endDate: Yup.date()
+    .required("Thời gian đến nơi dự kiến không được để trống")
+    .concat(
+      dateAfter(
+        "startDate",
         "Thời gian đến nơi dự kiến phải sau thời gian khởi hành",
-        function (value) {
-          const { timeOfDeparture } = this.parent; // Access sibling field timeOfDeparture
-          return !timeOfDeparture || value > timeOfDeparture;
-        },
       ),
-    UN_LOCODE_ArrivalLocation: Yup.string().required(
-      "UN/LOCODE điểm đến không được để trống",
     ),
-    arrivalLocation: Yup.string().required("Tên điểm đến không được để trống"),
+
+  shipInfo: Yup.object().shape({
+    imonumber: requiredString("Số IMO tàu không được để trống"),
+    name: requiredString("Tên tàu không được để trống"),
+    countryISO: requiredString("Quốc tịch tàu không được để trống"),
+    shipType: requiredString("Loại tàu không được để trống"),
+    imageUrl: Yup.string().nullable(),
   }),
+
+  crewMembers: Yup.array()
+    .of(
+      Yup.object().shape({
+        cardId: requiredString("Số thẻ thuyền viên không được để trống"),
+        professionalPosition: requiredString(
+          "Chức danh chuyên môn không được để trống",
+        ),
+      }),
+    )
+    .min(1, "Phải có ít nhất một thuyền viên"),
 });

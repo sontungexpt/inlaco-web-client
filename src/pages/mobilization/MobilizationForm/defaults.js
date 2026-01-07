@@ -1,20 +1,21 @@
 export const DEFAULT_INITIAL_VALUES = {
-  compName: "",
-  mobilizationInfo: {
-    timeOfDeparture: "",
-    departureLocation: "",
-    UN_LOCODE_DepartureLocation: "",
+  status: "PENDING",
 
-    estimatedTimeOfArrival: "",
-    arrivalLocation: "",
-    UN_LOCODE_ArrivalLocation: "",
+  partnerName: "",
+  partnerPhone: "",
+  partnerEmail: "",
+  partnerAddress: "",
 
-    shipImage: "",
-    shipIMO: "",
-    shipName: "",
-    shipNationality: "",
+  startDate: "",
+  endDate: "",
+
+  shipInfo: {
+    imageUrl: "",
+    imonumber: "",
+    name: "",
+    countryISO: "",
     shipType: "",
   },
 
-  mobilizedCrewMembers: [],
+  crewMembers: [],
 };

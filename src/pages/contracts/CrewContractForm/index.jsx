@@ -3,7 +3,7 @@ import {
   SectionWrapper,
   FileUploadFieldFormik,
   PageTitle,
-  InfoTextField,
+  InfoTextFieldFormik,
 } from "@components/common";
 import {
   Box,
@@ -123,8 +123,6 @@ const CrewContractForm = () => {
         isValid,
         dirty,
         isSubmitting,
-        handleBlur,
-        handleChange,
         handleSubmit,
       }) => {
         return (
@@ -204,17 +202,7 @@ const CrewContractForm = () => {
             <SectionWrapper>
               <Grid container spacing={2}>
                 <Grid size={6}>
-                  <InfoTextField
-                    label="Tiêu đề hợp đồng"
-                    required
-                    fullWidth
-                    name="title"
-                    value={values.title}
-                    error={!!touched.title && !!errors.title}
-                    helperText={touched.title && errors.title}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
+                  <InfoTextFieldFormik label="Tiêu đề hợp đồng" name="title" />
                 </Grid>
               </Grid>
             </SectionWrapper>
@@ -223,99 +211,37 @@ const CrewContractForm = () => {
             <SectionWrapper title="Người sử dụng lao động (Bên A)">
               <Grid container spacing={2} mt={1}>
                 <Grid size={4}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Tên công ty"
-                    required
-                    fullWidth
                     name="partyA.compName"
-                    value={values.partyA?.compName}
-                    error={
-                      !!touched.partyA?.compName && !!errors.partyA?.compName
-                    }
-                    helperText={
-                      touched.partyA?.compName && errors.partyA?.compName
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
 
                 <Grid size={6}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Địa chỉ"
-                    required
-                    fullWidth
                     name="partyA.compAddress"
-                    value={values.partyA?.compAddress}
-                    error={
-                      !!touched.partyA?.compAddress &&
-                      !!errors.partyA?.compAddress
-                    }
-                    helperText={
-                      touched.partyA?.compAddress && errors.partyA?.compAddress
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
 
                 <Grid size={2}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Số điện thoại"
-                    required
-                    fullWidth
                     name="partyA.compPhoneNumber"
-                    value={values.partyA?.compPhoneNumber}
-                    error={
-                      !!touched.partyA?.compPhoneNumber &&
-                      !!errors.partyA?.compPhoneNumber
-                    }
-                    helperText={
-                      touched.partyA?.compPhoneNumber &&
-                      errors.partyA?.compPhoneNumber
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
 
                 <Grid size={4}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Người đại diện"
-                    required
-                    fullWidth
                     name="partyA.representative"
-                    value={values.partyA?.representative}
-                    error={
-                      !!touched.partyA?.representative &&
-                      !!errors.partyA?.representative
-                    }
-                    helperText={
-                      touched.partyA?.representative &&
-                      errors.partyA?.representative
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
 
                 <Grid size={3}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Chức vụ"
-                    required
-                    fullWidth
                     name="partyA.representativePos"
-                    error={
-                      !!touched.partyA?.representativePos &&
-                      !!errors.partyA?.representativePos
-                    }
-                    helperText={
-                      touched.partyA?.representativePos &&
-                      errors.partyA?.representativePos
-                    }
-                    value={values.partyA?.representativePos}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
               </Grid>
@@ -325,198 +251,74 @@ const CrewContractForm = () => {
             <SectionWrapper title="Người lao động (Bên B)">
               <Grid container spacing={2} mt={1}>
                 <Grid size={6}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Họ và tên"
-                    required
-                    fullWidth
                     name="partyB.fullName"
-                    value={values.partyB?.fullName}
-                    error={
-                      !!touched.partyB?.fullName && !!errors.partyB?.fullName
-                    }
-                    helperText={
-                      touched.partyB?.fullName && errors.partyB?.fullName
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
 
                 <Grid size={3}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     type="date"
                     label="Ngày sinh"
-                    required
-                    fullWidth
                     name="partyB.dob"
-                    value={values.partyB?.dob}
-                    error={!!touched.partyB?.dob && !!errors.partyB?.dob}
-                    helperText={touched.partyB?.dob && errors.partyB?.dob}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    slotProps={{ inputLabel: { shrink: true } }}
                   />
                 </Grid>
                 <Grid size={3}>
-                  <InfoTextField
-                    id="birthPlace"
+                  <InfoTextFieldFormik
                     label="Nơi sinh"
-                    margin="none"
-                    required
-                    fullWidth
                     name="partyB.birthPlace"
-                    value={values.partyB?.birthPlace}
-                    error={
-                      !!touched.partyB?.birthPlace &&
-                      !!errors.partyB?.birthPlace
-                    }
-                    helperText={
-                      touched.partyB?.birthPlace && errors.partyB?.birthPlace
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
 
                 <Grid size={2}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Quốc tịch"
-                    required
-                    fullWidth
                     name="partyB.nationality"
-                    value={values.partyB?.nationality}
-                    error={
-                      !!touched.partyB?.nationality &&
-                      !!errors.partyB?.nationality
-                    }
-                    helperText={
-                      touched.partyB?.nationality && errors.partyB?.nationality
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
 
                 <Grid size={5}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Địa chỉ thường trú"
-                    required
-                    fullWidth
                     name="partyB.permanentAddr"
-                    value={values.partyB?.permanentAddr}
-                    error={
-                      !!touched.partyB?.permanentAddr &&
-                      !!errors.partyB?.permanentAddr
-                    }
-                    helperText={
-                      touched.partyB?.permanentAddr &&
-                      errors.partyB?.permanentAddr
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
                 <Grid size={5}>
-                  <InfoTextField
-                    id="temporary-address"
+                  <InfoTextFieldFormik
                     label="Địa chỉ tạm trú"
-                    margin="none"
-                    required
-                    fullWidth
                     name="partyB.temporaryAddr"
-                    value={values.partyB?.temporaryAddr}
-                    error={
-                      !!touched.partyB?.temporaryAddr &&
-                      !!errors.partyB?.temporaryAddr
-                    }
-                    helperText={
-                      touched.partyB?.temporaryAddr &&
-                      errors.partyB?.temporaryAddr
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
 
                 <Grid size={3}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Số điện thoại"
-                    required
-                    fullWidth
                     name="partyB.phone"
-                    value={values.partyB?.phone}
-                    error={!!touched.partyB?.phone && !!errors.partyB?.phone}
-                    helperText={touched.partyB?.phone && errors.partyB?.phone}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
                 <Grid size={12}>
                   <SectionWrapper title="Thông tin Căn cước công dân">
                     <Grid container spacing={2}>
                       <Grid size={4}>
-                        <InfoTextField
-                          id="ci-number"
+                        <InfoTextFieldFormik
                           label="Số Căn cước công dân"
-                          required
-                          fullWidth
                           name="partyB.ciNumber"
-                          value={values.partyB?.ciNumber}
-                          error={
-                            !!touched.partyB?.ciNumber &&
-                            !!errors.partyB?.ciNumber
-                          }
-                          helperText={
-                            touched.partyB?.ciNumber && errors.partyB?.ciNumber
-                          }
-                          onChange={handleChange}
-                          onBlur={handleBlur}
                         />
                       </Grid>
 
                       <Grid size={3}>
-                        <InfoTextField
-                          id="ci-issue-date"
+                        <InfoTextFieldFormik
                           type="date"
                           label="Ngày cấp"
-                          required
-                          fullWidth
                           name="partyB.ciIssueDate"
-                          value={values.partyB?.ciIssueDate}
-                          error={
-                            !!touched.partyB?.ciIssueDate &&
-                            !!errors.partyB?.ciIssueDate
-                          }
-                          helperText={
-                            touched.partyB?.ciIssueDate &&
-                            errors.partyB?.ciIssueDate
-                          }
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          slotProps={{
-                            inputLabel: { shrink: true },
-                          }}
                         />
                       </Grid>
 
                       <Grid size={5}>
-                        <InfoTextField
-                          id="ci-issue-place"
+                        <InfoTextFieldFormik
                           label="Nơi cấp"
-                          required
-                          fullWidth
                           name="partyB.ciIssuePlace"
-                          value={values.partyB?.ciIssuePlace}
-                          error={
-                            !!touched.partyB?.ciIssuePlace &&
-                            !!errors.partyB?.ciIssuePlace
-                          }
-                          helperText={
-                            touched.partyB?.ciIssuePlace &&
-                            errors.partyB?.ciIssuePlace
-                          }
-                          onChange={handleChange}
-                          onBlur={handleBlur}
                         />
                       </Grid>
                     </Grid>
@@ -529,103 +331,40 @@ const CrewContractForm = () => {
             <SectionWrapper title="Thông tin công việc">
               <Grid container spacing={2} mt={1}>
                 <Grid size={4}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     type="datetime-local"
                     label="Ngày bắt đầu"
-                    required
-                    fullWidth
                     name="jobInfo.startDate"
-                    value={values.jobInfo?.startDate}
-                    error={
-                      !!touched.jobInfo?.startDate &&
-                      !!errors.jobInfo?.startDate
-                    }
-                    helperText={
-                      touched.jobInfo?.startDate && errors.jobInfo?.startDate
-                    }
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    slotProps={{ inputLabel: { shrink: true } }}
                   />
                 </Grid>
 
                 <Grid size={4}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     type="datetime-local"
                     label="Ngày kết thúc"
-                    required
-                    fullWidth
                     name="jobInfo.endDate"
-                    value={values.jobInfo?.endDate}
-                    error={
-                      !!touched.jobInfo?.endDate && !!errors.jobInfo?.endDate
-                    }
-                    helperText={
-                      touched.jobInfo?.endDate && errors.jobInfo?.endDate
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    slotProps={{ inputLabel: { shrink: true } }}
                   />
                 </Grid>
 
                 <Grid size={4}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Vị trí chuyên môn"
-                    margin="none"
-                    required
-                    fullWidth
                     name="jobInfo.position"
-                    value={values.jobInfo?.position}
-                    error={
-                      !!touched.jobInfo?.position && !!errors.jobInfo?.position
-                    }
-                    helperText={
-                      touched.jobInfo?.position && errors.jobInfo?.position
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
                 <Grid size={12}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Địa điểm làm việc"
-                    required
-                    fullWidth
                     name="jobInfo.workingLocation"
-                    value={values.jobInfo?.workingLocation}
-                    error={
-                      !!touched.jobInfo?.workingLocation &&
-                      !!errors.jobInfo?.workingLocation
-                    }
-                    helperText={
-                      touched.jobInfo?.workingLocation &&
-                      errors.jobInfo?.workingLocation
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
 
                 <Grid size={12}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Mô tả công việc"
-                    required
                     multiline
                     rows={5}
-                    fullWidth
                     name="jobInfo.jobDescription"
-                    value={values.jobInfo?.jobDescription}
-                    error={
-                      !!touched.jobInfo?.jobDescription &&
-                      !!errors.jobInfo?.jobDescription
-                    }
-                    helperText={
-                      touched.jobInfo?.jobDescription &&
-                      errors.jobInfo?.jobDescription
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
               </Grid>
@@ -644,23 +383,10 @@ const CrewContractForm = () => {
             >
               <Grid container spacing={2} mt={1}>
                 <Grid size={6}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     type="number"
                     label="Lương cơ bản"
-                    required
-                    fullWidth
                     name="salaryInfo.basicSalary"
-                    value={values.salaryInfo?.basicSalary}
-                    error={
-                      !!touched.salaryInfo?.basicSalary &&
-                      !!errors.salaryInfo?.basicSalary
-                    }
-                    helperText={
-                      touched.salaryInfo?.basicSalary &&
-                      errors.salaryInfo?.basicSalary
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                     slotProps={{
                       input: {
                         endAdornment: (
@@ -672,89 +398,36 @@ const CrewContractForm = () => {
                 </Grid>
 
                 <Grid size={6}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Phụ cấp"
-                    required
-                    fullWidth
                     name="salaryInfo.allowance"
-                    value={values.salaryInfo?.allowance}
-                    error={
-                      !!touched.salaryInfo?.allowance &&
-                      !!errors.salaryInfo?.allowance
-                    }
-                    helperText={
-                      touched.salaryInfo?.allowance &&
-                      errors.salaryInfo?.allowance
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
 
                 <Grid size={6}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     select
                     label="Hình thức trả lương"
-                    required
-                    fullWidth
                     name="salaryInfo.receiveMethod"
-                    value={values.salaryInfo?.receiveMethod}
-                    error={
-                      !!touched.salaryInfo?.receiveMethod &&
-                      !!errors.salaryInfo?.receiveMethod
-                    }
-                    helperText={
-                      touched.salaryInfo?.receiveMethod &&
-                      errors.salaryInfo?.receiveMethod
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   >
                     {RECEIVE_METHOD.map((m) => (
                       <MenuItem key={m} value={m}>
                         {m}
                       </MenuItem>
                     ))}
-                  </InfoTextField>
+                  </InfoTextFieldFormik>
                 </Grid>
 
                 <Grid size={6}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     label="Thời hạn trả lương"
-                    required
-                    fullWidth
                     name="salaryInfo.payday"
-                    value={values.salaryInfo?.payday}
-                    error={
-                      !!touched.salaryInfo?.payday &&
-                      !!errors.salaryInfo?.payday
-                    }
-                    helperText={
-                      touched.salaryInfo?.payday && errors.salaryInfo?.payday
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
                 <Grid size={6}>
-                  <InfoTextField
-                    id="salary-review-period"
+                  <InfoTextFieldFormik
                     label="Thời hạn được xét nâng lương"
-                    margin="none"
-                    required
-                    fullWidth
                     name="salaryInfo.salaryReviewPeriod"
-                    value={values.salaryInfo?.salaryReviewPeriod}
-                    error={
-                      !!touched.salaryInfo?.salaryReviewPeriod &&
-                      !!errors.salaryInfo?.salaryReviewPeriod
-                    }
-                    helperText={
-                      touched.salaryInfo?.salaryReviewPeriod &&
-                      errors.salaryInfo?.salaryReviewPeriod
-                    }
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
 
@@ -762,45 +435,16 @@ const CrewContractForm = () => {
                   "Chuyển khoản ngân hàng" && (
                   <>
                     <Grid size={6}>
-                      <InfoTextField
-                        id="bankAccount"
+                      <InfoTextFieldFormik
                         label="Tài khoản ngân hàng"
-                        margin="none"
-                        required
-                        fullWidth
                         name="salaryInfo.bankAccount"
-                        value={values.salaryInfo?.bankAccount}
-                        error={
-                          !!touched.salaryInfo?.bankAccount &&
-                          !!errors.salaryInfo?.bankAccount
-                        }
-                        helperText={
-                          touched.salaryInfo?.bankAccount &&
-                          errors.salaryInfo?.bankAccount
-                        }
-                        onChange={handleChange}
-                        onBlur={handleBlur}
                       />
                     </Grid>
                     <Grid size={6}>
-                      <InfoTextField
+                      <InfoTextFieldFormik
                         id="bankName"
                         label="Tên ngân hàng"
-                        margin="none"
-                        required
-                        fullWidth
                         name="salaryInfo.bankName"
-                        value={values.salaryInfo?.bankName}
-                        error={
-                          !!touched.salaryInfo?.bankName &&
-                          !!errors.salaryInfo?.bankName
-                        }
-                        helperText={
-                          touched.salaryInfo?.bankName &&
-                          errors.salaryInfo?.bankName
-                        }
-                        onChange={handleChange}
-                        onBlur={handleBlur}
                       />
                     </Grid>
                   </>
@@ -809,11 +453,7 @@ const CrewContractForm = () => {
             </SectionWrapper>
 
             <SectionWrapper title="Hợp đồng">
-              <FileUploadFieldFormik
-                required
-                name="contractFile"
-                helperText={touched.contractFile && errors.contractFile}
-              />
+              <FileUploadFieldFormik required name="contractFile" />
             </SectionWrapper>
 
             <TemplateDialog

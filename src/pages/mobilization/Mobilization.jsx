@@ -15,12 +15,12 @@ const Mobilization = ({ pageSize = 10 }) => {
     page: initialPage || 0,
     pageSize: pageSize,
   });
+
   const { data: { content: mobilizations } = {}, isLoading } = useMobilizations(
     {
       page: paginationModel.page,
       pageSize: paginationModel.pageSize,
-      // status: "PENDING",
-      // status: "CREATED",
+      filter: {},
     },
   );
 

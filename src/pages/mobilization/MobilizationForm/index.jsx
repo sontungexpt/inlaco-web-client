@@ -21,9 +21,8 @@ const MobiliaztionForm = () => {
   const navigate = useNavigate();
 
   const createEmptyRow = () => ({
-    name: "",
-    age: null,
-    email: "",
+    cardId: "",
+    professionalPosition: "",
   });
 
   const handleFormSubmission = async (values, { resetForm }) => {
@@ -31,10 +30,11 @@ const MobiliaztionForm = () => {
       const newMobilization = await createMobilization(
         mapValuesToRequestBody(values),
       );
+
       // resetForm();
       // navigate(`/mobilizations/${newMobilization.id}`);
     } catch (err) {
-      console.log("Error when creating mobilization: ", err);
+      console.error("Error when creating mobilization: ", err);
     }
   };
 
@@ -89,7 +89,7 @@ const MobiliaztionForm = () => {
             <Grid container spacing={2}>
               <Grid size={5}>
                 <InfoTextFieldFormik
-                  name="compName"
+                  name="partnerName"
                   label="Điều động đến công ty"
                   fullWidth
                 />
@@ -97,7 +97,7 @@ const MobiliaztionForm = () => {
 
               <Grid size={4}>
                 <InfoTextFieldFormik
-                  name="email"
+                  name="partnerEmail"
                   label="Email công ty"
                   fullWidth
                 />
@@ -105,7 +105,7 @@ const MobiliaztionForm = () => {
 
               <Grid size={3}>
                 <InfoTextFieldFormik
-                  name="phoneNumber"
+                  name="partnerPhone"
                   label="SĐT công ty"
                   fullWidth
                 />
@@ -118,14 +118,14 @@ const MobiliaztionForm = () => {
             <Grid container spacing={2}>
               <Grid size={6}>
                 <InfoTextFieldFormik
-                  name="mobilizationInfo.startDate"
+                  name="startDate"
                   type="datetime-local"
                   label="Thời gian bắt đầu công việc"
                 />
               </Grid>
               <Grid size={6}>
                 <InfoTextFieldFormik
-                  name="mobilizationInfo.endDate"
+                  name="endDate"
                   type="datetime-local"
                   label="Thời gian kết thúc công việc"
                 />
@@ -137,7 +137,7 @@ const MobiliaztionForm = () => {
           <SectionWrapper title="Thông tin tàu">
             <Box display="flex" justifyContent="center" mb={2}>
               <ImageUploadFieldFormik
-                name="mobilizationInfo.shipImage"
+                name="shipInfo.imageUrl"
                 width={300}
                 height={180}
               />
@@ -145,29 +145,23 @@ const MobiliaztionForm = () => {
 
             <Grid container spacing={2}>
               <Grid size={2}>
-                <InfoTextFieldFormik
-                  name="mobilizationInfo.shipIMO"
-                  label="IMO"
-                />
+                <InfoTextFieldFormik name="shipInfo.imonumber" label="IMO" />
               </Grid>
 
               <Grid size={4}>
-                <InfoTextFieldFormik
-                  name="mobilizationInfo.shipName"
-                  label="Tên tàu"
-                />
+                <InfoTextFieldFormik name="shipInfo.name" label="Tên tàu" />
               </Grid>
 
               <Grid size={2}>
                 <NationalityTextField
-                  name="mobilizationInfo.shipNationality"
+                  name="shipInfo.countryISO"
                   label="Quốc tịch"
                 />
               </Grid>
 
               <Grid size={4}>
                 <InfoTextFieldFormik
-                  name="mobilizationInfo.shipType"
+                  name="shipInfo.shipType"
                   label="Loại tàu"
                 />
               </Grid>
@@ -180,24 +174,17 @@ const MobiliaztionForm = () => {
               title="Danh sách thuyền viên được điều động"
               createEmptyRow={createEmptyRow}
               buttonText="Thêm thuyền viên"
-              name="mobilizedCrewMembers"
+              name="crewMembers"
               columns={[
                 {
-                  field: "name",
-                  headerName: "Tên",
+                  field: "cardId",
+                  headerName: "Số thẻ",
                   flex: 1,
                   editable: true,
                 },
                 {
-                  field: "age",
-                  headerName: "Tuổi",
-                  type: "number",
-                  width: 120,
-                  editable: true,
-                },
-                {
-                  field: "email",
-                  headerName: "Email",
+                  field: "professionalPosition",
+                  headerName: "Chức danh",
                   flex: 1,
                   editable: true,
                 },

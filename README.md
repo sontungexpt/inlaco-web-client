@@ -1,5 +1,9 @@
 # INLACO Crew Management System
 
+## Tech stack
+
+- ReactJs, MUI
+
 ## Reference
 
 - [INLACO Crew Management Backend](https://github.com/sontungexpt/inlaco-crewmgr-service)
