@@ -16,14 +16,22 @@ import Color from "@constants/Color";
 import { SCHEMA } from "./schema";
 import { mapValuesToRequestBody } from "./mapper";
 import { DEFAULT_INITIAL_VALUES } from "./defaults";
+import EditableDataGridFormik from "@/components/common/EditableDataGridFormik";
+import CrewSearchEditCell from "./CrewSearchEditCell";
 
 const MobiliaztionForm = () => {
   const navigate = useNavigate();
 
   const createEmptyRow = () => ({
     cardId: "",
+    name: "",
     professionalPosition: "",
   });
+
+  // services/crewService.js
+  const searchCrew = async (keyword) => {
+    // return [{ id, cardId, name }]
+  };
 
   const handleFormSubmission = async (values, { resetForm }) => {
     try {
@@ -39,6 +47,34 @@ const MobiliaztionForm = () => {
   };
 
   const initialValues = useMemo(() => DEFAULT_INITIAL_VALUES, []);
+  const columns = useMemo(
+    () => [
+      {
+        field: "cardId",
+        headerName: "Số thẻ",
+        flex: 1,
+        required: true,
+        renderEditCell: (params) => {
+          console.log("params: ", params);
+          return <CrewSearchEditCell {...params} />;
+        },
+      },
+      {
+        field: "name",
+        headerName: "Họ tên",
+        flex: 1,
+        editable: false,
+        renderEditCell: (params) => <CrewSearchEditCell {...params} />,
+      },
+      {
+        field: "professionalPosition",
+        headerName: "Chức danh",
+        flex: 1,
+        editable: true,
+      },
+    ],
+    [],
+  );
 
   return (
     <Formik
@@ -170,25 +206,12 @@ const MobiliaztionForm = () => {
 
           {/* ================= CREW ================= */}
           <SectionWrapper>
-            <EditableDataGrid
+            <EditableDataGridFormik
               title="Danh sách thuyền viên được điều động"
               createEmptyRow={createEmptyRow}
               buttonText="Thêm thuyền viên"
               name="crewMembers"
-              columns={[
-                {
-                  field: "cardId",
-                  headerName: "Số thẻ",
-                  flex: 1,
-                  editable: true,
-                },
-                {
-                  field: "professionalPosition",
-                  headerName: "Chức danh",
-                  flex: 1,
-                  editable: true,
-                },
-              ]}
+              columns={columns}
             />
           </SectionWrapper>
         </Box>

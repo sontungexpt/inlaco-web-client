@@ -10,7 +10,7 @@ import {
   dateAfter,
   dateMax,
 } from "@/utils/yupHelpers";
-import { dateBefore } from "@/utils/yupHelper";
+import { dateBefore } from "@/utils/yupHelpers";
 
 export const SCHEMA = Yup.object({
   title: requiredString("Tiêu đề không được để trống"),

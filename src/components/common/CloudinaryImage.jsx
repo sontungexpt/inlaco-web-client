@@ -48,13 +48,15 @@ const CloudinaryImage = ({
     return image;
   }, [publicId, width, height, hasError]);
 
-  const sharedStyle = {
-    width: width ?? "100%",
-    height: height ?? "100%",
-    objectFit: width && height ? "cover" : "contain",
-    display: "block",
-    ...imgSx,
-  };
+  const sharedStyle = [
+    {
+      width: width ?? "100%",
+      height: height ?? "100%",
+      objectFit: width && height ? "cover" : "contain",
+      display: "block",
+    },
+    ...(Array.isArray(sx) ? sx : [sx]),
+  ];
 
   /* ===== Fallback ===== */
   if (hasError || (!cldImg && !src)) {
@@ -63,7 +65,8 @@ const CloudinaryImage = ({
         component="img"
         src={fallback}
         alt="fallback"
-        sx={[sharedStyle, ...(Array.isArray(sx) ? sx : [sx])]}
+        sx={sharedStyle}
+        {...props}
       />
     );
   }
@@ -75,7 +78,7 @@ const CloudinaryImage = ({
         component={AdvancedImage}
         cldImg={cldImg}
         onError={handleError}
-        sx={[sharedStyle, ...(Array.isArray(sx) ? sx : [sx])]}
+        sx={sharedStyle}
         {...props}
       />
     );
@@ -89,7 +92,7 @@ const CloudinaryImage = ({
       alt={alt}
       loading="lazy"
       onError={handleError}
-      sx={[sharedStyle, ...(Array.isArray(sx) ? sx : [sx])]}
+      sx={sharedStyle}
       {...props}
     />
   );

@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { requiredString, dateBefore, dateAfter } from "@/utils/yupHelper";
+import { requiredString, dateBefore, dateAfter } from "@/utils/yupHelpers";
 
 export const SCHEMA = Yup.object().shape({
   partnerName: requiredString("Tên công ty không được để trống"),

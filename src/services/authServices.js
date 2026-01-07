@@ -1,16 +1,12 @@
 import AuthEndpoint from "@/endpoints/AuthEndpoint";
 import { publicRequest } from "@/utils/request";
 
-export const loginAPI = async (email, password) => {
-  try {
-    const response = await publicRequest.post(AuthEndpoint.LOGIN, {
-      username: email,
-      password: password,
-    });
-    return response;
-  } catch (err) {
-    return err.response;
-  }
+export const login = async (email, password) => {
+  const response = await publicRequest.post(AuthEndpoint.LOGIN, {
+    username: email,
+    password: password,
+  });
+  return response;
 };
 
 export const signUpAPI = async (fullName, email, password, confirmPassword) => {

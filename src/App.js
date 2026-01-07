@@ -1,14 +1,54 @@
-import { Routes, Route } from "react-router";
+import { Routes, Outlet, Route, Navigate } from "react-router";
 import React, { Suspense } from "react";
 import { useAuthContext } from "./contexts/AuthContext";
 import { PageCircularProgress } from "./components/common";
 import { AppRoutes } from "./routes";
 import MainLayout from "./layout/MainLayout";
+import LoginPage from "./pages/auth/LoginPage";
+
+function AuthGuard() {
+  const { isLoading, isAuthenticated } = useAuthContext();
+
+  if (isLoading) {
+    return <PageCircularProgress />;
+  } else if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+}
+
+function RoleGuard({ allowedRoles }) {
+  const { hasRole, roles: userRoles } = useAuthContext();
+  if (!allowedRoles) return <Outlet />;
+  const allowed =
+    typeof allowedRoles === "function"
+      ? allowedRoles(hasRole, userRoles)
+      : allowedRoles.some((r) => hasRole(r));
+  if (!allowed) return <div>Unauthorized</div>;
+  return <Outlet />;
+}
+
+function LayoutRoute({ layout }) {
+  if (layout === "blank") return <Outlet />;
+  return (
+    <MainLayout>
+      <Outlet />
+    </MainLayout>
+  );
+}
 
 const ProtectedRoute = ({ roles, children }) => {
-  const { loading, hasRole, roles: userRoles } = useAuthContext();
-  if (loading) {
-    return null;
+  const {
+    isLoading,
+    isAuthenticated,
+    hasRole,
+    roles: userRoles,
+  } = useAuthContext();
+  if (isLoading) {
+    return <PageCircularProgress />;
+  } else if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
   } else if (!roles) {
     return children;
   } else if (
@@ -19,6 +59,30 @@ const ProtectedRoute = ({ roles, children }) => {
   }
   return children;
 };
+
+export const buildRoutes = (routes) =>
+  routes.map((route, idx) => {
+    const Element = route.element;
+
+    return (
+      <Route
+        key={route.path || `route-${idx}`}
+        path={route.path}
+        index={route.index}
+      >
+        {/* Layout */}
+        <Route element={<LayoutRoute layout={route.layout} />}>
+          {/* Role */}
+          <Route element={<RoleGuard allowedRoles={route.roles} />}>
+            {/* Actual page */}
+            {Element && <Route index={route.index} element={<Element />} />}
+            {(route.childrens || route.children) &&
+              buildRoutes(route.childrens || route.children)}
+          </Route>
+        </Route>
+      </Route>
+    );
+  });
 
 const renderRoute = (route, parentLayout = MainLayout) => {
   // 1) Xác định layout của route hiện tại
@@ -67,7 +131,10 @@ const renderRoute = (route, parentLayout = MainLayout) => {
 export default function App() {
   return (
     <Suspense fallback={<PageCircularProgress />}>
-      <Routes>{AppRoutes.map((route) => renderRoute(route))}</Routes>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        {AppRoutes.map((route) => renderRoute(route))}
+      </Routes>
     </Suspense>
   );
 }

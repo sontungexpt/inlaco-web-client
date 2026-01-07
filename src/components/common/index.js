@@ -14,6 +14,7 @@ export { default as ConfirmButton } from "./ConfirmButton";
 export { default as BaseTabBar } from "./BaseTabBar";
 export { default as BaseDataGrid } from "./BaseDataGrid";
 export { default as EditableDataGrid } from "./EditableDataGrid";
+export { default as EditableDataGridFormik } from "./EditableDataGridFormik";
 
 export { default as SectionWrapper } from "./SectionWrapper";
 export { default as SectionDivider } from "./SectionDivider";

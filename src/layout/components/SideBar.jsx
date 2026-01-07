@@ -9,6 +9,7 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import { useAuthContext } from "../../contexts/AuthContext";
 import Color from "@constants/Color";
 import SidebarConfig, { ActionMap } from "@/constants/SidebarConfig";
+import { CloudinaryImage } from "@/components/common";
 
 const Item = memo(({ title, icon, active, onClick }) => (
   <MenuItem
@@ -31,7 +32,7 @@ const Item = memo(({ title, icon, active, onClick }) => (
 ));
 
 const SideBar = () => {
-  const { accountName, hasRole, logout, roles } = useAuthContext();
+  const { user, hasRole, logout, roles } = useAuthContext();
 
   /* ===== ACTION MAP ===== */
   const ACTION_MAP = {
@@ -73,7 +74,6 @@ const SideBar = () => {
       if (f) await f();
     }
   };
-
   return (
     <Sidebar
       collapsed={collapsed}
@@ -130,16 +130,24 @@ const SideBar = () => {
 
         {/* ===== USER INFO (ANIMATED) ===== */}
         <Collapse in={!collapsed}>
-          <Box my={3} textAlign="center">
-            <img
-              src={require("@assets/images/profile-logo-placeholder.jpg")}
+          <Box
+            width="100%"
+            flexDirection="column"
+            my={3}
+            display="flex"
+            alignItems="center"
+          >
+            <CloudinaryImage
+              fallback={require("@assets/images/profile-logo-placeholder.jpg")}
+              publicId={user?.avatar?.publicId}
+              src={user?.avatar?.url}
               alt="profile"
               width={90}
               height={90}
               style={{ borderRadius: "50%" }}
             />
             <Typography variant="h6" color={Color.PrimaryWhite} mt={1}>
-              {accountName}
+              {user?.name}
             </Typography>
           </Box>
         </Collapse>
