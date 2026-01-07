@@ -135,35 +135,6 @@ export function dateTimeStringToISOString(dateTimeString) {
   }
 }
 
-export function isoToMUIDateTime(isoString, showTime = true) {
-  try {
-    const date = new Date(isoString);
-
-    if (isNaN(date.getTime())) {
-      throw new Error("Invalid ISO string");
-    }
-
-    // Extract date components
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-
-    if (!showTime) {
-      // Return in MUI date format
-      return `${year}-${month}-${day}`;
-    }
-
-    // Extract time components
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-
-    // Return in MUI datetime format
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-  } catch (error) {
-    return "";
-  }
-}
-
 //convert "yyyy-mm-ddT00:00:00.000Z" to "yyyy-mm-dd"
 export function isoStringToDateString(isoString, showTime) {
   try {
@@ -216,19 +187,6 @@ export function isoStringToAppDateString(isoString) {
   } catch (error) {
     console.error("Error converting ISOString to date string:", error);
     return null; // Return null on errors
-  }
-}
-
-export function formatDateString(value) {
-  try {
-    // Split the input date string by the hyphen
-    const [year, month, day] = value.split("-");
-
-    // Return the formatted date string in "dd/mm/yyyy" format
-    return `${day}/${month}/${year}`;
-  } catch (error) {
-    console.error("Error formatting date string:", error);
-    return null; // Return null on formatting errors
   }
 }
 

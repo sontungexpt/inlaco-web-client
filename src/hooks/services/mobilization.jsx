@@ -13,14 +13,14 @@ export const useMobilization = (mobilizationId, ...params) => {
   });
 };
 
-export const useMobilizations = ({ page, pageSize, status }) => {
+export const useMobilizations = ({ page, pageSize, filter }) => {
   return useQuery({
-    queryKey: ["mobolizations", page, pageSize, status],
+    queryKey: ["mobolizations", page, pageSize, filter],
     queryFn: () =>
       fetchMobilizations({
         page,
         pageSize,
-        status,
+        filter,
       }),
   });
 };

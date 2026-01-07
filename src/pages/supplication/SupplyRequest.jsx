@@ -7,7 +7,7 @@ import { isoToLocalDatetime } from "@/utils/converter";
 import Color from "@constants/Color";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import { useSupplyRequests } from "@/hooks/services/supplyRequest";
-import { PageTitle, BaseDataGrid, DetailCell } from "@/components/common";
+import { PageTitle, BaseDataGrid, DetailActionCell } from "@/components/common";
 
 const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
   const navigate = useNavigate();
@@ -136,7 +136,7 @@ const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
         align: "center",
         sortable: false,
         renderCell: (params) => (
-          <DetailCell
+          <DetailActionCell
             onClick={() => navigate(`/supply-requests/${params.id}`)}
           />
         ),

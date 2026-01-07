@@ -1,20 +1,26 @@
-import { IconButton, Tooltip, CircularProgress } from "@mui/material";
+import { Tooltip, CircularProgress } from "@mui/material";
+import { GridActionsCellItem } from "@mui/x-data-grid";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import Color from "@constants/Color";
-import { memo } from "react";
 
-const DetailCell = ({
+const DetailActionCell = ({
   onClick,
   tooltip = "Xem chi tiết",
   disabled = false,
   loading = false,
-  size = "small",
 }) => {
   return (
     <Tooltip title={tooltip} arrow placement="left">
       <span>
-        <IconButton
-          size={size}
+        <GridActionsCellItem
+          icon={
+            loading ? (
+              <CircularProgress size={14} color="inherit" />
+            ) : (
+              <ArrowForwardIosRoundedIcon sx={{ fontSize: 14 }} />
+            )
+          }
+          label={tooltip}
           onClick={onClick}
           disabled={disabled || loading}
           sx={{
@@ -22,8 +28,7 @@ const DetailCell = ({
             height: 32,
             borderRadius: 1.5,
 
-            backgroundColor: "rgba(76, 175, 80, 0.45)", // 👈 đậm hơn
-
+            backgroundColor: "rgba(76, 175, 80, 0.45)",
             color: "text.secondary",
             transition: "all 0.2s ease",
 
@@ -42,16 +47,10 @@ const DetailCell = ({
               color: "action.disabled",
             },
           }}
-        >
-          {loading ? (
-            <CircularProgress size={14} color="inherit" />
-          ) : (
-            <ArrowForwardIosRoundedIcon sx={{ fontSize: 14 }} />
-          )}
-        </IconButton>
+        />
       </span>
     </Tooltip>
   );
 };
 
-export default memo(DetailCell);
+export default DetailActionCell;

@@ -17,7 +17,7 @@ const NoValuesOverlay = ({
         gap: 1,
         color: "text.secondary",
         textAlign: "center",
-        px: 2,
+        px: 4,
       }}
     >
       <Box
@@ -48,9 +48,11 @@ const NoValuesOverlay = ({
         {text}
       </Typography>
 
-      <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 320 }}>
-        {subText}
-      </Typography>
+      {subText && (
+        <Typography variant="body2" color="text.secondary">
+          {subText}
+        </Typography>
+      )}
     </Box>
   );
 };

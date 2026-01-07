@@ -18,7 +18,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useSpecificPost } from "@/hooks/services/post";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { changeRegistrationRecruitmentPostStatus } from "@/services/postServices";
-import { isoToLocalDatetime } from "@/utils/converter";
+import { isoToLocaleString } from "@/utils/converter";
 
 const RecruitmentDetail = () => {
   const navigate = useNavigate();
@@ -187,7 +187,7 @@ const RecruitmentDetail = () => {
                 📅 Ngày mở
               </Typography>
               <Typography>
-                {isoToLocalDatetime(post.recruitmentStartDate)}
+                {isoToLocaleString(post.recruitmentStartDate)}
               </Typography>
             </Box>
 
@@ -196,7 +196,7 @@ const RecruitmentDetail = () => {
                 📅 Ngày đóng
               </Typography>
               <Typography>
-                {isoToLocalDatetime(post.recruitmentEndDate)}
+                {isoToLocaleString(post.recruitmentEndDate)}
               </Typography>
             </Box>
 

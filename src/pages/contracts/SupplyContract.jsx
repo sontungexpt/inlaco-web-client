@@ -4,7 +4,7 @@ import {
   PageTitle,
   SearchBar,
   InfoTextField,
-  DetailCell,
+  DetailActionCell,
 } from "@components/common";
 import { Box, MenuItem } from "@mui/material";
 import { useLocation, useNavigate } from "react-router";
@@ -85,7 +85,9 @@ const SupplyContract = ({ pageSize = 10 }) => {
       align: "center",
       headerAlign: "center",
       renderCell: (params) => {
-        return <DetailCell onClick={() => onContractDetailClick(params?.id)} />;
+        return (
+          <DetailActionCell onClick={() => onContractDetailClick(params?.id)} />
+        );
       },
     },
   ];

@@ -12,7 +12,6 @@ const SectionWrapper = ({
   ...props
 }) => (
   <Paper
-    {...props}
     elevation={elevation}
     sx={[
       {
@@ -24,6 +23,7 @@ const SectionWrapper = ({
       },
       ...(Array.isArray(sx) ? sx : [sx]),
     ]}
+    {...props}
   >
     {title &&
       (divider ? (

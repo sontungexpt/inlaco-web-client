@@ -1,7 +1,7 @@
 import React, { useMemo, useRef } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import Color from "@constants/Color";
-import { NoValuesOverlay } from "../global";
+import { NoValuesOverlay } from "@components/common";
 
 const BaseDataGrid = ({
   rows,
@@ -9,13 +9,14 @@ const BaseDataGrid = ({
   rowCount,
   slots,
   paginationModel,
-  pageSizeOptions = [paginationModel?.pageSize],
+  header,
+  pageSizeOptions = [],
   onPaginationModelChange,
   loading,
   sx = {},
   ...props
 }) => {
-  // Fix the data grid row count is undefined when fetching and auto reset to page 0
+  // Fix rowCount undefined → tránh reset page
   const rowCountRef = useRef(rowCount ?? 0);
   const stableRowCount = useMemo(() => {
     if (typeof rowCount === "number") {
@@ -24,6 +25,7 @@ const BaseDataGrid = ({
     return rowCountRef.current;
   }, [rowCount]);
 
+  const pageSize = paginationModel?.pageSize ?? 10;
   return (
     <DataGrid
       disableRowSelectionOnClick
@@ -32,45 +34,90 @@ const BaseDataGrid = ({
       showColumnVerticalBorder
       showCellVerticalBorder
       getRowHeight={() => "auto"}
-      pageSizeOptions={pageSizeOptions}
+      pageSizeOptions={[...pageSizeOptions, pageSize]}
       rows={rows}
       columns={columns}
       rowCount={stableRowCount}
       loading={loading}
       slots={{ noRowsOverlay: NoValuesOverlay, ...slots }}
-      paginationMode="server"
-      paginationModel={paginationModel}
+      paginationMode={paginationModel ? "server" : "client"}
+      paginationModel={paginationModel ?? { page: 0, pageSize }}
       onPaginationModelChange={onPaginationModelChange}
       sx={[
         {
-          bgcolor: "#FFF",
-          boxShadow: "0px 3px 12px rgba(0,0,0,0.1)",
+          /* ===== CARD ===== */
+          bgcolor: "#fff",
+          borderRadius: 2,
+          overflow: "hidden",
+          border: "1px solid",
+          borderColor: "divider",
+          boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
 
-          "& .MuiDataGrid-cell": {
-            borderColor: "divider",
-            px: 2,
-            py: 1.5,
-            alignItems: "center",
-          },
-
-          "& .MuiDataGrid-columnHeaders": {
-            borderColor: "divider",
-          },
-
-          "& .MuiDataGrid-columnSeparator": {
-            color: "divider",
-          },
-
+          /* ===== HEADER ===== */
           "& .MuiDataGrid-columnHeader": {
             backgroundColor: Color.SecondaryBlue,
             color: Color.PrimaryWhite,
             fontWeight: 700,
+            fontSize: 14,
+          },
+
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: Color.SecondaryBlue,
+            color: Color.PrimaryWhite,
+            borderColor: "divider",
+            borderBottom: "none",
+          },
+
+          /* ===== BODY ===== */
+          "& .MuiDataGrid-cell": {
+            px: 2,
+            py: 1.25,
+            borderColor: "divider",
+            alignItems: "center",
+          },
+          "& .MuiDataGrid-columnSeparator": {
+            borderColor: "divider",
+            color: "#000000",
+          },
+
+          /* Zebra rows */
+          "& .MuiDataGrid-row:nth-of-type(even)": {
+            bgcolor: "rgba(0,0,0,0.015)",
+          },
+
+          "& .MuiDataGrid-row:hover": {
+            bgcolor: "rgba(0,0,0,0.04)",
+          },
+
+          "& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within": {
+            outline: "none",
+          },
+
+          /* ===== FOOTER ===== */
+          "& .MuiDataGrid-footerContainer": {
+            backgroundColor: Color.SecondaryBlue,
+            color: Color.PrimaryWhite,
+            borderTop: "none",
           },
 
           "& .MuiTablePagination-root": {
             backgroundColor: Color.SecondaryBlue,
             color: Color.PrimaryWhite,
+            fontSize: 13,
           },
+
+          "& .MuiTablePagination-actions svg": {
+            color: Color.PrimaryWhite,
+          },
+
+          "& .MuiTablePagination-selectIcon": {
+            color: Color.PrimaryWhite,
+          },
+
+          "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows":
+            {
+              fontSize: 13,
+            },
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}

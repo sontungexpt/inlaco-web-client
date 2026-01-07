@@ -1,14 +1,23 @@
 import { privateRequest } from "@/utils/request";
 import MobilizationEndpoint from "@/endpoints/mobilizationEndpoints";
+import { flattenFilter } from "@/utils/object";
 
-export const fetchMobilizations = async ({ page, pageSize, status }) => {
+export const fetchMobilizations = async ({
+  page,
+  pageSize,
+  filter = {
+    status: null,
+    startDate: null,
+    endDate: null,
+  },
+}) => {
   const response = await privateRequest.get(
     MobilizationEndpoint.GET_ALL_MOBILIZATIONS,
     {
       params: {
         page,
         size: pageSize,
-        status,
+        ...flattenFilter(filter),
       },
     },
   );
@@ -16,15 +25,10 @@ export const fetchMobilizations = async ({ page, pageSize, status }) => {
 };
 
 export const fetchSpecificMobilization = async (mobilizationID) => {
-  try {
-    const response = await privateRequest.get(
-      MobilizationEndpoint.GET_BY_ID(mobilizationID),
-    );
-    return response.data;
-  } catch (err) {
-    console.debug(err);
-    throw err;
-  }
+  const response = await privateRequest.get(
+    MobilizationEndpoint.GET_BY_ID(mobilizationID),
+  );
+  return response.data;
 };
 
 export const getMyMobilizationAPI = async (cardID) => {
@@ -38,16 +42,12 @@ export const getMyMobilizationAPI = async (cardID) => {
   }
 };
 
-export const createMobilizationAPI = async (mobilizationInfo) => {
-  try {
-    const response = await privateRequest.post(
-      `${MobilizationEndpoint.GENERAL}`,
-      mobilizationInfo,
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
+export const createMobilization = async (mobilizationInfo) => {
+  const response = await privateRequest.post(
+    MobilizationEndpoint.CREATE_MOBILIZATION,
+    mobilizationInfo,
+  );
+  return response.data;
 };
 
 export const editMobilizationAPI = async (mobilizationID, mobilizationInfo) => {

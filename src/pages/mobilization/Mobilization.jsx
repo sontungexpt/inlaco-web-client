@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageTitle, DetailCell, BaseDataGrid } from "@components/common";
+import { PageTitle, DetailActionCell, BaseDataGrid } from "@components/common";
 import { Box, Button, Typography, Stack } from "@mui/material";
 import { ShipInfoCell } from "@/components/mobilization";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
@@ -101,7 +101,9 @@ const Mobilization = ({ pageSize = 10 }) => {
       headerAlign: "center",
       sortable: false,
       renderCell: ({ row: { id } }) => {
-        return <DetailCell onClick={() => navigate(`/mobilizations/${id}`)} />;
+        return (
+          <DetailActionCell onClick={() => navigate(`/mobilizations/${id}`)} />
+        );
       },
     },
   ];

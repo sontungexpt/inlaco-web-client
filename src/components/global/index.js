@@ -9,7 +9,6 @@ export { default as SectionDivider } from "../common/SectionDivider";
 export { default as SectionWrapper } from "../common/SectionWrapper";
 export { default as ConfirmActionDialog } from "../common/ConfirmDialog";
 export { default as InfoTextField } from "../common/fields/InfoTextField";
-export { default as EditableDataGrid } from "./EditableDataGrid";
+export { default as EditableDataGrid } from "../common/EditableDataGrid";
 export { default as ReqEditableDataGrid } from "./ReqEditableDataGrid";
 export { default as StatusLabel } from "../common/StatusLabel";
-export { default as MultilineFileUploadField } from "./MultilineFileUploadField";

@@ -15,6 +15,7 @@ import {
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { InfoTextField, SectionDivider } from "@/components/global";
 import { dateTimeStringToISOString } from "@/utils/converter";
+import { InfoTextFieldFormik } from "@/components/common";
 
 // ===================
 // Validation Schema
@@ -111,6 +112,7 @@ export default function PostForm({
     workLocation: "",
     recruitmentStartDate: "",
     recruitmentEndDate: "",
+
     ...initialValues,
     image: { url: initialValues?.image?.url || "" },
     attachments: initialValues?.attachments || [],
@@ -172,73 +174,47 @@ export default function PostForm({
               <Grid container spacing={3}>
                 <Grid item size={4}>
                   {!fixedType ? (
-                    <InfoTextField
+                    <InfoTextFieldFormik
                       select
-                      fullWidth
-                      required
                       label="Chọn loại bài viết"
                       name="type"
-                      value={values.type || ""}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
                       disabled={mode === "edit"}
-                      error={touched.type && Boolean(errors.type)}
-                      helperText={touched.type && errors.type}
                     >
                       {POST_TYPES.map((t) => (
                         <MenuItem key={t.value} value={t.value}>
                           {t.label}
                         </MenuItem>
                       ))}
-                    </InfoTextField>
+                    </InfoTextFieldFormik>
                   ) : (
-                    <InfoTextField
-                      fullWidth
+                    <InfoTextFieldFormik
                       disabled
                       label="Chọn loại bài viết"
                       name="type"
-                      value={values.type || ""}
                     />
                   )}
                 </Grid>
 
                 <Grid item size={4}>
-                  <InfoTextField
-                    name="title"
-                    fullWidth
-                    label="Tiêu đề"
-                    value={values.title}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.title && Boolean(errors.title)}
-                    helperText={touched.title && errors.title}
-                  />
+                  <InfoTextFieldFormik name="title" label="Tiêu đề" />
                 </Grid>
 
                 <Grid item size={4}>
-                  <InfoTextField
+                  <InfoTextFieldFormik
                     name="company"
-                    fullWidth
                     label="Tên công ty liên quan"
-                    value={values.company}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </Grid>
               </Grid>
 
               {/* Description hàng riêng */}
               <Box mt={3}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   name="description"
-                  fullWidth
                   label="Mô tả"
                   multiline
                   minRows={2}
                   sx={{ "& textarea": { lineHeight: "1.5" } }}
-                  value={values.description}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Box>
             </Box>

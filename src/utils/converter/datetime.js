@@ -88,3 +88,27 @@ export function isoToLocaleString(
   };
   return new Date(isoString)[map[type] || type](locale);
 }
+
+export function isoToMUIDateTime(value, type = "datetime-local") {
+  if (!value) return value;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  const pad = (n) => String(n).padStart(2, "0");
+  const yyyy = date.getFullYear();
+  const mm = pad(date.getMonth() + 1);
+  const dd = pad(date.getDate());
+  if (type === "date") {
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  const hh = pad(date.getHours());
+  const mi = pad(date.getMinutes());
+
+  if (type === "datetime-local") {
+    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+  } else if (type === "time") {
+    return `${hh}:${mi}`;
+  }
+  return value;
+}
