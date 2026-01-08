@@ -63,14 +63,7 @@ const SupplyRequestForm = lazy(
 
 const ADMIN_SAILOR = [UserRole.ADMIN, UserRole.SAILOR];
 
-// layout === false => no layout
-// layout === null => default to MainLayout
-// layout === any other value => custom layout
-//
-// roles === null => no access control
-// roles === [...] => access control
-export const AppRoutes = [
-  // Public Routes
+export const PublicRoutes = [
   {
     // Public
     path: RoutePath.Login,
@@ -91,13 +84,21 @@ export const AppRoutes = [
     element: VerifyEmailConfirmation,
     layout: false,
   },
+];
 
-  // Authenticated Routes
+// layout === false => no layout
+// layout === null => default to MainLayout
+// layout === any other value => custom layout
+//
+// roles === null => no access control
+// roles === [...] => access control
+export const AppRoutes = [
   {
-    // Public
     path: RoutePath.Home,
     element: HomePage,
   },
+
+  // Authenticated Routes
 
   {
     path: RoutePath.CrewRoot,

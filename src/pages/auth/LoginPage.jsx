@@ -18,32 +18,17 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { HttpStatusCode } from "axios";
-import { useQueryClient } from "@tanstack/react-query";
 
-import StorageKey from "@/constants/StorageKey";
 import Color from "@constants/Color";
 import Regex from "@/constants/Regex";
-import { login } from "@/services/authServices";
-import { localStorage, sessionStorage } from "@/utils/storage";
 
 import { InfoTextFieldFormik } from "@/components/common";
-
-const LOGIN_SCHEMA = Yup.object().shape({
-  email: Yup.string()
-    .email("Email không hợp lệ")
-    .required("Vui lòng nhập email"),
-
-  password: Yup.string()
-    .matches(
-      Regex.PASSWORD,
-      "Mật khẩu phải có ít nhất 8 ký tự, bao gồm 1 chữ hoa và 1 chữ thường",
-    )
-    .required("Vui lòng nhập mật khẩu"),
-});
+import { useAuthContext } from "@/contexts/AuthContext";
+import { requiredString } from "@/utils/yupHelpers";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { login } = useAuthContext();
 
   const [isShowPass, setIsShowPass] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -53,53 +38,41 @@ const LoginPage = () => {
     password: "",
   };
 
+  const LOGIN_SCHEMA = Yup.object().shape({
+    email: requiredString("Vui lòng nhập email").email("Email không hợp lệ"),
+    password: requiredString("Vui lòng nhập mật khẩu").matches(
+      Regex.PASSWORD,
+      "Mật khẩu phải có ít nhất 8 ký tự, bao gồm 1 chữ hoa và 1 chữ thường",
+    ),
+  });
+
   const handleLoginClick = async (values, { setErrors }) => {
-    try {
-      const response = await login(values.email, values.password);
+    const response = await login({
+      email: values.email,
+      password: values.password,
+      rememberMe: rememberMe,
+    });
 
-      if (response.status === HttpStatusCode.Ok) {
-        const { jwt } = response.data;
-        const { accessToken, refreshToken } = jwt;
-
-        localStorage.setItem(StorageKey.REMEMBER_ME, rememberMe);
-
-        const storage = rememberMe ? localStorage : sessionStorage;
-        storage.setItem(StorageKey.ACCESS_TOKEN, accessToken);
-        storage.setItem(StorageKey.REFRESH_TOKEN, refreshToken);
-
-        // trigger fetch /users/me
-        queryClient.invalidateQueries({
-          queryKey: ["user-profile"],
-        });
-
+    switch (response.status) {
+      case HttpStatusCode.Ok:
         navigate("/", { replace: true });
-        return;
-      }
-
-      if (response.status === HttpStatusCode.NotFound) {
+        break;
+      case HttpStatusCode.Forbidden:
+        setErrors({
+          email: "Email chưa được xác thực, vui lòng kiểm tra email của bạn",
+        });
+        break;
+      case HttpStatusCode.NotFound:
         setErrors({
           email: "Tên đăng nhập hoặc mật khẩu không chính xác",
           password: "Tên đăng nhập hoặc mật khẩu không chính xác",
         });
-        return;
-      }
-
-      if (response.status === HttpStatusCode.Forbidden) {
+        break;
+      default:
         setErrors({
-          email: "Email chưa được xác thực, vui lòng kiểm tra email của bạn",
+          email: "Đã có lỗi xảy ra, vui lòng thử lại sau",
+          password: "Đã có lỗi xảy ra, vui lòng thử lại sau",
         });
-        return;
-      }
-
-      setErrors({
-        email: "Đã có lỗi xảy ra, vui lòng thử lại sau",
-        password: "Đã có lỗi xảy ra, vui lòng thử lại sau",
-      });
-    } catch (err) {
-      setErrors({
-        email: "Đã có lỗi xảy ra, vui lòng thử lại sau",
-        password: "Đã có lỗi xảy ra, vui lòng thử lại sau",
-      });
     }
   };
 

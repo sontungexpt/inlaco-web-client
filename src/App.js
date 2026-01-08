@@ -5,6 +5,8 @@ import { PageCircularProgress } from "./components/common";
 import { AppRoutes } from "./routes";
 import MainLayout from "./layout/MainLayout";
 import LoginPage from "./pages/auth/LoginPage";
+import SignUpPage from "./pages/auth/SignUpPage";
+import VerifyEmailConfirmation from "./pages/auth/VerifyEmailConfirmation";
 
 function AuthGuard() {
   const { isLoading, isAuthenticated } = useAuthContext();
@@ -133,6 +135,11 @@ export default function App() {
     <Suspense fallback={<PageCircularProgress />}>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/sign-up" element={<SignUpPage />} />
+        <Route
+          path="/verify-email-confirmation"
+          element={<VerifyEmailConfirmation />}
+        />
         {AppRoutes.map((route) => renderRoute(route))}
       </Routes>
     </Suspense>
