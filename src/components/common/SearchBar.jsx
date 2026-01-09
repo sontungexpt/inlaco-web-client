@@ -7,8 +7,6 @@ import {
   Paper,
   List,
   ListItemButton,
-  Box,
-  Stack,
 } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";

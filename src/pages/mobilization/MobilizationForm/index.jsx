@@ -28,11 +28,6 @@ const MobiliaztionForm = () => {
     professionalPosition: "",
   });
 
-  // services/crewService.js
-  const searchCrew = async (keyword) => {
-    // return [{ id, cardId, name }]
-  };
-
   const handleFormSubmission = async (values, { resetForm }) => {
     try {
       const newMobilization = await createMobilization(
@@ -47,6 +42,7 @@ const MobiliaztionForm = () => {
   };
 
   const initialValues = useMemo(() => DEFAULT_INITIAL_VALUES, []);
+
   const columns = useMemo(
     () => [
       {
@@ -54,22 +50,41 @@ const MobiliaztionForm = () => {
         headerName: "Số thẻ",
         flex: 1,
         required: true,
-        renderEditCell: (params) => {
-          console.log("params: ", params);
-          return <CrewSearchEditCell {...params} />;
-        },
+        renderEditCell: (params) => <CrewSearchEditCell {...params} />,
       },
       {
         field: "name",
         headerName: "Họ tên",
         flex: 1,
-        editable: false,
+        required: true,
         renderEditCell: (params) => <CrewSearchEditCell {...params} />,
       },
       {
-        field: "professionalPosition",
+        field: "rankOnBoard",
         headerName: "Chức danh",
         flex: 1,
+        editable: true,
+      },
+
+      // ===== Contract-based mobilization =====
+      {
+        field: "startDate",
+        headerName: "Ngày bắt đầu HĐ",
+        type: "date",
+        flex: 1,
+        editable: true,
+      },
+      {
+        field: "endDate",
+        headerName: "Ngày kết thúc HĐ",
+        type: "date",
+        flex: 1,
+        editable: true,
+      },
+      {
+        field: "remark",
+        headerName: "Ghi chú",
+        flex: 2,
         editable: true,
       },
     ],

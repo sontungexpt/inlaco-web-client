@@ -1,10 +1,11 @@
 import React from "react";
 import ErrorWrapper from "./ErrorWrapper";
-import { InfoTextField } from "@/components/global";
+import { InfoTextField, SearchBar } from "@/components/global";
+import { TextField } from "@mui/material";
 
 const DefaultEditableCell = ({ id, field, value, error, api }) => (
   <ErrorWrapper error={error}>
-    <InfoTextField
+    <TextField
       fullWidth
       size="small"
       value={value ?? ""}
@@ -12,11 +13,6 @@ const DefaultEditableCell = ({ id, field, value, error, api }) => (
       onChange={(e) =>
         api.setEditCellValue({ id, field, value: e.target.value })
       }
-      sx={{
-        "& .MuiOutlinedInput-root": {
-          backgroundColor: error ? "#FFF5F5" : "inherit",
-        },
-      }}
     />
   </ErrorWrapper>
 );

@@ -22,9 +22,9 @@ const ErrorWrapper = ({ error, children }) => {
           display: "flex",
           height: "100%",
           width: "100%",
-          borderColor: error ?? "error.main",
-          borderWidth: 1,
-          borderStyle: "solid",
+          // borderColor: error ?? "error.main",
+          // borderWidth: 1,
+          // borderStyle: "solid",
         }}
       >
         {children}

@@ -37,13 +37,6 @@ const CrewContractDetail = lazy(
   () => import("@/pages/contracts/details/CrewContractDetail"),
 );
 
-const E404 = lazy(() => import("@/pages/E404"));
-const LoginPage = lazy(() => import("@pages/auth/LoginPage"));
-const SignUpPage = lazy(() => import("@pages/auth/SignUpPage"));
-const VerifyEmailConfirmation = lazy(
-  () => import("@pages/auth/VerifyEmailConfirmation"),
-);
-
 const CrewInfos = lazy(() => import("@pages/CrewInfos"));
 const AddCrewMember = lazy(() => import("@pages/AddCrewMember"));
 const CrewMyMobilization = lazy(() => import("@pages/CrewMyMobilization"));
@@ -63,28 +56,7 @@ const SupplyRequestForm = lazy(
 
 const ADMIN_SAILOR = [UserRole.ADMIN, UserRole.SAILOR];
 
-export const PublicRoutes = [
-  {
-    // Public
-    path: RoutePath.Login,
-    element: LoginPage,
-    layout: false,
-  },
-
-  {
-    // Public
-    path: RoutePath.SignUp,
-    element: SignUpPage,
-    layout: false,
-  },
-
-  {
-    // Public
-    path: RoutePath.VerifyEmailConfirmation,
-    element: VerifyEmailConfirmation,
-    layout: false,
-  },
-];
+export * from "./publicRoutes";
 
 // layout === false => no layout
 // layout === null => default to MainLayout
@@ -152,7 +124,7 @@ export const AppRoutes = [
 
   {
     path: "/supply-requests",
-    roles: (hasRole) =>
+    roles: ({ hasRole }) =>
       hasRole(UserRole.ADMIN) ||
       (hasRole(UserRole.USER) && !hasRole(UserRole.SAILOR)),
     children: [
@@ -185,7 +157,7 @@ export const AppRoutes = [
 
   {
     path: "/recruitment",
-    roles: (hasRole) =>
+    roles: ({ hasRole }) =>
       hasRole(UserRole.ADMIN) ||
       (hasRole(UserRole.USER) && !hasRole(UserRole.SAILOR)),
     children: [
@@ -217,12 +189,5 @@ export const AppRoutes = [
       { path: ":id", element: CourseDetail },
       { path: "create", element: CreateCourse },
     ],
-  },
-
-  // fallback
-  {
-    path: "*",
-    element: E404,
-    layout: false,
   },
 ];

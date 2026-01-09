@@ -1,146 +1,106 @@
 import { Routes, Outlet, Route, Navigate } from "react-router";
-import React, { Suspense } from "react";
+import React, { Fragment, lazy, Suspense } from "react";
 import { useAuthContext } from "./contexts/AuthContext";
 import { PageCircularProgress } from "./components/common";
-import { AppRoutes } from "./routes";
+import { AppRoutes, PublicRoutes } from "./routes";
 import MainLayout from "./layout/MainLayout";
-import LoginPage from "./pages/auth/LoginPage";
-import SignUpPage from "./pages/auth/SignUpPage";
-import VerifyEmailConfirmation from "./pages/auth/VerifyEmailConfirmation";
 
-function AuthGuard() {
+function AuthGuard({ children = <Outlet /> }) {
   const { isLoading, isAuthenticated } = useAuthContext();
 
+  console.log("render AuthGuard");
   if (isLoading) {
     return <PageCircularProgress />;
   } else if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-
-  return <Outlet />;
+  console.log("render AuthGuard child");
+  return children;
 }
 
-function RoleGuard({ allowedRoles }) {
-  const { hasRole, roles: userRoles } = useAuthContext();
-  if (!allowedRoles) return <Outlet />;
+function RoleGuard({ allowedRoles, children = <Outlet /> }) {
+  const { hasRole, roles: userRoles, hasRoles } = useAuthContext();
+  if (!allowedRoles) return children;
+  console.log("render RoleGuard");
+
   const allowed =
     typeof allowedRoles === "function"
-      ? allowedRoles(hasRole, userRoles)
+      ? allowedRoles({ hasRole, userRoles, hasRoles })
       : allowedRoles.some((r) => hasRole(r));
   if (!allowed) return <div>Unauthorized</div>;
-  return <Outlet />;
-}
-
-function LayoutRoute({ layout }) {
-  if (layout === "blank") return <Outlet />;
-  return (
-    <MainLayout>
-      <Outlet />
-    </MainLayout>
-  );
-}
-
-const ProtectedRoute = ({ roles, children }) => {
-  const {
-    isLoading,
-    isAuthenticated,
-    hasRole,
-    roles: userRoles,
-  } = useAuthContext();
-  if (isLoading) {
-    return <PageCircularProgress />;
-  } else if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  } else if (!roles) {
-    return children;
-  } else if (
-    (typeof roles === "function" && !roles(hasRole, userRoles)) ||
-    (roles.length > 0 && !roles.some((r) => hasRole(r)))
-  ) {
-    return <div>Unauthorized</div>;
-  }
   return children;
-};
+}
 
-export const buildRoutes = (routes) =>
-  routes.map((route, idx) => {
-    const Element = route.element;
+export const buildRoutes = (routes, pub = false) => {
+  const walk = (routes, pub = false, level = 0, parentHasLayout = false) => {
+    return routes.map((route, i) => {
+      const needAuth =
+        route.public !== true && !(route.public === undefined && pub);
 
-    return (
-      <Route
-        key={route.path || `route-${idx}`}
-        path={route.path}
-        index={route.index}
-      >
-        {/* Layout */}
-        <Route element={<LayoutRoute layout={route.layout} />}>
-          {/* Role */}
-          <Route element={<RoleGuard allowedRoles={route.roles} />}>
-            {/* Actual page */}
-            {Element && <Route index={route.index} element={<Element />} />}
-            {(route.childrens || route.children) &&
-              buildRoutes(route.childrens || route.children)}
-          </Route>
-        </Route>
-      </Route>
-    );
-  });
+      const hasOwnLayout = typeof route.layout === "function";
 
-const renderRoute = (route, parentLayout = MainLayout) => {
-  // 1) Xác định layout của route hiện tại
-  const CurrentLayout =
-    route.layout === false ? React.Fragment : route.layout || parentLayout;
-  const Element = route.element;
+      let Layout = Fragment;
 
-  // 2) Nếu có children → render đệ quy
-  if (route.children && route.children.length > 0) {
-    return (
-      <Route
-        key={route.path}
-        path={route.path}
-        element={
-          // element is the parent layout
-          Element ? (
-            <CurrentLayout>
-              <Element />
-            </CurrentLayout>
-          ) : undefined
-        }
-      >
-        {/* ĐỆ QUY CON */}
-        {route.children.map((child) => renderRoute(child, CurrentLayout))}
-      </Route>
-    );
-  }
-
-  // 3) Không có children → route thường
-  return (
-    <Route
-      index={route.index}
-      path={route.path}
-      element={
-        // element as element role
-        <CurrentLayout>
-          <ProtectedRoute roles={route.roles}>
-            <Element />
-          </ProtectedRoute>
-        </CurrentLayout>
+      if (hasOwnLayout) {
+        // Con có layout riêng → dùng layout của nó
+        Layout = route.layout;
+      } else if (parentHasLayout) {
+        // Cha đã có layout → KHÔNG render thêm layout
+        Layout = Fragment;
+      } else if (route.layout !== false) {
+        // Không ai có layout → dùng layout mặc định
+        Layout = MainLayout;
       }
-    />
-  );
+
+      const Element = route.element;
+      const OptionalAuthGuard = needAuth ? AuthGuard : Fragment;
+
+      const elementNode = (
+        <Layout>
+          <OptionalAuthGuard>
+            <RoleGuard allowedRoles={route.roles}>
+              {Element && <Element />}
+            </RoleGuard>
+          </OptionalAuthGuard>
+        </Layout>
+      );
+
+      if (!route.children || route.children.length === 0) {
+        return (
+          <Route
+            key={`${level}-${i}`}
+            index={route.index}
+            path={route.path || ""}
+            element={elementNode}
+          />
+        );
+      }
+
+      return (
+        <Route key={`${level}-${i}`} path={route.path} element={elementNode}>
+          {walk(
+            route.children,
+            pub,
+            level + 1,
+            hasOwnLayout || (!parentHasLayout && Layout !== Fragment),
+          )}
+        </Route>
+      );
+    });
+  };
+
+  return walk(routes, pub);
 };
 
 export default function App() {
   return (
     <Suspense fallback={<PageCircularProgress />}>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/sign-up" element={<SignUpPage />} />
-        <Route
-          path="/verify-email-confirmation"
-          element={<VerifyEmailConfirmation />}
-        />
-        {AppRoutes.map((route) => renderRoute(route))}
+        {buildRoutes(PublicRoutes, true)}
+        {buildRoutes(AppRoutes)}
+
+        {/* fallback */}
+        <Route path="*" element={lazy(() => import("@/pages/E404"))} />
       </Routes>
     </Suspense>
   );

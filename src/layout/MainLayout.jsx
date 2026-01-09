@@ -1,8 +1,7 @@
 import { Outlet } from "react-router";
-import TopBar from "./components/TopBar";
 import SideBar from "./components/SideBar";
 
-const MainLayout = ({ children }) => {
+const MainLayout = ({ children = <Outlet /> }) => {
   return (
     <div className="app">
       <SideBar />
@@ -10,7 +9,6 @@ const MainLayout = ({ children }) => {
         {/* <TopBar /> */}
         {/* Renders the matched child route */}
         {children}
-        <Outlet />
       </main>
     </div>
   );

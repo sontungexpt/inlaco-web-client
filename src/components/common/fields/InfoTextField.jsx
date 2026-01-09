@@ -29,8 +29,8 @@ const InfoTextField = ({
       value={displayValue}
       fullWidth={fullWidth}
       sx={[
-        { backgroundColor: "#FFF", marginBottom: 1 },
         {
+          backgroundColor: "#FFF",
           "& .MuiInputBase-input.Mui-disabled": {
             WebkitTextFillColor: Color.PrimaryBlack,
           },
@@ -43,17 +43,9 @@ const InfoTextField = ({
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]} // Merging styles with spread operator
-      slotProps={{
-        formHelperText: {
-          sx: {
-            margin: 0,
-            paddingRight: 1,
-            paddingLeft: 1,
-            backgroundColor: Color.PrimaryWhite,
-          },
-        },
-        ...slotProps, // Merging slotProps with spread operator
-      }}
+      slotProps={
+        slotProps // Merging slotProps with spread operator
+      }
       type={type}
     />
   );
