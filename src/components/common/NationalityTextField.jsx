@@ -8,6 +8,7 @@ const NationalityTextField = ({
   slotProps,
   multiline,
   minRow,
+  value,
   maxRow,
   rows,
   component = InfoTextField,
@@ -15,7 +16,13 @@ const NationalityTextField = ({
 }) => {
   const TextField = component;
   return (
-    <TextField {...props} multiline={multiline} rows={rows} select>
+    <TextField
+      {...props}
+      value={value || ""}
+      multiline={multiline}
+      rows={rows}
+      select
+    >
       {CountryCodes.map((country) => (
         <MenuItem key={country.code} value={country.code}>
           {`${country.code} - ${country.name}`}

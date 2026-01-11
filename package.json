@@ -37,6 +37,9 @@
     "xlsx": "^0.18.5",
     "yup": "^1.7.1"
   },
+  "overrides": {
+    "typescript": "^5.9.3"
+  },
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",

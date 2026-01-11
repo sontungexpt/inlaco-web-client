@@ -5,12 +5,12 @@ import Color from "@constants/Color";
 
 const DetailActionCell = ({
   onClick,
-  tooltip = "Xem chi tiết",
+  tooltip = "Chi tiết",
   disabled = false,
   loading = false,
 }) => {
   return (
-    <Tooltip title={tooltip} arrow placement="left">
+    <Tooltip title={tooltip} arrow placement="top">
       <span>
         <GridActionsCellItem
           icon={

@@ -21,11 +21,15 @@ export class TokenMutex {
 
     this._locked = true;
 
-    const result = await fn();
-    this._resolveAll(result);
-    this._locked = false;
-
-    return result ?? null;
+    try {
+      const result = await fn();
+      this._resolveAll(result);
+      return result ?? null;
+    } catch (error) {
+      throw error;
+    } finally {
+      this._locked = false;
+    }
   }
 
   _resolveAll(value) {

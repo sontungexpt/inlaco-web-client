@@ -16,16 +16,19 @@ const BaseDataGrid = ({
   sx = {},
   ...props
 }) => {
-  // Fix rowCount undefined → tránh reset page
+  const pageSize = paginationModel?.pageSize ?? 10;
+  const paginationMode = paginationModel ? "server" : "client";
+
+  // Fix rowCount undefined → avoid reset page
   const rowCountRef = useRef(rowCount ?? 0);
   const stableRowCount = useMemo(() => {
+    if (paginationMode === "client") return undefined;
     if (typeof rowCount === "number") {
       rowCountRef.current = rowCount;
     }
     return rowCountRef.current;
-  }, [rowCount]);
+  }, [paginationMode, rowCount]);
 
-  const pageSize = paginationModel?.pageSize ?? 10;
   return (
     <DataGrid
       disableRowSelectionOnClick
@@ -34,14 +37,15 @@ const BaseDataGrid = ({
       showColumnVerticalBorder
       showCellVerticalBorder
       getRowHeight={() => "auto"}
+      {...props}
+      rowCount={stableRowCount}
       pageSizeOptions={[...pageSizeOptions, pageSize]}
+      paginationMode={paginationMode}
+      paginationModel={paginationModel ?? { page: 0, pageSize }}
       rows={rows}
       columns={columns}
-      rowCount={stableRowCount}
       loading={loading}
       slots={{ noRowsOverlay: NoValuesOverlay, ...slots }}
-      paginationMode={paginationModel ? "server" : "client"}
-      paginationModel={paginationModel ?? { page: 0, pageSize }}
       onPaginationModelChange={onPaginationModelChange}
       sx={[
         {
@@ -121,7 +125,6 @@ const BaseDataGrid = ({
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
-      {...props}
     />
   );
 };

@@ -169,6 +169,7 @@ const ImageUploadField = ({
       <Box display="flex" gap={1} flexWrap="wrap">
         {(images.length ? images : [{}]).map((img, idx) => (
           <Card
+            key={img.publicId || img.url || img.id || idx}
             onClick={openDialog}
             sx={{
               position: "relative",

@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { PageTitle } from "@/components/global";
+import { PageTitle } from "@/components/common";
 import { Box, CircularProgress } from "@mui/material";
 import Color from "@/constants/Color";
 import { useState } from "react";

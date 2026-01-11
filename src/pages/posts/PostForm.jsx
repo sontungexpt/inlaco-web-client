@@ -13,9 +13,12 @@ import {
   Grid,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { InfoTextField, SectionDivider } from "@/components/global";
+import {
+  InfoTextFieldFormik,
+  InfoTextField,
+  SectionDivider,
+} from "@/components/common";
 import { dateTimeStringToISOString } from "@/utils/converter";
-import { InfoTextFieldFormik } from "@/components/common";
 
 // ===================
 // Validation Schema
@@ -227,95 +230,36 @@ export default function PostForm({
 
                 <Grid container spacing={3}>
                   <Grid item size={4}>
-                    <InfoTextField
-                      name="position"
-                      label="Vị trí"
-                      fullWidth
-                      value={values.position}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={touched.position && Boolean(errors.position)}
-                      helperText={touched.position && errors.position}
-                    />
+                    <InfoTextFieldFormik name="position" label="Vị trí" />
                   </Grid>
 
                   <Grid item size={4}>
-                    <InfoTextField
+                    <InfoTextFieldFormik
                       name="workLocation"
                       label="Địa điểm làm việc"
-                      fullWidth
-                      value={values.workLocation}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={
-                        touched.workLocation && Boolean(errors.workLocation)
-                      }
-                      helperText={touched.workLocation && errors.workLocation}
                     />
                   </Grid>
 
                   <Grid item size={4}>
-                    <InfoTextField
+                    <InfoTextFieldFormik
                       name="expectedSalary"
                       label="Mức lương dự kiến"
-                      fullWidth
-                      value={values.expectedSalary}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={touched.expectedSalary && errors.expectedSalary}
-                      helperText={
-                        touched.expectedSalary && errors.expectedSalary
-                      }
                     />
                   </Grid>
 
                   <Grid item size={4}>
-                    <InfoTextField
+                    <InfoTextFieldFormik
                       name="recruitmentStartDate"
                       label="Ngày bắt đầu đăng kí tuyển dụng"
                       type="datetime-local"
-                      margin="none"
-                      fullWidth
-                      value={values.recruitmentStartDate}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={
-                        touched.recruitmentStartDate &&
-                        Boolean(errors.recruitmentStartDate)
-                      }
-                      helperText={
-                        touched.recruitmentStartDate &&
-                        errors.recruitmentStartDate
-                      }
-                      slotProps={{
-                        inputLabel: {
-                          shrink: true,
-                        },
-                      }}
                     />
                   </Grid>
 
                   <Grid item size={4}>
-                    <InfoTextField
+                    <InfoTextFieldFormik
                       name="recruitmentEndDate"
                       label="Ngày kết thúc đăng kí tuyển dụng"
                       type="datetime-local"
-                      fullWidth
-                      value={values.recruitmentEndDate}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={
-                        touched.recruitmentEndDate &&
-                        Boolean(errors.recruitmentEndDate)
-                      }
-                      helperText={
-                        touched.recruitmentEndDate && errors.recruitmentEndDate
-                      }
-                      slotProps={{
-                        inputLabel: {
-                          shrink: true,
-                        },
-                      }}
                     />
                   </Grid>
                 </Grid>

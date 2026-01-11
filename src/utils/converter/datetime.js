@@ -89,10 +89,9 @@ export function isoToLocaleString(
   return new Date(isoString)[map[type] || type](locale);
 }
 
-export function isoToMUIDateTime(value, type = "datetime-local") {
-  if (!value) return value;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
+export function dateToMUIDatetime(date, type = "datetime-local") {
+  if (!(date instanceof Date)) throw new Error("date must be Date type");
+  if (Number.isNaN(date.getTime())) return "";
 
   const pad = (n) => String(n).padStart(2, "0");
   const yyyy = date.getFullYear();
@@ -110,5 +109,11 @@ export function isoToMUIDateTime(value, type = "datetime-local") {
   } else if (type === "time") {
     return `${hh}:${mi}`;
   }
-  return value;
+  return "";
+}
+
+export function isoToMUIDateTime(value, type = "datetime-local") {
+  if (!value) return value;
+  const date = new Date(value);
+  return dateToMUIDatetime(date, type);
 }

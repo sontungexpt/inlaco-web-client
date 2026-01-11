@@ -10,23 +10,33 @@ import {
 } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { useEffect, useRef, useState, useCallback, Fragment } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useDebounced } from "@/hooks/useDebounced";
+
+const SOURCE = {
+  USER: "user",
+  INTERNAL: "internal",
+};
 
 const SearchBar = ({
   value,
   placeholder = "Tìm kiếm...",
-  debounce = 400,
+  showSearchIcon = true,
+  debounceMs = 300,
+  disabled = false,
   size = "small",
   minLength = 1,
-  autoSearch = true,
-  loading = false,
-  disabled = false,
 
-  /** dropdown */
+  autoSearch = true,
+  searchOnMount = false,
+  searchAfterClear = false,
+  suppressSearchOnValueChange = false,
+
+  loading,
   dropdown = false,
   options = [],
   renderOption = (opt) => opt?.label ?? String(opt),
+  mapOptionToValue,
   onSelectOption,
 
   onChange,
@@ -35,117 +45,222 @@ const SearchBar = ({
   sx,
   ...props
 }) => {
+  /* =========================
+   * State & Refs
+   * ========================= */
   const isControlled = value !== undefined;
-  const mountedRef = useRef(false);
-  const skipDebounceRef = useRef(false);
+  const [inputValue, setInputValue] = useState(value ?? "");
+  const [dropdownOpened, setDropdownOpened] = useState(false);
+  const [activeOptionIndex, setActiveOptionIndex] = useState(-1);
+  const [innerLoading, setInnerLoading] = useState(false);
+
+  const debouncedValue = useDebounced(inputValue, debounceMs);
+  const finalLoading = typeof loading === "boolean" ? loading : innerLoading;
+
+  const listRef = useRef([]);
+  const changeSourceRef = useRef(SOURCE.INTERNAL);
   const anchorRef = useRef(null);
+  const mountedRef = useRef(false);
 
-  const [internalValue, setInternalValue] = useState(value ?? "");
-  const [open, setOpen] = useState(false);
+  /* =========================
+   * Helpers
+   * ========================= */
+  const shouldSearch = (keyword) =>
+    Boolean(onSearch) && keyword.length >= minLength;
 
-  /** sync controlled */
+  const clampIndex = (idx) => {
+    if (idx < 0) return options.length - 1;
+    if (idx >= options.length) return 0;
+    return idx;
+  };
+
+  const runSearch = useCallback(
+    async (keyword) => {
+      if (!shouldSearch(keyword)) {
+        setDropdownOpened(false);
+        return;
+      }
+
+      try {
+        if (typeof loading !== "boolean") {
+          setInnerLoading(true);
+        }
+        const res = onSearch?.(keyword);
+        if (res instanceof Promise) {
+          await res;
+        }
+      } finally {
+        setInnerLoading(false);
+      }
+
+      if (dropdown) setDropdownOpened(true);
+    },
+    [onSearch, minLength, dropdown, loading], // eslint-disable-line
+  );
+
   useEffect(() => {
-    if (isControlled) setInternalValue(value ?? "");
-  }, [value, isControlled]);
+    if (activeOptionIndex >= 0) {
+      listRef.current[activeOptionIndex]?.scrollIntoView({
+        block: "nearest",
+      });
+    }
+  }, [activeOptionIndex]);
 
-  const debouncedValue = useDebounced(internalValue || "", debounce);
+  useEffect(() => {
+    if (!dropdownOpened || options.length === 0) {
+      setActiveOptionIndex(-1);
+    } else {
+      setActiveOptionIndex(0); // auto focus option đầu tiên
+    }
+  }, [dropdownOpened, options]);
 
-  /** auto search */
+  /* =========================
+   * Sync controlled value
+   * ========================= */
+  useEffect(() => {
+    if (!isControlled) return;
+    else if (value === inputValue) return;
+
+    changeSourceRef.current = suppressSearchOnValueChange
+      ? SOURCE.INTERNAL
+      : SOURCE.USER;
+
+    setInputValue(value ?? "");
+  }, [value, isControlled, suppressSearchOnValueChange]); // eslint-disable-line
+
+  /* =========================
+   * Auto search (debounce)
+   * ========================= */
   useEffect(() => {
     if (!autoSearch || !onSearch) return;
     if (!mountedRef.current) {
       mountedRef.current = true;
+      if (!searchOnMount) return;
+    }
+
+    if (changeSourceRef.current !== SOURCE.USER) {
       return;
     }
 
-    if (skipDebounceRef.current) {
-      skipDebounceRef.current = false;
-      return;
+    runSearch(debouncedValue);
+
+    changeSourceRef.current = SOURCE.INTERNAL;
+  }, [debouncedValue, autoSearch, searchOnMount, onSearch, runSearch]);
+
+  /* =========================
+   * Handlers
+   * ========================= */
+  const handleInputChange = (e) => {
+    const v = e.target.value;
+    changeSourceRef.current = SOURCE.USER;
+    setInputValue(v);
+    onChange?.(e, v);
+
+    if (!autoSearch) {
+      // no debounce
+      runSearch(v);
     }
-
-    if (debouncedValue.length < minLength) {
-      setOpen(false);
-      return;
-    }
-
-    onSearch(debouncedValue);
-    if (dropdown) setOpen(true);
-  }, [debouncedValue, autoSearch, minLength, onSearch, dropdown]);
-
-  const handleInputChange = useCallback(
-    (e) => {
-      const v = e.target.value;
-      setInternalValue(v);
-      onChange?.(v);
-
-      if (dropdown) {
-        setOpen(v.length >= minLength);
-      }
-    },
-    [onChange, dropdown, minLength],
-  );
-
-  const handleClear = useCallback(() => {
-    skipDebounceRef.current = true;
-    setInternalValue("");
-    setOpen(false);
-    if (minLength > 0) return;
-    onSearch?.("");
-  }, [onSearch, minLength]);
-
-  const handleEnter = useCallback(
-    (e) => {
-      if (e.key === "Enter") {
-        skipDebounceRef.current = true;
-        if (internalValue.length >= minLength) {
-          onSearch?.(internalValue);
-        }
-        setOpen(false);
-      }
-      if (e.key === "Escape") {
-        setOpen(false);
-      }
-    },
-    [internalValue, minLength, onSearch],
-  );
-
-  const handleSelect = (option) => {
-    const label = typeof option === "string" ? option : (option?.label ?? "");
-
-    skipDebounceRef.current = true;
-    setInternalValue(label);
-    setOpen(false);
-
-    onSelectOption?.(option);
-    onSearch?.(label);
   };
 
+  const handleClear = (e) => {
+    changeSourceRef.current = SOURCE.INTERNAL;
+    setInputValue("");
+    setDropdownOpened(false);
+    onChange?.(e, "");
+
+    if (searchAfterClear) {
+      runSearch("");
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (
+      e.key === "ArrowDown" &&
+      dropdown &&
+      !dropdownOpened &&
+      options.length
+    ) {
+      e.preventDefault();
+      setDropdownOpened(true);
+      setActiveOptionIndex(0);
+      return;
+    }
+
+    if (!dropdown || !dropdownOpened) {
+      if (e.key === "Enter") {
+        changeSourceRef.current = SOURCE.USER;
+        runSearch(inputValue);
+      }
+      return;
+    }
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setActiveOptionIndex((i) => clampIndex(i + 1));
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setActiveOptionIndex((i) => clampIndex(i - 1));
+        break;
+      case "Enter":
+        e.preventDefault();
+        options[activeOptionIndex]
+          ? handleSelectOption(options[activeOptionIndex])
+          : runSearch(inputValue);
+        break;
+      case "Escape":
+        setDropdownOpened(false);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleSelectOption = (option, ...params) => {
+    const value =
+      typeof option === "string" ? option : mapOptionToValue(option, ...params);
+
+    changeSourceRef.current = SOURCE.INTERNAL;
+    setInputValue(value);
+    setDropdownOpened(false);
+    onSelectOption?.(option, ...params);
+  };
+
+  const handleBlur = (e) => {
+    setDropdownOpened(false);
+  };
+
+  /* =========================
+   * Render
+   * ========================= */
   return (
     <>
       <TextField
-        fullWidth
         {...props}
+        fullWidth
         ref={anchorRef}
-        value={internalValue}
+        value={inputValue}
         disabled={disabled}
         placeholder={placeholder}
         size={size}
-        onChange={handleInputChange}
-        onKeyDown={handleEnter}
         sx={sx}
+        onChange={handleInputChange}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
         slotProps={{
           input: {
             startAdornment: (
               <InputAdornment position="start">
-                {loading ? (
+                {finalLoading ? (
                   <CircularProgress size={18} />
-                ) : (
+                ) : showSearchIcon ? (
                   <SearchRoundedIcon fontSize="small" />
-                )}
+                ) : undefined}
               </InputAdornment>
             ),
             endAdornment:
-              internalValue && !loading && !disabled ? (
+              inputValue && !finalLoading && !disabled ? (
                 <InputAdornment position="end">
                   <IconButton size="small" onClick={handleClear}>
                     <CloseRoundedIcon fontSize="small" />
@@ -157,28 +272,29 @@ const SearchBar = ({
         }}
       />
 
-      {/* ===== Dropdown ===== */}
       {dropdown && (
         <Popper
-          open={open && options.length > 0}
+          placement="bottom-start"
+          {...slotProps?.poper}
+          open={dropdownOpened && options.length > 0}
           anchorEl={anchorRef.current}
           style={{
             zIndex: 1300,
-            width: anchorRef.current?.getBoundingClientRect().width,
+            ...slotProps?.poper?.style,
+            // width: anchorRef.current?.getBoundingClientRect().width,
           }}
         >
-          <Paper
-            sx={{
-              minWidth: anchorRef.current?.offsetWidth,
-              mt: 0.5,
-              maxHeight: 300,
-              overflow: "auto",
-            }}
-          >
+          <Paper sx={{ mt: 0.5, overflow: "auto" }}>
             <List dense>
               {options.map((opt, idx) => (
-                <ListItemButton key={idx} onMouseDown={() => handleSelect(opt)}>
-                  {renderOption(opt)}
+                <ListItemButton
+                  ref={(el) => (listRef.current[idx] = el)}
+                  key={opt.key || idx}
+                  selected={idx === activeOptionIndex}
+                  onMouseEnter={() => setActiveOptionIndex(idx)}
+                  onMouseDown={() => handleSelectOption(opt)}
+                >
+                  {renderOption(opt, idx === activeOptionIndex, idx)}
                 </ListItemButton>
               ))}
             </List>

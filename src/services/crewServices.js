@@ -1,7 +1,6 @@
 import privateRequest from "../utils/privateRequest";
 import CrewEndpoints from "../endpoints/crewEndpoints";
 import { dateStringToISOString } from "../utils/converter";
-import { flattenFilter } from "@/utils/object";
 
 export const fetchCrewMembers = async ({ page, size, official }) => {
   const response = await privateRequest.get(CrewEndpoints.GENERAL, {
@@ -25,9 +24,7 @@ export const searchCrewMembers = async ({
       q: query,
       page,
       size,
-      filter: {
-        ...flattenFilter(filter),
-      },
+      filter: filter && filter.toString(),
     },
   });
   return response.data;

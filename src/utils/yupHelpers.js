@@ -1,3 +1,4 @@
+import Regex from "@/constants/Regex";
 import * as Yup from "yup";
 
 /** ===== BASIC ===== */
@@ -17,6 +18,11 @@ export const requiredNumber = (
   if (min) schema.min(min, minMsg);
   return schema;
 };
+export const requiredVnPhoneNumber = (msg = "Vui lòng nhập số điện thoải") =>
+  Yup.string().matches(Regex.VN_PHONE).required(msg);
+
+export const requiredEmail = (msg = "Vui'hui nhập email") =>
+  Yup.string().email(msg).required(msg);
 
 export const requiredFile = (msg = "Vui lòng tải lên file") =>
   Yup.mixed().required(msg);

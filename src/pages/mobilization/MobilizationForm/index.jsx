@@ -1,43 +1,112 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import {
   PageTitle,
   SectionWrapper,
   InfoTextFieldFormik,
+  EditableDataGridFormik,
   ImageUploadFieldFormik,
-  EditableDataGrid,
+  SearchEditCell,
 } from "@components/common";
 import { NationalityTextField } from "@components/common";
-import { Grid, Box, Button, CircularProgress } from "@mui/material";
+import { Grid, Typography, Box, Button, CircularProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
 import { useNavigate } from "react-router";
 import { createMobilization } from "@/services/mobilizationServices";
 import Color from "@constants/Color";
-import { SCHEMA } from "./schema";
+import { FORM_SCHEMA } from "./schema";
 import { mapValuesToRequestBody } from "./mapper";
 import { DEFAULT_INITIAL_VALUES } from "./defaults";
-import EditableDataGridFormik from "@/components/common/EditableDataGridFormik";
-import CrewSearchEditCell from "./CrewSearchEditCell";
+import { searchCrewMembers } from "@/services/crewServices";
+import { sfEqual } from "spring-filter-query-builder";
+import toast from "react-hot-toast";
+
+const CrewOptionItem = ({ cardId, fullName, active }) => (
+  <Box
+    px={1.5}
+    py={0.75}
+    sx={{
+      borderRadius: 0.75,
+      bgcolor: active ? "action.hover" : "transparent",
+    }}
+  >
+    <Typography fontWeight={600} noWrap>
+      {fullName}
+    </Typography>
+    <Typography variant="caption" color="text.secondary">
+      {cardId}
+    </Typography>
+  </Box>
+);
+
+const CrewSearchEditCell = ({
+  id,
+  value,
+  field,
+  error,
+  api,
+  hasFocus,
+  mapOptionToRow = (crew) => ({
+    fullName: crew.fullName,
+    cardId: crew.cardId || crew.id,
+  }),
+}) => {
+  const [options, setOptions] = useState([]);
+
+  // Search & normalize option data
+  const handleSearch = useCallback(async (keyword) => {
+    if (!keyword) return;
+    try {
+      const res = await searchCrewMembers({
+        query: keyword,
+        page: 0,
+        size: 10,
+        filter: sfEqual("workStatus", "AVAILABLE"),
+      });
+      setOptions(res.content || []);
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
+
+  return (
+    <SearchEditCell
+      id={id}
+      field={field}
+      value={value}
+      showSearchIcon={false}
+      api={api}
+      error={error}
+      hasFocus={hasFocus}
+      options={options}
+      onSearch={handleSearch}
+      mapOptionToRow={mapOptionToRow}
+      renderOption={({ raw: crew }, active, idx) => {
+        return (
+          <CrewOptionItem
+            cardId={crew.cardId || crew.id}
+            fullName={crew.fullName}
+            position={crew.professionalPosition}
+            active={active}
+          />
+        );
+      }}
+    />
+  );
+};
 
 const MobiliaztionForm = () => {
   const navigate = useNavigate();
-
-  const createEmptyRow = () => ({
-    cardId: "",
-    name: "",
-    professionalPosition: "",
-  });
 
   const handleFormSubmission = async (values, { resetForm }) => {
     try {
       const newMobilization = await createMobilization(
         mapValuesToRequestBody(values),
       );
-
-      // resetForm();
-      // navigate(`/mobilizations/${newMobilization.id}`);
+      resetForm();
+      navigate(`/mobilizations/${newMobilization.id}`);
     } catch (err) {
-      console.error("Error when creating mobilization: ", err);
+      toast.error("Tạo điều động thất bại, thử lại sau");
     }
   };
 
@@ -48,44 +117,33 @@ const MobiliaztionForm = () => {
       {
         field: "cardId",
         headerName: "Số thẻ",
-        flex: 1,
-        required: true,
+        headerAlign: "center",
         renderEditCell: (params) => <CrewSearchEditCell {...params} />,
       },
       {
-        field: "name",
+        field: "fullName",
         headerName: "Họ tên",
-        flex: 1,
-        required: true,
         renderEditCell: (params) => <CrewSearchEditCell {...params} />,
       },
       {
         field: "rankOnBoard",
         headerName: "Chức danh",
-        flex: 1,
-        editable: true,
       },
-
-      // ===== Contract-based mobilization =====
       {
         field: "startDate",
-        headerName: "Ngày bắt đầu HĐ",
+        headerName: "Ngày bắt đầu",
         type: "date",
-        flex: 1,
-        editable: true,
+        flex: 1.5,
       },
       {
         field: "endDate",
-        headerName: "Ngày kết thúc HĐ",
+        headerName: "Ngày kết thúc",
         type: "date",
-        flex: 1,
-        editable: true,
+        flex: 1.5,
       },
       {
         field: "remark",
         headerName: "Ghi chú",
-        flex: 2,
-        editable: true,
       },
     ],
     [],
@@ -94,7 +152,7 @@ const MobiliaztionForm = () => {
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={SCHEMA}
+      validationSchema={FORM_SCHEMA}
       validateOnChange
       onSubmit={handleFormSubmission}
     >
@@ -120,7 +178,7 @@ const MobiliaztionForm = () => {
             <Button
               type="submit"
               variant="contained"
-              disabled={!isValid || !dirty}
+              disabled={!isValid || !dirty || isSubmitting}
               sx={{
                 minWidth: 140,
                 fontWeight: 700,
@@ -142,7 +200,6 @@ const MobiliaztionForm = () => {
                 <InfoTextFieldFormik
                   name="partnerName"
                   label="Điều động đến công ty"
-                  fullWidth
                 />
               </Grid>
 
@@ -150,15 +207,17 @@ const MobiliaztionForm = () => {
                 <InfoTextFieldFormik
                   name="partnerEmail"
                   label="Email công ty"
-                  fullWidth
                 />
               </Grid>
 
               <Grid size={3}>
+                <InfoTextFieldFormik name="partnerPhone" label="SĐT công ty" />
+              </Grid>
+
+              <Grid size={3}>
                 <InfoTextFieldFormik
-                  name="partnerPhone"
-                  label="SĐT công ty"
-                  fullWidth
+                  name="partnerAddress"
+                  label="Địa chỉ công ty"
                 />
               </Grid>
             </Grid>
@@ -205,6 +264,7 @@ const MobiliaztionForm = () => {
 
               <Grid size={2}>
                 <NationalityTextField
+                  component={InfoTextFieldFormik}
                   name="shipInfo.countryISO"
                   label="Quốc tịch"
                 />
@@ -222,10 +282,9 @@ const MobiliaztionForm = () => {
           {/* ================= CREW ================= */}
           <SectionWrapper>
             <EditableDataGridFormik
-              title="Danh sách thuyền viên được điều động"
-              createEmptyRow={createEmptyRow}
-              buttonText="Thêm thuyền viên"
               name="crewMembers"
+              title="Danh sách thuyền viên được điều động"
+              addButtonText="Thêm thuyền viên"
               columns={columns}
             />
           </SectionWrapper>
