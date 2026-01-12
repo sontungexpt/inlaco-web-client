@@ -42,7 +42,7 @@ const SearchBar = ({
   onSelectOption,
 
   collapsible = false,
-  collapsed = false,
+  collapsed = true,
   collapseWidth,
   autoCollapseOnBlur = true,
 
@@ -317,7 +317,7 @@ const SearchBar = ({
                 {finalLoading ? (
                   <CircularProgress size={18} />
                 ) : (
-                  <SearchRoundedIcon fontSize="small" />
+                  showSearchIcon && <SearchRoundedIcon fontSize="small" />
                 )}
               </InputAdornment>
             ),

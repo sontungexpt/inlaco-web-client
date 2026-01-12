@@ -1,6 +1,6 @@
 import { privateRequest } from "@/utils/request";
 import MobilizationEndpoint from "@/endpoints/mobilizationEndpoints";
-import { flattenFilter } from "@/utils/object";
+import { flattenFilter } from "@/utils/filter";
 
 export const fetchMobilizations = async ({
   page,

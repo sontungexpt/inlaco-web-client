@@ -5,10 +5,10 @@ import {
   BaseTabBar,
   BaseDataGrid,
 } from "@components/common";
-import { Box, Button, Stack, Toolbar } from "@mui/material";
-import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import { Box, Toolbar } from "@mui/material";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined";
+import MoreVertRoundedIcon from "@mui/icons-material/MoreVertRounded";
 
 import { useNavigate } from "react-router";
 import { useCrewMembers } from "@/hooks/services/crew";
@@ -16,6 +16,7 @@ import { isoToLocaleString } from "@/utils/converter";
 
 import Color from "@constants/Color";
 import CandidateStatus from "@/constants/CandidateStatus";
+import { GridActionsCellItem } from "@mui/x-data-grid";
 
 const DataGridToolbar = ({ onAdd, onSearch }) => {
   return (
@@ -60,7 +61,9 @@ export default function CrewInfos() {
   } = useCrewMembers({
     page: paginationModel.page,
     size: paginationModel.pageSize,
-    official: official,
+    filter: {
+      official,
+    },
   });
 
   const handleTabChange = (e, newValue) => {
@@ -71,8 +74,8 @@ export default function CrewInfos() {
     () => [
       {
         field: "fullName",
+        flex: 2.5,
         headerName: "Họ tên",
-        flex: 2,
         align: "center",
       },
       {
@@ -85,59 +88,60 @@ export default function CrewInfos() {
       },
       {
         field: "birthDate",
+        flex: 1,
         headerName: "Ngày sinh",
-        flex: 1.5,
         align: "center",
         renderCell: ({ value }) => isoToLocaleString(value, "date"),
       },
       {
+        flex: 2.5,
         field: "email",
         headerName: "Email",
-        flex: 2,
         align: "center",
       },
       {
+        flex: 1,
         field: "phoneNumber",
         headerName: "SĐT",
-        flex: 1,
         align: "center",
       },
       {
+        flex: 1,
         field: "actions",
+        type: "actions",
         headerName: "Chi tiết",
-        flex: 1.5,
-        align: "center",
         sortable: false,
-        renderCell: ({ id }) => (
-          <Stack direction="row" spacing={1}>
-            {!official && (
-              <Button
-                size="small"
-                variant="contained"
-                onClick={() => {
+        getActions: ({ row: { id } }) =>
+          [
+            <GridActionsCellItem
+              icon={<MoreVertRoundedIcon />}
+              label="Actions"
+              showInMenu
+            />,
+            !official && (
+              <GridActionsCellItem
+                icon={<AssignmentIndOutlinedIcon fontSize="small" />}
+                label="Chi tiết hợp đồng"
+                showInMenu
+                onClick={() =>
                   navigate(`/crew-contracts/form/${id}`, {
-                    state: {
-                      type: "create",
-                    },
-                  });
-                }}
-              >
-                <AssignmentIndOutlinedIcon fontSize="small" />
-              </Button>
-            )}
-            <Button
-              size="small"
-              variant="contained"
-              onClick={() => {
+                    state: { type: "create" },
+                  })
+                }
+              />
+            ),
+
+            <GridActionsCellItem
+              icon={<ArrowForwardIosRoundedIcon fontSize="small" />}
+              label="Chi tiết thuyền viên"
+              showInMenu
+              onClick={() =>
                 navigate(`/crews/${id}`, {
                   state: { official },
-                });
-              }}
-            >
-              <ArrowForwardIosRoundedIcon fontSize="small" />
-            </Button>
-          </Stack>
-        ),
+                })
+              }
+            />,
+          ].filter(Boolean),
       },
     ],
     [navigate, official],

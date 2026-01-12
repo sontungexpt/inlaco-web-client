@@ -1,13 +1,14 @@
 import privateRequest from "../utils/privateRequest";
-import CrewEndpoints from "../endpoints/crewEndpoints";
+import CrewEndpoint from "../endpoints/crewEndpoints";
 import { dateStringToISOString } from "../utils/converter";
+import { flattenFilter } from "@/utils/filter";
 
-export const fetchCrewMembers = async ({ page, size, official }) => {
-  const response = await privateRequest.get(CrewEndpoints.GENERAL, {
+export const fetchCrewMembers = async ({ page, size, filter }) => {
+  const response = await privateRequest.get(CrewEndpoint.GET_ALL_CREWS, {
     params: {
       page,
       size,
-      official,
+      ...flattenFilter(filter),
     },
   });
   return response.data;
@@ -19,7 +20,7 @@ export const searchCrewMembers = async ({
   size = 10,
   filter,
 }) => {
-  const response = await privateRequest.get(CrewEndpoints.SEARCH, {
+  const response = await privateRequest.get(CrewEndpoint.SEARCH, {
     params: {
       q: query,
       page,
@@ -33,7 +34,7 @@ export const searchCrewMembers = async ({
 export const getCrewMemberByID_API = async (crewMemberID) => {
   try {
     const response = await privateRequest.get(
-      `${CrewEndpoints.GENERAL}/${crewMemberID}`,
+      `${CrewEndpoint.GENERAL}/${crewMemberID}`,
     );
     return response;
   } catch (err) {
@@ -44,7 +45,7 @@ export const getCrewMemberByID_API = async (crewMemberID) => {
 export const getProfileCurrentCrewMemberAPI = async () => {
   try {
     const response = await privateRequest.get(
-      `${CrewEndpoints.CURRENT_PROFILE}`,
+      `${CrewEndpoint.CURRENT_PROFILE}`,
     );
     return response;
   } catch (err) {
@@ -58,7 +59,7 @@ export const editCrewMemberProfileAPI = async (
 ) => {
   try {
     const response = await privateRequest.patch(
-      `${CrewEndpoints.GENERAL}/${crewMemberID}`,
+      `${CrewEndpoint.GENERAL}/${crewMemberID}`,
       {
         birthDate: dateStringToISOString(crewMemberInfo.dob),
         fullName: crewMemberInfo.fullName,
@@ -109,7 +110,7 @@ export const createCrMemberFrCandidateAPI = async (
 ) => {
   try {
     const response = await privateRequest.post(
-      `${CrewEndpoints.GENERAL}/${candidateID}`,
+      `${CrewEndpoint.GENERAL}/${candidateID}`,
       {
         birthDate: candidateInfo?.birthDate,
         fullName: candidateInfo?.fullName,

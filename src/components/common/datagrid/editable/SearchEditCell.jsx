@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import SearchBar from "@/components/common/SearchBar";
 import { ErrorTooltip } from "@/components/common";
 
@@ -55,9 +55,10 @@ const SearchEditCell = ({
       <SearchBar
         autoSearch
         dropdown
-        value={value}
+        showSearchIcon={false}
         suppressSearchOnValueChange={!hasFocus}
         {...props}
+        value={value}
         options={normalizeOptions}
         mapOptionToValue={(opt) => opt.value}
         onSelectOption={handleSelect}
