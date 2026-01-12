@@ -50,7 +50,6 @@ const CrewContract = ({ pageSize = 10 }) => {
       sortable: false,
       flex: 2,
       align: "center",
-      headerAlign: "center",
     },
     {
       field: "freezedAt",
@@ -58,7 +57,6 @@ const CrewContract = ({ pageSize = 10 }) => {
       sortable: false,
       flex: 1,
       align: "center",
-      headerAlign: "center",
       valueFormatter: (params) => {
         return params ? isoToLocalDatetime(params, "dd/mm/yyyy HH:MM") : "";
       },
@@ -69,7 +67,6 @@ const CrewContract = ({ pageSize = 10 }) => {
       sortable: false,
       flex: 1,
       align: "center",
-      headerAlign: "center",
       valueFormatter: (params) => {
         return params ? isoToLocalDatetime(params, "dd/mm/yyyy HH:MM") : "";
       },
@@ -79,7 +76,6 @@ const CrewContract = ({ pageSize = 10 }) => {
       headerName: "Chi tiết",
       sortable: false,
       align: "center",
-      headerAlign: "center",
       renderCell: (params) => {
         return (
           <DetailActionCell onClick={() => onContractDetailClick(params?.id)} />

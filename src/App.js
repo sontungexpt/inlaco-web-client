@@ -27,62 +27,61 @@ function RoleGuard({ allowedRoles, children = <Outlet /> }) {
     typeof allowedRoles === "function"
       ? allowedRoles({ hasRole, userRoles, hasRoles })
       : allowedRoles.some((r) => hasRole(r));
+
   if (!allowed) return <div>Unauthorized</div>;
   return children;
 }
 
+const Guarded = ({ needAuth, allowedRoles, children }) => {
+  const Auth = needAuth ? AuthGuard : Fragment;
+  return (
+    <Auth>
+      <RoleGuard allowedRoles={allowedRoles}>{children}</RoleGuard>
+    </Auth>
+  );
+};
+
+const resolveLayout = (route, hasParentLayout) => {
+  if (typeof route.layout === "function") return route.layout;
+  if (route.layout === false || hasParentLayout) return Fragment;
+  return MainLayout;
+};
+
 export const buildRoutes = (routes, pub = false) => {
-  const walk = (routes, pub = false, level = 0, parentHasLayout = false) => {
+  const walk = (routes, level = 0, hasParentLayout = false) => {
     return routes.map((route, i) => {
       const needAuth =
         route.public !== true && !(route.public === undefined && pub);
 
-      const hasOwnLayout = typeof route.layout === "function";
+      const Layout = resolveLayout(route, hasParentLayout);
+      const RouteElement = route.element;
 
-      let Layout = Fragment;
-
-      if (hasOwnLayout) {
-        // Con có layout riêng → dùng layout của nó
-        Layout = route.layout;
-      } else if (parentHasLayout) {
-        // Cha đã có layout → KHÔNG render thêm layout
-        Layout = Fragment;
-      } else if (route.layout !== false) {
-        // Không ai có layout → dùng layout mặc định
-        Layout = MainLayout;
-      }
-
-      const Element = route.element;
-      const OptionalAuthGuard = needAuth ? AuthGuard : Fragment;
-
-      const elementNode = (
+      const element = (
         <Layout>
-          <OptionalAuthGuard>
-            <RoleGuard allowedRoles={route.roles}>
-              {Element && <Element />}
-            </RoleGuard>
-          </OptionalAuthGuard>
+          <Guarded needAuth={needAuth} allowedRoles={route.roles}>
+            {RouteElement && <RouteElement />}
+          </Guarded>
         </Layout>
       );
-
-      if (!route.children || route.children.length === 0) {
+      const key = `${level}-${i}`;
+      if (!route.children?.length) {
         return (
           <Route
-            key={`${level}-${i}`}
+            key={key}
             index={route.index}
             path={route.path || ""}
-            element={elementNode}
+            element={element}
           />
         );
       }
 
       return (
-        <Route key={`${level}-${i}`} path={route.path} element={elementNode}>
+        <Route key={key} path={route.path} element={element}>
           {walk(
             route.children,
-            pub,
             level + 1,
-            hasOwnLayout || (!parentHasLayout && Layout !== Fragment),
+            hasParentLayout || Layout !== Fragment,
+            // hasOwnLayout || (!hasParentLayout && Layout !== Fragment),
           )}
         </Route>
       );

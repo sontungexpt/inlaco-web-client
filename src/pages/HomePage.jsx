@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageTitle } from "@components/global";
+import { PageTitle, SectionWrapper } from "@components/global";
 import {
   Box,
   Typography,
@@ -17,6 +17,149 @@ import { usePosts } from "@/hooks/services/post";
 import { useNavigate } from "react-router";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";
+import { CloudinaryImage } from "@/components/common";
+
+const NewsCard = ({
+  title,
+  description,
+  imagePublicId,
+  imageSrc,
+  date,
+  onClick,
+  onDetailClick,
+  ...props
+}) => {
+  return (
+    <Card
+      {...props}
+      onClick={onClick}
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: 4,
+        overflow: "hidden",
+        cursor: "pointer",
+        backgroundColor: "#fff",
+        transition: "all 0.3s ease",
+        boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
+        "&:hover": {
+          transform: "translateY(-8px)",
+          boxShadow: "0 16px 40px rgba(0,0,0,0.18)",
+          "& img": {
+            transform: "scale(1.05)",
+          },
+        },
+      }}
+    >
+      {/* IMAGE */}
+      <Box
+        position="relative"
+        sx={{
+          overflow: "hidden",
+        }}
+      >
+        <CloudinaryImage
+          height="180"
+          publicId={imagePublicId}
+          src={imageSrc}
+          alt={title}
+          sx={{
+            transition: "transform 0.4s ease",
+          }}
+        />
+
+        {/* Gradient + blur */}
+        <Box
+          position="absolute"
+          inset={0}
+          sx={{
+            background:
+              "linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0))",
+            backdropFilter: "blur(1px)",
+          }}
+        />
+
+        {/* Date badge */}
+        <Box
+          position="absolute"
+          top={12}
+          left={12}
+          sx={{
+            px: 1.5,
+            py: 0.5,
+            borderRadius: 2,
+            backgroundColor: "rgba(0,0,0,0.6)",
+          }}
+        >
+          <Typography variant="caption" sx={{ color: "#fff", fontWeight: 500 }}>
+            {date}
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* CONTENT */}
+      <CardContent
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+          p: 3,
+        }}
+      >
+        {/* Title */}
+        <Typography
+          variant="h6"
+          fontWeight={700}
+          lineHeight={1.3}
+          sx={{
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
+          {title}
+        </Typography>
+
+        {/* Description */}
+        <Typography
+          variant="body2"
+          sx={{
+            mt: 1.2,
+            color: "text.secondary",
+            display: "-webkit-box",
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
+          {description}
+        </Typography>
+
+        {/* CTA */}
+        <Button
+          variant="contained"
+          size="small"
+          sx={{
+            mt: "auto",
+            alignSelf: "flex-start",
+            borderRadius: 2,
+            textTransform: "none",
+            fontWeight: 600,
+            px: 2.5,
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDetailClick?.(e);
+          }}
+        >
+          Xem chi tiết
+        </Button>
+      </CardContent>
+    </Card>
+  );
+};
 
 const HomePage = ({ newsPerPage = 12 }) => {
   const navigate = useNavigate();
@@ -25,7 +168,7 @@ const HomePage = ({ newsPerPage = 12 }) => {
   const [page, setPage] = useState(0);
 
   const {
-    data: { content: news = [], totalPages = 0 } = {},
+    data: { content: posts = [], totalPages = 0 } = {},
     isLoading,
     isError,
     refetch: refetchNews,
@@ -68,21 +211,12 @@ const HomePage = ({ newsPerPage = 12 }) => {
 
   return (
     <Box m="20px">
-      <PageTitle
-        title="TRANG CHỦ"
-        subtitle="Trang chủ website quản lý của công ty INLACO Hải Phòng"
-      />
-      <Box
-        mt={3}
-        mb={2}
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-          Tin tức công ty
-        </Typography>
-
+      <SectionWrapper>
+        <PageTitle
+          title="TRANG CHỦ"
+          subtitle="Trang chủ website quản lý của công ty INLACO Hải Phòng"
+          mb={isAdmin ? 2 : 0}
+        />
         {isAdmin && (
           <Button
             variant="contained"
@@ -93,77 +227,21 @@ const HomePage = ({ newsPerPage = 12 }) => {
             Thêm bài viết
           </Button>
         )}
-      </Box>
+      </SectionWrapper>
       <Grid container spacing={3}>
-        {news.map((news) => (
-          <Grid
-            key={news.id}
-            size={{
-              xs: 12,
-              sm: 6,
-              md: 4,
-            }}
-          >
-            <Card
-              onClick={() => navigate(`/posts/${news.id}`)}
-              sx={{
-                boxShadow: 3,
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-                "&:hover": {
-                  boxShadow: 6,
-                  transform: "translateY(-4px)",
-                },
+        {posts.map((post) => (
+          <Grid key={post.id} size={4}>
+            <NewsCard
+              id={post.id}
+              title={post.title}
+              description={post.description}
+              image={post.image}
+              date={post.date}
+              onClick={() => navigate(`/posts/${post.id}`)}
+              onDetailClick={() => {
+                navigate(`/posts/${post.id}`);
               }}
-            >
-              <CardMedia
-                component="img"
-                height="140"
-                image={news.image}
-                alt={news.title}
-              />
-
-              <CardContent
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  flexGrow: 1,
-                }}
-              >
-                <Typography gutterBottom variant="h6" component="div">
-                  {news.title}
-                </Typography>
-
-                <Typography variant="body2" color="text.secondary">
-                  {news.description}
-                </Typography>
-
-                <Typography
-                  variant="caption"
-                  display="block"
-                  color="text.secondary"
-                  sx={{ mt: 1 }}
-                >
-                  {news.date}
-                </Typography>
-
-                {/* Nút đặt ở đáy card */}
-                <Button
-                  variant="contained"
-                  size="small"
-                  sx={{ mt: "auto", borderRadius: 2 }}
-                  onClick={(e) => {
-                    e.stopPropagation(); //  không trigger click card
-                    navigate(`/posts/${news.id}`);
-                  }}
-                >
-                  Xem chi tiết
-                </Button>
-              </CardContent>
-            </Card>
+            />
           </Grid>
         ))}
       </Grid>
@@ -171,7 +249,7 @@ const HomePage = ({ newsPerPage = 12 }) => {
       <Box display="flex" justifyContent="center" mt={4}>
         <Pagination
           count={totalPages}
-          page={page + 1} // MUI bắt đầu từ 1
+          page={page + 1} // MUI start from 1
           onChange={(e, value) => setPage(value - 1)}
           color="primary"
           size="large"
