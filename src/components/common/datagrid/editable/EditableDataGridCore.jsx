@@ -63,6 +63,8 @@ const EditableDataGridCoreInner = ({
 
   columns,
 
+  headerAlign,
+  slotProps,
   addButtonText = "Thêm dòng",
   editMode = "row",
   onProcessRowUpdateError = () => {},
@@ -72,6 +74,7 @@ const EditableDataGridCoreInner = ({
     rows,
     rowErrors,
     rowModesModel,
+    updaingRowIds,
     setRowModesModel,
     addRow,
     removeRow,
@@ -134,7 +137,6 @@ const EditableDataGridCoreInner = ({
       const isDateType = colType === "datetime" || colType === "date";
 
       return {
-        headerAlign: "center",
         editable: true,
         flex: isDateType ? 1.5 : 1,
         ...col,
@@ -174,6 +176,7 @@ const EditableDataGridCoreInner = ({
           [params.id]: true,
         }));
       }}
+      headerAlign={headerAlign}
       columns={[...finalColumns, actionColumn]}
       rowModesModel={rowModesModel}
       onRowModesModelChange={setRowModesModel}
@@ -181,13 +184,16 @@ const EditableDataGridCoreInner = ({
       onProcessRowUpdateError={onProcessRowUpdateError}
       experimentalFeatures={{ newEditingApi: true }}
       slotProps={{
+        ...slotProps,
         toolbar: {
           onAdd: addRow,
           addButtonText,
           addDisabled: Object.keys(rowErrors).length > 0,
         },
         cell: {
-          onFocus: (event) => {
+          ...slotProps?.cell,
+          onFocus: (event, ...params) => {
+            slotProps?.cell?.onFocus?.(event, ...params);
             const rowId = event.currentTarget.parentElement?.dataset?.id;
             if (!rowId) return;
 

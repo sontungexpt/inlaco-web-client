@@ -1,3 +1,4 @@
+export { default as NoValuesOverlay } from "./NoValuesOverlay";
 export { default as BaseDataGrid } from "./BaseDataGrid";
 export { default as DetailActionCell } from "./DetailActionCell";
 

@@ -1,6 +1,6 @@
 import {
   PageTitle,
-  InfoTextField,
+  InfoTextFieldFormik,
   ImageUploadFieldFormik,
   NationalityTextField,
   FileUploadFieldFormik,
@@ -203,96 +203,35 @@ const SupplyRequestForm = () => {
           <SectionWrapper title="Thông tin công ty">
             <Grid container spacing={2} rowSpacing={3}>
               <Grid size={4}>
-                <InfoTextField
-                  label="Tên công ty"
-                  required
-                  fullWidth
-                  name="companyName"
-                  value={values.companyName}
-                  error={!!touched.companyName && !!errors.companyName}
-                  helperText={touched.companyName && errors.companyName}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
+                <InfoTextFieldFormik label="Tên công ty" name="companyName" />
               </Grid>
 
               <Grid size={5}>
-                <InfoTextField
-                  label="Địa chỉ"
-                  required
-                  fullWidth
-                  name="companyAddress"
-                  value={values.companyAddress}
-                  error={!!touched.companyAddress && !!errors.companyAddress}
-                  helperText={touched.companyAddress && errors.companyAddress}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
+                <InfoTextFieldFormik label="Địa chỉ" name="companyAddress" />
               </Grid>
 
               <Grid size={3}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Số điện thoại"
-                  required
-                  fullWidth
                   name="companyPhone"
-                  value={values.companyPhone}
-                  error={!!touched.companyPhone && !!errors.companyPhone}
-                  helperText={touched.companyPhone && errors.companyPhone}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
 
               <Grid size={4}>
-                <InfoTextField
-                  label="Email"
-                  required
-                  fullWidth
-                  name="companyEmail"
-                  value={values.companyEmail}
-                  error={!!touched.companyEmail && !!errors.companyEmail}
-                  helperText={touched.companyEmail && errors.companyEmail}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
+                <InfoTextFieldFormik label="Email" name="companyEmail" />
               </Grid>
 
               <Grid size={5}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Người đại diện"
-                  required
-                  fullWidth
                   name="companyRepresentor"
-                  value={values.companyRepresentor}
-                  error={
-                    !!touched.companyRepresentor && !!errors.companyRepresentor
-                  }
-                  helperText={
-                    touched.companyRepresentor && errors.companyRepresentor
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
 
               <Grid size={3}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Chức vụ"
-                  required
-                  fullWidth
                   name="companyRepresentorPosition"
-                  value={values.companyRepresentorPosition}
-                  error={
-                    !!touched.companyRepresentorPosition &&
-                    !!errors.companyRepresentorPosition
-                  }
-                  helperText={
-                    touched.companyRepresentorPosition &&
-                    errors.companyRepresentorPosition
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
             </Grid>
@@ -302,34 +241,18 @@ const SupplyRequestForm = () => {
           <SectionWrapper title="Thông tin yêu cầu">
             <Grid container spacing={2} rowSpacing={3}>
               <Grid size={4}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   type="datetime-local"
                   label="Thời gian bắt đầu thuê"
-                  required
-                  fullWidth
                   name="rentalStartDate"
-                  value={values.rentalStartDate}
-                  error={!!touched.rentalStartDate && !!errors.rentalStartDate}
-                  helperText={touched.rentalStartDate && errors.rentalStartDate}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
 
               <Grid size={4}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   type="datetime-local"
                   label="Thời gian kết thúc thuê"
-                  required
-                  fullWidth
                   name="rentalEndDate"
-                  value={values.rentalEndDate}
-                  error={!!touched.rentalEndDate && !!errors.rentalEndDate}
-                  helperText={touched.rentalEndDate && errors.rentalEndDate}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
 
@@ -339,7 +262,6 @@ const SupplyRequestForm = () => {
                   required
                   label="Danh sách số lượng cần cung ứng"
                   name="detailFile"
-                  helperText={touched.detailFile && errors.detailFile}
                 />
               </Grid>
             </Grid>
@@ -349,82 +271,24 @@ const SupplyRequestForm = () => {
           <SectionWrapper title="Thông tin tàu">
             <Grid container spacing={3}>
               <Grid size={6}>
-                <ImageUploadFieldFormik
-                  required
-                  helperText={touched.shipInfo?.image && errors.shipInfo?.image}
-                  name="shipInfo.image"
-                />
+                <ImageUploadFieldFormik required name="shipInfo.image" />
               </Grid>
 
               <Grid size={6} container direction="column" rowSpacing={3}>
-                <InfoTextField
-                  label="IMO"
-                  fullWidth
-                  name="shipInfo.IMONumber"
-                  value={values.shipInfo?.IMONumber}
-                  error={
-                    !!touched.shipInfo?.IMONumber &&
-                    !!errors.shipInfo?.IMONumber
-                  }
-                  helperText={
-                    touched.shipInfo?.IMONumber && errors.shipInfo?.IMONumber
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
+                <InfoTextFieldFormik label="IMO" name="shipInfo.IMONumber" />
 
-                <InfoTextField
-                  label="Tên tàu"
-                  fullWidth
-                  name="shipInfo.name"
-                  value={values.shipInfo?.name}
-                  error={!!touched.shipInfo?.name && !!errors.shipInfo?.name}
-                  helperText={touched.shipInfo?.name && errors.shipInfo?.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
+                <InfoTextFieldFormik label="Tên tàu" name="shipInfo.name" />
 
                 <NationalityTextField
+                  component={InfoTextFieldFormik}
                   label="Quốc tịch"
-                  fullWidth
                   name="shipInfo.countryISO"
-                  value={values.shipInfo?.countryISO}
-                  error={
-                    !!touched.shipInfo?.countryISO &&
-                    !!errors.shipInfo?.countryISO
-                  }
-                  helperText={
-                    touched.shipInfo?.countryISO && errors.shipInfo?.countryISO
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
 
-                <InfoTextField
-                  label="Loại tàu"
-                  fullWidth
-                  name="shipInfo.type"
-                  value={values.shipInfo?.type}
-                  error={!!touched.shipInfo?.type && !!errors.shipInfo?.type}
-                  helperText={touched.shipInfo?.type && errors.shipInfo?.type}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                <InfoTextField
+                <InfoTextFieldFormik label="Loại tàu" name="shipInfo.type" />
+                <InfoTextFieldFormik
                   label="Mô tả"
-                  fullWidth
                   name="shipInfo.description"
-                  value={values.shipInfo?.description}
-                  error={
-                    !!touched.shipInfo?.description &&
-                    !!errors.shipInfo?.description
-                  }
-                  helperText={
-                    touched.shipInfo?.description &&
-                    errors.shipInfo?.description
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                 />
               </Grid>
             </Grid>

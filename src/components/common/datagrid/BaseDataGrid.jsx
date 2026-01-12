@@ -12,6 +12,7 @@ const BaseDataGrid = ({
   header,
   pageSizeOptions = [],
   onPaginationModelChange,
+  headerAlign = "center", // undefined to use column align
   loading,
   sx = {},
   ...props
@@ -58,6 +59,10 @@ const BaseDataGrid = ({
           boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
 
           /* ===== HEADER ===== */
+          "& .MuiDataGrid-columnHeaderTitleContainer": {
+            justifyContent: headerAlign,
+          },
+
           "& .MuiDataGrid-columnHeader": {
             backgroundColor: Color.SecondaryBlue,
             color: Color.PrimaryWhite,

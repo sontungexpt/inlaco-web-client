@@ -18,13 +18,19 @@ import { useNavigate } from "react-router";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";
 
-const HomePage = () => {
+const HomePage = ({ newsPerPage = 12 }) => {
   const navigate = useNavigate();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
   const [page, setPage] = useState(0);
-  const size = 12;
-  const { data, isLoading, isError, refetch } = usePosts({ page, size });
+
+  const {
+    data: { content: news = [], totalPages = 0 } = {},
+    isLoading,
+    isError,
+    refetch: refetchNews,
+  } = usePosts({ page, size: newsPerPage });
+
   if (isLoading) {
     return (
       <Box
@@ -53,130 +59,125 @@ const HomePage = () => {
         <Alert severity="error" sx={{ mb: 2 }}>
           Không thể tải dữ liệu bài viết. Vui lòng thử lại!
         </Alert>
-        <Button variant="contained" onClick={() => refetch()}>
+        <Button variant="contained" onClick={() => refetchNews()}>
           Thử lại
         </Button>
       </Box>
     );
   }
 
-  const newsList = data?.content || [];
-  const totalPages = data?.totalPages || 1;
-
   return (
-    <div>
-      <Box m="20px">
-        <PageTitle
-          title="TRANG CHỦ"
-          subtitle="Trang chủ website quản lý của công ty INLACO Hải Phòng"
-        />
-        <Box
-          mt={3}
-          mb={2}
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-            Tin tức công ty
-          </Typography>
+    <Box m="20px">
+      <PageTitle
+        title="TRANG CHỦ"
+        subtitle="Trang chủ website quản lý của công ty INLACO Hải Phòng"
+      />
+      <Box
+        mt={3}
+        mb={2}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+          Tin tức công ty
+        </Typography>
 
-          {isAdmin && (
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={() => navigate("/posts/create")}
-            >
-              Thêm bài viết
-            </Button>
-          )}
-        </Box>
-        <Grid container spacing={3}>
-          {newsList.map((news) => (
-            <Grid
-              key={news.id}
-              size={{
-                xs: 12,
-                sm: 6,
-                md: 4,
+        {isAdmin && (
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => navigate("/posts/create")}
+          >
+            Thêm bài viết
+          </Button>
+        )}
+      </Box>
+      <Grid container spacing={3}>
+        {news.map((news) => (
+          <Grid
+            key={news.id}
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4,
+            }}
+          >
+            <Card
+              onClick={() => navigate(`/posts/${news.id}`)}
+              sx={{
+                boxShadow: 3,
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  boxShadow: 6,
+                  transform: "translateY(-4px)",
+                },
               }}
             >
-              <Card
-                onClick={() => navigate(`/posts/${news.id}`)}
+              <CardMedia
+                component="img"
+                height="140"
+                image={news.image}
+                alt={news.title}
+              />
+
+              <CardContent
                 sx={{
-                  boxShadow: 3,
-                  height: "100%",
                   display: "flex",
                   flexDirection: "column",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                  "&:hover": {
-                    boxShadow: 6,
-                    transform: "translateY(-4px)",
-                  },
+                  flexGrow: 1,
                 }}
               >
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={news.image}
-                  alt={news.title}
-                />
+                <Typography gutterBottom variant="h6" component="div">
+                  {news.title}
+                </Typography>
 
-                <CardContent
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    flexGrow: 1,
+                <Typography variant="body2" color="text.secondary">
+                  {news.description}
+                </Typography>
+
+                <Typography
+                  variant="caption"
+                  display="block"
+                  color="text.secondary"
+                  sx={{ mt: 1 }}
+                >
+                  {news.date}
+                </Typography>
+
+                {/* Nút đặt ở đáy card */}
+                <Button
+                  variant="contained"
+                  size="small"
+                  sx={{ mt: "auto", borderRadius: 2 }}
+                  onClick={(e) => {
+                    e.stopPropagation(); //  không trigger click card
+                    navigate(`/posts/${news.id}`);
                   }}
                 >
-                  <Typography gutterBottom variant="h6" component="div">
-                    {news.title}
-                  </Typography>
+                  Xem chi tiết
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
 
-                  <Typography variant="body2" color="text.secondary">
-                    {news.description}
-                  </Typography>
-
-                  <Typography
-                    variant="caption"
-                    display="block"
-                    color="text.secondary"
-                    sx={{ mt: 1 }}
-                  >
-                    {news.date}
-                  </Typography>
-
-                  {/* Nút đặt ở đáy card */}
-                  <Button
-                    variant="contained"
-                    size="small"
-                    sx={{ mt: "auto", borderRadius: 2 }}
-                    onClick={(e) => {
-                      e.stopPropagation(); //  không trigger click card
-                      navigate(`/posts/${news.id}`);
-                    }}
-                  >
-                    Xem chi tiết
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-
-        <Box display="flex" justifyContent="center" mt={4}>
-          <Pagination
-            count={totalPages}
-            page={page + 1} // MUI bắt đầu từ 1
-            onChange={(e, value) => setPage(value - 1)}
-            color="primary"
-            size="large"
-          />
-        </Box>
+      <Box display="flex" justifyContent="center" mt={4}>
+        <Pagination
+          count={totalPages}
+          page={page + 1} // MUI bắt đầu từ 1
+          onChange={(e, value) => setPage(value - 1)}
+          color="primary"
+          size="large"
+        />
       </Box>
-    </div>
+    </Box>
   );
 };
 

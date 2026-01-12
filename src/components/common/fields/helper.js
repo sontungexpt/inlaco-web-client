@@ -5,13 +5,6 @@ export const formatSize = (bytes) =>
 
 export const isValidFileType = (file, accept) => {
   if (!accept || accept === "*") return true;
-  // return accept.split(",").some((rule) => {
-  //   rule = rule.trim().toLowerCase();
-  //   if (rule.startsWith(".")) return file.name.toLowerCase().endsWith(rule);
-  //   if (rule.includes("/")) return file.type === rule;
-  //   return false;
-  // });
-
   return accept.split(",").some((rule) => {
     rule = rule.trim().toLowerCase();
     if (rule.endsWith("/*")) {

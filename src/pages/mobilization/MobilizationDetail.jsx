@@ -22,33 +22,8 @@ import {
   PageTitle,
   CloudinaryImage,
   BaseDataGrid,
+  InfoItem,
 } from "@/components/common";
-
-/* =========================
- * Reusable Info Item
- * ========================= */
-const InfoItem = ({ label, value }) => (
-  <Box>
-    <Typography
-      sx={{
-        fontSize: 13,
-        color: Color.PrimaryBlackPlaceHolder,
-        mb: "2px",
-      }}
-    >
-      {label}
-    </Typography>
-    <Typography
-      sx={{
-        fontSize: 15,
-        fontWeight: 600,
-        color: Color.PrimaryBlack,
-      }}
-    >
-      {value ?? "—"}
-    </Typography>
-  </Box>
-);
 
 const MobilizationDetailPage = () => {
   const { id } = useParams();
@@ -68,35 +43,30 @@ const MobilizationDetailPage = () => {
         field: "fullName",
         headerName: "Họ và tên",
         flex: 2,
-        headerAlign: "center",
         align: "left",
       },
       {
         field: "cardId",
         headerName: "Mã thẻ",
         flex: 1.2,
-        headerAlign: "center",
         align: "center",
       },
       {
         field: "phoneNumber",
         headerName: "SĐT",
         flex: 1.3,
-        headerAlign: "center",
         align: "center",
       },
       {
         field: "email",
         headerName: "Email",
         flex: 2,
-        headerAlign: "center",
         renderCell: (params) => params?.value ?? "—",
       },
       {
         field: "gender",
         headerName: "Giới tính",
         flex: 1,
-        headerAlign: "center",
         align: "center",
         renderCell: (params) => {
           if (!params?.value) return "—";
@@ -107,7 +77,6 @@ const MobilizationDetailPage = () => {
         field: "professionalPosition",
         headerName: "Chức danh",
         flex: 1.5,
-        headerAlign: "center",
         renderCell: (params) => params?.value ?? "—",
       },
     ],
@@ -140,23 +109,23 @@ const MobilizationDetailPage = () => {
         <PageTitle
           title="CHI TIẾT ĐIỀU ĐỘNG"
           subtitle="Thông tin chi tiết của điều động"
+          mb={2}
         />
 
         {isAdmin && (
           <Stack direction="row" spacing={2}>
             <Button
               variant="contained"
+              startIcon={<EditIcon />}
               sx={{
                 backgroundColor: Color.PrimaryGold,
                 color: Color.PrimaryBlack,
               }}
             >
-              <EditIcon sx={{ mr: 1 }} />
               Chỉnh sửa
             </Button>
 
-            <Button variant="outlined">
-              <FileDownloadRoundedIcon sx={{ mr: 1 }} />
+            <Button startIcon={<FileDownloadRoundedIcon />} variant="outlined">
               Excel
             </Button>
           </Stack>

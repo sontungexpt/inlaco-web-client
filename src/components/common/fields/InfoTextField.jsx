@@ -1,7 +1,8 @@
-import React, { useMemo } from "react";
+import React, {} from "react";
 import { TextField } from "@mui/material";
 import Regex from "@/constants/Regex";
 import { dateToMUIDatetime, isoToMUIDateTime } from "@/utils/converter";
+import Color from "@/constants/Color";
 
 const formatDisplayValue = (value, type) => {
   if (
@@ -30,22 +31,21 @@ const InfoTextField = ({
       {...props}
       value={formatDisplayValue(value, type)}
       fullWidth={fullWidth}
-      sx={sx}
-      // sx={[
-      //   {
-      //     backgroundColor: "#FFF",
-      //     "& .MuiInputBase-input.Mui-disabled": {
-      //       WebkitTextFillColor: Color.PrimaryBlack,
-      //     },
-      //     "& .MuiOutlinedInput-root.Mui-disabled": {
-      //       WebkitTextFillColor: Color.PrimaryBlack,
-      //     },
-      //     "& .MuiInputLabel-root.Mui-disabled": {
-      //       WebkitTextFillColor: Color.PrimaryBlack,
-      //     },
-      //   },
-      //   ...(Array.isArray(sx) ? sx : [sx]),
-      // ]} // Merging styles with spread operator
+      sx={[
+        {
+          backgroundColor: "#FFF",
+          "& .MuiInputBase-input.Mui-disabled": {
+            WebkitTextFillColor: Color.PrimaryBlack,
+          },
+          "& .MuiOutlinedInput-root.Mui-disabled": {
+            WebkitTextFillColor: Color.PrimaryBlack,
+          },
+          "& .MuiInputLabel-root.Mui-disabled": {
+            WebkitTextFillColor: Color.PrimaryBlack,
+          },
+        },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]} // Merging styles with spread operator
       slotProps={
         slotProps // Merging slotProps with spread operator
       }
