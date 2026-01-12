@@ -162,11 +162,9 @@ const EditableDataGridCoreInner = ({
   const finalColumns = useMemo(() => {
     return columns.map((col) => {
       const colType = col.type;
-      const isDateType = colType === "datetime" || colType === "date";
 
       return {
         editable: true,
-        flex: isDateType ? 1.5 : 1,
         ...col,
         renderEditCell: (params) => {
           const allowShowError = showErrors[params.id];

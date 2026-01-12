@@ -133,13 +133,13 @@ const MobiliaztionForm = () => {
         field: "startDate",
         headerName: "Ngày bắt đầu",
         type: "date",
-        flex: 1.5,
+        flex: 1,
       },
       {
         field: "endDate",
         headerName: "Ngày kết thúc",
         type: "date",
-        flex: 1.5,
+        flex: 1,
       },
       {
         field: "remark",

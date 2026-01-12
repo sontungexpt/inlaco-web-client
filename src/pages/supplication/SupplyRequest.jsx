@@ -17,39 +17,13 @@ const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
     page: 0,
     pageSize: PAGE_SIZE,
   });
-  const { data: { content, totalElements: totalRequests } = {}, isLoading } =
-    useSupplyRequests({
-      page: paginationModel.page,
-      pageSize: paginationModel.pageSize,
-    });
-
-  const supplyRequests = useMemo(
-    () =>
-      content?.map((r) => ({
-        raw: r,
-        id: r.id,
-        detail: {
-          companyName: r.companyName,
-          companyRepresentor: {
-            name: r.companyRepresentor,
-            email: r.companyEmail,
-            phone: r.companyPhone,
-          },
-          rentalStartDate: r.rentalStartDate,
-          rentalEndDate: r.rentalEndDate,
-          detailFileUrl: r.detailFile?.url,
-        },
-        shipInfo: {
-          IMONumber: r.shipInfo.IMONumber,
-          name: r.shipInfo.name,
-          countryCode: r.shipInfo.countryISO,
-          image: r.shipInfo.image,
-          type: r.shipInfo.type,
-          description: r.shipInfo.description,
-        },
-      })),
-    [content],
-  );
+  const {
+    data: { content: supplyRequests = [], totalElements: totalRequests } = {},
+    isLoading,
+  } = useSupplyRequests({
+    page: paginationModel.page,
+    pageSize: paginationModel.pageSize,
+  });
 
   const columns = useMemo(
     () => [
@@ -60,29 +34,31 @@ const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
         headerAlign: "center",
         sortable: false,
         renderCell: ({
-          value: {
+          row: {
             companyName,
             companyRepresentor,
+            companyEmail,
+            companyPhone,
             rentalStartDate,
             rentalEndDate,
-            detailFileUrl,
-          } = {},
+            detailFile,
+          },
         }) => (
-          <Stack spacing={0.3} minWidth={0}>
+          <Stack spacing={0.3}>
             <Typography fontWeight={600} fontSize={14} noWrap>
               Công ty {companyName}
             </Typography>
 
             {/* Representative */}
             <Typography ml={2} variant="body2" color="text.secondary" noWrap>
-              Đại diện {companyRepresentor.name}
+              Đại diện {companyRepresentor}
             </Typography>
             <Typography ml={2} variant="body2" color="text.secondary" noWrap>
-              Điện thoại: {companyRepresentor.phone}
+              Điện thoại: {companyPhone}
             </Typography>
             {/* Email */}
             <Typography ml={2} variant="body2" color="text.secondary" noWrap>
-              Email: {companyRepresentor.email}
+              Email: {companyEmail}
             </Typography>
 
             {/* Rental time */}
@@ -99,7 +75,7 @@ const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
             {/* Detail link */}
             <Link
               ml={2}
-              href={detailFileUrl}
+              href={detailFile?.url}
               target="_blank"
               rel="noopener"
               underline="hover"
@@ -117,9 +93,9 @@ const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
         flex: 2.5,
         headerAlign: "center",
         sortable: false,
-        renderCell: ({ value: shipInfo }) => (
+        renderCell: ({ row: { shipInfo = {} } }) => (
           <ShipInfoCell
-            imagePublicId={shipInfo?.image?.publicId}
+            imagePublicId={shipInfo.image?.publicId}
             name={shipInfo.name}
             countryCode={shipInfo.countryCode}
             type={shipInfo.type}
@@ -135,14 +111,14 @@ const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
         headerAlign: "center",
         align: "center",
         sortable: false,
-        renderCell: (params) => (
+        renderCell: ({ row: { id: requestId } }) => (
           <DetailActionCell
-            onClick={() => navigate(`/supply-requests/${params.id}`)}
+            onClick={() => navigate(`/supply-requests/${requestId}`)}
           />
         ),
       },
     ],
-    [content],
+    [], // eslint-disable-line
   );
 
   return (
@@ -164,6 +140,7 @@ const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
               px: 2,
               py: 1,
             }}
+            startIcon={<AddCircleRoundedIcon />}
             onClick={() =>
               navigate("/supply-requests/form", {
                 state: {
@@ -172,8 +149,7 @@ const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
               })
             }
           >
-            <AddCircleRoundedIcon sx={{ mr: 1 }} />
-            Gửi yêu cầu cung ứng
+            Tạo yêu cầu cung ứng
           </Button>
         </Box>
       )}

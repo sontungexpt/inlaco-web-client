@@ -1,86 +1,42 @@
-import { lazy } from "react";
 // routes.js
+import { lazy } from "react";
 
 import HomePage from "@pages/HomePage";
 
-import Mobilization from "@/pages/mobilization/Mobilization";
-import MobiliaztionForm from "@/pages/mobilization/MobilizationForm";
-import MobilizationDetail from "@pages/mobilization/MobilizationDetail";
-
-import SupplyContract from "@/pages/contracts/SupplyContract";
-import SupplyContractForm from "@/pages/contracts/SupplyContractForm";
-import SupplyContractDetail from "@/pages/contracts/details/SupplyContractDetail";
-// import SupplyContractAddendum from "@pages/supplyContractAddendum";
-
-import CrewRecruitment from "@pages/posts/recruitments/CrewRecruitment";
-import CandidateProfileDetail from "@/pages/candidates/CandidateProfileDetail";
-import ApplyRecruitment from "@pages/posts/recruitments/ApplyRecruitment";
-import CreateRecruitment from "@pages/posts/recruitments/CreateRecruitment";
-import RecruitmentDetail from "@pages/posts/recruitments/RecruitmentDetail";
-
-import CrewCourse from "@pages/courses/CrewCourse";
-import CreateCourse from "@pages/courses/CreateCourse";
-import CourseDetail from "@pages/courses/CourseDetail";
 import UserRole from "@/constants/UserRole";
 import RoutePath from "@/constants/RoutePath";
-import CreatePost from "@/pages/posts/CreatePost";
-import PostDetail from "@/pages/posts/PostDetail";
-import UpdatePost from "@/pages/posts/UpdatePost";
-
-// import CrewContractAddendum from "@pages/crewContractAddendum";
-
-const CrewContract = lazy(() => import("@/pages/contracts/CrewContract"));
-const CrewContractForm = lazy(
-  () => import("@/pages/contracts/CrewContractForm"),
-);
-const CrewContractDetail = lazy(
-  () => import("@/pages/contracts/details/CrewContractDetail"),
-);
-
-const CrewInfos = lazy(() => import("@pages/CrewInfos"));
-const AddCrewMember = lazy(() => import("@pages/AddCrewMember"));
-const CrewMyMobilization = lazy(() => import("@pages/CrewMyMobilization"));
-const CrewMemberDetail = lazy(() => import("@pages/CrewMemberDetail"));
-const CrewProfile = lazy(() => import("@pages/CrewProfile"));
-const TemplateContract = lazy(
-  () => import("@/pages/contracts/ContractTemplate"),
-);
-
-const SupplyRequest = lazy(() => import("@/pages/supplication/SupplyRequest"));
-const SupplyRequestDetail = lazy(
-  () => import("@/pages/supplication/SupplyRequestDetail"),
-);
-const SupplyRequestForm = lazy(
-  () => import("@/pages/supplication/SupplyRequestForm"),
-);
 
 const ADMIN_SAILOR = [UserRole.ADMIN, UserRole.SAILOR];
 
 export * from "./authRoutes";
 export * from "./errorRoutes";
 
-// layout === false => no layout
-// layout === null => default to MainLayout
-// layout === any other value => custom layout
-//
-// roles === null => no access control
-// roles === [...] => access control
 export const AppRoutes = [
   {
     path: RoutePath.Home,
     element: HomePage,
   },
 
-  // Authenticated Routes
-
   {
-    path: RoutePath.CrewRoot,
+    path: RoutePath.Crew.Root,
     roles: ADMIN_SAILOR,
     children: [
-      { index: true, element: CrewInfos },
-      { path: "add/:candidateID", element: AddCrewMember },
-      { path: ":id", element: CrewMemberDetail },
-      { path: "my-profile", element: CrewProfile },
+      {
+        index: true,
+        element: lazy(() => import("@pages/CrewInfos")),
+      },
+      {
+        path: "add/:candidateID",
+        element: lazy(() => import("@pages/AddCrewMember")),
+      },
+      {
+        path: ":id",
+        element: lazy(() => import("@pages/CrewMemberDetail")),
+      },
+      {
+        path: "my-profile",
+        element: lazy(() => import("@pages/CrewProfile")),
+      },
     ],
   },
 
@@ -88,38 +44,73 @@ export const AppRoutes = [
     path: "/mobilizations",
     roles: ADMIN_SAILOR,
     children: [
-      { index: true, element: Mobilization },
-      { path: "form", element: MobiliaztionForm },
-      { path: ":id", element: MobilizationDetail },
-      { path: "my-mobilizations", element: CrewMyMobilization },
+      {
+        index: true,
+        element: lazy(() => import("@/pages/mobilization/Mobilization")),
+      },
+      {
+        path: "form",
+        element: lazy(() => import("@/pages/mobilization/MobilizationForm")),
+      },
+
+      {
+        path: ":id",
+        element: lazy(() => import("@pages/mobilization/MobilizationDetail")),
+      },
+      {
+        path: "my-mobilizations",
+        element: lazy(() => import("@pages/CrewMyMobilization")),
+      },
     ],
   },
 
   {
-    path: "/crew-contracts",
+    path: RoutePath.CrewContract.Root,
     roles: ADMIN_SAILOR,
     children: [
-      { index: true, element: CrewContract },
-      { path: "form", element: CrewContractForm },
-      { path: ":id", element: CrewContractDetail },
+      {
+        index: true,
+        element: lazy(() => import("@/pages/contracts/CrewContract")),
+      },
+      {
+        path: "form",
+        element: lazy(() => import("@/pages/contracts/CrewContractForm")),
+      },
+      {
+        path: ":id",
+        element: lazy(
+          () => import("@/pages/contracts/details/CrewContractDetail"),
+        ),
+      },
       // { path: ":id/create-addendum", element: CrewContractAddendum },
     ],
   },
 
   {
-    path: "/supply-contracts",
+    path: RoutePath.SupplyContract.Root,
     roles: ADMIN_SAILOR,
     children: [
-      { index: true, element: SupplyContract },
-      { path: "form", element: SupplyContractForm },
-      { path: ":id", element: SupplyContractDetail },
+      {
+        index: true,
+        element: lazy(() => import("@/pages/contracts/SupplyContract")),
+      },
+      {
+        path: "form",
+        element: lazy(() => import("@/pages/contracts/SupplyContractForm")),
+      },
+      {
+        path: ":id",
+        element: lazy(
+          () => import("@/pages/contracts/details/SupplyContractDetail"),
+        ),
+      },
       // { path: ":id/create-addendum", element: SupplyContractAddendum },
     ],
   },
 
   {
     path: "/template-contracts",
-    element: TemplateContract,
+    element: lazy(() => import("@/pages/contracts/ContractTemplate")),
     roles: ADMIN_SAILOR,
   },
 
@@ -129,9 +120,18 @@ export const AppRoutes = [
       hasRole(UserRole.ADMIN) ||
       (hasRole(UserRole.USER) && !hasRole(UserRole.SAILOR)),
     children: [
-      { index: true, element: SupplyRequest },
-      { path: ":id", element: SupplyRequestDetail },
-      { path: "form", element: SupplyRequestForm },
+      {
+        index: true,
+        element: lazy(() => import("@/pages/supplication/SupplyRequest")),
+      },
+      {
+        path: ":id",
+        element: lazy(() => import("@/pages/supplication/SupplyRequestDetail")),
+      },
+      {
+        path: "form",
+        element: lazy(() => import("@/pages/supplication/SupplyRequestForm")),
+      },
     ],
   },
 
@@ -141,17 +141,17 @@ export const AppRoutes = [
       {
         // View post
         path: ":id",
-        element: PostDetail,
+        element: lazy(() => import("@/pages/posts/PostDetail")),
       },
       {
         path: "create",
         roles: ["ADMIN"],
-        element: CreatePost,
+        element: lazy(() => import("@/pages/posts/CreatePost")),
       },
       {
         path: "edit/:id",
         roles: ["ADMIN"],
-        element: UpdatePost,
+        element: lazy(() => import("@/pages/posts/UpdatePost")),
       },
     ],
   },
@@ -164,21 +164,34 @@ export const AppRoutes = [
     children: [
       {
         index: true,
-        element: CrewRecruitment,
+        element: lazy(
+          () => import("@pages/posts/recruitments/CrewRecruitment"),
+        ),
       },
       {
         path: "create",
-        element: CreateRecruitment,
+        element: lazy(
+          () => import("@pages/posts/recruitments/CreateRecruitment"),
+        ),
       },
       {
         path: ":id",
-        element: RecruitmentDetail,
+        element: lazy(
+          () => import("@pages/posts/recruitments/RecruitmentDetail"),
+        ),
       },
       {
         path: "candidates/:candidateID",
-        element: CandidateProfileDetail,
+        element: lazy(
+          () => import("@/pages/candidates/CandidateProfileDetail"),
+        ),
       },
-      { path: "apply/:recruitmentId", element: ApplyRecruitment },
+      {
+        path: "apply/:recruitmentId",
+        element: lazy(
+          () => import("@pages/posts/recruitments/ApplyRecruitment"),
+        ),
+      },
     ],
   },
 
@@ -186,9 +199,18 @@ export const AppRoutes = [
     path: "/courses",
     roles: ADMIN_SAILOR,
     children: [
-      { index: true, element: CrewCourse },
-      { path: ":id", element: CourseDetail },
-      { path: "create", element: CreateCourse },
+      {
+        index: true,
+        element: lazy(() => import("@pages/courses/CrewCourse")),
+      },
+      {
+        path: ":id",
+        element: lazy(() => import("@pages/courses/CourseDetail")),
+      },
+      {
+        path: "create",
+        element: lazy(() => import("@pages/courses/CreateCourse")),
+      },
     ],
   },
 ];

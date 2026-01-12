@@ -1,4 +1,4 @@
-import { useState, memo, useMemo } from "react";
+import { useState, memo, useMemo, useCallback } from "react";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, Collapse } from "@mui/material";
 import { useNavigate, useLocation } from "react-router";
@@ -32,7 +32,7 @@ const Item = memo(({ title, icon, active, onClick }) => (
 ));
 
 const SideBar = () => {
-  const { user, hasRole, logout, roles } = useAuthContext();
+  const { user, hasRole, logout } = useAuthContext();
 
   /* ===== ACTION MAP ===== */
   const ACTION_MAP = {
@@ -48,7 +48,10 @@ const SideBar = () => {
   const isActive = (path) =>
     location.pathname === path || location.pathname.startsWith(path + "/");
 
-  const hasAnyRole = (roles = []) => roles.length === 0 || roles.some(hasRole);
+  const hasAnyRole = useCallback(
+    (roles = []) => roles.length === 0 || roles.some(hasRole),
+    [hasRole],
+  );
 
   /* ===== Filter menu by role (memoized) ===== */
   const filteredMenu = useMemo(() => {
@@ -58,7 +61,7 @@ const SideBar = () => {
     })).filter(
       (section) => hasAnyRole(section.roles) && section.items.length > 0,
     );
-  }, [roles]);
+  }, [hasAnyRole]);
 
   const handleItemClick = async (e, item) => {
     if (item.preNavigate) {

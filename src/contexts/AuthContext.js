@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -33,36 +33,39 @@ export const AuthProvider = ({ children }) => {
   const {
     data: user,
     isLoading,
-    isError,
+    // isError,
   } = useProfile({
     enabled: !!token,
   });
 
   const isAuthenticated = !!user;
 
-  async function login({ email, password, rememberMe }) {
-    try {
-      const response = await loginAPI(email, password);
-      const { accessToken, refreshToken } = response.data.jwt;
+  const login = useCallback(
+    async ({ email, password, rememberMe }) => {
+      try {
+        const response = await loginAPI(email, password);
+        const { accessToken, refreshToken } = response.data.jwt;
 
-      localStorage.setItem(StorageKey.REMEMBER_ME, rememberMe);
+        localStorage.setItem(StorageKey.REMEMBER_ME, rememberMe);
 
-      const storage = rememberMe ? localStorage : sessionStorage;
-      storage.setItem(StorageKey.ACCESS_TOKEN, accessToken);
-      storage.setItem(StorageKey.REFRESH_TOKEN, refreshToken);
+        const storage = rememberMe ? localStorage : sessionStorage;
+        storage.setItem(StorageKey.ACCESS_TOKEN, accessToken);
+        storage.setItem(StorageKey.REFRESH_TOKEN, refreshToken);
 
-      await queryClient.invalidateQueries({
-        queryKey: USE_PROFILE_KEY,
-      });
+        await queryClient.invalidateQueries({
+          queryKey: USE_PROFILE_KEY,
+        });
 
-      return response;
-    } catch (error) {
-      return error.response;
-    }
-  }
+        return response;
+      } catch (error) {
+        return error.response;
+      }
+    },
+    [queryClient],
+  );
 
   // ===== LOGOUT =====
-  async function logout() {
+  const logout = useCallback(async () => {
     const refreshToken = storage.getItem(StorageKey.REFRESH_TOKEN) || "";
 
     try {
@@ -79,7 +82,17 @@ export const AuthProvider = ({ children }) => {
 
     queryClient.clear();
     navigate("/login");
-  }
+  }, [navigate, queryClient, storage]);
+
+  const hasRole = useCallback(
+    (role) => user?.roles?.includes(role),
+    [user?.roles],
+  );
+
+  const hasRoles = useCallback(
+    (roles) => roles.every((r) => user?.roles?.includes(r)),
+    [user?.roles],
+  );
 
   // ===== CONTEXT VALUE =====
   const value = useMemo(
@@ -96,10 +109,10 @@ export const AuthProvider = ({ children }) => {
       // helpers
       login,
       logout,
-      hasRole: (role) => user?.roles?.includes(role),
-      hasRoles: (roles) => roles.every((r) => user?.roles?.includes(r)),
+      hasRole,
+      hasRoles,
     }),
-    [isLoading, isAuthenticated, user, isError], // eslint-disable-line react-hooks/exhaustive-deps
+    [isLoading, isAuthenticated, user, login, logout, hasRole, hasRoles],
   );
   if (isLoading) return <PageCircularProgress />;
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
