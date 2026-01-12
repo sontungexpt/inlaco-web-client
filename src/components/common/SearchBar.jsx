@@ -41,6 +41,7 @@ const SearchBar = ({
   matchAnchorWidth = false,
   onSelectOption,
 
+  collapsible = false,
   collapsed = false,
   collapseWidth,
   autoCollapseOnBlur = true,
@@ -59,7 +60,13 @@ const SearchBar = ({
   const [dropdownOpened, setDropdownOpened] = useState(false);
   const [activeOptionIndex, setActiveOptionIndex] = useState(-1);
   const [innerLoading, setInnerLoading] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(collapsed);
+  const [isCollapsed, setIsCollapsedState] = useState(collapsible && collapsed);
+  const setIsCollapsed = useCallback(
+    (v) => {
+      if (collapsible) setIsCollapsedState(v);
+    },
+    [collapsible],
+  );
 
   const debouncedValue = useDebounced(inputValue, debounceMs);
   const finalLoading = typeof loading === "boolean" ? loading : innerLoading;
@@ -73,6 +80,7 @@ const SearchBar = ({
   /* =========================
    * Helpers
    * ========================= */
+
   const clampIndex = (idx) => {
     if (idx < 0) return options.length - 1;
     if (idx >= options.length) return 0;
@@ -134,7 +142,7 @@ const SearchBar = ({
    * ========================= */
   useEffect(() => {
     setIsCollapsed(collapsed);
-  }, [collapsed]);
+  }, [collapsed, setIsCollapsed]);
 
   useEffect(() => {
     if (!isControlled) return;

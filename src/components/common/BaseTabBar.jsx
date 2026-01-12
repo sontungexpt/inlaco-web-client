@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Tabs, Tab } from "@mui/material";
 
 const BaseTabBar = ({
   tabs = [],
-  value = 0,
+  value,
   onChange,
   singleTab = false,
   color = "primary",
@@ -13,13 +13,59 @@ const BaseTabBar = ({
   tabSx,
   ...props
 }) => {
-  const visibleTabs = singleTab ? tabs.filter((t) => t.value === value) : tabs;
+  const isControlled = value !== undefined;
+
+  // normalize tabs: ensure each tab has a value
+  const normalizedTabs = useMemo(
+    () =>
+      tabs.map((tab, index) => ({
+        ...tab,
+        value: tab.value ?? index,
+      })),
+    [tabs],
+  );
+
+  const [internalValue, setInternalValue] = useState(
+    value ?? normalizedTabs[0]?.value,
+  );
+
+  const finalValue = isControlled ? value : internalValue;
+
+  // sync controlled value
+  useEffect(() => {
+    if (isControlled) {
+      setInternalValue(value);
+    }
+  }, [isControlled, value]);
+
+  // auto-fix when tabs changed
+  useEffect(() => {
+    if (!normalizedTabs.length) return;
+    const isValid = normalizedTabs.some((t) => t.value === finalValue);
+    if (!isValid) {
+      const fallback = normalizedTabs[0].value;
+      if (!isControlled) {
+        setInternalValue(fallback);
+      }
+      onChange?.(null, fallback);
+    }
+  }, [normalizedTabs, finalValue, isControlled, onChange]);
+
+  const handleChange = (e, newValue) => {
+    if (!isControlled) {
+      setInternalValue(newValue);
+    }
+    onChange?.(e, newValue);
+  };
+
+  // UI behavior only
+  if (singleTab && normalizedTabs.length <= 1) return null;
 
   return (
     <Tabs
       {...props}
-      value={singleTab ? visibleTabs[0]?.value : value}
-      onChange={(_, newValue) => onChange?.(newValue)}
+      value={finalValue}
+      onChange={handleChange}
       centered={centered}
       variant={variant}
       sx={[
@@ -34,9 +80,9 @@ const BaseTabBar = ({
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
     >
-      {visibleTabs.map((tab) => (
+      {normalizedTabs.map((tab) => (
         <Tab
-          key={tab?.key || tab.value}
+          key={tab.key ?? tab.value}
           value={tab.value}
           label={tab.label}
           icon={tab.icon}
@@ -49,12 +95,8 @@ const BaseTabBar = ({
               minHeight: 48,
               px: 3,
               color: "text.secondary",
-              "&.Mui-selected": {
-                color: color,
-              },
-              "&:hover": {
-                color: color,
-              },
+              "&.Mui-selected": { color },
+              "&:hover": { color },
             },
             ...(Array.isArray(tabSx) ? tabSx : [tabSx]),
           ]}
@@ -65,3 +107,69 @@ const BaseTabBar = ({
 };
 
 export default BaseTabBar;
+// import React, { useEffect, useState } from "react";
+// import { Tabs, Tab } from "@mui/material";
+
+// const BaseTabBar = ({
+//   tabs = [],
+//   value = 0,
+//   onChange,
+//   singleTab = false,
+//   color = "primary",
+//   variant = "standard",
+//   centered = true,
+//   sx,
+//   tabSx,
+//   ...props
+// }) => {
+//   const visibleTabs = singleTab ? tabs.filter((t) => t.value === value) : tabs;
+
+//   return (
+//     <Tabs
+//       {...props}
+//       value={singleTab ? visibleTabs[0]?.value : value}
+//       centered={centered}
+//       variant={variant}
+//       sx={[
+//         {
+//           minHeight: 48,
+//           "& .MuiTabs-indicator": {
+//             backgroundColor: color,
+//             height: 3,
+//             borderRadius: 2,
+//           },
+//         },
+//         ...(Array.isArray(sx) ? sx : [sx]),
+//       ]}
+//     >
+//       {visibleTabs.map((tab) => (
+//         <Tab
+//           key={tab?.key || tab.value}
+//           value={tab.value}
+//           label={tab.label}
+//           icon={tab.icon}
+//           iconPosition={tab.iconPosition || "start"}
+//           disabled={tab.disabled}
+//           sx={[
+//             {
+//               fontWeight: 700,
+//               textTransform: "none",
+//               minHeight: 48,
+//               px: 3,
+//               color: "text.secondary",
+//               "&.Mui-selected": {
+//                 color: color,
+//               },
+//               "&:hover": {
+//                 color: color,
+//               },
+//             },
+//             ...(Array.isArray(tabSx) ? tabSx : [tabSx]),
+//           ]}
+//         />
+//       ))}
+//     </Tabs>
+//   );
+// };
+
+// export default BaseTabBar;

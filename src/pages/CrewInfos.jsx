@@ -20,29 +20,27 @@ import CandidateStatus from "@/constants/CandidateStatus";
 const DataGridToolbar = ({ onAdd, onSearch }) => {
   return (
     <Toolbar
-      sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
+      sx={
+        {
+          // display: "flex",
+          // justifyContent: "space-between",
+          // alignItems: "center",
+        }
+      }
     >
-      <SearchBar
-        placeholder="Tìm thuyền viên..."
-        sx={{ width: 300 }}
-        onChange={onSearch}
-      />
-      <Button
-        variant="contained"
-        sx={{
-          backgroundColor: Color.PrimaryGold,
-          color: Color.PrimaryBlack,
-          borderRadius: 2,
-        }}
-        onClick={onAdd}
-        startIcon={<AddCircleRoundedIcon />}
-      >
-        Thêm thuyền viên
-      </Button>
+      <SearchBar placeholder="Tìm thuyền viên..." onChange={onSearch} />
+      {/* <Button */}
+      {/*   variant="contained" */}
+      {/*   sx={{ */}
+      {/*     backgroundColor: Color.PrimaryGold, */}
+      {/*     color: Color.PrimaryBlack, */}
+      {/*     borderRadius: 2, */}
+      {/*   }} */}
+      {/*   onClick={onAdd} */}
+      {/*   startIcon={<AddCircleRoundedIcon />} */}
+      {/* > */}
+      {/*   Thêm thuyền viên */}
+      {/* </Button> */}
     </Toolbar>
   );
 };
@@ -56,13 +54,16 @@ export default function CrewInfos() {
     pageSize: 10,
   });
 
-  const { data: crewMembers, isLoading } = useCrewMembers({
+  const {
+    data: { content: crewMembers = [], totalElements: totalCrews } = {},
+    isLoading,
+  } = useCrewMembers({
     page: paginationModel.page,
     size: paginationModel.pageSize,
     official: official,
   });
 
-  const handleTabChange = async (newValue) => {
+  const handleTabChange = (e, newValue) => {
     setOfficial(newValue === 0);
   };
 
@@ -168,6 +169,7 @@ export default function CrewInfos() {
         loading={isLoading}
         rows={crewMembers}
         columns={columns}
+        rowCount={totalCrews}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
         showToolbar
