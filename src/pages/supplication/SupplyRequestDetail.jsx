@@ -1,20 +1,24 @@
 import React, { useState } from "react";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
-import NoteAddRoundedIcon from "@mui/icons-material/NoteAddRounded";
-import Color from "@constants/Color";
-import { PageTitle, SectionWrapper, StatusLabel } from "@components/global";
-import {
-  CloudinaryImage,
-  FilePreviewCard,
-  ViewTextField,
-} from "@components/common";
-import { Box, Button, Grid, CircularProgress } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
 import { reviewSupplyRequest } from "@/services/supplyReqServices";
 import { useSupplyRequest } from "@/hooks/services/supplyRequest";
-import toast from "react-hot-toast";
 import { isoToLocalDatetime } from "@/utils/converter";
+import toast from "react-hot-toast";
+
+import Color from "@constants/Color";
+import {
+  PageTitle,
+  SectionWrapper,
+  StatusLabel,
+  CloudinaryImage,
+  FilePreviewCard,
+  ViewTextField,
+  CenterCircularProgress,
+} from "@components/common";
+import { Box, Button, Grid, CircularProgress } from "@mui/material";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
+import NoteAddRoundedIcon from "@mui/icons-material/NoteAddRounded";
 
 const SupplyRequestDetail = () => {
   const navigate = useNavigate();
@@ -47,28 +51,8 @@ const SupplyRequestDetail = () => {
     await reviewRequest(false);
   };
 
-  const createContract = () => {
-    navigate(`/supply-contracts/form`, {
-      state: {
-        type: "create",
-        requestId: id,
-      },
-    });
-  };
-
   if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <CenterCircularProgress />;
   }
 
   /* ===== COMMON DISABLED FIELD STYLE ===== */
@@ -181,7 +165,14 @@ const SupplyRequestDetail = () => {
                   color: Color.PrimaryBlack,
                 }}
                 startIcon={<NoteAddRoundedIcon sx={{ mr: 1 }} />}
-                onClick={createContract}
+                onClick={() => {
+                  navigate(`/supply-contracts/form`, {
+                    state: {
+                      type: "create",
+                      requestId: id,
+                    },
+                  });
+                }}
               >
                 Tạo hợp đồng
               </Button>

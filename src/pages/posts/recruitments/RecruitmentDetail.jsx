@@ -15,10 +15,11 @@ import EventBusyRoundedIcon from "@mui/icons-material/EventBusyRounded";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { useSpecificPost } from "@/hooks/services/post";
+import { usePost } from "@/hooks/services/post";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { changeRegistrationRecruitmentPostStatus } from "@/services/postServices";
 import { isoToLocaleString } from "@/utils/converter";
+import { CenterCircularProgress } from "@/components/common";
 
 const RecruitmentDetail = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const RecruitmentDetail = () => {
   const { roles } = useAuthContext();
   const isAdmin = roles.includes("ADMIN");
 
-  const { data: post, isLoading } = useSpecificPost(id);
+  const { data: post, isLoading } = usePost(id);
   const active = Boolean(post?.active);
 
   const {
@@ -60,18 +61,7 @@ const RecruitmentDetail = () => {
   };
 
   if (isLoading) {
-    return (
-      <Box
-        sx={{
-          height: "80vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <CenterCircularProgress />;
   }
 
   return (

@@ -8,25 +8,21 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { InfoTextField, SectionDivider } from "@/components/common";
 
-import { InfoTextField, SectionDivider } from "@/components/global";
-import { fetchUniquePost } from "@/services/postServices"; // API get detail
+import { useNavigate, useParams } from "react-router";
+import { usePost } from "@/hooks/services/post";
+import CenterCircularProgress from "@/components/common/CenterCircularProgress";
 
 export default function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data: post, isLoading } = useQuery({
-    queryKey: ["post-detail", id],
-    queryFn: () => fetchUniquePost(id),
-  });
-
-  if (isLoading) return <Typography>Đang tải...</Typography>;
-  if (!post) return <Typography>Không tìm thấy bài đăng.</Typography>;
-
+  const { data: post, isLoading } = usePost(id);
   const isRecruitment = post.type === "RECRUITMENT";
+
+  if (isLoading) return <CenterCircularProgress />;
+  if (!post) return <Typography>Không tìm thấy bài đăng.</Typography>;
 
   return (
     <Box m="20px">

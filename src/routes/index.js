@@ -18,6 +18,11 @@ export const AppRoutes = [
   },
 
   {
+    path: RoutePath.Account,
+    element: lazy(() => import("@/pages/AccoountProfile")),
+  },
+
+  {
     path: RoutePath.Crew.Root,
     roles: ADMIN_SAILOR,
     children: [

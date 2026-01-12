@@ -1,416 +1,191 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import {
   PageTitle,
-  NoValuesOverlay,
   SearchBar,
   BaseTabBar,
+  BaseDataGrid,
 } from "@components/common";
-import { Box, Button, Typography, CircularProgress } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { Box, Button, Stack, Toolbar } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined";
+
 import { useNavigate } from "react-router";
-import { fetchCrewMembers } from "@/services/crewServices";
-import { isoStringToAppDateString } from "@/utils/converter";
+import { useCrewMembers } from "@/hooks/services/crew";
+import { isoToLocaleString } from "@/utils/converter";
+
 import Color from "@constants/Color";
-import { HttpStatusCode } from "axios";
 import CandidateStatus from "@/constants/CandidateStatus";
 
-const CrewInfos = () => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [crewMembers, setCrewMembers] = useState([]);
-  const [tabValue, setTabValue] = useState(0);
-  const [sectionLoading, setSectionLoading] = useState(false);
-
-  useEffect(() => {
-    const getAllCrewMembers = async (official) => {
-      setLoading(true);
-      try {
-        const response = await fetchCrewMembers({
-          page: 0,
-          size: 10,
-          official: official,
-        });
-        await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
-
-        if (response.status === HttpStatusCode.Ok) {
-          console.log(response.data.content);
-          setCrewMembers(response.data.content);
-        } else {
-          console.log("Error when fetching crew members: ", response);
-        }
-      } catch (err) {
-        console.error("Error when fetching crew members: ", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getAllCrewMembers(true);
-  }, []);
-
-  const onMemberDetailClick = (id) => {
-    navigate(`/crews/${id}`, {
-      state: { official: tabValue === 0 ? true : false },
-    });
-  };
-
-  const fetchCrewMemberTabChange = async (official) => {
-    setSectionLoading(true);
-    try {
-      const response = await fetchCrewMembers(0, 10, official);
-      await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
-
-      if (response.status === HttpStatusCode.Ok) {
-        setCrewMembers(response.data.content);
-      } else {
-        console.log("Error when fetching crew members: ", response);
-      }
-    } catch (err) {
-      console.error("Error when fetching crew members: ", err);
-    } finally {
-      setSectionLoading(false);
-    }
-  };
-
-  const onCreateCrewContractClick = async (id) => {
-    navigate(`/crew-contracts/form/${id}`, {
-      state: {
-        type: "create",
-      },
-    });
-  };
-
-  const handleTabChange = async (newValue) => {
-    if (newValue === 1) {
-      await fetchCrewMemberTabChange(false);
-      setTabValue(newValue);
-    } else {
-      await fetchCrewMemberTabChange(true);
-      setTabValue(newValue);
-    }
-  };
-
-  const columns = [
-    {
-      field: "fullName",
-      headerName: "Họ tên",
-      flex: 2,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-            width: "100%",
-          }}
-        >
-          {params.value}
-        </Box>
-      ),
-    },
-    {
-      field: "gender",
-      headerName: "Giới tính",
-      sortable: false,
-      flex: 0.75,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => {
-        return (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "100%",
-              width: "100%",
-            }}
-          >
-            {params.value === "MALE"
-              ? "Nam"
-              : params.value === "FEMALE"
-                ? "Nữ"
-                : "Khác"}
-          </Box>
-        );
-      },
-    },
-    {
-      field: "birthDate",
-      headerName: "Ngày sinh",
-      sortable: false,
-      flex: 1.5,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-            width: "100%",
-          }}
-        >
-          {isoStringToAppDateString(params.value)}
-        </Box>
-      ),
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      sortable: false,
-      flex: 2,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-            width: "100%",
-          }}
-        >
-          {params.value}
-        </Box>
-      ),
-    },
-    {
-      field: "phoneNumber",
-      headerName: "SĐT",
-      sortable: false,
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-            width: "100%",
-          }}
-        >
-          {params.value}
-        </Box>
-      ),
-    },
-    {
-      field: "detail",
-      headerName: "Chi tiết",
-      sortable: false,
-      flex: 1.5,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => {
-        return (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              height: "100%",
-              justifyContent: "center",
-              padding: 10,
-            }}
-          >
-            {tabValue === 1 && (
-              <Button
-                variant="contained"
-                size="small"
-                onClick={() => onCreateCrewContractClick(params?.id)}
-                sx={{
-                  backgroundColor: Color.PrimaryGold,
-                  color: Color.PrimaryBlack,
-                  fontWeight: 700,
-                  textTransform: "capitalize",
-                  marginRight: "8px",
-                }}
-              >
-                <AssignmentIndOutlinedIcon
-                  sx={{
-                    width: 18,
-                    height: 18,
-                    marginTop: "3px",
-                    marginBottom: "3px",
-                  }}
-                />
-              </Button>
-            )}
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() => onMemberDetailClick(params?.id)}
-              sx={{
-                backgroundColor: Color.PrimaryGreen,
-                color: Color.PrimaryBlack,
-                fontWeight: 700,
-                textTransform: "capitalize",
-              }}
-            >
-              <ArrowForwardIosRoundedIcon
-                sx={{
-                  width: 15,
-                  height: 15,
-                  marginTop: "4px",
-                  marginBottom: "4px",
-                }}
-              />
-            </Button>
-          </div>
-        );
-      },
-    },
-  ];
-
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
+const DataGridToolbar = ({ onAdd, onSearch }) => {
   return (
-    <div>
-      <Box m="20px">
-        <Box>
-          <PageTitle
-            title="THÔNG TIN THUYỀN VIÊN"
-            subtitle="Danh sách Thuyền viên công ty"
-          />
-        </Box>
-        <BaseTabBar
-          tabs={[
-            {
-              label: "Danh sách Thuyền viên chính thức",
-            },
-            {
-              label: "Danh sách Thuyền viên chưa chính thức",
-            },
-          ]}
-          variant={"fullWidth"}
-          onChange={(newValue) => handleTabChange(newValue)}
-          color={Color.SecondaryBlue}
-          sx={{
-            backgroundColor: Color.SecondaryWhite,
-            marginTop: 4,
-          }}
-        />
-        {!sectionLoading ? (
-          <Box m="24px 0 0 0" height="80vh" maxHeight={550} maxWidth={1600}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                width: "100%",
-                paddingBottom: 2,
-                justifyContent: "space-between",
-              }}
-            >
-              <SearchBar
-                placeholder={
-                  "Nhập thông tin thuyền viên cần tìm kiếm (VD: Tên thuyền viên, Chức vụ,...)"
-                }
-                color={Color.PrimaryBlack}
-                backgroundColor={Color.SecondaryWhite}
-                sx={{
-                  width: "50%",
-                }}
-              />
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: Color.PrimaryGold,
-                  color: Color.PrimaryBlack,
-                  borderRadius: 2,
-                }}
-                onClick={() =>
-                  navigate("/recruitment", {
-                    state: {
-                      tab: 1,
-                      candidate: {
-                        status: CandidateStatus.WAIT_FOR_INTERVIEW,
-                      },
-                    },
-                  })
-                }
-              >
-                <AddCircleRoundedIcon />
-                <Typography
-                  sx={{
-                    fontWeight: 700,
-                    marginLeft: "4px",
-                    textTransform: "capitalize",
-                  }}
-                >
-                  Thêm thuyền viên
-                </Typography>
-              </Button>
-            </Box>
-            <DataGrid
-              disableRowSelectionOnClick
-              disableColumnMenu
-              disableColumnResize
-              rows={crewMembers}
-              columns={columns}
-              slots={{ noRowsOverlay: NoValuesOverlay }}
-              pageSizeOptions={[5, 10, { value: -1, label: "All" }]}
-              initialState={{
-                pagination: {
-                  paginationModel: { pageSize: 5, page: 0 },
-                },
-              }}
-              sx={{
-                backgroundColor: "#FFF",
-                headerAlign: "center",
-
-                "& .MuiDataGrid-columnHeaderTitle": {
-                  fontSize: 16,
-                  fontWeight: 700,
-                },
-
-                "& .MuiDataGrid-columnHeader": {
-                  backgroundColor: Color.SecondaryBlue,
-                  color: Color.PrimaryWhite,
-                },
-                "& .MuiTablePagination-root": {
-                  backgroundColor: Color.SecondaryBlue,
-                  color: Color.PrimaryWhite,
-                },
-              }}
-            />
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100vh",
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        )}
-      </Box>
-    </div>
+    <Toolbar
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <SearchBar
+        placeholder="Tìm thuyền viên..."
+        sx={{ width: 300 }}
+        onChange={onSearch}
+      />
+      <Button
+        variant="contained"
+        sx={{
+          backgroundColor: Color.PrimaryGold,
+          color: Color.PrimaryBlack,
+          borderRadius: 2,
+        }}
+        onClick={onAdd}
+        startIcon={<AddCircleRoundedIcon />}
+      >
+        Thêm thuyền viên
+      </Button>
+    </Toolbar>
   );
 };
 
-export default CrewInfos;
+export default function CrewInfos() {
+  const navigate = useNavigate();
+  const [official, setOfficial] = useState(true);
+
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+
+  const { data: crewMembers, isLoading } = useCrewMembers({
+    page: paginationModel.page,
+    size: paginationModel.pageSize,
+    official: official,
+  });
+
+  const handleTabChange = async (newValue) => {
+    setOfficial(newValue === 0);
+  };
+
+  const columns = useMemo(
+    () => [
+      {
+        field: "fullName",
+        headerName: "Họ tên",
+        flex: 2,
+        align: "center",
+      },
+      {
+        field: "gender",
+        headerName: "Giới tính",
+        flex: 1,
+        align: "center",
+        renderCell: ({ value }) =>
+          value === "MALE" ? "Nam" : value === "FEMALE" ? "Nữ" : "Khác",
+      },
+      {
+        field: "birthDate",
+        headerName: "Ngày sinh",
+        flex: 1.5,
+        align: "center",
+        renderCell: ({ value }) => isoToLocaleString(value, "date"),
+      },
+      {
+        field: "email",
+        headerName: "Email",
+        flex: 2,
+        align: "center",
+      },
+      {
+        field: "phoneNumber",
+        headerName: "SĐT",
+        flex: 1,
+        align: "center",
+      },
+      {
+        field: "actions",
+        headerName: "Chi tiết",
+        flex: 1.5,
+        align: "center",
+        sortable: false,
+        renderCell: ({ id }) => (
+          <Stack direction="row" spacing={1}>
+            {!official && (
+              <Button
+                size="small"
+                variant="contained"
+                onClick={() => {
+                  navigate(`/crew-contracts/form/${id}`, {
+                    state: {
+                      type: "create",
+                    },
+                  });
+                }}
+              >
+                <AssignmentIndOutlinedIcon fontSize="small" />
+              </Button>
+            )}
+            <Button
+              size="small"
+              variant="contained"
+              onClick={() => {
+                navigate(`/crews/${id}`, {
+                  state: { official },
+                });
+              }}
+            >
+              <ArrowForwardIosRoundedIcon fontSize="small" />
+            </Button>
+          </Stack>
+        ),
+      },
+    ],
+    [navigate, official],
+  );
+
+  return (
+    <Box m="20px">
+      <PageTitle
+        title="THÔNG TIN THUYỀN VIÊN"
+        subtitle="Danh sách Thuyền viên công ty"
+      />
+      <BaseTabBar
+        tabs={[
+          { label: "Thuyền viên chính thức" },
+          { label: "Thuyền viên chưa chính thức" },
+        ]}
+        variant={"fullWidth"}
+        onChange={handleTabChange}
+        color={Color.SecondaryBlue}
+        sx={{
+          backgroundColor: Color.SecondaryWhite,
+          marginTop: 4,
+        }}
+      />
+      <BaseDataGrid
+        disableRowSelectionOnClick
+        disableColumnMenu
+        disableColumnResize
+        loading={isLoading}
+        rows={crewMembers}
+        columns={columns}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        showToolbar
+        slots={{ toolbar: DataGridToolbar }}
+        slotProps={{
+          toolbar: {
+            onAdd: () =>
+              navigate("/recruitment", {
+                state: {
+                  tab: 1,
+                  candidate: {
+                    status: CandidateStatus.WAIT_FOR_INTERVIEW,
+                  },
+                },
+              }),
+          },
+        }}
+      />
+    </Box>
+  );
+}

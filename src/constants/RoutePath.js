@@ -1,9 +1,13 @@
 const RoutePath = {
   Home: "/",
-  Login: "/login",
-  SignUp: "/sign-up",
-  VerifyEmailConfirmation: "/verify-email-confirmation",
   E403: "/403",
+  Account: "/account",
+
+  Auth: {
+    Login: "/login",
+    SignUp: "/sign-up",
+    VerifyEmailConfirmation: "/verify-email-confirmation",
+  },
 
   Crew: {
     Root: "/crews",

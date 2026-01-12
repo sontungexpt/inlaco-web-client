@@ -9,6 +9,7 @@ export { default as InfoItem } from "./InfoItem";
 
 export { default as SearchBar } from "./SearchBar";
 export { default as PageCircularProgress } from "./PageCircularProgress";
+export { default as CenterCircularProgress } from "./CenterCircularProgress";
 
 export { default as ConfirmDialog } from "./ConfirmDialog";
 export { default as DialogButton } from "./DialogButton";

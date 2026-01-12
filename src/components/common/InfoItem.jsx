@@ -1,28 +1,45 @@
 import React, {} from "react";
 import { Box, Typography } from "@mui/material";
 
-import Color from "@/constants/Color";
-
-export default function InfoItem({ label, value }) {
+export default function InfoItem({
+  label,
+  value,
+  color,
+  onClick,
+  highlight = false,
+  bold = false,
+  clickable = false,
+}) {
   return (
-    <Box>
+    <Box
+      sx={{
+        cursor: clickable ? "pointer" : "default",
+        py: clickable ? 0.5 : 0,
+      }}
+      onClick={onClick}
+    >
+      {/* Label */}
       <Typography
+        variant="body2"
         sx={{
+          color: "text.secondary",
+          mb: 0.5,
           fontSize: 13,
-          color: Color.PrimaryBlackPlaceHolder,
-          mb: "2px",
         }}
       >
         {label}
       </Typography>
+
+      {/* Value */}
       <Typography
+        variant="body1"
         sx={{
-          fontSize: 15,
-          fontWeight: 600,
-          color: Color.PrimaryBlack,
+          fontWeight: bold || highlight ? 600 : 500,
+          color: color || (highlight ? "primary.main" : "text.primary"),
+          fontSize: highlight ? 16 : 14,
         }}
       >
-        {value ?? "—"}
+        {value || "-"}
       </Typography>
     </Box>
   );

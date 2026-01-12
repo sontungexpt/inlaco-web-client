@@ -1,12 +1,5 @@
 import React, { useMemo, useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Grid,
-  Stack,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Button, Grid, Stack, CircularProgress } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import { useParams } from "react-router";
@@ -24,6 +17,7 @@ import {
   BaseDataGrid,
   InfoItem,
 } from "@/components/common";
+import CenterCircularProgress from "@/components/common/CenterCircularProgress";
 
 const MobilizationDetailPage = () => {
   const { id } = useParams();
@@ -84,18 +78,7 @@ const MobilizationDetailPage = () => {
   );
 
   if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <CenterCircularProgress />;
   }
   return (
     <Box m="20px">

@@ -4,7 +4,7 @@ import { Box, CircularProgress } from "@mui/material";
 import Color from "@/constants/Color";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useSpecificPost } from "@/hooks/services/post";
+import { usePost } from "@/hooks/services/post";
 import { isoToMUIDateTime } from "@/utils/converter";
 import { updatePost } from "@/services/postServices";
 import PostForm from "./PostForm";
@@ -12,7 +12,7 @@ import PostForm from "./PostForm";
 export default function UpdatePost() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { data: post, isLoading } = useSpecificPost(id);
+  const { data: post, isLoading } = usePost(id);
 
   const [snackbar, setSnackbar] = useState({
     open: false,

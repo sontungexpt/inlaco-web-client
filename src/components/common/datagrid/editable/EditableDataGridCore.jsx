@@ -100,7 +100,6 @@ const EditableDataGridCoreInner = ({
       field: "__actions",
       type: "actions",
       headerName: "Hành động",
-      width: 120,
       align: "center",
       headerAlign: "center",
       getActions: ({ id: rowId }) => {

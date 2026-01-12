@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-  InfoTextField,
-  PageTitle,
-  SectionWrapper,
-  StatusLabel,
-} from "@components/global";
+import { PageTitle, SectionWrapper, StatusLabel } from "@components/common";
 import { Box, Button, Grid, CircularProgress } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
@@ -14,7 +9,8 @@ import { reviewCandidateApplication } from "@/services/postServices";
 import { useCandidate } from "@/hooks/services/post";
 import CandidateStatus from "@/constants/CandidateStatus";
 import toast from "react-hot-toast";
-import { FilePreviewCard } from "@/components/common";
+import { FilePreviewCard, InfoItem } from "@/components/common";
+import CenterCircularProgress from "@/components/common/CenterCircularProgress";
 
 const CandidateProfileDetail = () => {
   const navigate = useNavigate();
@@ -25,11 +21,16 @@ const CandidateProfileDetail = () => {
     isLoading,
     refetch: refetchCandidateInfo,
   } = useCandidate(candidateID);
-  const [isReviewing, setIsReviewing] = useState(false);
+
   const resume = candidateInfo?.resume;
+  const status = candidateInfo?.status;
+
+  // accept || reject
+  const [reviewingButtonId, setReviewingButtonId] = useState(null);
 
   const reviewCandidate = async (status) => {
-    setIsReviewing(true);
+    const buttonId = status ? "accept" : "reject";
+    setReviewingButtonId(buttonId);
     try {
       await reviewCandidateApplication(candidateID, status);
       refetchCandidateInfo();
@@ -37,7 +38,7 @@ const CandidateProfileDetail = () => {
     } catch {
       toast.error("Thay đổi trạng thái thất bại!");
     }
-    setIsReviewing(false);
+    setReviewingButtonId(null);
   };
 
   const STATUS_MAP = {
@@ -48,7 +49,6 @@ const CandidateProfileDetail = () => {
       "Đã ký hợp đồng (chưa có hiệu lực)",
     [CandidateStatus.HIRED]: "Hợp đồng đã có hiệu lực",
   };
-  const status = candidateInfo?.status;
 
   const handleApproveClick = async () => {
     if (status === CandidateStatus.REJECTED) {
@@ -75,18 +75,7 @@ const CandidateProfileDetail = () => {
   };
 
   if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <CenterCircularProgress />;
   }
 
   return (
@@ -127,119 +116,98 @@ const CandidateProfileDetail = () => {
             mt: 3,
           }}
         >
-          {isReviewing ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: 220, // chiều rộng tương đương 2 nút → spinner vào giữa
-                height: 40,
-              }}
-            >
-              Đang thực hiện
-              <CircularProgress
-                size={24}
-                sx={{
-                  ml: 2,
-                  color: Color.PrimaryBlue,
-                }}
-              />
-            </Box>
-          ) : (
-            <>
+          <Button
+            variant="contained"
+            onClick={handleApproveClick}
+            disabled={reviewingButtonId}
+            sx={{
+              color: Color.PrimaryWhite,
+              bgcolor: Color.PrimaryBlue,
+              borderRadius: 2,
+              textTransform: "none",
+              fontWeight: 600,
+              ":hover": { opacity: 0.9, bgcolor: Color.PrimaryBlue },
+            }}
+            startIcon={
+              reviewingButtonId === "accept" ? (
+                <CircularProgress size={24} />
+              ) : (
+                <CheckCircleRoundedIcon />
+              )
+            }
+          >
+            {status === CandidateStatus.HIRED ||
+            status === CandidateStatus.CONTRACT_NOT_YET_IN_FORCE
+              ? "Xem hợp đồng"
+              : status === CandidateStatus.WAIT_FOR_INTERVIEW
+                ? "Tạo hợp đồng"
+                : "Chấp nhận"}
+          </Button>
+
+          {status !== CandidateStatus.HIRED &&
+            status !== CandidateStatus.REJECTED && (
               <Button
                 variant="contained"
-                onClick={handleApproveClick}
-                disabled={isReviewing}
+                onClick={handleDeclineClick}
+                disabled={reviewingButtonId}
                 sx={{
+                  bgcolor: Color.PrimaryOrgange,
                   color: Color.PrimaryWhite,
-                  bgcolor: Color.PrimaryBlue,
                   borderRadius: 2,
                   textTransform: "none",
                   fontWeight: 600,
-                  ":hover": { opacity: 0.9, bgcolor: Color.PrimaryBlue },
+                  ":hover": { opacity: 0.9, bgcolor: Color.PrimaryOrgange },
                 }}
+                startIcon={
+                  reviewingButtonId === "reject" ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    <CancelRoundedIcon />
+                  )
+                }
               >
-                <CheckCircleRoundedIcon sx={{ mr: 1 }} />
-                {status === CandidateStatus.HIRED ||
-                status === CandidateStatus.CONTRACT_NOT_YET_IN_FORCE
-                  ? "Xem hợp đồng"
-                  : status === CandidateStatus.WAIT_FOR_INTERVIEW
-                    ? "Tạo hợp đồng"
-                    : "Chấp nhận"}
+                Từ chối
               </Button>
-
-              {status !== CandidateStatus.HIRED &&
-                status !== CandidateStatus.REJECTED && (
-                  <Button
-                    variant="contained"
-                    onClick={handleDeclineClick}
-                    disabled={isReviewing}
-                    sx={{
-                      bgcolor: Color.PrimaryOrgange,
-                      color: Color.PrimaryWhite,
-                      borderRadius: 2,
-                      textTransform: "none",
-                      fontWeight: 600,
-                      ":hover": { opacity: 0.9, bgcolor: Color.PrimaryOrgange },
-                    }}
-                  >
-                    <CancelRoundedIcon sx={{ mr: 1 }} /> Từ chối
-                  </Button>
-                )}
-            </>
-          )}
+            )}
         </Box>
       </SectionWrapper>
 
-      {/* CARD: Thông tin ứng viên */}
       <SectionWrapper title="Thông tin ứng viên">
         <Grid container spacing={2}>
-          <Grid item size={4}>
-            <InfoTextField
+          <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
+            <InfoItem
               label="Họ và tên"
-              fullWidth
-              disabled
-              name="fullName"
               value={candidateInfo?.fullName}
+              highlight
             />
           </Grid>
-          <Grid item size={5}>
-            <InfoTextField
+
+          <Grid size={{ xs: 12, sm: 6, lg: 5 }}>
+            <InfoItem
               label="Email"
-              fullWidth
-              disabled
-              name="email"
               value={candidateInfo?.email}
+              clickable
+              color="primary.main"
+              onClick={() => window.open(`mailto:${candidateInfo?.email}`)}
             />
           </Grid>
 
-          <Grid item size={3}>
-            <InfoTextField
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+            <InfoItem
               label="Số điện thoại"
-              fullWidth
-              name="phoneNumber"
-              disabled
               value={candidateInfo?.phoneNumber}
+              clickable
+              onClick={() => window.open(`tel:${candidateInfo?.phoneNumber}`)}
             />
           </Grid>
 
-          <Grid item size={12}>
-            <InfoTextField
-              label="Địa chỉ"
-              fullWidth
-              name="address"
-              disabled
-              value={candidateInfo?.address}
-            />
+          <Grid size={12}>
+            <InfoItem label="Địa chỉ" value={candidateInfo?.address} />
           </Grid>
-          <Grid item size={12}>
-            <InfoTextField
+
+          <Grid size={12}>
+            <InfoItem
               label="Trình độ ngoại ngữ"
-              fullWidth
-              name="languageSkills"
-              disabled
               value={candidateInfo?.languageSkills}
             />
           </Grid>

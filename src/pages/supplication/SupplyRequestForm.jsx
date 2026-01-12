@@ -1,35 +1,18 @@
 import React from "react";
-import {
-  Box,
-  Button,
-  Typography,
-  CircularProgress,
-  Stack,
-  Grid,
-} from "@mui/material";
+import { Box, Button, CircularProgress, Grid } from "@mui/material";
 import { Formik } from "formik";
-
-import ScheduleSendRoundedIcon from "@mui/icons-material/ScheduleSendRounded";
 
 import {
   PageTitle,
   SectionWrapper,
-  InfoTextField,
+  InfoTextFieldFormik,
   FileUploadFieldFormik,
   ImageUploadFieldFormik,
   NationalityTextField,
 } from "@/components/common";
 
 import Color from "@constants/Color";
-
-const SHARED_SX = {
-  "& .MuiInputBase-input.Mui-disabled": {
-    color: Color.PrimaryBlack,
-  },
-  "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-    borderColor: Color.PrimaryBlack,
-  },
-};
+import ScheduleSendRoundedIcon from "@mui/icons-material/ScheduleSendRounded";
 
 const SupplyRequestForm = ({
   title,
@@ -38,7 +21,6 @@ const SupplyRequestForm = ({
   validationSchema,
   onSubmit,
   submitLabel = "Gửi yêu cầu",
-  submittingLabel = "Đang gửi...",
 }) => {
   return (
     <Formik
@@ -60,12 +42,7 @@ const SupplyRequestForm = ({
       }) => (
         <Box component="form" onSubmit={handleSubmit} m={3}>
           {/* ===== HEADER ===== */}
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="flex-end"
-            mb={4}
-          >
+          <SectionWrapper display="flex" justifyContent="space-between" mb={4}>
             <PageTitle title={title} subtitle={subtitle} />
 
             <Button
@@ -91,124 +68,54 @@ const SupplyRequestForm = ({
                   boxShadow: "none",
                 },
               }}
-            >
-              {isSubmitting ? (
-                <Stack direction="row" alignItems="center" spacing={1}>
+              startIcon={
+                isSubmitting ? (
                   <CircularProgress
                     size={18}
                     sx={{ color: Color.PrimaryBlack }}
                   />
-                  <Typography fontWeight={600}>{submittingLabel}</Typography>
-                </Stack>
-              ) : (
-                <Stack direction="row" alignItems="center" spacing={1}>
+                ) : (
                   <ScheduleSendRoundedIcon />
-                  <Typography fontWeight={700}>{submitLabel}</Typography>
-                </Stack>
-              )}
+                )
+              }
+            >
+              {submitLabel}
             </Button>
-          </Box>
+          </SectionWrapper>
 
           {/* ===== COMPANY INFO ===== */}
           <SectionWrapper title="Thông tin công ty">
             <Grid container spacing={2} rowSpacing={3}>
               <Grid size={4}>
-                <InfoTextField
-                  label="Tên công ty"
-                  required
-                  fullWidth
-                  name="companyName"
-                  value={values.companyName}
-                  error={!!touched.companyName && !!errors.companyName}
-                  helperText={touched.companyName && errors.companyName}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={SHARED_SX}
-                />
+                <InfoTextFieldFormik label="Tên công ty" name="companyName" />
               </Grid>
 
               <Grid size={5}>
-                <InfoTextField
-                  label="Địa chỉ"
-                  required
-                  fullWidth
-                  name="companyAddress"
-                  value={values.companyAddress}
-                  error={!!touched.companyAddress && !!errors.companyAddress}
-                  helperText={touched.companyAddress && errors.companyAddress}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={SHARED_SX}
-                />
+                <InfoTextFieldFormik label="Địa chỉ" name="companyAddress" />
               </Grid>
 
               <Grid size={3}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Số điện thoại"
-                  required
-                  fullWidth
                   name="companyPhone"
-                  value={values.companyPhone}
-                  error={!!touched.companyPhone && !!errors.companyPhone}
-                  helperText={touched.companyPhone && errors.companyPhone}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
               </Grid>
 
               <Grid size={4}>
-                <InfoTextField
-                  label="Email"
-                  required
-                  fullWidth
-                  name="companyEmail"
-                  value={values.companyEmail}
-                  error={!!touched.companyEmail && !!errors.companyEmail}
-                  helperText={touched.companyEmail && errors.companyEmail}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={SHARED_SX}
-                />
+                <InfoTextFieldFormik label="Email" name="companyEmail" />
               </Grid>
 
               <Grid size={5}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Người đại diện"
-                  required
-                  fullWidth
                   name="companyRepresentor"
-                  value={values.companyRepresentor}
-                  error={
-                    !!touched.companyRepresentor && !!errors.companyRepresentor
-                  }
-                  helperText={
-                    touched.companyRepresentor && errors.companyRepresentor
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
               </Grid>
 
               <Grid size={3}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Chức vụ"
-                  required
-                  fullWidth
                   name="companyRepresentorPosition"
-                  value={values.companyRepresentorPosition}
-                  error={
-                    !!touched.companyRepresentorPosition &&
-                    !!errors.companyRepresentorPosition
-                  }
-                  helperText={
-                    touched.companyRepresentorPosition &&
-                    errors.companyRepresentorPosition
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
               </Grid>
             </Grid>
@@ -218,36 +125,18 @@ const SupplyRequestForm = ({
           <SectionWrapper title="Thông tin yêu cầu">
             <Grid container spacing={2} rowSpacing={3}>
               <Grid size={4}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   type="datetime-local"
                   label="Thời gian bắt đầu thuê"
-                  required
-                  fullWidth
                   name="rentalStartDate"
-                  value={values.rentalStartDate}
-                  error={!!touched.rentalStartDate && !!errors.rentalStartDate}
-                  helperText={touched.rentalStartDate && errors.rentalStartDate}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={SHARED_SX}
-                  slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
 
               <Grid size={4}>
-                <InfoTextField
+                <InfoTextFieldFormik
                   type="datetime-local"
                   label="Thời gian kết thúc thuê"
-                  required
-                  fullWidth
                   name="rentalEndDate"
-                  value={values.rentalEndDate}
-                  error={!!touched.rentalEndDate && !!errors.rentalEndDate}
-                  helperText={touched.rentalEndDate && errors.rentalEndDate}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={SHARED_SX}
-                  slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
 
@@ -257,7 +146,6 @@ const SupplyRequestForm = ({
                   accept=".doc,.docx,.pdf,.xls,.xlsx"
                   label="Danh sách số lượng cần cung ứng"
                   name="detailFile"
-                  helperText={touched.detailFile && errors.detailFile}
                 />
               </Grid>
             </Grid>
@@ -267,66 +155,25 @@ const SupplyRequestForm = ({
           <SectionWrapper title="Thông tin tàu">
             <Grid container spacing={3}>
               <Grid size={6}>
-                <ImageUploadFieldFormik
-                  required
-                  name="shipInfo.image"
-                  helperText={touched.shipInfo?.image && errors.shipInfo?.image}
-                />
+                <ImageUploadFieldFormik required name="shipInfo.image" />
               </Grid>
 
               <Grid size={6} container direction="column" rowSpacing={3}>
-                <InfoTextField
-                  label="IMO"
-                  name="shipInfo.IMONumber"
-                  value={values.shipInfo?.IMONumber}
-                  error={
-                    !!touched.shipInfo?.IMONumber &&
-                    !!errors.shipInfo?.IMONumber
-                  }
-                  helperText={
-                    touched.shipInfo?.IMONumber && errors.shipInfo?.IMONumber
-                  }
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={SHARED_SX}
-                />
+                <InfoTextFieldFormik label="IMO" name="shipInfo.IMONumber" />
 
-                <InfoTextField
-                  label="Tên tàu"
-                  name="shipInfo.name"
-                  value={values.shipInfo?.name}
-                  error={!!touched.shipInfo?.name && !!errors.shipInfo?.name}
-                  helperText={touched.shipInfo?.name && errors.shipInfo?.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={SHARED_SX}
-                />
+                <InfoTextFieldFormik label="Tên tàu" name="shipInfo.name" />
 
                 <NationalityTextField
+                  component={InfoTextFieldFormik}
                   label="Quốc tịch"
                   name="shipInfo.countryISO"
-                  value={values.shipInfo?.countryISO}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
 
-                <InfoTextField
-                  label="Loại tàu"
-                  name="shipInfo.type"
-                  value={values.shipInfo?.type}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={SHARED_SX}
-                />
+                <InfoTextFieldFormik label="Loại tàu" name="shipInfo.type" />
 
-                <InfoTextField
+                <InfoTextFieldFormik
                   label="Mô tả"
                   name="shipInfo.description"
-                  value={values.shipInfo?.description}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  sx={SHARED_SX}
                 />
               </Grid>
             </Grid>

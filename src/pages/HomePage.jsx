@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageTitle, SectionWrapper } from "@components/global";
+import { CloudinaryImage, PageTitle, SectionWrapper } from "@components/common";
 import {
   Box,
   Typography,
@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   Button,
-  CircularProgress,
   Pagination,
   Alert,
 } from "@mui/material";
@@ -16,7 +15,7 @@ import { usePosts } from "@/hooks/services/post";
 import { useNavigate } from "react-router";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";
-import { CloudinaryImage } from "@/components/common";
+import CenterCircularProgress from "@/components/common/CenterCircularProgress";
 
 const NewsCard = ({
   title,
@@ -160,7 +159,7 @@ const NewsCard = ({
   );
 };
 
-const HomePage = ({ newsPerPage = 12 }) => {
+export default function HomePage({ newsPerPage = 12 }) {
   const navigate = useNavigate();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
@@ -174,18 +173,7 @@ const HomePage = ({ newsPerPage = 12 }) => {
   } = usePosts({ page, size: newsPerPage });
 
   if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <CenterCircularProgress />;
   }
 
   if (isError) {
@@ -227,9 +215,17 @@ const HomePage = ({ newsPerPage = 12 }) => {
           </Button>
         )}
       </SectionWrapper>
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, md: 3 }}>
         {posts.map((post) => (
-          <Grid key={post.id} size={4}>
+          <Grid
+            key={post.id}
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4,
+              lg: 3,
+            }}
+          >
             <NewsCard
               id={post.id}
               title={post.title}
@@ -237,9 +233,7 @@ const HomePage = ({ newsPerPage = 12 }) => {
               image={post.image}
               date={post.date}
               onClick={() => navigate(`/posts/${post.id}`)}
-              onDetailClick={() => {
-                navigate(`/posts/${post.id}`);
-              }}
+              onDetailClick={() => navigate(`/posts/${post.id}`)}
             />
           </Grid>
         ))}
@@ -249,13 +243,11 @@ const HomePage = ({ newsPerPage = 12 }) => {
         <Pagination
           count={totalPages}
           page={page + 1} // MUI start from 1
-          onChange={(e, value) => setPage(value - 1)}
+          onChange={(_, value) => setPage(value - 1)}
           color="primary"
           size="large"
         />
       </Box>
     </Box>
   );
-};
-
-export default HomePage;
+}

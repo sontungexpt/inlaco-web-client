@@ -6,7 +6,7 @@ import {
 } from "@/services/postServices";
 import { useQuery } from "@tanstack/react-query";
 
-export const useSpecificPost = (id) => {
+export const usePost = (id) => {
   return useQuery({
     queryKey: ["post", id],
     queryFn: () => fetchUniquePost(id),

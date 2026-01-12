@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useDebounced } from "@/hooks/useDebounced";
 
 const SOURCE = {
@@ -23,6 +23,7 @@ const SearchBar = ({
   placeholder = "Tìm kiếm...",
   showSearchIcon = true,
   debounceMs = 300,
+  fullWidth = true,
   disabled = false,
   size = "small",
   minLength = 1,
@@ -37,7 +38,12 @@ const SearchBar = ({
   options = [],
   renderOption = (opt) => opt?.label ?? String(opt),
   mapOptionToValue,
+  matchAnchorWidth = false,
   onSelectOption,
+
+  collapsed = false,
+  collapseWidth,
+  autoCollapseOnBlur = true,
 
   onChange,
   onSearch,
@@ -53,30 +59,33 @@ const SearchBar = ({
   const [dropdownOpened, setDropdownOpened] = useState(false);
   const [activeOptionIndex, setActiveOptionIndex] = useState(-1);
   const [innerLoading, setInnerLoading] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(collapsed);
 
   const debouncedValue = useDebounced(inputValue, debounceMs);
   const finalLoading = typeof loading === "boolean" ? loading : innerLoading;
 
   const listRef = useRef([]);
   const changeSourceRef = useRef(SOURCE.INTERNAL);
+  const inputRef = useRef(null);
   const anchorRef = useRef(null);
   const mountedRef = useRef(false);
 
   /* =========================
    * Helpers
    * ========================= */
-  const shouldSearch = (keyword) =>
-    Boolean(onSearch) && keyword.length >= minLength;
-
   const clampIndex = (idx) => {
     if (idx < 0) return options.length - 1;
     if (idx >= options.length) return 0;
     return idx;
   };
 
+  const expand = () => {
+    setIsCollapsed(false);
+  };
+
   const runSearch = useCallback(
     async (keyword) => {
-      if (!shouldSearch(keyword)) {
+      if (!onSearch && keyword.length >= minLength) {
         setDropdownOpened(false);
         return;
       }
@@ -95,8 +104,14 @@ const SearchBar = ({
 
       if (dropdown) setDropdownOpened(true);
     },
-    [onSearch, minLength, dropdown, loading], // eslint-disable-line
+    [onSearch, minLength, dropdown, loading],
   );
+
+  useEffect(() => {
+    if (!isCollapsed && !disabled) {
+      inputRef.current?.focus();
+    }
+  }, [isCollapsed, disabled]);
 
   useEffect(() => {
     if (activeOptionIndex >= 0) {
@@ -117,6 +132,10 @@ const SearchBar = ({
   /* =========================
    * Sync controlled value
    * ========================= */
+  useEffect(() => {
+    setIsCollapsed(collapsed);
+  }, [collapsed]);
+
   useEffect(() => {
     if (!isControlled) return;
     else if (value === inputValue) return;
@@ -219,7 +238,9 @@ const SearchBar = ({
 
   const handleSelectOption = (option, ...params) => {
     const value =
-      typeof option === "string" ? option : mapOptionToValue(option, ...params);
+      typeof option === "string"
+        ? option
+        : (mapOptionToValue(option, ...params) ?? "");
 
     changeSourceRef.current = SOURCE.INTERNAL;
     setInputValue(value);
@@ -227,9 +248,35 @@ const SearchBar = ({
     onSelectOption?.(option, ...params);
   };
 
-  const handleBlur = (e) => {
+  const handleBlur = () => {
     setDropdownOpened(false);
+
+    if (autoCollapseOnBlur && !inputValue) {
+      setIsCollapsed(true);
+    }
   };
+
+  const mergedSx = useMemo(
+    () => [
+      ...(Array.isArray(sx) ? sx : [sx]),
+      {
+        overflow: "hidden",
+        maxWidth: isCollapsed ? collapseWidth : undefined,
+        minWidth: isCollapsed
+          ? collapseWidth > 50
+            ? collapseWidth
+            : 50
+          : undefined,
+        transition: "max-width 300ms ease min-width 300ms ease",
+
+        "& input": {
+          width: isCollapsed ? collapseWidth || 0 : undefined,
+          transition: "width 300ms ease",
+        },
+      },
+    ],
+    [sx, isCollapsed, collapseWidth],
+  );
 
   /* =========================
    * Render
@@ -238,29 +285,36 @@ const SearchBar = ({
     <>
       <TextField
         {...props}
-        fullWidth
         ref={anchorRef}
+        inputRef={inputRef}
         value={inputValue}
+        fullWidth={!isCollapsed && fullWidth}
         disabled={disabled}
         placeholder={placeholder}
         size={size}
-        sx={sx}
+        sx={mergedSx}
         onChange={handleInputChange}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
+        onClick={isCollapsed ? expand : undefined}
         slotProps={{
           input: {
             startAdornment: (
-              <InputAdornment position="start">
+              <InputAdornment
+                position="start"
+                sx={{
+                  cursor: "pointer",
+                }}
+              >
                 {finalLoading ? (
                   <CircularProgress size={18} />
-                ) : showSearchIcon ? (
+                ) : (
                   <SearchRoundedIcon fontSize="small" />
-                ) : undefined}
+                )}
               </InputAdornment>
             ),
             endAdornment:
-              inputValue && !finalLoading && !disabled ? (
+              !isCollapsed && inputValue && !finalLoading && !disabled ? (
                 <InputAdornment position="end">
                   <IconButton size="small" onClick={handleClear}>
                     <CloseRoundedIcon fontSize="small" />
@@ -281,7 +335,9 @@ const SearchBar = ({
           style={{
             zIndex: 1300,
             ...slotProps?.poper?.style,
-            // width: anchorRef.current?.getBoundingClientRect().width,
+            width: matchAnchorWidth
+              ? anchorRef.current?.getBoundingClientRect().width
+              : undefined,
           }}
         >
           <Paper sx={{ mt: 0.5, overflow: "auto" }}>
