@@ -1,7 +1,7 @@
 import RoutePath from "@/constants/RoutePath";
 import { lazy } from "react";
 
-export const PublicRoutes = [
+export const AuthRoutes = [
   {
     // Public
     path: RoutePath.Login,
@@ -24,4 +24,4 @@ export const PublicRoutes = [
   },
 ];
 
-export default PublicRoutes;
+export default AuthRoutes;

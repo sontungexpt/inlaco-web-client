@@ -50,7 +50,6 @@ const Mobilization = ({ pageSize = 10 }) => {
           <Typography ml={2} variant="body2" color="text.secondary" noWrap>
             Điện thoại: {partnerPhone}
           </Typography>
-          {/* Email */}
           <Typography ml={2} variant="body2" color="text.secondary" noWrap>
             Email: {partnerEmail}
           </Typography>

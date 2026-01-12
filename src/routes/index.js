@@ -56,7 +56,8 @@ const SupplyRequestForm = lazy(
 
 const ADMIN_SAILOR = [UserRole.ADMIN, UserRole.SAILOR];
 
-export * from "./publicRoutes";
+export * from "./authRoutes";
+export * from "./errorRoutes";
 
 // layout === false => no layout
 // layout === null => default to MainLayout

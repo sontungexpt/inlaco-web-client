@@ -2,7 +2,7 @@ import { Routes, Outlet, Route, Navigate } from "react-router";
 import React, { Fragment, lazy, Suspense } from "react";
 import { useAuthContext } from "./contexts/AuthContext";
 import { PageCircularProgress } from "./components/common";
-import { AppRoutes, PublicRoutes } from "./routes";
+import { AppRoutes, AuthRoutes, ErrorRoutes } from "./routes";
 import MainLayout from "./layout/MainLayout";
 
 function AuthGuard({ children = <Outlet /> }) {
@@ -28,7 +28,7 @@ function RoleGuard({ allowedRoles, children = <Outlet /> }) {
       ? allowedRoles({ hasRole, userRoles, hasRoles })
       : allowedRoles.some((r) => hasRole(r));
 
-  if (!allowed) return <div>Unauthorized</div>;
+  if (!allowed) return <Navigate to="/403" replace />;
   return children;
 }
 
@@ -95,11 +95,12 @@ export default function App() {
   return (
     <Suspense fallback={<PageCircularProgress />}>
       <Routes>
-        {buildRoutes(PublicRoutes, true)}
+        {buildRoutes(ErrorRoutes, true)}
+        {buildRoutes(AuthRoutes, true)}
         {buildRoutes(AppRoutes)}
 
         {/* fallback */}
-        <Route path="*" element={lazy(() => import("@/pages/E404"))} />
+        <Route path="*" element={lazy(() => import("@/pages/errors/E404"))} />
       </Routes>
     </Suspense>
   );

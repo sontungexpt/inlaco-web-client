@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { GridActionsCellItem, GridRowModes, Toolbar } from "@mui/x-data-grid";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
@@ -68,19 +68,31 @@ const EditableDataGridCoreInner = ({
   addButtonText = "Thêm dòng",
   editMode = "row",
   onProcessRowUpdateError = () => {},
+  getRowClassName,
+  sx,
+  slots,
   ...props
 }) => {
   const {
     rows,
     rowErrors,
     rowModesModel,
-    updaingRowIds,
+    updatingRowIdMap,
     setRowModesModel,
     addRow,
     removeRow,
     processRowUpdate,
   } = useEditableGridContext();
   const [showErrors, setShowErrors] = useState({});
+
+  const showRowError = useCallback((rowId, showed) => {
+    setShowErrors((prev) => {
+      const next = { ...prev };
+      if (showed) next[rowId] = true;
+      else delete next[rowId];
+      return next;
+    });
+  }, []);
 
   /* ================= ACTION COLUMN ================= */
   const actionColumn = useMemo(
@@ -91,43 +103,59 @@ const EditableDataGridCoreInner = ({
       width: 120,
       align: "center",
       headerAlign: "center",
-      getActions: ({ id }) => {
-        const editing = rowModesModel[id]?.mode === GridRowModes.Edit;
+      getActions: ({ id: rowId }) => {
+        const editing = rowModesModel[rowId]?.mode === GridRowModes.Edit;
+        const isRowUpdating = updatingRowIdMap[rowId];
         return [
-          editing ? (
+          editing || isRowUpdating ? (
             <GridActionsCellItem
-              icon={<SaveIcon color="success" />}
+              disabled={isRowUpdating}
+              icon={
+                isRowUpdating ? (
+                  <CircularProgress size={18} />
+                ) : (
+                  <SaveIcon color={isRowUpdating ? "disabled" : "success"} />
+                )
+              }
               label="Lưu"
               onClick={() => {
-                setShowErrors((prev) => ({ ...prev, [id]: true }));
+                showRowError(rowId, true);
                 setRowModesModel((prev) => ({
                   ...prev,
-                  [id]: { mode: GridRowModes.View },
+                  [rowId]: { mode: GridRowModes.View },
                 }));
               }}
             />
           ) : (
             <GridActionsCellItem
-              icon={<EditIcon color="primary" />}
+              disabled={isRowUpdating}
+              icon={<EditIcon color={isRowUpdating ? "disabled" : "primary"} />}
               label="Sửa"
               onClick={() => {
-                setShowErrors((prev) => ({ ...prev, [id]: false }));
+                showRowError(rowId, false);
                 setRowModesModel((prev) => ({
                   ...prev,
-                  [id]: { mode: GridRowModes.Edit },
+                  [rowId]: { mode: GridRowModes.Edit },
                 }));
               }}
             />
           ),
           <GridActionsCellItem
-            icon={<DeleteIcon color="error" />}
+            disabled={isRowUpdating}
+            icon={<DeleteIcon color={isRowUpdating ? "disabled" : "error"} />}
             label="Xoá"
-            onClick={() => removeRow(id)}
+            onClick={() => removeRow(rowId)}
           />,
         ];
       },
     }),
-    [rowModesModel, setRowModesModel, removeRow],
+    [
+      rowModesModel,
+      updatingRowIdMap,
+      setRowModesModel,
+      showRowError,
+      removeRow,
+    ],
   );
 
   /* ================= FINAL COLUMNS ================= */
@@ -164,25 +192,49 @@ const EditableDataGridCoreInner = ({
   return (
     <BaseDataGrid
       showToolbar
-      slots={{ toolbar: EditableGridToolbar }}
       {...props}
+      slots={{ toolbar: EditableGridToolbar, ...slots }}
       rows={rows}
       editMode={editMode}
       onRowEditStop={(params, event) => {
         // Ignore focus move inside same row
         if (event?.reason === "cellFocusOut") return;
-        setShowErrors((prev) => ({
-          ...prev,
-          [params.id]: true,
-        }));
+        showRowError(params.id, true);
       }}
       headerAlign={headerAlign}
       columns={[...finalColumns, actionColumn]}
       rowModesModel={rowModesModel}
       onRowModesModelChange={setRowModesModel}
       processRowUpdate={processRowUpdate}
+      getRowClassName={(params, ...args) => {
+        const internal = updatingRowIdMap[params.id] && "editable-row--loading";
+        const external = getRowClassName?.(params, ...args);
+        return [internal, external].filter(Boolean).join(" ");
+      }}
       onProcessRowUpdateError={onProcessRowUpdateError}
       experimentalFeatures={{ newEditingApi: true }}
+      sx={[
+        {
+          "& .editable-row--loading::after": {
+            content: '""',
+            position: "absolute",
+            inset: 0,
+            padding: "2px",
+            background:
+              "linear-gradient(90deg, transparent, #1976d2, transparent)",
+            backgroundSize: "200% 100%",
+            animation: "row-border-loading 20s linear infinite",
+            pointerEvents: "none",
+            mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            maskComposite: "exclude",
+          },
+          "@keyframes row-border-loading": {
+            from: { backgroundPosition: "200% 0" },
+            to: { backgroundPosition: "-200% 0" },
+          },
+        },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
       slotProps={{
         ...slotProps,
         toolbar: {
@@ -198,10 +250,7 @@ const EditableDataGridCoreInner = ({
             if (!rowId) return;
 
             //  KEY LINE: hide error when user starts editing
-            setShowErrors((prev) => ({
-              ...prev,
-              [rowId]: false,
-            }));
+            showRowError(rowId, false);
           },
         },
       }}

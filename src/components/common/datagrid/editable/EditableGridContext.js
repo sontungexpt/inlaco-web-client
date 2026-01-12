@@ -35,7 +35,7 @@ export const EditableGridProvider = ({
     validateRows,
   } = adapter;
   const [rowModesModel, setRowModesModel] = useState({});
-  const [updatingRowIds, setUpdatingRowIds] = useState({});
+  const [updatingRowIdMap, setUpdatingRowIdMap] = useState({});
 
   /* ---------- actions ---------- */
 
@@ -63,7 +63,7 @@ export const EditableGridProvider = ({
   );
 
   const markRowUpdating = useCallback((rowId, status) => {
-    setUpdatingRowIds((prev) => {
+    setUpdatingRowIdMap((prev) => {
       const next = { ...prev };
       if (status) next[rowId] = true;
       else delete next[rowId];
@@ -73,9 +73,10 @@ export const EditableGridProvider = ({
 
   const processRowUpdate = useCallback(
     async (row) => {
-      markRowUpdating(row.id, true);
+      const rowId = row.id;
+      markRowUpdating(rowId, true);
       const updated = { ...row, isNew: false };
-      const nextRows = rows.map((r) => (r.id === row.id ? updated : r));
+      const nextRows = rows.map((r) => (r.id === rowId ? updated : r));
 
       if (setRowsOnUpdate) {
         await setRowsOnUpdate(nextRows);
@@ -84,7 +85,7 @@ export const EditableGridProvider = ({
       }
 
       const ok = !validateRows || (await validateRows(nextRows));
-      markRowUpdating(false);
+      markRowUpdating(rowId, false);
 
       if (!ok) {
         throw new Error("VALIDATION_ERROR"); // not commit to prevent stop edit mode
@@ -105,7 +106,7 @@ export const EditableGridProvider = ({
       rowErrors,
       rowModesModel,
       setRowModesModel,
-      updatingRowIds,
+      updatingRowIdMap,
 
       addRow,
       updateRow,
@@ -117,7 +118,7 @@ export const EditableGridProvider = ({
       rows,
       rowErrors,
       rowModesModel,
-      updatingRowIds,
+      updatingRowIdMap,
 
       addRow,
       updateRow,

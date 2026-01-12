@@ -55,8 +55,8 @@ const BaseTabBar = ({
               "&:hover": {
                 color: color,
               },
-              ...tabSx,
             },
+            ...(Array.isArray(tabSx) ? tabSx : [tabSx]),
           ]}
         />
       ))}
@@ -65,51 +65,3 @@ const BaseTabBar = ({
 };
 
 export default BaseTabBar;
-// import React, { useState } from "react";
-// import { Tabs, Tab, Box } from "@mui/material";
-
-// const BaseTabBar = ({
-//   onTabChange,
-//   initialTab = 0,
-//   tabLabel1,
-//   tabLabel2,
-//   variant,
-//   color,
-//   isSingleTab = false,
-//   sx = [],
-// }) => {
-//   const [value, setValue] = useState(initialTab);
-
-//   const handleValueChange = (event, newValue) => {
-//     if (isSingleTab) return;
-//     setValue(newValue);
-//     onTabChange(newValue);
-//   };
-
-//   const labels = isSingleTab
-//     ? [initialTab === 0 ? tabLabel1 : tabLabel2] // chỉ show tab đúng initialTab
-//     : [tabLabel1, tabLabel2]; // show cả 2 tab bình thường
-
-//   return (
-//     <Tabs
-//       value={isSingleTab ? 0 : value}
-//       onChange={handleValueChange}
-//       centered
-//       variant={variant}
-//       sx={[
-//         {
-//           "& .MuiTabs-indicator": {
-//             backgroundColor: color,
-//           },
-//         },
-//         ...(Array.isArray(sx) ? sx : [sx]),
-//       ]}
-//     >
-//       {labels.map((label, idx) => (
-//         <Tab key={idx} label={label} sx={{ fontWeight: 700, color: color }} />
-//       ))}
-//     </Tabs>
-//   );
-// };
-
-// export default BaseTabBar;

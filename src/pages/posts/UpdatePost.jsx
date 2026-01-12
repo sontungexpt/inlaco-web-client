@@ -40,7 +40,6 @@ export default function UpdatePost() {
   });
 
   const handleSubmit = async (postInfo, { resetForm }) => {
-    console.log("postInfo", postInfo);
     await updatePostAsync(postInfo, {
       onSuccess: (post) => {
         if (post.type === "RECRUITMENT") {
