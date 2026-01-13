@@ -212,6 +212,10 @@ const EditableDataGridCoreInner = ({
       experimentalFeatures={{ newEditingApi: true }}
       sx={[
         {
+          "@keyframes row-border-loading": {
+            from: { backgroundPosition: "200% 0" },
+            to: { backgroundPosition: "-200% 0" },
+          },
           "& .editable-row--loading::after": {
             content: '""',
             position: "absolute",
@@ -220,14 +224,11 @@ const EditableDataGridCoreInner = ({
             background:
               "linear-gradient(90deg, transparent, #1976d2, transparent)",
             backgroundSize: "200% 100%",
-            animation: "row-border-loading 20s linear infinite",
             pointerEvents: "none",
             mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
             maskComposite: "exclude",
-          },
-          "@keyframes row-border-loading": {
-            from: { backgroundPosition: "200% 0" },
-            to: { backgroundPosition: "-200% 0" },
+            animation: "row-border-loading 3s linear infinite",
+            transition: "background-position 0.5s ease-out, height 1s linear",
           },
         },
         ...(Array.isArray(sx) ? sx : [sx]),

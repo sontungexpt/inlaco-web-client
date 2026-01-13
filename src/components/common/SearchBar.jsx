@@ -47,6 +47,10 @@ const SearchBar = ({
   autoCollapseOnBlur = true,
 
   onChange,
+  onKeyDown,
+  onClick,
+
+  onBlur,
   onSearch,
   slotProps,
   sx,
@@ -85,10 +89,6 @@ const SearchBar = ({
     if (idx < 0) return options.length - 1;
     if (idx >= options.length) return 0;
     return idx;
-  };
-
-  const expand = () => {
-    setIsCollapsed(false);
   };
 
   const runSearch = useCallback(
@@ -189,6 +189,13 @@ const SearchBar = ({
     }
   };
 
+  const handleClick = (e) => {
+    if (isCollapsed) {
+      setIsCollapsed(false);
+    }
+    onClick?.(e);
+  };
+
   const handleClear = (e) => {
     changeSourceRef.current = SOURCE.INTERNAL;
     setInputValue("");
@@ -242,6 +249,8 @@ const SearchBar = ({
       default:
         break;
     }
+
+    onKeyDown?.(e);
   };
 
   const handleSelectOption = (option, ...params) => {
@@ -256,12 +265,14 @@ const SearchBar = ({
     onSelectOption?.(option, ...params);
   };
 
-  const handleBlur = () => {
+  const handleBlur = (e, ...params) => {
     setDropdownOpened(false);
 
     if (autoCollapseOnBlur && !inputValue) {
       setIsCollapsed(true);
     }
+
+    onBlur?.(e, ...params);
   };
 
   const mergedSx = useMemo(
@@ -304,7 +315,7 @@ const SearchBar = ({
         onChange={handleInputChange}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        onClick={isCollapsed ? expand : undefined}
+        onClick={handleClick}
         slotProps={{
           input: {
             startAdornment: (
