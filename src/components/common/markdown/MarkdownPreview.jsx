@@ -19,17 +19,14 @@ export default function MarkdownPreview({
   children,
   value,
 
-  minHeight = 200,
   name,
-  wrapperProps,
   ...props
 }) {
   const content = normalizeMarkdown(children ?? value);
   if (!content) {
     return (
       <Box
-        {...wrapperProps}
-        minHeight={minHeight}
+        {...props}
         display="flex"
         alignItems="center"
         justifyContent="center"
@@ -46,7 +43,7 @@ export default function MarkdownPreview({
   }
 
   return (
-    <Box className="markdown-preview" {...wrapperProps}>
+    <Box className="markdown-preview" {...props}>
       <ReactMarkdown
         {...props}
         remarkPlugins={[remarkGfm]}

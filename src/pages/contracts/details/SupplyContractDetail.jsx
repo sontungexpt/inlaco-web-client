@@ -13,24 +13,43 @@ import ContractDetailLayout from "./ContractDetailLayout";
 import PartySection from "./sections/PartySection";
 import ShipInfoSection from "./sections/ShipInfoSection";
 import FilesSection from "./sections/FilesSection";
-import { ConfirmButton, SectionWrapper } from "@/components/common";
+import {
+  ConfirmButton,
+  LoadErrorState,
+  SectionWrapper,
+} from "@/components/common";
 
 const SupplyContractDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
-  const { data: contract = {}, isLoading, refetch } = useContract(id);
+  const {
+    data: contract = {},
+    isError,
+    isLoading,
+    refetch: refetchContract,
+  } = useContract(id);
 
   const approve = async () => {
     try {
       await activeContract(id);
       toast.success("Ký kết thành công");
-      refetch();
+      refetchContract();
     } catch {
       toast.error("Ký kết thất bại");
     }
   };
+
+  if (isError) {
+    return (
+      <LoadErrorState
+        title="Không thể tải hợp đồng"
+        subtitle="Hợp đồng không tồn tại hoặc đã bị xóa"
+        onRetry={() => refetchContract()}
+      />
+    );
+  }
 
   return (
     <ContractDetailLayout
@@ -46,11 +65,7 @@ const SupplyContractDetail = () => {
             <Button
               variant="contained"
               color="warning"
-              onClick={() =>
-                navigate("/crew-contracts/form", {
-                  state: { contractId: id, type: "update" },
-                })
-              }
+              onClick={() => navigate(`/supply-contracts/${id}/edit`, {})}
             >
               {contract.freezed ? "Thêm phụ lục" : "Sửa hợp đồng"}
             </Button>

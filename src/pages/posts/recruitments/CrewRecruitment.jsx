@@ -77,7 +77,11 @@ export default function CrewRecruitment() {
             <Button
               variant="contained"
               startIcon={<AddCircleRoundedIcon />}
-              onClick={() => navigate("/recruitment/create")}
+              onClick={() =>
+                navigate("/recruitments/create", {
+                  state: { fixedType: "RECRUITMENT" },
+                })
+              }
               sx={{
                 backgroundColor: Color.PrimaryGold,
                 color: Color.PrimaryBlack,
@@ -127,9 +131,9 @@ export default function CrewRecruitment() {
           totalPages={postData?.totalPages || 1}
           page={postPage + 1}
           onPageChange={(e, value) => setPostPage(value - 1)}
-          onPostClick={(post) => navigate(`/recruitment/${post.id}`)}
-          onViewDetail={(post) => navigate(`/recruitment/${post.id}`)}
-          onApplyNow={(post) => navigate(`/recruitment/apply/${post.id}`)}
+          onPostClick={(post) => navigate(`/recruitments/${post.id}`)}
+          onViewDetail={(post) => navigate(`/recruitments/${post.id}`)}
+          onApplyNow={(post) => navigate(`/recruitments/apply/${post.id}`)}
         />
       )}
 

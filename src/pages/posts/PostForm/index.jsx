@@ -4,24 +4,24 @@ import { Box, Button, MenuItem, Grid, CircularProgress } from "@mui/material";
 import {
   InfoTextFieldFormik,
   SectionWrapper,
+  MarkdownPreviewFormik,
   ImageUploadFieldFormik,
   PageTitle,
   SimpleMarkdownEditor,
 } from "@/components/common";
 import { FORM_SCHEMA } from "./schema";
 import { createPost, updatePost } from "@/services/postServices";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { usePost } from "@/hooks/services/post";
 import FormMode from "@/constants/FormMode";
 import { buildInitialValues } from "./initial";
 import { mapValuesToRequestBody } from "./mapper";
 import toast from "react-hot-toast";
 import LoadErrorState from "@/components/common/states/LoadErrorState";
-import MarkdownPreviewFormik from "@/components/common/markdown/MarkdownPreviewForkmik";
 
 export default function PostForm() {
   const navigate = useNavigate();
-
+  const { fixedType } = useLocation().state || {};
   const { id: postId } = useParams();
   const mode = postId ? FormMode.EDIT : FormMode.CREATE;
 
@@ -37,8 +37,9 @@ export default function PostForm() {
       buildInitialValues({
         mode,
         post,
+        fixedType,
       }),
-    [mode, post],
+    [fixedType, mode, post],
   );
 
   const viewPostDetail = ({ id, type }) => {
@@ -135,7 +136,7 @@ export default function PostForm() {
                   select
                   label="Chọn loại bài viết"
                   name="type"
-                  disabled={mode === FormMode.EDIT}
+                  disabled={mode === FormMode.EDIT || fixedType}
                 >
                   {POST_TYPES.map((t) => (
                     <MenuItem key={t.value} value={t.value}>

@@ -227,7 +227,7 @@ const RecruitmentDetail = () => {
                   variant="contained"
                   color="primary"
                   sx={{ py: 1.2, borderRadius: 2 }}
-                  onClick={() => navigate(`/recruitment/apply/${id}`)}
+                  onClick={() => navigate(`/recruitments/apply/${id}`)}
                 >
                   Ứng tuyển ngay
                 </Button>
@@ -246,7 +246,7 @@ const RecruitmentDetail = () => {
                       "&:hover": { backgroundColor: Color.PrimaryHoverBlue },
                     }}
                     onClick={() =>
-                      navigate("/recruitment", {
+                      navigate("/recruitments", {
                         state: {
                           tab: "CANDIDATE",
                           candidate: {

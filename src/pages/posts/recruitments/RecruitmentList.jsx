@@ -26,7 +26,7 @@ export default function RecruitmentList({
       </Box>
     );
 
-  if (posts.length === 0)
+  if (!posts?.length)
     return (
       <Typography sx={{ textAlign: "center", mt: 2, fontWeight: "bold" }}>
         Chưa có bài đăng tuyển dụng nào

@@ -5,18 +5,20 @@ import {
   ToggleButtonGroup,
   Typography,
   Paper,
-  Fade,
 } from "@mui/material";
 import MarkdownPreview from "./MarkdownPreview";
 import { InfoTextField } from "../fields";
+import { resolveComponent } from "@/utils/component";
 
 export default function SimpleMarkdownEditor({
   value,
   name,
   placeholder = "Nhập nội dung markdown...",
-  label,
-  input: TextFieldComponent = InfoTextField,
-  markdown: MarkdownPreviewComponent = MarkdownPreview,
+  label = "Markdown Editor",
+  multiline = true,
+  minRows = 4,
+  input = InfoTextField,
+  markdown = MarkdownPreview,
   ...props
 }) {
   const [mode, setMode] = useState("edit");
@@ -25,27 +27,21 @@ export default function SimpleMarkdownEditor({
     <Paper
       elevation={0}
       sx={{
-        border: "1px solid",
-        borderColor: "divider",
+        border: "1px solid #000",
         borderRadius: 2,
         overflow: "hidden",
-        bgcolor: "#fafafa",
       }}
     >
       {/* Header */}
       <Box
-        px={2}
-        py={1}
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        borderBottom="1px solid"
-        borderColor="divider"
-        bgcolor="#fff"
+        borderBottom="1px solid #000"
       >
-        {label && (
-          <Typography fontWeight={600}>{label || "Markdown Editor"}</Typography>
-        )}
+        <Typography ml={2} fontWeight={600}>
+          {label}
+        </Typography>
 
         <ToggleButtonGroup
           size="small"
@@ -53,8 +49,6 @@ export default function SimpleMarkdownEditor({
           exclusive
           onChange={(_, v) => v && setMode(v)}
           sx={{
-            bgcolor: "#f5f5f5",
-            borderRadius: 1,
             "& .MuiToggleButton-root": {
               px: 2,
               textTransform: "none",
@@ -68,32 +62,23 @@ export default function SimpleMarkdownEditor({
       </Box>
 
       {/* Body */}
-      <Box p={2}>
-        {mode === "edit" ? (
-          <Fade in={mode === "edit"} unmountOnExit>
-            {typeof TextFieldComponent === "function" ? (
-              <TextFieldComponent
-                multiline
-                minRows={8}
-                {...props}
-                name={name}
-                value={value}
-                placeholder={placeholder}
-              />
-            ) : (
-              TextFieldComponent
-            )}
-          </Fade>
-        ) : (
-          <Fade in={mode === "preview"} unmountOnExit>
-            {typeof MarkdownPreviewComponent === "function" ? (
-              <MarkdownPreviewComponent name={name} value={value} />
-            ) : (
-              MarkdownPreviewComponent
-            )}
-          </Fade>
-        )}
-      </Box>
+      {mode === "edit" ? (
+        resolveComponent(input, {
+          ...props,
+          multiline,
+          minRows,
+          name,
+          value,
+          placeholder,
+        })
+      ) : (
+        <Box px={2}>
+          {resolveComponent(markdown, {
+            name,
+            value,
+          })}
+        </Box>
+      )}
     </Paper>
   );
 }

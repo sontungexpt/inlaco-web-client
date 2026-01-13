@@ -1,10 +1,9 @@
-import { useMemo, useState, useCallback, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import AppProperty from "@/constants/AppProperty";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { fill } from "@cloudinary/url-gen/actions/resize";
-
 import NoImage from "@assets/images/no-ship-photo.png";
 
 const cld = new Cloudinary({
@@ -26,14 +25,14 @@ const CloudinaryImage = ({
 }) => {
   const [hasError, setHasError] = useState(false);
 
-  /* reset error khi đổi source */
+  /* reset error when source changes*/
   useEffect(() => {
     setHasError(false);
   }, [publicId, src]);
 
-  const handleError = useCallback(() => {
+  const handleError = () => {
     setHasError(true);
-  }, []);
+  };
 
   const cldImg = useMemo(() => {
     if (!publicId || hasError) return null;
@@ -62,11 +61,11 @@ const CloudinaryImage = ({
   if (hasError || (!cldImg && !src)) {
     return (
       <Box
+        {...props}
         component="img"
         src={fallback}
         alt="fallback"
         sx={sharedStyle}
-        {...props}
       />
     );
   }
@@ -75,11 +74,11 @@ const CloudinaryImage = ({
   if (cldImg) {
     return (
       <Box
+        {...props}
         component={AdvancedImage}
         cldImg={cldImg}
         onError={handleError}
         sx={sharedStyle}
-        {...props}
       />
     );
   }
@@ -87,13 +86,13 @@ const CloudinaryImage = ({
   /* ===== URL thường ===== */
   return (
     <Box
+      {...props}
       component="img"
       src={src}
       alt={alt}
       loading="lazy"
       onError={handleError}
       sx={sharedStyle}
-      {...props}
     />
   );
 };

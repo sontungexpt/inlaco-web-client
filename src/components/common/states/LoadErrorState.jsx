@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Button } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import PageTitle from "../PageTitle";
+import { useNavigate } from "react-router";
 
 export default function LoadErrorState({
   title = "Không thể tải dữ liệu",
@@ -10,6 +11,7 @@ export default function LoadErrorState({
   onRetry,
   minHeight = 300,
 }) {
+  const navigate = useNavigate();
   return (
     <Box
       display="flex"
@@ -25,7 +27,7 @@ export default function LoadErrorState({
 
       <Box mt={3} display="flex" gap={2}>
         {onBack && (
-          <Button variant="outlined" onClick={onBack}>
+          <Button variant="outlined" onClick={onBack || (() => navigate(-1))}>
             Quay lại
           </Button>
         )}

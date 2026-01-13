@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import {
   FileUploadFieldFormik,
   PageTitle,
-  InfoTextField,
   SectionWrapper,
   NationalityTextField,
   ImageUploadFieldFormik,
@@ -17,7 +16,7 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import Color from "@constants/Color";
 import { Formik } from "formik";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import {
   createSupplyContract,
   editContract,
@@ -27,26 +26,29 @@ import cloudinaryUpload from "@/services/cloudinaryServices";
 import UploadStrategy from "@/constants/UploadStrategy";
 import toast from "react-hot-toast";
 import { mapValuesToRequestBody } from "./mapper";
-import { SCHEMA } from "./schema";
+import { FORM_SCHEMA } from "./schema";
 import { buildInitialValues } from "./initial";
 import { useSupplyRequest } from "@/hooks/services/supplyRequest";
 import { useContract } from "@/hooks/services/contract";
 import { keepChangedFields } from "@/utils/object";
 import InfoTextFieldFormik from "@/components/common/fields/InfoTextFieldFormik";
+import FormMode from "@/constants/FormMode";
 
 const SupplyContractForm = () => {
   const navigate = useNavigate();
-  const { state: { type = "create", requestId, contractId } = {} } =
-    useLocation();
+  const { contractId, requestId } = useParams();
+  const formMode = contractId ? FormMode.EDIT : FormMode.CREATE;
+  const isUpdateForm = formMode === FormMode.EDIT;
 
   const { data: requestInfo, isLoading: requestInfoLoading } =
     useSupplyRequest(requestId);
+
   const { data: contractInfo, isLoading: contractInfoLoading } =
     useContract(contractId);
+
   const freezedContract = contractInfo?.freezed;
 
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
-  const updatingForm = type === "update";
 
   const createContract = async (values) => {
     const [contractFileRes, shipImageRes] = await Promise.all([
@@ -84,14 +86,14 @@ const SupplyContractForm = () => {
 
   const handleFormSubmission = async (values, helpers) => {
     try {
-      const contract = updatingForm
+      const contract = isUpdateForm
         ? await updateContract(values, helpers)
         : await createContract(values, helpers);
       if (!contract?.id) return;
       helpers.resetForm();
       navigate(`/supply-contracts/${contract.id}`);
     } catch (err) {
-      const msg = updatingForm
+      const msg = isUpdateForm
         ? freezedContract
           ? "Thêm phụ lục thất bại"
           : "Cập nhật hợp đồng thất bại"
@@ -103,18 +105,18 @@ const SupplyContractForm = () => {
   const initialValues = useMemo(
     () =>
       buildInitialValues({
-        updatingForm,
+        updatingForm: isUpdateForm,
         requestInfo,
         contractInfo,
       }),
-    [updatingForm, requestInfo, contractInfo],
+    [isUpdateForm, requestInfo, contractInfo],
   );
 
   return (
     <Formik
       initialValues={initialValues}
       enableReinitialize
-      validationSchema={SCHEMA}
+      validationSchema={FORM_SCHEMA}
       onSubmit={handleFormSubmission}
     >
       {({
@@ -138,8 +140,12 @@ const SupplyContractForm = () => {
             }}
           >
             <PageTitle
-              title="TẠO HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN"
-              subtitle="Tạo và lưu hợp đồng mới"
+              title={
+                isUpdateForm
+                  ? "CÂP NHẤT HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN"
+                  : "TẠO HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN"
+              }
+              subtitle={isUpdateForm ? "Lưu hợp đồng mới" : "Tạo hợp đồng"}
             />
 
             <Box display="flex" gap={2} mt={2}>
@@ -183,7 +189,7 @@ const SupplyContractForm = () => {
                   color: Color.PrimaryBlack,
                 }}
               >
-                {updatingForm
+                {isUpdateForm
                   ? freezedContract
                     ? "Thêm phụ lục"
                     : "Sửa hợp đồng"

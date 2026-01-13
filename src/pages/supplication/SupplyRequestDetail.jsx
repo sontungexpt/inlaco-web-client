@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router";
+import toast from "react-hot-toast";
+
 import { reviewSupplyRequest } from "@/services/supplyReqServices";
 import { useSupplyRequest } from "@/hooks/services/supplyRequest";
-import { isoToLocalDatetime } from "@/utils/converter";
-import toast from "react-hot-toast";
+import { isoToLocalDatetime, isoToLocaleString } from "@/utils/converter";
 
 import Color from "@constants/Color";
 import {
@@ -12,10 +13,13 @@ import {
   StatusLabel,
   CloudinaryImage,
   FilePreviewCard,
-  ViewTextField,
   CenterCircularProgress,
 } from "@components/common";
-import { Box, Button, Grid, CircularProgress } from "@mui/material";
+
+import InfoItem from "@/components/common/InfoItem";
+
+import { Box, Button, CircularProgress, Grid, Stack } from "@mui/material";
+
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import NoteAddRoundedIcon from "@mui/icons-material/NoteAddRounded";
@@ -23,6 +27,7 @@ import NoteAddRoundedIcon from "@mui/icons-material/NoteAddRounded";
 const SupplyRequestDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+
   const {
     data: requestInfo,
     isLoading,
@@ -35,36 +40,15 @@ const SupplyRequestDetail = () => {
     const buttonId = status ? "approve" : "decline";
     setButtonLoading(buttonId);
     try {
-      const response = await reviewSupplyRequest(id, status);
+      await reviewSupplyRequest(id, status);
       await refetchRequestInfo();
-    } catch (err) {
+    } catch {
       toast.error("Thay đổi trạng thái thất bại!");
     }
     setButtonLoading(false);
   };
 
-  const approveRequest = async () => {
-    await reviewRequest(true);
-  };
-
-  const declineRequest = async () => {
-    await reviewRequest(false);
-  };
-
-  if (isLoading) {
-    return <CenterCircularProgress />;
-  }
-
-  /* ===== COMMON DISABLED FIELD STYLE ===== */
-  const disabledFieldSx = {
-    "& .MuiInputBase-input.Mui-disabled": {
-      color: Color.PrimaryBlack,
-      WebkitTextFillColor: Color.PrimaryBlack,
-    },
-    "& .MuiOutlinedInput-notchedOutline.Mui-disabled": {
-      borderColor: Color.PrimaryBlack,
-    },
-  };
+  if (isLoading) return <CenterCircularProgress />;
 
   const STATUS_MAP = {
     PENDING: {
@@ -84,7 +68,7 @@ const SupplyRequestDetail = () => {
       color: Color.PrimaryBlackPlaceHolder,
     },
     SIGNING: {
-      label: "Đang đợi kí hợp đông",
+      label: "Đang đợi kí hợp đồng",
       color: Color.PrimaryBlue,
     },
     DONE: {
@@ -97,10 +81,11 @@ const SupplyRequestDetail = () => {
 
   return (
     <Box sx={{ m: 3 }}>
-      {/* ===== HEADER ===== */}
+      {/* ================= HEADER ================= */}
       <SectionWrapper
         sx={{
           background: "linear-gradient(135deg, #E3F2FD 0%, #F5F9FC 100%)",
+          borderRadius: 3,
         }}
       >
         <Box display="flex" justifyContent="space-between">
@@ -108,212 +93,193 @@ const SupplyRequestDetail = () => {
             title="CHI TIẾT YÊU CẦU CUNG ỨNG"
             subtitle={`Yêu cầu cung ứng với id: ${id}`}
           />
-
           <StatusLabel
             label={STATUS_MAP[status]?.label || "Lỗi"}
             color={STATUS_MAP[status]?.color}
           />
         </Box>
 
-        {/* ===== ACTIONS ===== */}
+        {/* ================= ACTIONS ================= */}
         {(status === "PENDING" || status === "APPROVED") && (
-          <Box mt={4} display="flex" gap={2}>
+          <Stack direction="row" spacing={2} mt={4}>
             {status === "PENDING" && (
               <>
                 <Button
                   variant="contained"
-                  onClick={approveRequest}
+                  onClick={() => reviewRequest(true)}
+                  disabled={buttonLoading}
                   startIcon={
                     buttonLoading === "approve" ? (
-                      <CircularProgress size={20} />
+                      <CircularProgress size={18} />
                     ) : (
-                      <CheckCircleRoundedIcon sx={{ mr: 1 }} />
+                      <CheckCircleRoundedIcon />
                     )
                   }
-                  disabled={buttonLoading}
-                  sx={{ minWidth: 150, backgroundColor: Color.PrimaryBlue }}
+                  sx={{
+                    minWidth: 160,
+                    borderRadius: 2,
+                    backgroundColor: Color.PrimaryBlue,
+                    textTransform: "none",
+                    fontWeight: 600,
+                  }}
                 >
                   Chấp thuận
                 </Button>
 
                 <Button
                   variant="contained"
-                  onClick={declineRequest}
+                  onClick={() => reviewRequest(false)}
                   disabled={buttonLoading}
                   startIcon={
                     buttonLoading === "decline" ? (
-                      <CircularProgress sx={{ mr: 1 }} />
+                      <CircularProgress size={18} />
                     ) : (
-                      <CancelRoundedIcon sx={{ mr: 1 }} />
+                      <CancelRoundedIcon />
                     )
                   }
                   sx={{
-                    minWidth: 150,
+                    minWidth: 160,
+                    borderRadius: 2,
                     backgroundColor: Color.PrimaryOrgange,
+                    textTransform: "none",
+                    fontWeight: 600,
                   }}
                 >
                   Từ chối
                 </Button>
               </>
             )}
+
             {status === "APPROVED" && (
               <Button
                 variant="contained"
+                onClick={() => navigate(`/supply-contracts/create/${id}`)}
+                startIcon={<NoteAddRoundedIcon />}
                 sx={{
-                  minWidth: 180,
+                  minWidth: 200,
+                  borderRadius: 2,
                   backgroundColor: Color.PrimaryGold,
                   color: Color.PrimaryBlack,
-                }}
-                startIcon={<NoteAddRoundedIcon sx={{ mr: 1 }} />}
-                onClick={() => {
-                  navigate(`/supply-contracts/form`, {
-                    state: {
-                      type: "create",
-                      requestId: id,
-                    },
-                  });
+                  textTransform: "none",
+                  fontWeight: 600,
                 }}
               >
                 Tạo hợp đồng
               </Button>
             )}
-          </Box>
+          </Stack>
         )}
       </SectionWrapper>
 
-      {/* ===== COMPANY INFO ===== */}
+      {/* ================= COMPANY INFO ================= */}
       <SectionWrapper title="Thông tin công ty">
-        <Grid container spacing={2}>
-          <Grid size={4}>
-            <ViewTextField
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <InfoItem
               label="Tên công ty"
               value={requestInfo.companyName}
-              sx={disabledFieldSx}
+              bold
             />
           </Grid>
 
-          <Grid size={5}>
-            <ViewTextField
-              label="Địa chỉ"
-              value={requestInfo.companyAddress}
-              sx={disabledFieldSx}
-            />
+          <Grid size={{ xs: 12, md: 5 }}>
+            <InfoItem label="Địa chỉ" value={requestInfo.companyAddress} />
           </Grid>
 
-          <Grid size={3}>
-            <ViewTextField
-              label="Số điện thoại"
-              value={requestInfo.companyPhone}
-              sx={disabledFieldSx}
-            />
+          <Grid size={{ xs: 12, md: 3 }}>
+            <InfoItem label="Số điện thoại" value={requestInfo.companyPhone} />
           </Grid>
 
-          <Grid size={4}>
-            <ViewTextField
-              label="Email"
-              value={requestInfo.companyEmail}
-              sx={disabledFieldSx}
-            />
+          <Grid size={{ xs: 12, md: 4 }}>
+            <InfoItem label="Email" value={requestInfo.companyEmail} />
           </Grid>
 
-          <Grid size={5}>
-            <ViewTextField
+          <Grid size={{ xs: 12, md: 5 }}>
+            <InfoItem
               label="Người đại diện"
               value={requestInfo.companyRepresentor}
-              sx={disabledFieldSx}
+              highlight
             />
           </Grid>
 
-          <Grid size={3}>
-            <ViewTextField
+          <Grid size={{ xs: 12, md: 3 }}>
+            <InfoItem
               label="Chức vụ"
               value={requestInfo.companyRepresentorPosition}
-              sx={disabledFieldSx}
             />
           </Grid>
         </Grid>
       </SectionWrapper>
 
-      {/* ===== SCHEDULE ===== */}
+      {/* ================= REQUEST INFO ================= */}
       <SectionWrapper title="Thông tin yêu cầu">
-        <Grid container spacing={2}>
-          <Grid size={12}>
-            <ViewTextField
-              label="Thời gian bắt đầu thuê"
-              value={
-                requestInfo.rentalStartDate &&
-                isoToLocalDatetime(requestInfo.rentalStartDate)
-              }
-              sx={disabledFieldSx}
-            />
+        <Stack spacing={3}>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, md: 6, lg: 6 }}>
+              <InfoItem
+                label="Thời gian bắt đầu thuê"
+                value={isoToLocaleString(requestInfo.rentalStartDate)}
+                highlight
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6, lg: 6 }}>
+              <InfoItem
+                label="Thời gian kết thúc thuê"
+                value={isoToLocaleString(requestInfo.rentalEndDate)}
+                highlight
+              />
+            </Grid>
           </Grid>
-          <Grid size={12}>
-            <ViewTextField
-              label="Thời gian kết thúc thuê"
-              value={
-                requestInfo.rentalEndDate &&
-                isoToLocalDatetime(requestInfo.rentalEndDate)
-              }
-              sx={disabledFieldSx}
-            />
-          </Grid>
-          <Grid size={12}>
-            <FilePreviewCard
-              url={requestInfo.detailFile?.url}
-              name="Danh sách số lượng cần cung ứng"
-            />
-          </Grid>
-        </Grid>
+
+          <FilePreviewCard
+            url={requestInfo.detailFile?.url}
+            name="Danh sách số lượng cần cung ứng"
+          />
+        </Stack>
       </SectionWrapper>
 
-      {/* ===== SHIP INFO ===== */}
+      {/* ================= SHIP INFO ================= */}
       <SectionWrapper title="Thông tin tàu">
-        <Grid container spacing={2}>
-          <Grid
-            item
-            size={12}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              mb: 2,
-            }}
-          >
-            <CloudinaryImage publicId={requestInfo.shipInfo?.image?.publicId} />
-          </Grid>
+        <Stack spacing={3}>
+          <Box display="flex" justifyContent="center">
+            <CloudinaryImage
+              publicId={requestInfo.shipInfo?.image?.publicId}
+              sx={{
+                borderRadius: 2,
+                maxHeight: 220,
+                objectFit: "cover",
+              }}
+            />
+          </Box>
 
-          <Grid item size={6}>
-            <ViewTextField
-              label="Tên tàu"
-              value={requestInfo.shipInfo?.name}
-              sx={disabledFieldSx}
-            />
-          </Grid>
-          <Grid item size={6}>
-            <ViewTextField
-              label="IMO"
-              value={requestInfo.shipInfo?.IMONumber}
-              sx={disabledFieldSx}
-            />
-          </Grid>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <InfoItem
+                label="Tên tàu"
+                value={requestInfo.shipInfo?.name}
+                bold
+              />
+            </Grid>
 
-          <Grid item size={6}>
-            <ViewTextField
-              label="Quốc tịch"
-              value={requestInfo.shipInfo?.countryISO}
-              sx={disabledFieldSx}
-            />
-          </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <InfoItem label="IMO" value={requestInfo.shipInfo?.IMONumber} />
+            </Grid>
 
-          <Grid item size={6}>
-            <ViewTextField
-              label="Loại tàu"
-              value={requestInfo.shipInfo?.type}
-              sx={disabledFieldSx}
-            />
+            <Grid size={{ xs: 12, md: 6 }}>
+              <InfoItem
+                label="Quốc tịch"
+                value={requestInfo.shipInfo?.countryISO}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <InfoItem label="Loại tàu" value={requestInfo.shipInfo?.type} />
+            </Grid>
           </Grid>
-        </Grid>
+        </Stack>
       </SectionWrapper>
     </Box>
   );
 };
+
 export default SupplyRequestDetail;

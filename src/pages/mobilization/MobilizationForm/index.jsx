@@ -64,9 +64,7 @@ const CrewSearchEditCell = ({
         filter: sfEqual("workStatus", "AVAILABLE"),
       });
       setOptions(res.content || []);
-    } catch (err) {
-      console.error(err);
-    }
+    } catch (err) {}
   }, []);
 
   return (

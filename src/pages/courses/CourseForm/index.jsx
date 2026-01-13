@@ -22,7 +22,7 @@ const CourseForm = () => {
 
   const CERTIFICATED_COURSE_OPTIONS = ["Có", "Không"];
 
-  const handleCreateCourseSubmit = async (values, { resetForm }) => {
+  const handleFormSubmission = async (values, { resetForm }) => {
     try {
       const [wallPaper, trainingProviderLogo] = await Promise.all([
         cloudinaryUpload(
@@ -54,7 +54,7 @@ const CourseForm = () => {
       validateOnChange
       initialValues={DEFAULT_INITIAL_VALUES}
       validationSchema={FORM_SCHEMA}
-      onSubmit={handleCreateCourseSubmit}
+      onSubmit={handleFormSubmission}
     >
       {({ isValid, dirty, isSubmitting, handleSubmit }) => (
         <Box component="form" m="20px" onSubmit={handleSubmit}>

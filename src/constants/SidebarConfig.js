@@ -100,7 +100,7 @@ export const SidebarConfig = [
       },
       {
         title: "Tuyển dụng",
-        to: "/recruitment",
+        to: "/recruitments",
         icon: <HowToRegOutlinedIcon />,
         roles: [UserRole.ADMIN, UserRole.USER],
       },

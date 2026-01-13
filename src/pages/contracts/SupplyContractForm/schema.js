@@ -1,6 +1,4 @@
-// schema.js
 import * as Yup from "yup";
-import Regex from "@/constants/Regex";
 import {
   requiredString,
   optionalString,
@@ -8,18 +6,16 @@ import {
   requiredFile,
   dateBefore,
   dateAfter,
+  requiredVnPhoneNumber,
 } from "@/utils/yupHelpers";
 
-export const SCHEMA = Yup.object({
+export const FORM_SCHEMA = Yup.object({
   title: requiredString("Tiêu đề không được để trống"),
 
   partyA: Yup.object({
     compName: requiredString("Tên công ty không được để trống"),
     compAddress: requiredString("Địa chỉ không được để trống"),
-    compPhoneNumber: requiredString("SĐT không được để trống").matches(
-      Regex.VN_PHONE,
-      "SĐT không hợp lệ",
-    ),
+    compPhoneNumber: requiredVnPhoneNumber(),
     representative: requiredString("Người đại diện không được để trống"),
     representativePos: requiredString("Chức vụ không được để trống"),
   }),
@@ -27,10 +23,7 @@ export const SCHEMA = Yup.object({
   partyB: Yup.object({
     compName: requiredString("Tên công ty không được để trống"),
     compAddress: requiredString("Địa chỉ không được để trống"),
-    compPhoneNumber: requiredString("SĐT không được để trống").matches(
-      Regex.VN_PHONE,
-      "SĐT không hợp lệ",
-    ),
+    compPhoneNumber: requiredVnPhoneNumber(),
     representative: requiredString("Người đại diện không được để trống"),
     representativePos: requiredString("Chức vụ không được để trống"),
   }),

@@ -1,17 +1,16 @@
 import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
+import { resolveComponent } from "@/utils/component";
 
 export default function InfoItem({
   label,
-  value = "-",
+  value,
   color,
   onClick,
   highlight = false,
   bold = false,
-  clickable = false,
-  icon: Icon,
+  icon,
   iconColor = "primary",
-  slotProps,
   ...props
 }) {
   const valueColor = color || (highlight ? "primary.main" : "text.primary");
@@ -19,19 +18,11 @@ export default function InfoItem({
 
   return (
     <Stack spacing={1.2} direction="row" alignItems="center" {...props}>
-      {Icon && typeof Icon === "function" ? (
-        <Icon color={iconColor} sx={{ mt: "2px" }} />
-      ) : (
-        Icon
-      )}
-      <Box
-        sx={{
-          cursor: clickable ? "pointer" : "default",
-          py: clickable ? 0.5 : 0,
-        }}
-        onClick={onClick}
-        {...props}
-      >
+      {icon &&
+        resolveComponent(icon, {
+          color: iconColor,
+        })}
+      <Box>
         {/* Label */}
         <Typography
           variant="body2"
@@ -53,7 +44,7 @@ export default function InfoItem({
             fontSize: highlight ? 16 : 14,
           }}
         >
-          {value}
+          {value || "-"}
         </Typography>
       </Box>
     </Stack>

@@ -1,17 +1,18 @@
 import {
   dateAfter,
   dateBefore,
+  optionalString,
+  requiredFile,
   requiredNumber,
   requiredString,
 } from "@/utils/yupHelpers";
 import * as Yup from "yup";
+
 export const FORM_SCHEMA = Yup.object().shape({
-  instructorName: Yup.string(),
+  instructorName: optionalString(),
   institute: requiredString("Tên đơn vị đào tạo không được để trống"),
-  instituteLogo: Yup.mixed().required(
-    "Logo đơn vị đào tạo không được để trống",
-  ),
-  courseWallpaper: Yup.mixed().required("Hình khóa học không được để trống"),
+  instituteLogo: requiredFile("Logo đơn vị đào tạo không được để trống"),
+  courseWallpaper: requiredFile("Hình khóa học không được để trống"),
   courseName: requiredString("Tên khóa học không được để trống"),
   startDate: dateBefore(
     "endDate",

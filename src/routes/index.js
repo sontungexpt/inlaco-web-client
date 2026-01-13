@@ -28,7 +28,7 @@ export const AppRoutes = [
     children: [
       {
         index: true,
-        element: lazy(() => import("@pages/CrewInfos")),
+        element: lazy(() => import("@/pages/crews/CrewInfos")),
       },
       {
         path: "add/:candidateID",
@@ -100,7 +100,11 @@ export const AppRoutes = [
         element: lazy(() => import("@/pages/contracts/SupplyContract")),
       },
       {
-        path: "form",
+        path: "create/:requestId",
+        element: lazy(() => import("@/pages/contracts/SupplyContractForm")),
+      },
+      {
+        path: ":contractId/edit",
         element: lazy(() => import("@/pages/contracts/SupplyContractForm")),
       },
       {
@@ -175,9 +179,7 @@ export const AppRoutes = [
       },
       {
         path: "create",
-        element: lazy(
-          () => import("@pages/posts/recruitments/CreateRecruitment"),
-        ),
+        element: lazy(() => import("@/pages/posts/PostForm")),
       },
       {
         path: ":id",

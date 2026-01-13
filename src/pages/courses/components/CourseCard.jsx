@@ -8,7 +8,7 @@ import { CloudinaryImage } from "@/components/common";
 const CourseCard = ({
   name,
   courseImagePublicId,
-  courseImage,
+  courseImageUrl,
 
   trainingPartner,
   trainingPartnerLogo,
@@ -42,9 +42,8 @@ const CourseCard = ({
       <Box sx={{ position: "relative" }}>
         <CloudinaryImage
           publicId={courseImagePublicId}
-          component="img"
+          src={courseImageUrl}
           height={200}
-          image={courseImage}
           alt={name}
           style={{ objectFit: "cover" }}
         />
