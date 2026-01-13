@@ -9,12 +9,12 @@ export const useCourse = (id) => {
   });
 };
 
-export const useCourses = (
+export const useCourses = ({
   page,
   pageSize = 20,
   nonExpired = true,
   sort = null,
-) => {
+}) => {
   return useQuery({
     queryKey: ["courses", page, pageSize, nonExpired, sort],
     queryFn: () =>

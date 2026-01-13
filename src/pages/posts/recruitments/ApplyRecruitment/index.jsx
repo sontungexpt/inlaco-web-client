@@ -43,7 +43,7 @@ const ApplyRecruitment = () => {
       );
 
       resetForm();
-      navigate(`/recruitment/candidates/${candidate.id}`);
+      navigate(`/recruitments/candidates/${candidate.id}`);
     } catch (error) {
       toast.error("Ứng tuyển thất bại");
     }

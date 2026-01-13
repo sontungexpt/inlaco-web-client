@@ -11,6 +11,7 @@ export const usePost = (id) => {
     queryKey: ["post", id],
     queryFn: () => fetchUniquePost(id),
     enabled: !!id,
+    retry: 1,
   });
 };
 

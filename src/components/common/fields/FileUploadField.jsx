@@ -54,7 +54,7 @@ const FileUploadField = ({
   label,
   required,
   accept = ".doc,.docx,.pdf",
-  maxSize = 5 * 1024 * 1024,
+  maxFileSize = 5 * 1024 * 1024,
   multiple = false,
   disabled,
   error,
@@ -75,7 +75,7 @@ const FileUploadField = ({
       if (!isValidFileType(file, accept)) {
         err = `${file.name} không đúng định dạng. Chỉ chấp nhận ${accept}`;
         break;
-      } else if (file.size > maxSize) {
+      } else if (file.size > maxFileSize) {
         err = `${file.name} vượt quá dung lượng cho phép`;
         break;
       }

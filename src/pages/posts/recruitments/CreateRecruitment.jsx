@@ -30,7 +30,7 @@ const CreateRecruitment = () => {
   };
 
   const handleViewPost = (id) => {
-    navigate(`/recruitment/${id}`);
+    navigate(`/recruitments/${id}`);
   };
 
   const { mutateAsync: createRecruitmentAsync, isPending: isCreating } =

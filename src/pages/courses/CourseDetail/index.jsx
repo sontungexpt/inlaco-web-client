@@ -23,7 +23,13 @@ import {
 } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router";
 
-import { PageTitle, SectionWrapper, CloudinaryImage } from "@components/common";
+import {
+  PageTitle,
+  SectionWrapper,
+  CloudinaryImage,
+  InfoItem,
+  CenterCircularProgress,
+} from "@components/common";
 import Color from "@constants/Color";
 import { useCourse } from "@/hooks/services/course";
 import useAllowedRole from "@/hooks/useAllowedRole";
@@ -32,23 +38,6 @@ import { isoToLocaleString } from "@/utils/converter";
 
 /* ================= Utils ================= */
 const formatDate = (value) => (value ? isoToLocaleString(value) : "--");
-
-/* ================= Small UI Item ================= */
-const InfoItem = ({ icon, label, value }) => {
-  if (!value) return null;
-
-  return (
-    <Box display="flex" gap={2} alignItems="flex-start">
-      {icon}
-      <Box>
-        <Typography fontSize={12} color="text.secondary">
-          {label}
-        </Typography>
-        <Typography fontWeight={600}>{value}</Typography>
-      </Box>
-    </Box>
-  );
-};
 
 /* ================= Status Chip ================= */
 const StatusChip = ({ course }) => {
@@ -102,16 +91,7 @@ export default function CourseDetail() {
   };
 
   if (isLoading) {
-    return (
-      <Box
-        height="80vh"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <CenterCircularProgress />;
   }
 
   return (

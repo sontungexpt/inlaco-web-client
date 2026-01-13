@@ -8,7 +8,6 @@ import {
 import { Box, Toolbar } from "@mui/material";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined";
-import MoreVertRoundedIcon from "@mui/icons-material/MoreVertRounded";
 
 import { useNavigate } from "react-router";
 import { useCrewMembers } from "@/hooks/services/crew";
@@ -113,12 +112,7 @@ export default function CrewInfos() {
         sortable: false,
         getActions: ({ row: { id } }) =>
           [
-            <GridActionsCellItem
-              icon={<MoreVertRoundedIcon />}
-              label="Actions"
-              showInMenu
-            />,
-            !official && (
+            official && (
               <GridActionsCellItem
                 icon={<AssignmentIndOutlinedIcon fontSize="small" />}
                 label="Chi tiết hợp đồng"

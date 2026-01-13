@@ -1,0 +1,15 @@
+export const DEFAULT_INITIAL_VALUES = {
+  instructorName: "",
+  institute: "",
+  instituteLogo: null,
+  courseName: "",
+  courseWallpaper: null,
+  description: "",
+  startDate: "",
+  endDate: "",
+  startRegistrationAt: "",
+  endRegistrationAt: "",
+  isCertificatedCourse: "",
+  limitStudent: "",
+  archivedPosition: "",
+};

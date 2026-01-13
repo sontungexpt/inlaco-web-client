@@ -10,21 +10,17 @@ import {
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { fetchCourses } from "@/services/courseServices";
 import Color from "@constants/Color";
-import { useAuthContext } from "@/contexts/AuthContext";
 import UserRole from "@/constants/UserRole";
 import CourseCard from "./components/CourseCard";
+import { useCourses } from "@/hooks/services/course";
+import useAllowedRole from "@/hooks/useAllowedRole";
 
 const CrewCourse = () => {
   const navigate = useNavigate();
-
-  const { hasRole } = useAuthContext();
-  const isAdmin = hasRole(UserRole.ADMIN);
+  const isAdmin = useAllowedRole(UserRole.ADMIN);
 
   const [page, setPage] = useState(0);
-  const size = 12;
 
   const {
     data: {
@@ -34,11 +30,7 @@ const CrewCourse = () => {
     } = {},
     isLoading,
     isError,
-  } = useQuery({
-    queryKey: ["courses", page, size],
-    queryFn: () => fetchCourses({ page, size }),
-    staleTime: 1000 * 30,
-  });
+  } = useCourses({ page, pageSize: 12 });
 
   return (
     <Box m="20px">

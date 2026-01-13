@@ -19,7 +19,11 @@ export default function InfoItem({
 
   return (
     <Stack spacing={1.2} direction="row" alignItems="center" {...props}>
-      {Icon && <Icon color={iconColor} sx={{ mt: "2px" }} />}
+      {Icon && typeof Icon === "function" ? (
+        <Icon color={iconColor} sx={{ mt: "2px" }} />
+      ) : (
+        Icon
+      )}
       <Box
         sx={{
           cursor: clickable ? "pointer" : "default",

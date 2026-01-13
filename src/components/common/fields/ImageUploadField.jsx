@@ -56,7 +56,7 @@ const ImageUploadField = ({
   required,
   disabled,
   multiple = false,
-  maxSize = 5 * 1024 * 1024,
+  maxFileSize = 5 * 1024 * 1024,
   accept = "image/*",
   error,
   helperText,
@@ -105,8 +105,9 @@ const ImageUploadField = ({
       if (!isValidFileType(file, accept)) {
         err = invalidFormatText || `${file.name} không đúng định dạng`;
         break;
-      } else if (file.size > maxSize) {
-        err = invalidSizeText || `${file.name} vượt quá ${formatSize(maxSize)}`;
+      } else if (file.size > maxFileSize) {
+        err =
+          invalidSizeText || `${file.name} vượt quá ${formatSize(maxFileSize)}`;
         break;
       }
     }

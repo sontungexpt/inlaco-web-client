@@ -11,10 +11,9 @@ const NationalityTextField = ({
   value,
   maxRow,
   rows,
-  component = InfoTextField,
+  component: TextField = InfoTextField,
   ...props
 }) => {
-  const TextField = component;
   return (
     <TextField
       {...props}

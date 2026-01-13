@@ -151,18 +151,18 @@ export const AppRoutes = [
       {
         path: "create",
         roles: ["ADMIN"],
-        element: lazy(() => import("@/pages/posts/CreatePost")),
+        element: lazy(() => import("@/pages/posts/PostForm")),
       },
       {
-        path: "edit/:id",
+        path: "edit/:id", // edit post
         roles: ["ADMIN"],
-        element: lazy(() => import("@/pages/posts/UpdatePost")),
+        element: lazy(() => import("@/pages/posts/PostForm")),
       },
     ],
   },
 
   {
-    path: "/recruitment",
+    path: "/recruitments",
     roles: ({ hasRole }) =>
       hasRole(UserRole.ADMIN) ||
       (hasRole(UserRole.USER) && !hasRole(UserRole.SAILOR)),
@@ -214,7 +214,7 @@ export const AppRoutes = [
       },
       {
         path: "create",
-        element: lazy(() => import("@pages/courses/CreateCourse")),
+        element: lazy(() => import("@pages/courses/CourseForm")),
       },
     ],
   },

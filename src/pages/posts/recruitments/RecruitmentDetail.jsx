@@ -11,10 +11,6 @@ import {
   Divider,
 } from "@mui/material";
 import Color from "@constants/Color";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
@@ -33,7 +29,11 @@ import { usePost } from "@/hooks/services/post";
 import { useMutation } from "@tanstack/react-query";
 import { changeRegistrationRecruitmentPostStatus } from "@/services/postServices";
 import { isoToLocaleString } from "@/utils/converter";
-import { CenterCircularProgress, InfoItem } from "@/components/common";
+import {
+  CenterCircularProgress,
+  InfoItem,
+  MarkdownPreview,
+} from "@/components/common";
 
 const RecruitmentDetail = () => {
   const navigate = useNavigate();
@@ -134,88 +134,18 @@ const RecruitmentDetail = () => {
       {/* ======================= BODY ======================= */}
       <Grid container spacing={3}>
         {/* LEFT: JOB DESCRIPTION */}
-        <Grid item size={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card sx={{ p: 3, borderRadius: 3 }}>
             <Typography variant="h5" fontWeight={700} mb={2}>
               Mô tả công việc
             </Typography>
 
-            {/* ===== ARTICLE ===== */}
-            <Box
-              sx={{
-                "& h1": {
-                  fontSize: 28,
-                  fontWeight: 700,
-                  mt: 5,
-                  mb: 2,
-                },
-                "& h2": {
-                  fontSize: 24,
-                  fontWeight: 700,
-                  mt: 5,
-                  mb: 2,
-                },
-                "& h3": {
-                  fontSize: 20,
-                  fontWeight: 700,
-                  mt: 4,
-                  mb: 1.5,
-                },
-                "& p": {
-                  fontSize: 16,
-                  lineHeight: 1.9,
-                  mb: 2,
-                },
-                "& ul": {
-                  pl: 3,
-                  mb: 2,
-                },
-                "& li": {
-                  mb: 1,
-                },
-                "& blockquote": {
-                  borderLeft: "4px solid #ddd",
-                  pl: 2,
-                  color: "text.secondary",
-                  fontStyle: "italic",
-                  my: 3,
-                },
-                "& img": {
-                  maxWidth: "100%",
-                  borderRadius: 2,
-                  my: 3,
-                },
-                "& code": {
-                  background: "#f2f2f2",
-                  padding: "2px 6px",
-                  borderRadius: 1,
-                  fontSize: 14,
-                },
-              }}
-            >
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  code({ inline, className, children }) {
-                    const match = /language-(\w+)/.exec(className || "");
-                    return !inline && match ? (
-                      <SyntaxHighlighter style={oneDark} language={match[1]}>
-                        {String(children)}
-                      </SyntaxHighlighter>
-                    ) : (
-                      <code>{children}</code>
-                    );
-                  },
-                }}
-              >
-                {post.content}
-              </ReactMarkdown>
-            </Box>
+            <MarkdownPreview>{post.content}</MarkdownPreview>
           </Card>
         </Grid>
 
         {/* RIGHT: SUMMARY BOX / SIDEBAR */}
-        <Grid size={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card sx={{ p: 3, borderRadius: 3, spacing: 2 }}>
             <Typography mb={2} variant="h6" fontWeight={700}>
               Thông tin chung
