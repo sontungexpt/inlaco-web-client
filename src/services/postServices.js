@@ -93,13 +93,18 @@ export const applyRecruitment = async (postID, data, resumePublicId) => {
   return response.data;
 };
 
-export const changeRegistrationRecruitmentPostStatus = async (id, active) => {
+export const changeRegistrationRecruitmentPostStatus = async (
+  id,
+  active,
+  reopenUntil,
+) => {
   const response = await privateRequest.post(
     PostEndpoint.CHANGE_REGISTRATION_RECRUIMENT_POST_STATUS(id),
     null,
     {
       params: {
         active,
+        reopenUntil,
       },
     },
   );

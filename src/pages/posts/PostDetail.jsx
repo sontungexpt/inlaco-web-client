@@ -1,172 +1,160 @@
 import React from "react";
 import {
   Box,
-  Stack,
+  Paper,
+  Typography,
   Button,
   Chip,
-  Grid,
-  Typography,
-  Paper,
+  Stack,
+  Divider,
 } from "@mui/material";
-import { InfoTextField, SectionDivider } from "@/components/common";
-
 import { useNavigate, useParams } from "react-router";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 import { usePost } from "@/hooks/services/post";
 import CenterCircularProgress from "@/components/common/CenterCircularProgress";
+import Color from "@/constants/Color";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export default function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const { data: post, isLoading } = usePost(id);
-  const isRecruitment = post.type === "RECRUITMENT";
 
   if (isLoading) return <CenterCircularProgress />;
-  if (!post) return <Typography>Không tìm thấy bài đăng.</Typography>;
+  if (!post) return <Typography>Not found</Typography>;
 
   return (
-    <Box m="20px">
-      <Stack direction="row" justifyContent="space-between" mb={3}>
-        <Typography variant="h4" fontWeight={700}>
-          Chi tiết bài đăng
-        </Typography>
+    <Paper
+      sx={{
+        borderRadius: 4,
+        m: 3,
+        px: { xs: 3, sm: 6 },
+        py: { xs: 4, sm: 6 },
+      }}
+    >
+      {/* ===== Top Actions ===== */}
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={4}
+      >
+        <Button
+          startIcon={<ArrowBackIcon />}
+          variant="text"
+          onClick={() => navigate(-1)}
+        >
+          Quay lại
+        </Button>
+
         <Button
           variant="contained"
-          size="large"
-          onClick={() => navigate(`/posts/${id}/edit`)}
+          size="small"
+          onClick={() => navigate(`/posts/edit/${id}`)}
         >
-          Sửa bài đăng
+          Chỉnh sửa
         </Button>
       </Stack>
 
-      <Paper sx={{ p: 3, borderRadius: 3 }}>
-        {/* ===== Thông tin chung ===== */}
-        <SectionDivider sectionName="Thông tin bài đăng" sx={{ mb: 3 }} />
-
-        <Grid container spacing={3}>
-          <Grid item xs={4}>
-            <InfoTextField
-              label="Loại bài viết"
-              value={post.type}
-              fullWidth
-              disabled
-            />
-          </Grid>
-
-          <Grid item xs={4}>
-            <InfoTextField
-              label="Tiêu đề"
-              value={post.title}
-              fullWidth
-              disabled
-            />
-          </Grid>
-
-          <Grid item xs={4}>
-            <InfoTextField
-              label="Công ty"
-              value={post.company || ""}
-              fullWidth
-              disabled
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <InfoTextField
-              label="Mô tả"
-              value={post.description || ""}
-              fullWidth
-              disabled
-              multiline
-              minRows={2}
-            />
-          </Grid>
-        </Grid>
-
-        {/* ===== RECRUITMENT ONLY ===== */}
-        {isRecruitment && (
-          <>
-            <SectionDivider
-              sectionName="Thông tin tuyển dụng"
-              sx={{ mt: 4, mb: 3 }}
-            />
-
-            <Grid container spacing={3}>
-              <Grid item xs={4}>
-                <InfoTextField
-                  label="Vị trí"
-                  value={post.position}
-                  fullWidth
-                  disabled
-                />
-              </Grid>
-
-              <Grid item xs={4}>
-                <InfoTextField
-                  label="Địa điểm làm việc"
-                  value={post.workLocation}
-                  fullWidth
-                  disabled
-                />
-              </Grid>
-
-              <Grid item xs={4}>
-                <InfoTextField
-                  label="Mức lương dự kiến"
-                  value={post.expectedSalary}
-                  fullWidth
-                  disabled
-                />
-              </Grid>
-
-              <Grid item xs={4}>
-                <InfoTextField
-                  label="Ngày bắt đầu"
-                  value={post.recruitmentStartDate}
-                  fullWidth
-                  disabled
-                />
-              </Grid>
-
-              <Grid item xs={4}>
-                <InfoTextField
-                  label="Ngày kết thúc"
-                  value={post.recruitmentEndDate}
-                  fullWidth
-                  disabled
-                />
-              </Grid>
-            </Grid>
-          </>
+      {/* ===== Meta ===== */}
+      <Stack direction="row" spacing={2} mb={2}>
+        <Chip label={post.type} size="small" />
+        {post.company && (
+          <Typography variant="body2" color="text.secondary">
+            {post.company}
+          </Typography>
         )}
+      </Stack>
 
-        {/* ===== Attachments ===== */}
-        <SectionDivider sectionName="Tệp đính kèm" sx={{ mt: 4, mb: 3 }} />
-        <Stack direction="row" spacing={2} flexWrap="wrap">
-          {post.attachments?.length ? (
-            post.attachments.map((file, i) => (
-              <Chip key={i} label={file.name} variant="outlined" />
-            ))
-          ) : (
-            <Typography>Không có tệp đính kèm</Typography>
-          )}
-        </Stack>
+      {/* ===== Title ===== */}
+      <Typography
+        component="h1"
+        sx={{
+          fontSize: { xs: 28, sm: 36 },
+          fontWeight: 800,
+          lineHeight: 1.25,
+          mb: 2,
+        }}
+      >
+        {post.title}
+      </Typography>
 
-        {/* ===== Content ===== */}
-        <SectionDivider sectionName="Nội dung bài viết" sx={{ mt: 4, mb: 2 }} />
-        <Paper
-          variant="outlined"
+      {/* ===== Description ===== */}
+      {post.description && (
+        <Typography
           sx={{
-            p: 2,
-            borderRadius: 2,
-            background: "#fafafa",
-            whiteSpace: "pre-line",
-            lineHeight: 1.6,
+            fontSize: 18,
+            lineHeight: 1.7,
+            color: "text.secondary",
+            mb: 4,
           }}
         >
-          <Typography>{post.content}</Typography>
-        </Paper>
-      </Paper>
-    </Box>
+          {post.description}
+        </Typography>
+      )}
+
+      {/* ===== Divider ===== */}
+      <Divider color={Color.PrimaryBlackPlaceHolder} />
+
+      {/* ===== Markdown Content ===== */}
+      <Box
+        sx={{
+          "& h1": {
+            fontSize: 28,
+            fontWeight: 700,
+            mt: 5,
+            mb: 2,
+          },
+          "& h2": {
+            fontSize: 24,
+            fontWeight: 700,
+            mt: 5,
+            mb: 2,
+          },
+          "& h3": {
+            fontSize: 20,
+            fontWeight: 700,
+            mt: 4,
+            mb: 1.5,
+          },
+          "& p": {
+            fontSize: 16,
+            lineHeight: 1.9,
+            mb: 2,
+          },
+          "& ul": {
+            pl: 3,
+            mb: 2,
+          },
+          "& li": {
+            mb: 1,
+          },
+          "& blockquote": {
+            borderLeft: "4px solid #ddd",
+            pl: 2,
+            color: "text.secondary",
+            fontStyle: "italic",
+            my: 3,
+          },
+          "& img": {
+            maxWidth: "100%",
+            borderRadius: 2,
+            my: 3,
+          },
+          "& code": {
+            background: "#f2f2f2",
+            padding: "2px 6px",
+            borderRadius: 1,
+            fontSize: 14,
+          },
+        }}
+      >
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {post.content}
+        </ReactMarkdown>
+      </Box>
+    </Paper>
   );
 }

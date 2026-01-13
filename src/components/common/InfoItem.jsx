@@ -1,46 +1,57 @@
-import React, {} from "react";
-import { Box, Typography } from "@mui/material";
+import React from "react";
+import { Box, Stack, Typography } from "@mui/material";
 
 export default function InfoItem({
   label,
-  value,
+  value = "-",
   color,
   onClick,
   highlight = false,
   bold = false,
   clickable = false,
+  icon: Icon,
+  iconColor = "primary",
+  slotProps,
+  ...props
 }) {
-  return (
-    <Box
-      sx={{
-        cursor: clickable ? "pointer" : "default",
-        py: clickable ? 0.5 : 0,
-      }}
-      onClick={onClick}
-    >
-      {/* Label */}
-      <Typography
-        variant="body2"
-        sx={{
-          color: "text.secondary",
-          mb: 0.5,
-          fontSize: 13,
-        }}
-      >
-        {label}
-      </Typography>
+  const valueColor = color || (highlight ? "primary.main" : "text.primary");
+  const fontWeight = bold || highlight ? 600 : 500;
 
-      {/* Value */}
-      <Typography
-        variant="body1"
+  return (
+    <Stack spacing={1.2} direction="row" alignItems="center" {...props}>
+      {Icon && <Icon color={iconColor} sx={{ mt: "2px" }} />}
+      <Box
         sx={{
-          fontWeight: bold || highlight ? 600 : 500,
-          color: color || (highlight ? "primary.main" : "text.primary"),
-          fontSize: highlight ? 16 : 14,
+          cursor: clickable ? "pointer" : "default",
+          py: clickable ? 0.5 : 0,
         }}
+        onClick={onClick}
+        {...props}
       >
-        {value || "-"}
-      </Typography>
-    </Box>
+        {/* Label */}
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.secondary",
+            mb: 0.5,
+            fontSize: 13,
+          }}
+        >
+          {label}
+        </Typography>
+
+        {/* Value */}
+        <Typography
+          variant="body1"
+          sx={{
+            fontWeight,
+            color: valueColor,
+            fontSize: highlight ? 16 : 14,
+          }}
+        >
+          {value}
+        </Typography>
+      </Box>
+    </Stack>
   );
 }

@@ -3,6 +3,7 @@ import {
   Box,
   Card,
   Grid,
+  Stack,
   Chip,
   Typography,
   Button,
@@ -10,55 +11,52 @@ import {
   Divider,
 } from "@mui/material";
 import Color from "@constants/Color";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+
+import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
+import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
+import EventAvailableOutlinedIcon from "@mui/icons-material/EventAvailableOutlined";
+import EventBusyOutlinedIcon from "@mui/icons-material/EventBusyOutlined";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import EventBusyRoundedIcon from "@mui/icons-material/EventBusyRounded";
+import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
+
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { usePost } from "@/hooks/services/post";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { changeRegistrationRecruitmentPostStatus } from "@/services/postServices";
 import { isoToLocaleString } from "@/utils/converter";
-import { CenterCircularProgress } from "@/components/common";
+import { CenterCircularProgress, InfoItem } from "@/components/common";
 
 const RecruitmentDetail = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { id } = useParams();
 
   const { roles } = useAuthContext();
   const isAdmin = roles.includes("ADMIN");
 
-  const { data: post, isLoading } = usePost(id);
+  const { data: post, isLoading, refetch: refetchPost } = usePost(id);
   const active = Boolean(post?.active);
 
   const {
-    mutateAsync: changeRegistrationStatus,
-    isPending: isTogglingOpenStatus,
+    mutate: toggleRegistrationStatus,
+    isPending: isTogglingRegistrationStatus,
   } = useMutation({
-    throwOnError: false,
-    mutationFn: (active) => changeRegistrationRecruitmentPostStatus(id, active),
+    mutationFn: () => changeRegistrationRecruitmentPostStatus(id, !active),
     onSuccess: () => {
-      queryClient.setQueryData(["post", id], (oldValue) => {
-        return {
-          ...oldValue,
-          active: !active,
-        };
-      });
+      refetchPost();
+    },
+    onError: () => {
+      toast.error("Thay đổi trạng thái thất bại!");
     },
   });
-
-  const toggleRecruitmentClosingStatus = async () => {
-    try {
-      await changeRegistrationStatus(active);
-    } catch (err) {
-      toast.error("Thay đổi trạng thái thất bại!");
-    }
-  };
-
-  const handleUserApplicationClick = () => {
-    navigate(`/recruitment/apply/${id}`);
-  };
 
   if (isLoading) {
     return <CenterCircularProgress />;
@@ -86,7 +84,7 @@ const RecruitmentDetail = () => {
         </Typography>
 
         <Typography variant="body1" color="text.secondary">
-          📍 {post.workLocation}
+          {post.workLocation}
         </Typography>
 
         {/* ======= DÒNG CHIP + BUTTON ======= */}
@@ -107,8 +105,17 @@ const RecruitmentDetail = () => {
           {isAdmin && (
             <Button
               variant="contained"
-              disabled={isTogglingOpenStatus}
-              onClick={toggleRecruitmentClosingStatus}
+              disabled={isTogglingRegistrationStatus}
+              onClick={toggleRegistrationStatus}
+              startIcon={
+                isTogglingRegistrationStatus ? (
+                  <CircularProgress size={22} />
+                ) : !active ? (
+                  <CheckCircleRoundedIcon />
+                ) : (
+                  <EventBusyRoundedIcon />
+                )
+              }
               sx={{
                 py: 1.1,
                 borderRadius: 2,
@@ -118,18 +125,7 @@ const RecruitmentDetail = () => {
                 minWidth: 180,
               }}
             >
-              {isTogglingOpenStatus ? (
-                <CircularProgress size={22} />
-              ) : (
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  {!active ? (
-                    <CheckCircleRoundedIcon sx={{ mr: 1 }} />
-                  ) : (
-                    <EventBusyRoundedIcon sx={{ mr: 1 }} />
-                  )}
-                  {active ? "Đóng tuyển dụng" : "Mở tuyển dụng"}
-                </Box>
-              )}
+              {active ? "Đóng tuyển dụng" : "Mở tuyển dụng"}
             </Button>
           )}
         </Box>
@@ -144,55 +140,119 @@ const RecruitmentDetail = () => {
               Mô tả công việc
             </Typography>
 
-            <Typography sx={{ whiteSpace: "pre-line" }}>
-              {post.content}
-            </Typography>
+            {/* ===== ARTICLE ===== */}
+            <Box
+              sx={{
+                "& h1": {
+                  fontSize: 28,
+                  fontWeight: 700,
+                  mt: 5,
+                  mb: 2,
+                },
+                "& h2": {
+                  fontSize: 24,
+                  fontWeight: 700,
+                  mt: 5,
+                  mb: 2,
+                },
+                "& h3": {
+                  fontSize: 20,
+                  fontWeight: 700,
+                  mt: 4,
+                  mb: 1.5,
+                },
+                "& p": {
+                  fontSize: 16,
+                  lineHeight: 1.9,
+                  mb: 2,
+                },
+                "& ul": {
+                  pl: 3,
+                  mb: 2,
+                },
+                "& li": {
+                  mb: 1,
+                },
+                "& blockquote": {
+                  borderLeft: "4px solid #ddd",
+                  pl: 2,
+                  color: "text.secondary",
+                  fontStyle: "italic",
+                  my: 3,
+                },
+                "& img": {
+                  maxWidth: "100%",
+                  borderRadius: 2,
+                  my: 3,
+                },
+                "& code": {
+                  background: "#f2f2f2",
+                  padding: "2px 6px",
+                  borderRadius: 1,
+                  fontSize: 14,
+                },
+              }}
+            >
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  code({ inline, className, children }) {
+                    const match = /language-(\w+)/.exec(className || "");
+                    return !inline && match ? (
+                      <SyntaxHighlighter style={oneDark} language={match[1]}>
+                        {String(children)}
+                      </SyntaxHighlighter>
+                    ) : (
+                      <code>{children}</code>
+                    );
+                  },
+                }}
+              >
+                {post.content}
+              </ReactMarkdown>
+            </Box>
           </Card>
         </Grid>
 
         {/* RIGHT: SUMMARY BOX / SIDEBAR */}
-        <Grid item size={4}>
-          <Card sx={{ p: 3, borderRadius: 3 }}>
-            {/* THÔNG TIN CHUNG */}
-            <Typography variant="h6" fontWeight={700}>
+        <Grid size={4}>
+          <Card sx={{ p: 3, borderRadius: 3, spacing: 2 }}>
+            <Typography mb={2} variant="h6" fontWeight={700}>
               Thông tin chung
             </Typography>
 
-            <Box my={1}>
-              <Typography fontWeight={600} color="text.secondary">
-                📝 Vị trí đang tuyển dụng
-              </Typography>
-              <Typography>{post?.position}</Typography>
-            </Box>
+            <Stack spacing={2}>
+              <InfoItem
+                icon={WorkOutlineIcon}
+                label="Vị trí đang tuyển dụng"
+                value={post?.position}
+                bold
+              />
 
-            <Box my={1}>
-              <Typography fontWeight={600} color="text.secondary">
-                💰 Mức lương
-              </Typography>
-              <Typography>{post?.expectedSalary} vnđ</Typography>
-            </Box>
+              <InfoItem
+                icon={PaidOutlinedIcon}
+                label="Mức lương"
+                value={`${post?.expectedSalary} vnđ`}
+                bold
+              />
 
-            <Box my={1}>
-              <Typography fontWeight={600} color="text.secondary">
-                📅 Ngày mở
-              </Typography>
-              <Typography>
-                {isoToLocaleString(post.recruitmentStartDate)}
-              </Typography>
-            </Box>
+              <InfoItem
+                icon={EventAvailableOutlinedIcon}
+                label="Ngày mở"
+                value={isoToLocaleString(post?.recruitmentStartDate)}
+                bold
+              />
 
-            <Box my={1}>
-              <Typography fontWeight={600} color="text.secondary">
-                📅 Ngày đóng
-              </Typography>
-              <Typography>
-                {isoToLocaleString(post.recruitmentEndDate)}
-              </Typography>
-            </Box>
+              <InfoItem
+                icon={EventBusyOutlinedIcon}
+                label="Ngày đóng"
+                value={isoToLocaleString(post?.recruitmentEndDate)}
+                bold
+              />
+            </Stack>
 
             <Divider sx={{ my: 2 }} />
 
-            {/* Skills */}
             <Typography variant="subtitle1" fontWeight={700}>
               Kỹ năng yêu cầu
             </Typography>
@@ -204,32 +264,32 @@ const RecruitmentDetail = () => {
 
             <Divider sx={{ my: 2 }} />
 
-            {/* THÔNG TIN LIÊN HỆ */}
             <Typography variant="subtitle1" fontWeight={700}>
               Thông tin liên hệ
             </Typography>
-            <Box mt={1}>
-              <Typography fontWeight={600} color="text.secondary">
-                👤 Tên công ty
-              </Typography>
-              <Typography>{post.company || "—"}</Typography>
+            <Stack mt={2} spacing={2}>
+              <InfoItem
+                icon={BusinessOutlinedIcon}
+                label="Tên công ty"
+                value={post.company}
+              />
 
-              <Typography fontWeight={600} mt={1} color="text.secondary">
-                📧 Email
-              </Typography>
-              <Typography>{post.contactEmail || "—"}</Typography>
+              <InfoItem
+                icon={EmailOutlinedIcon}
+                label="Email"
+                value={post.contactEmail}
+              />
 
-              <Typography mt={1} color="text.secondary">
-                📞 Số điện thoại
-              </Typography>
-              <Typography fontWeight={600}>
-                {post.contactPhone || "—"}
-              </Typography>
-            </Box>
+              <InfoItem
+                icon={PhoneOutlinedIcon}
+                label="Số điện thoại"
+                value={post.contactPhone}
+                bold
+              />
+            </Stack>
 
             {/* ===== BUTTONS ===== */}
-            <Box mt={3} display="flex" flexDirection="column" gap={1.5}>
-              {/* USER BUTTON */}
+            <Stack mt={3} spacing={1.5}>
               {!isAdmin && (
                 <Button
                   fullWidth
@@ -237,7 +297,7 @@ const RecruitmentDetail = () => {
                   variant="contained"
                   color="primary"
                   sx={{ py: 1.2, borderRadius: 2 }}
-                  onClick={handleUserApplicationClick}
+                  onClick={() => navigate(`/recruitment/apply/${id}`)}
                 >
                   Ứng tuyển ngay
                 </Button>
@@ -253,7 +313,7 @@ const RecruitmentDetail = () => {
                       py: 1.2,
                       borderRadius: 2,
                       backgroundColor: Color.PrimaryBlue,
-                      "&:hover": { backgroundColor: Color.PrimaryBlueDark },
+                      "&:hover": { backgroundColor: Color.PrimaryHoverBlue },
                     }}
                     onClick={() =>
                       navigate("/recruitment", {
@@ -280,7 +340,7 @@ const RecruitmentDetail = () => {
                   </Button>
                 </>
               )}
-            </Box>
+            </Stack>
           </Card>
         </Grid>
       </Grid>

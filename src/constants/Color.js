@@ -4,7 +4,7 @@ const Color = {
    * BRAND
    * =============================== */
   PrimaryBlue: "#195CAC",
-  PrimaryHoverBlue: "#3374C5",
+  PrimaryHoverBlue: "#2b74c5",
   SecondaryBlue: "#4D85D8",
   TertiaryBlue: "#133E80",
 
