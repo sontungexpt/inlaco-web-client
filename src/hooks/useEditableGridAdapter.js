@@ -7,8 +7,7 @@ export const useEditableGridAdapter = (initialRows = [], validationSchema) => {
   const [rowErrors, setRowErrors] = useState({});
 
   const validateRows = useCallback(
-    async ({ reason, rows }) => {
-      if (reason !== "update") return true;
+    async (rows) => {
       if (!validationSchema) return true;
 
       const errors = {};
