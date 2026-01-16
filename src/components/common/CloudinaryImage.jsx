@@ -4,7 +4,6 @@ import AppProperty from "@/constants/AppProperty";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { fill } from "@cloudinary/url-gen/actions/resize";
-import NoImage from "@assets/images/no-ship-photo.png";
 
 const cld = new Cloudinary({
   cloud: {
@@ -12,12 +11,16 @@ const cld = new Cloudinary({
   },
 });
 
+const NO_AVATAR_URL =
+  "https://www.kindpng.com/picc/m/22-223863_no-avatar-png-circle-transparent-png.png";
+
 const CloudinaryImage = ({
   publicId,
   src,
   width,
   height,
-  fallback = NoImage,
+  fallback,
+  avatar,
   sx = {},
   imgSx = {},
   alt = "",
@@ -63,7 +66,11 @@ const CloudinaryImage = ({
       <Box
         {...props}
         component="img"
-        src={fallback}
+        src={
+          fallback ||
+          (avatar ? NO_AVATAR_URL : require("@assets/images/no-ship-photo.png"))
+        }
+        loading="lazy"
         alt="fallback"
         sx={sharedStyle}
       />
