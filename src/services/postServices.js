@@ -3,7 +3,7 @@ import { privateRequest, publicRequest } from "@utils/request";
 
 export const fetchPosts = async ({
   page = 0,
-  size = 20,
+  pageSize = 20,
   type = "NEWS",
   sort = null,
 }) => {
@@ -11,7 +11,7 @@ export const fetchPosts = async ({
     params: {
       page,
       type,
-      size,
+      size: pageSize,
       sort,
     },
   });

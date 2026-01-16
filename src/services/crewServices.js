@@ -1,5 +1,5 @@
 import privateRequest from "../utils/privateRequest";
-import CrewEndpoint from "../endpoints/crewEndpoints";
+import CrewEndpoint from "../endpoints/CrewEndpoint";
 import { dateStringToISOString } from "../utils/converter";
 import { flattenFilter } from "@/utils/filter";
 

@@ -15,10 +15,10 @@ export const usePost = (id) => {
   });
 };
 
-export const usePosts = (page, size = 20, type = "NEWS", sort = null) => {
+export const usePosts = (page, pageSize = 20, type = "NEWS", sort = null) => {
   return useQuery({
-    queryKey: ["posts", page, size, type, sort],
-    queryFn: () => fetchPosts({ page, size, type, sort }),
+    queryKey: ["posts", page, pageSize, type, sort],
+    queryFn: () => fetchPosts({ page, pageSize, type, sort }),
     staleTime: 1000 * 60 * 5, // cache 5 phút
   });
 };
@@ -36,7 +36,7 @@ export const useCandidates = ({
 }) => {
   return useQuery({
     queryKey: ["candidates", status, recruitmentPostId, page, pageSize, sort],
-    queryFn: async () =>
+    queryFn: () =>
       fetchCandidates({
         page,
         pageSize,
@@ -54,7 +54,7 @@ export const useCandidate = (candidateId) => {
     queryKey: ["candidate-profile", candidateId],
     enabled: !!candidateId,
     queryFn: () => fetchUniqueCandidate(candidateId),
-    staleTime: 1000 * 60 * 2, // 2 phút cache (tùy chỉnh)
-    retry: 1, // thử lại 1 lần nếu fail
+    staleTime: 1000 * 60 * 2,
+    retry: 1,
   });
 };

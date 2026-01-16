@@ -8,7 +8,7 @@ import {
   login as loginAPI,
   logout as logoutAPI,
 } from "@/services/authServices";
-import { USE_PROFILE_KEY, useProfile } from "@/hooks/services/user";
+import { useProfile } from "@/hooks/services/user";
 import { PageCircularProgress } from "@/components/common";
 
 export const AuthContext = createContext(null);
@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }) => {
   const {
     data: user,
     isLoading,
+    refetch: refetchUserProfile,
     // isError,
   } = useProfile({
     enabled: !!token,
@@ -52,16 +53,18 @@ export const AuthProvider = ({ children }) => {
         storage.setItem(StorageKey.ACCESS_TOKEN, accessToken);
         storage.setItem(StorageKey.REFRESH_TOKEN, refreshToken);
 
-        await queryClient.invalidateQueries({
-          queryKey: USE_PROFILE_KEY,
-        });
+        await refetchUserProfile();
+
+        // await queryClient.invalidateQueries({
+        //   queryKey: USE_PROFILE_KEY,
+        // });
 
         return response;
       } catch (error) {
         return error.response;
       }
     },
-    [queryClient],
+    [refetchUserProfile],
   );
 
   // ===== LOGOUT =====
@@ -72,7 +75,8 @@ export const AuthProvider = ({ children }) => {
       if (refreshToken) {
         await logoutAPI(refreshToken);
       }
-    } catch (_) {
+    } catch (e) {
+      console.debug("Logout failed", e);
       // ignore
     }
 
@@ -114,6 +118,7 @@ export const AuthProvider = ({ children }) => {
     }),
     [isLoading, isAuthenticated, user, login, logout, hasRole, hasRoles],
   );
+
   if (isLoading) return <PageCircularProgress />;
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
