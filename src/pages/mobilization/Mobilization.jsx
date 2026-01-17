@@ -5,7 +5,7 @@ import { ShipInfoCell } from "@/components/mobilization";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { useLocation, useNavigate } from "react-router";
 import Color from "@constants/Color";
-import { isoToLocaleString } from "@/utils/converter";
+import { dateToLocaleString } from "@/utils/converter";
 import { useMobilizations } from "@/hooks/services/mobilization";
 
 const Mobilization = ({ pageSize = 10 }) => {
@@ -62,10 +62,10 @@ const Mobilization = ({ pageSize = 10 }) => {
             Thời gian thuê
           </Typography>
           <Typography ml={2} variant="body2" color="text.secondary" noWrap>
-            Bắt đầu: {isoToLocaleString(startDate)}
+            Bắt đầu: {dateToLocaleString(startDate)}
           </Typography>
           <Typography ml={2} variant="body2" color="text.secondary" noWrap>
-            Kết thúc: {isoToLocaleString(estimatedEndDate)}
+            Kết thúc: {dateToLocaleString(estimatedEndDate)}
           </Typography>
         </Stack>
       ),

@@ -13,7 +13,7 @@ import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 
 import UserRole from "@/constants/UserRole";
 
-export const ActionMap = {
+export const Action = {
   LOGOUT: "LOGOUT",
 };
 
@@ -37,7 +37,7 @@ export const SidebarConfig = [
     items: [
       {
         title: "Hồ sơ cá nhân",
-        to: "/crews/my-profile",
+        to: "/crews/me/profile",
         icon: <AccountBoxRoundedIcon />,
         roles: [UserRole.SAILOR],
       },
@@ -127,7 +127,7 @@ export const SidebarConfig = [
         title: "Đăng xuất",
         icon: <LogoutRoundedIcon />,
         to: "/login",
-        preNavigate: ActionMap.LOGOUT,
+        preNavigate: Action.LOGOUT,
         roles: [UserRole.USER],
       },
     ],

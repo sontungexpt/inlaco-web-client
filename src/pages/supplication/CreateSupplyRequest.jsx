@@ -29,7 +29,7 @@ import { datetimeToISO } from "@/utils/converter";
 const SupplyRequestForm = () => {
   const navigate = useNavigate();
 
-  const handleCreateRequestSubmit = async (values, { resetForm }) => {
+  const handleFormSubmission = async (values, { resetForm }) => {
     try {
       const [detailFileUploadRes, shipImageUploadRes] = await Promise.all([
         cloudinaryUpload(
@@ -132,7 +132,7 @@ const SupplyRequestForm = () => {
       validateOnChange={false}
       initialValues={initialValues}
       validationSchema={SUPPLY_REQUEST_SCHEMA}
-      onSubmit={handleCreateRequestSubmit}
+      onSubmit={handleFormSubmission}
     >
       {({
         values,

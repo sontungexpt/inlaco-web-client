@@ -11,7 +11,7 @@ import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined
 
 import { useNavigate } from "react-router";
 import { useCrewMembers } from "@/hooks/services/crew";
-import { isoToLocaleString } from "@/utils/converter";
+import { dateToLocaleString } from "@/utils/converter";
 
 import Color from "@constants/Color";
 import CandidateStatus from "@/constants/CandidateStatus";
@@ -90,7 +90,7 @@ export default function CrewInfos() {
         flex: 1,
         headerName: "Ngày sinh",
         align: "center",
-        renderCell: ({ value }) => isoToLocaleString(value, "date"),
+        renderCell: ({ value }) => dateToLocaleString(value, "date"),
       },
       {
         flex: 2.5,

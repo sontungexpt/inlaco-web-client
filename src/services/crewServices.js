@@ -31,26 +31,14 @@ export const searchCrewMembers = async ({
   return response.data;
 };
 
-export const getCrewMemberByID_API = async (crewMemberID) => {
-  try {
-    const response = await privateRequest.get(
-      `${CrewEndpoint.GENERAL}/${crewMemberID}`,
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
+export const fetchMyCrewProfile = async () => {
+  const response = await privateRequest.get(CrewEndpoint.CURRENT_PROFILE);
+  return response.data;
 };
 
-export const getProfileCurrentCrewMemberAPI = async () => {
-  try {
-    const response = await privateRequest.get(
-      `${CrewEndpoint.CURRENT_PROFILE}`,
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
+export const fetchSpecificCrewProfile = async (profileId) => {
+  const response = await privateRequest.get(CrewEndpoint.GET_BY_ID(profileId));
+  return response.data;
 };
 
 export const editCrewMemberProfileAPI = async (

@@ -9,7 +9,7 @@ import useAllowedRole from "@/hooks/useAllowedRole";
 import { useSupplyRequests } from "@/hooks/services/supplyRequest";
 import { PageTitle, BaseDataGrid, DetailActionCell } from "@/components/common";
 
-const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
+export default function SupplyRequest({ PAGE_SIZE = 6 }) {
   const navigate = useNavigate();
   const isAdmin = useAllowedRole("ADMIN");
 
@@ -164,6 +164,4 @@ const SupplyRequest = ({ PAGE_SIZE = 6 }) => {
       />
     </Box>
   );
-};
-
-export default SupplyRequest;
+}

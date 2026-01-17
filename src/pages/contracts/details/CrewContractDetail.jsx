@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 import { useContract } from "@/hooks/services/contract";
 import { activeContract } from "@/services/contractServices";
-import { isoToLocaleString } from "@/utils/converter";
+import { dateToLocaleString } from "@/utils/converter";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";
 
@@ -105,10 +105,10 @@ const CrewContractDetail = () => {
           <Typography>
             Từ{" "}
             {contract.activationDate &&
-              isoToLocaleString(contract.activationDate, "date")}{" "}
+              dateToLocaleString(contract.activationDate, "date")}{" "}
             đến{" "}
             {contract.expiredDate &&
-              isoToLocaleString(contract.expiredDate, "date")}
+              dateToLocaleString(contract.expiredDate, "date")}
           </Typography>
 
           <Typography fontWeight={700} mt={2}>

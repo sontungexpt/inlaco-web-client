@@ -6,10 +6,11 @@ import { ShipInfoCell, ScheduleCell } from "../components/mobilization";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useNavigate } from "react-router";
 import { getMyMobilizationAPI } from "../services/mobilizationServices";
-import { getProfileCurrentCrewMemberAPI } from "../services/crewServices";
+import { fetchMyCrewProfile } from "../services/crewServices";
 import { formatDateTime } from "@utils/converter";
 import Color from "@constants/Color";
 import { HttpStatusCode } from "axios";
+import { BaseDataGrid, DetailActionCell } from "@/components/common";
 
 const CrewMyMobilization = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const CrewMyMobilization = () => {
     const getProfile = async () => {
       setLoading(true);
       try {
-        const response = await getProfileCurrentCrewMemberAPI();
+        const response = await fetchMyCrewProfile();
         await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
 
         if (response.status === HttpStatusCode.Ok) {
@@ -167,71 +168,29 @@ const CrewMyMobilization = () => {
       headerAlign: "center",
       renderCell: (params) => {
         return (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              height: "100%",
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() =>
-                onMobilizationDetailClick(
-                  params?.id,
-                  params?.row?.scheduleInfo?.position,
-                )
-              }
-              sx={{
-                backgroundColor: Color.PrimaryGreen,
-                color: Color.PrimaryBlack,
-                fontWeight: 700,
-                textTransform: "capitalize",
-              }}
-            >
-              <ArrowForwardIosRoundedIcon
-                sx={{
-                  width: 15,
-                  height: 15,
-                  marginTop: "4px",
-                  marginBottom: "4px",
-                }}
-              />
-            </Button>
-          </div>
+          <DetailActionCell
+            onClick={() =>
+              onMobilizationDetailClick(
+                params?.id,
+                params?.row?.scheduleInfo?.position,
+              )
+            }
+          />
         );
       },
     },
   ];
 
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return (
-    <div>
-      <Box m="20px">
-        <Box>
-          <PageTitle
-            title="LỊCH ĐIỀU ĐỘNG"
-            subtitle={"Thông tin các điều động của cá nhân"}
-          />
-        </Box>
-        {/* Switch bar component only for Crew Member role */}
-        {/* <SwitchBar
+    <Box m="20px">
+      <Box>
+        <PageTitle
+          title="LỊCH ĐIỀU ĐỘNG"
+          subtitle={"Thông tin các điều động của cá nhân"}
+        />
+      </Box>
+      {/* Switch bar component only for Crew Member role */}
+      {/* <SwitchBar
           tabLabel1={"Danh Sách"}
           tabLabel2={"Thời Gian Biểu"}
           variant={"fullWidth"}
@@ -317,48 +276,15 @@ const CrewMyMobilization = () => {
             <Typography>THỜI GIAN BIỂU</Typography>
           </Box>
         )} */}
-        <Box
-          m="40px 0 0 0"
-          height={"72vh"}
-          maxHeight={550}
-          maxWidth={1600}
-          sx={{
-            "& .MuiDataGrid-columnHeader": {
-              backgroundColor: Color.SecondaryBlue,
-              color: Color.PrimaryWhite,
-            },
-            "& .MuiTablePagination-root": {
-              backgroundColor: Color.SecondaryBlue,
-              color: Color.PrimaryWhite,
-            },
-          }}
-        >
-          <DataGrid
-            disableRowSelectionOnClick
-            disableColumnMenu
-            disableColumnResize
-            getRowHeight={() => "auto"}
-            rows={mobilizations}
-            columns={columns}
-            slots={{ noRowsOverlay: NoValuesOverlay }}
-            pageSizeOptions={[5, 10, { value: -1, label: "All" }]}
-            initialState={{
-              pagination: {
-                paginationModel: { pageSize: 5, page: 0 },
-              },
-            }}
-            sx={{
-              backgroundColor: "#FFF",
-              headerAlign: "center",
-              "& .MuiDataGrid-columnHeaderTitle": {
-                fontSize: 16,
-                fontWeight: 700,
-              },
-            }}
-          />
-        </Box>
-      </Box>
-    </div>
+      <BaseDataGrid
+        loading={loading}
+        // disableRowSelectionOnClick
+        // disableColumnMenu
+        // disableColumnResize
+        rows={mobilizations}
+        columns={columns}
+      />
+    </Box>
   );
 };
 

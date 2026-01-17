@@ -28,7 +28,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { usePost } from "@/hooks/services/post";
 import { useMutation } from "@tanstack/react-query";
 import { changeRegistrationRecruitmentPostStatus } from "@/services/postServices";
-import { isoToLocaleString } from "@/utils/converter";
+import { dateToLocaleString } from "@/utils/converter";
 import {
   CenterCircularProgress,
   InfoItem,
@@ -169,14 +169,14 @@ const RecruitmentDetail = () => {
               <InfoItem
                 icon={EventAvailableOutlinedIcon}
                 label="Ngày mở"
-                value={isoToLocaleString(post?.recruitmentStartDate)}
+                value={dateToLocaleString(post?.recruitmentStartDate)}
                 bold
               />
 
               <InfoItem
                 icon={EventBusyOutlinedIcon}
                 label="Ngày đóng"
-                value={isoToLocaleString(post?.recruitmentEndDate)}
+                value={dateToLocaleString(post?.recruitmentEndDate)}
                 bold
               />
             </Stack>

@@ -76,17 +76,15 @@ export function datetimeToISO(input) {
   }
 }
 
-export function isoToLocaleString(
-  isoString,
-  type = "datetime",
-  locale = "vi-VN",
-) {
+export function dateToLocaleString(date, type = "datetime", locale = "vi-VN") {
   const map = {
     date: "toLocaleDateString",
     datetime: "toLocaleString",
     time: "toLocaleTimeString",
   };
-  return new Date(isoString)[map[type] || type](locale);
+  const dateObj = date instanceof Date ? date : new Date(date);
+  if (Number.isNaN(dateObj.getTime())) return "";
+  return dateObj[map[type] || type](locale);
 }
 
 export function dateToMUIDatetime(date, type = "datetime-local") {

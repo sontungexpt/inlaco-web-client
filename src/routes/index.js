@@ -32,15 +32,15 @@ export const AppRoutes = [
       },
       {
         path: "add/:candidateID",
-        element: lazy(() => import("@pages/AddCrewMember")),
+        element: lazy(() => import("@pages/crews/CrewProfileForm")),
       },
+      // {
+      //   path: ":id",
+      //   element: lazy(() => import("@pages/CrewMemberDetail")),
+      // },
       {
-        path: ":id",
-        element: lazy(() => import("@pages/CrewMemberDetail")),
-      },
-      {
-        path: "my-profile",
-        element: lazy(() => import("@pages/CrewProfile")),
+        path: ":id/profile",
+        element: lazy(() => import("@/pages/crews/CrewProfile")),
       },
     ],
   },

@@ -34,10 +34,10 @@ import Color from "@constants/Color";
 import { useCourse } from "@/hooks/services/course";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";
-import { isoToLocaleString } from "@/utils/converter";
+import { dateToLocaleString } from "@/utils/converter";
 
 /* ================= Utils ================= */
-const formatDate = (value) => (value ? isoToLocaleString(value) : "--");
+const formatDate = (value) => (value ? dateToLocaleString(value) : "--");
 
 /* ================= Status Chip ================= */
 const StatusChip = ({ course }) => {

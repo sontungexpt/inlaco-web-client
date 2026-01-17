@@ -4,6 +4,9 @@ import SectionDivider from "./SectionDivider";
 
 const SectionWrapper = ({
   elevation = 1,
+  px = 3,
+  py = 2,
+  mb = 3,
   children,
   sx,
   title,
@@ -12,18 +15,18 @@ const SectionWrapper = ({
   ...props
 }) => (
   <Paper
+    {...props}
     elevation={elevation}
     sx={[
       {
-        px: 3,
-        py: 2,
-        mb: 3,
+        px: px,
+        py: py,
+        mb: mb,
         borderRadius: 2,
         backgroundColor: "background.paper",
       },
       ...(Array.isArray(sx) ? sx : [sx]),
     ]}
-    {...props}
   >
     {title &&
       (divider ? (

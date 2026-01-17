@@ -8,7 +8,7 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
 import { useAuthContext } from "../../contexts/AuthContext";
 import Color from "@constants/Color";
-import SidebarConfig, { ActionMap } from "@/constants/SidebarConfig";
+import SidebarConfig, { Action } from "@/constants/SidebarConfig";
 import { CloudinaryImage } from "@/components/common";
 
 const Item = memo(({ title, icon, active, onClick }) => (
@@ -36,7 +36,7 @@ const SideBar = () => {
 
   /* ===== ACTION MAP ===== */
   const ACTION_MAP = {
-    [ActionMap.LOGOUT]: logout,
+    [Action.LOGOUT]: logout,
   };
 
   const [collapsed, setCollapsed] = useState(false);

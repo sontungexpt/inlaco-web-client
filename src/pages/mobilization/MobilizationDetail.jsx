@@ -5,7 +5,7 @@ import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import { useParams } from "react-router";
 
 import Color from "@/constants/Color";
-import { isoToLocaleString } from "@/utils/converter";
+import { dateToLocaleString } from "@/utils/converter";
 import { useMobilization } from "@/hooks/services/mobilization";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";
@@ -19,7 +19,7 @@ import {
 } from "@/components/common";
 import CenterCircularProgress from "@/components/common/CenterCircularProgress";
 
-const MobilizationDetailPage = () => {
+export default function MobilizationDetail() {
   const { id } = useParams();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
@@ -81,22 +81,23 @@ const MobilizationDetailPage = () => {
     return <CenterCircularProgress />;
   }
   return (
-    <Box m="20px">
+    <Box m={3}>
       {/* ================= HEADER ================= */}
       <SectionWrapper
         display="flex"
         justifyContent="space-between"
-        alignItems="center"
+        alignItems={{ xs: "flex-start", md: "center" }}
+        flexDirection={{ xs: "column", md: "row" }}
+        gap={2}
         mb={2}
       >
         <PageTitle
           title="CHI TIẾT ĐIỀU ĐỘNG"
           subtitle="Thông tin chi tiết của điều động"
-          mb={2}
         />
 
         {isAdmin && (
-          <Stack direction="row" spacing={2}>
+          <Stack mt={2} direction={{ xs: "column", sm: "row" }} spacing={2}>
             <Button
               variant="contained"
               startIcon={<EditIcon />}
@@ -118,16 +119,18 @@ const MobilizationDetailPage = () => {
       {/* ================= THÔNG TIN CHUNG ================= */}
       <SectionWrapper title="Thông tin chung">
         <Grid container spacing={3}>
-          <Grid item xs={5}>
+          <Grid size={{ xs: 12, md: 5 }}>
             <InfoItem
               label="Công ty điều động đến"
               value={mobilization.partnerName}
             />
           </Grid>
-          <Grid item xs={4}>
+
+          <Grid size={{ xs: 12, md: 4 }}>
             <InfoItem label="Email công ty" value={mobilization.partnerEmail} />
           </Grid>
-          <Grid item xs={3}>
+
+          <Grid size={{ xs: 12, md: 3 }}>
             <InfoItem label="SĐT công ty" value={mobilization.partnerPhone} />
           </Grid>
         </Grid>
@@ -136,16 +139,17 @@ const MobilizationDetailPage = () => {
       {/* ================= LỊCH TRÌNH ================= */}
       <SectionWrapper title="Lịch trình dự kiến">
         <Grid container spacing={3}>
-          <Grid item xs={4}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <InfoItem
               label="Thời gian bắt đầu"
-              value={isoToLocaleString(mobilization.startDate)}
+              value={dateToLocaleString(mobilization.startDate)}
             />
           </Grid>
-          <Grid item xs={4}>
+
+          <Grid size={{ xs: 12, md: 6 }}>
             <InfoItem
               label="Thời gian kết thúc"
-              value={isoToLocaleString(mobilization.estimatedEndDate)}
+              value={dateToLocaleString(mobilization.estimatedEndDate)}
             />
           </Grid>
         </Grid>
@@ -154,48 +158,50 @@ const MobilizationDetailPage = () => {
       {/* ================= THÔNG TIN TÀU ================= */}
       <SectionWrapper title="Thông tin tàu">
         <Grid container spacing={3}>
-          <Grid item xs={12} display="flex" justifyContent="center">
+          {/* Ship image */}
+          <Grid size={{ xs: 12 }} display="flex" justifyContent="center">
             <CloudinaryImage
               publicId={shipInfo?.image?.publicId}
               src={shipInfo?.image?.url}
               alt="Ship"
               style={{
-                width: 300,
-                height: 180,
+                width: "100%",
+                maxWidth: 360,
+                height: 200,
                 objectFit: "cover",
                 borderRadius: 8,
               }}
             />
           </Grid>
 
-          <Grid item xs={2}>
+          <Grid size={{ xs: 12, sm: 6, md: 2 }}>
             <InfoItem label="IMO" value={shipInfo.imoNumber} />
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <InfoItem label="Tên tàu" value={shipInfo.name} />
           </Grid>
 
-          <Grid item xs={2}>
+          <Grid size={{ xs: 12, sm: 6, md: 2 }}>
             <InfoItem label="Quốc tịch" value={shipInfo.countryISO} />
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <InfoItem label="Loại tàu" value={shipInfo.type} />
           </Grid>
         </Grid>
       </SectionWrapper>
 
+      {/* ================= CREW LIST ================= */}
       <SectionWrapper title="Danh sách thuyền viên được điều động">
         <BaseDataGrid
           rows={mobilization.crewMembers || []}
           columns={columns}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
+          autoHeight
         />
       </SectionWrapper>
     </Box>
   );
-};
-
-export default MobilizationDetailPage;
+}

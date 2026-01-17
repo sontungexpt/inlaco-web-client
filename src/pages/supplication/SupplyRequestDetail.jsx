@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 
 import { reviewSupplyRequest } from "@/services/supplyReqServices";
 import { useSupplyRequest } from "@/hooks/services/supplyRequest";
-import { isoToLocalDatetime, isoToLocaleString } from "@/utils/converter";
+import { isoToLocalDatetime, dateToLocaleString } from "@/utils/converter";
 
 import Color from "@constants/Color";
 import {
@@ -24,7 +24,7 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import NoteAddRoundedIcon from "@mui/icons-material/NoteAddRounded";
 
-const SupplyRequestDetail = () => {
+export default function SupplyRequestDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -218,14 +218,14 @@ const SupplyRequestDetail = () => {
             <Grid size={{ xs: 12, md: 6, lg: 6 }}>
               <InfoItem
                 label="Thời gian bắt đầu thuê"
-                value={isoToLocaleString(requestInfo.rentalStartDate)}
+                value={dateToLocaleString(requestInfo.rentalStartDate)}
                 highlight
               />
             </Grid>
             <Grid size={{ xs: 12, md: 6, lg: 6 }}>
               <InfoItem
                 label="Thời gian kết thúc thuê"
-                value={isoToLocaleString(requestInfo.rentalEndDate)}
+                value={dateToLocaleString(requestInfo.rentalEndDate)}
                 highlight
               />
             </Grid>
@@ -280,6 +280,4 @@ const SupplyRequestDetail = () => {
       </SectionWrapper>
     </Box>
   );
-};
-
-export default SupplyRequestDetail;
+}

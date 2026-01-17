@@ -1,10 +1,20 @@
 import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { resolveComponent } from "@/utils/component";
+import { dateToLocaleString } from "@/utils/converter";
+
+const formatDisplayValue = (value, type) => {
+  if (!value) return "-";
+  else if (["date", "datetime-local", "time"].includes(type)) {
+    return dateToLocaleString(value, type) || "-";
+  }
+  return value;
+};
 
 export default function InfoItem({
   label,
   value,
+  type,
   color,
   onClick,
   highlight = false,
@@ -44,7 +54,7 @@ export default function InfoItem({
             fontSize: highlight ? 16 : 14,
           }}
         >
-          {value || "-"}
+          {formatDisplayValue(value, type)}
         </Typography>
       </Box>
     </Stack>
