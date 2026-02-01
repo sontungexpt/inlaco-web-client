@@ -35,6 +35,8 @@ import { useCourse } from "@/hooks/services/course";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";
 import { dateToLocaleString } from "@/utils/converter";
+import { enrollCourse } from "@/services/courseServices";
+import toast from "react-hot-toast";
 
 /* ================= Utils ================= */
 const formatDate = (value) => (value ? dateToLocaleString(value) : "--");
@@ -69,25 +71,30 @@ export default function CourseDetail() {
   const navigate = useNavigate();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
-  const { data: course, isLoading } = useCourse(id);
+  const { data: course, isLoading, refetch } = useCourse(id);
   const progress = course?.completionProgress ?? 0;
 
   const [enrollLoading, setEnrollLoading] = useState(false);
   const [toggleLoading, setToggleLoading] = useState(false);
 
-  const handleToggleRegister = async () => {
+  // TODO: handle toggle
+  const handleToggleRegistration = async () => {
     setToggleLoading(true);
-
     // await toggleCourseRegister(course.id);
-
     await new Promise((r) => setTimeout(r, 1000));
     setToggleLoading(false);
   };
 
   const handleEnroll = async () => {
-    setEnrollLoading(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    setEnrollLoading(false);
+    try {
+      setEnrollLoading(true);
+      await enrollCourse(course.id);
+      await refetch();
+    } catch (error) {
+      toast.error("Ký kết thất bại");
+    } finally {
+      setEnrollLoading(false);
+    }
   };
 
   if (isLoading) {
@@ -154,7 +161,7 @@ export default function CourseDetail() {
           {isAdmin && (
             <Button
               variant="contained"
-              onClick={handleToggleRegister}
+              onClick={handleToggleRegistration}
               disabled={toggleLoading}
               sx={{
                 minWidth: 180,

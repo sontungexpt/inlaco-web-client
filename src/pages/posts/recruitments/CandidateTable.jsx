@@ -13,8 +13,9 @@ const CustomFooter = ({ filterStatus, onFilterStatusChange }) => {
     { label: "Đã nộp", value: "APPLIED" },
     { label: "Đang trong vòng phỏng vấn", value: "WAIT_FOR_INTERVIEW" },
     { label: "Từ chối", value: "REJECTED" },
-    { label: "Đã ký hợp đồng", value: "HIRED" },
+    { label: "Đã thuê", value: "HIRED" },
   ];
+
   return (
     <GridFooterContainer
       sx={{

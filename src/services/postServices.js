@@ -80,13 +80,13 @@ export const fetchUniqueCandidate = async (candidateId) => {
   return response.data;
 };
 
-export const applyRecruitment = async (postID, data, resumePublicId) => {
+export const applyRecruitment = async (postID, data, resumeAssetId) => {
   const response = await privateRequest.post(
     PostEndpoint.APPLY_CANDIDATE(postID),
     data,
     {
       params: {
-        resumePublicId: resumePublicId,
+        resumeAssetId: resumeAssetId,
       },
     },
   );

@@ -1,4 +1,5 @@
 import {
+  optionalString,
   requiredEmail,
   requiredFile,
   requiredString,
@@ -12,6 +13,8 @@ export const FORM_SCHEMA = Yup.object().shape({
   gender: requiredString("Giới tính không được để trống"),
   phoneNumber: requiredVnPhoneNumber("Vui lòng nhập số điện thoại"),
   email: requiredEmail("Vui lòng nhập email"),
-  permanentAddr: requiredString("Địa chỉ không được để trống"),
+  address: requiredString("Địa chỉ không được để trống"),
+  experiences: requiredString("Vui lòng nhập kinh nghiệm của bạn"),
+  languageSkills: optionalString(),
   cvFile: requiredFile("Vui lòng thêm CV"),
 });

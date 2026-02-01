@@ -20,6 +20,13 @@ const DefaultEditableCell = ({ id, field, value, error, api, type }) => {
         type={type}
         value={value ?? ""}
         error={!!error}
+        fullWidth
+        sx={{
+          width: "100%",
+          "& .MuiInputBase-root": {
+            height: "100%",
+          },
+        }}
         onChange={(e) => {
           const nextValue =
             type === "date" || type === "datetime-local"

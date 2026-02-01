@@ -62,17 +62,7 @@ const ApplyRecruitment = () => {
       validationSchema={FORM_SCHEMA}
       onSubmit={handleSubmit}
     >
-      {({
-        values,
-        errors,
-        touched,
-        isValid,
-        dirty,
-        isSubmitting,
-        handleBlur,
-        handleChange,
-        handleSubmit,
-      }) => (
+      {({ errors, touched, isValid, dirty, isSubmitting, handleSubmit }) => (
         <Box m="20px" component="form" onSubmit={handleSubmit}>
           <SectionWrapper
             sx={{
@@ -140,6 +130,7 @@ const ApplyRecruitment = () => {
               </Grid>
               <Grid size={12}>
                 <InfoTextFieldFormik
+                  required={false}
                   label="Trình độ ngoại ngữ (liệt kê nếu có)"
                   name="languageSkills"
                 />

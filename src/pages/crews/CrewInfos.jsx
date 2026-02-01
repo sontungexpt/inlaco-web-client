@@ -117,11 +117,7 @@ export default function CrewInfos() {
                 icon={<AssignmentIndOutlinedIcon fontSize="small" />}
                 label="Chi tiết hợp đồng"
                 showInMenu
-                onClick={() =>
-                  navigate(`/crew-contracts/form/${id}`, {
-                    state: { type: "create" },
-                  })
-                }
+                onClick={() => navigate(`/crew-contracts/${id}`, {})}
               />
             ),
 

@@ -134,17 +134,7 @@ const SupplyRequestForm = () => {
       validationSchema={SUPPLY_REQUEST_SCHEMA}
       onSubmit={handleFormSubmission}
     >
-      {({
-        values,
-        errors,
-        touched,
-        isValid,
-        dirty,
-        isSubmitting,
-        handleBlur,
-        handleChange,
-        handleSubmit,
-      }) => (
+      {({ isValid, dirty, isSubmitting, handleSubmit }) => (
         <Box component="form" onSubmit={handleSubmit} m={3}>
           {/* ===== HEADER ===== */}
           <Box

@@ -329,7 +329,7 @@ const SupplyContractForm = () => {
                 <InfoTextFieldFormik label="IMO" name="shipInfo.IMONumber" />
                 <InfoTextFieldFormik label="Tên tàu" name="shipInfo.name" />
                 <NationalityTextField
-                  textField={InfoTextFieldFormik}
+                  component={InfoTextFieldFormik}
                   label="Quốc tịch"
                   name="shipInfo.countryISO"
                 />

@@ -125,9 +125,7 @@ export const AppRoutes = [
 
   {
     path: "/supply-requests",
-    roles: ({ hasRole }) =>
-      hasRole(UserRole.ADMIN) ||
-      (hasRole(UserRole.USER) && !hasRole(UserRole.SAILOR)),
+    roles: [UserRole.ADMIN],
     children: [
       {
         index: true,
@@ -139,7 +137,7 @@ export const AppRoutes = [
       },
       {
         path: "form",
-        element: lazy(() => import("@/pages/supplication/SupplyRequestForm")),
+        element: lazy(() => import("@/pages/supplication/CreateSupplyRequest")),
       },
     ],
   },
@@ -167,9 +165,6 @@ export const AppRoutes = [
 
   {
     path: "/recruitments",
-    roles: ({ hasRole }) =>
-      hasRole(UserRole.ADMIN) ||
-      (hasRole(UserRole.USER) && !hasRole(UserRole.SAILOR)),
     children: [
       {
         index: true,

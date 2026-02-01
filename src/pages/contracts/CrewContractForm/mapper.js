@@ -18,7 +18,7 @@ export const mapContractToFormValues = (contractInfo) => {
     },
     partyB: {
       fullName: partyB?.partyName,
-      dob: isoToMUIDateTime(partyB?.birthDate, false),
+      dob: isoToMUIDateTime(partyB?.birthDate, "date"),
       birthPlace: partyB?.birthPlace || "",
       phone: partyB?.phone || "",
       nationality: partyB?.nationality || "",
@@ -27,7 +27,7 @@ export const mapContractToFormValues = (contractInfo) => {
       ciNumber: partyB?.identificationCardId || "",
       ciIssueDate: isoToMUIDateTime(
         partyB?.identificationCardIssuedDate,
-        false,
+        "date",
       ),
       ciIssuePlace: partyB?.identificationCardIssuedPlace || "",
     },

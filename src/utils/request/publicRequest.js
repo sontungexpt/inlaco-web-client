@@ -1,8 +1,8 @@
-import AppProperty from "../../constants/AppProperty";
+import Env from "@/config/env.config";
 import axios from "axios";
 
 const publicRequest = axios.create({
-  baseURL: AppProperty.INLACO_API_URL,
+  baseURL: Env.BASE_API_URL,
   headers: {
     "Content-Type": "application/json",
   },

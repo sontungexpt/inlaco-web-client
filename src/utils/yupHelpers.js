@@ -29,7 +29,18 @@ export const requiredEmail = (
 ) => Yup.string().email(invalidMsg).required(msg);
 
 export const requiredFile = (msg = "Vui lòng tải lên file") =>
-  Yup.mixed().required(msg);
+  Yup.mixed()
+    .required(msg)
+    .test("file-or-object", "Giá trị không hợp lệ", (value) => {
+      if (!value) return false;
+      if (value instanceof File) return true;
+      if (typeof value === "object") {
+        if (value.file) {
+          return true;
+        }
+      }
+      return false;
+    });
 
 /* ========= DATE HELPERS ========= */
 export const dateMax = (maxDate, msg) =>

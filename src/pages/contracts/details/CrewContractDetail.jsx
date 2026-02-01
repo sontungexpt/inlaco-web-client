@@ -12,7 +12,11 @@ import UserRole from "@/constants/UserRole";
 import ContractDetailLayout from "./ContractDetailLayout";
 import PartySection from "./sections/PartySection";
 import FilesSection from "./sections/FilesSection";
-import { ConfirmButton, SectionWrapper } from "@/components/common";
+import {
+  ConfirmButton,
+  LoadErrorState,
+  SectionWrapper,
+} from "@/components/common";
 
 /* ================= DETAIL ================= */
 const CrewContractDetail = () => {
@@ -20,7 +24,23 @@ const CrewContractDetail = () => {
   const navigate = useNavigate();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
-  const { data: contract = {}, isLoading, refetch } = useContract(id);
+  const {
+    data: contract = {},
+    isError,
+    error,
+    isLoading,
+    refetch,
+  } = useContract(id);
+
+  if (isError && error?.response?.status === 404) {
+    return (
+      <LoadErrorState
+        title="Không thể tải hợp đồng"
+        subtitle="Hợp đồng không tồn tại hoặc đã bị xoa"
+        onRetry={() => refetch()}
+      />
+    );
+  }
 
   const approve = async () => {
     try {

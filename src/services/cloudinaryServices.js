@@ -1,14 +1,14 @@
 import axios from "axios";
-import AppProperty from "@/constants/AppProperty";
 import { privateRequest } from "@/utils/request";
 import UploadEndpoint from "@/endpoints/UploadEndpoint";
+import Env from "@/config/env.config";
 
-export const getUploadOptions = async (stragegy, params) => {
+export const getUploadOptions = async (strategy, params) => {
   const response = await privateRequest.get(
     UploadEndpoint.GET_UPLOAD_OPTIONS,
     {
       params: {
-        stragegy,
+        strategy,
         ...params,
       },
     },
@@ -20,7 +20,7 @@ export const getUploadOptions = async (stragegy, params) => {
 const cldUpload = async (file, options) => {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("api_key", AppProperty.CLOUDINARY_API_KEY);
+  formData.append("api_key", Env.CLOUDINARY_API_KEY);
 
   if (!options.signature) {
     throw new Error("Missing signature");
@@ -33,12 +33,11 @@ const cldUpload = async (file, options) => {
   }
 
   const response = await axios.post(
-    `https://api.cloudinary.com/v1_1/${AppProperty.CLOUDINARY_CLOUD_NAME}/auto/upload`,
+    `https://api.cloudinary.com/v1_1/${Env.CLOUDINARY_CLOUD_NAME}/auto/upload`,
     formData,
     {
       headers: {
         "Content-Type": `multipart/form-data`,
-        boundary: formData._boundary,
       },
     },
   );

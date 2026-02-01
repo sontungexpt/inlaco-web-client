@@ -84,6 +84,7 @@ const BaseDataGrid = ({
             borderColor: "divider",
             alignItems: "center",
           },
+
           "& .MuiDataGrid-columnSeparator": {
             borderColor: "divider",
             color: "#000000",

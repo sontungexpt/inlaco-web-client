@@ -19,7 +19,11 @@ const ErrorTooltip = ({ error, children, ...props }) => {
     <ETooltip {...props} open={!!error} placement="top-start" title={error}>
       <span
         style={{
-          display: "inline-flex",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         {children}

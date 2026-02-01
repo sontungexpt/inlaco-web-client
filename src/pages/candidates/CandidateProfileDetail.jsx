@@ -11,10 +11,13 @@ import CandidateStatus from "@/constants/CandidateStatus";
 import toast from "react-hot-toast";
 import { FilePreviewCard, InfoItem } from "@/components/common";
 import CenterCircularProgress from "@/components/common/CenterCircularProgress";
+import useAllowedRole from "@/hooks/useAllowedRole";
+import UserRole from "@/constants/UserRole";
 
 const CandidateProfileDetail = () => {
   const navigate = useNavigate();
   const { candidateID } = useParams();
+  const isAdmin = useAllowedRole(UserRole.ADMIN);
 
   const {
     data: candidateInfo,
@@ -29,8 +32,7 @@ const CandidateProfileDetail = () => {
   const [reviewingButtonId, setReviewingButtonId] = useState(null);
 
   const reviewCandidate = async (status) => {
-    const buttonId = status ? "accept" : "reject";
-    setReviewingButtonId(buttonId);
+    setReviewingButtonId(status);
     try {
       await reviewCandidateApplication(candidateID, status);
       refetchCandidateInfo();
@@ -45,9 +47,7 @@ const CandidateProfileDetail = () => {
     [CandidateStatus.APPLIED]: "Đã nộp",
     [CandidateStatus.WAIT_FOR_INTERVIEW]: "Đang đợi phỏng vấn",
     [CandidateStatus.REJECTED]: "Từ chối",
-    [CandidateStatus.CONTRACT_NOT_YET_IN_FORCE]:
-      "Đã ký hợp đồng (chưa có hiệu lực)",
-    [CandidateStatus.HIRED]: "Hợp đồng đã có hiệu lực",
+    [CandidateStatus.HIRED]: "Ứng cử viên đã được thuê",
   };
 
   const handleApproveClick = async () => {
@@ -62,10 +62,7 @@ const CandidateProfileDetail = () => {
           type: "create",
         },
       });
-    } else if (
-      status === CandidateStatus.CONTRACT_NOT_YET_IN_FORCE ||
-      status === CandidateStatus.HIRED
-    ) {
+    } else if (status === CandidateStatus.HIRED) {
       navigate(`/crew-contracts/${candidateID}`);
     }
   };
@@ -109,67 +106,69 @@ const CandidateProfileDetail = () => {
         </Box>
 
         {/* ACTION BUTTONS */}
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-            mt: 3,
-          }}
-        >
-          <Button
-            variant="contained"
-            onClick={handleApproveClick}
-            disabled={reviewingButtonId}
+        {isAdmin && (
+          <Box
             sx={{
-              color: Color.PrimaryWhite,
-              bgcolor: Color.PrimaryBlue,
-              borderRadius: 2,
-              textTransform: "none",
-              fontWeight: 600,
-              ":hover": { opacity: 0.9, bgcolor: Color.PrimaryBlue },
+              display: "flex",
+              gap: 2,
+              mt: 3,
             }}
-            startIcon={
-              reviewingButtonId === "accept" ? (
-                <CircularProgress size={24} />
-              ) : (
-                <CheckCircleRoundedIcon />
-              )
-            }
           >
-            {status === CandidateStatus.HIRED ||
-            status === CandidateStatus.CONTRACT_NOT_YET_IN_FORCE
-              ? "Xem hợp đồng"
-              : status === CandidateStatus.WAIT_FOR_INTERVIEW
-                ? "Tạo hợp đồng"
-                : "Chấp nhận"}
-          </Button>
+            <Button
+              variant="contained"
+              onClick={handleApproveClick}
+              disabled={reviewingButtonId}
+              sx={{
+                color: Color.PrimaryWhite,
+                bgcolor: Color.PrimaryBlue,
+                borderRadius: 2,
+                textTransform: "none",
+                fontWeight: 600,
+                ":hover": { opacity: 0.9, bgcolor: Color.PrimaryBlue },
+              }}
+              startIcon={
+                reviewingButtonId &&
+                reviewingButtonId !== CandidateStatus.REJECTED ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  <CheckCircleRoundedIcon />
+                )
+              }
+            >
+              {status === CandidateStatus.HIRED
+                ? "Xem hợp đồng"
+                : status === CandidateStatus.WAIT_FOR_INTERVIEW
+                  ? "Tạo hợp đồng"
+                  : "Chấp nhận"}
+            </Button>
 
-          {status !== CandidateStatus.HIRED &&
-            status !== CandidateStatus.REJECTED && (
-              <Button
-                variant="contained"
-                onClick={handleDeclineClick}
-                disabled={reviewingButtonId}
-                sx={{
-                  bgcolor: Color.PrimaryOrgange,
-                  color: Color.PrimaryWhite,
-                  borderRadius: 2,
-                  textTransform: "none",
-                  fontWeight: 600,
-                  ":hover": { opacity: 0.9, bgcolor: Color.PrimaryOrgange },
-                }}
-                startIcon={
-                  reviewingButtonId === "reject" ? (
-                    <CircularProgress size={24} />
-                  ) : (
-                    <CancelRoundedIcon />
-                  )
-                }
-              >
-                Từ chối
-              </Button>
-            )}
-        </Box>
+            {status !== CandidateStatus.HIRED &&
+              status !== CandidateStatus.REJECTED && (
+                <Button
+                  variant="contained"
+                  onClick={handleDeclineClick}
+                  disabled={reviewingButtonId}
+                  sx={{
+                    bgcolor: Color.PrimaryOrgange,
+                    color: Color.PrimaryWhite,
+                    borderRadius: 2,
+                    textTransform: "none",
+                    fontWeight: 600,
+                    ":hover": { opacity: 0.9, bgcolor: Color.PrimaryOrgange },
+                  }}
+                  startIcon={
+                    reviewingButtonId === CandidateStatus.REJECTED ? (
+                      <CircularProgress size={24} />
+                    ) : (
+                      <CancelRoundedIcon />
+                    )
+                  }
+                >
+                  Từ chối
+                </Button>
+              )}
+          </Box>
+        )}
       </SectionWrapper>
 
       <SectionWrapper title="Thông tin ứng viên">

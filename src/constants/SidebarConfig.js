@@ -33,7 +33,6 @@ export const SidebarConfig = [
   {
     section: "Thuyền Viên",
     short: "TV",
-    roles: [UserRole.ADMIN, UserRole.SAILOR],
     items: [
       {
         title: "Hồ sơ cá nhân",
@@ -51,27 +50,20 @@ export const SidebarConfig = [
         title: "Lịch điều động",
         to: "/mobilizations",
         icon: <DirectionsBoatOutlinedIcon />,
-        roles: [UserRole.ADMIN],
+        roles: [UserRole.ADMIN, UserRole.SAILOR],
       },
-      // {
-      //   title: "Lịch điều động",
-      //   to: "/mobilizations/my-mobilizations",
-      //   icon: <DirectionsBoatOutlinedIcon />,
-      //   roles: [ROLES.SAILOR],
-      // },
     ],
   },
 
   {
     section: "Hợp Đồng",
     short: "HĐ",
-    roles: [UserRole.ADMIN],
     items: [
       {
         title: "Hợp đồng Thuyền viên",
         to: "/crew-contracts",
         icon: <AssignmentIndOutlinedIcon />,
-        roles: [UserRole.ADMIN],
+        roles: [UserRole.ADMIN, UserRole.SAILOR],
       },
       {
         title: "Hợp đồng Cung ứng",
@@ -96,7 +88,7 @@ export const SidebarConfig = [
         title: "Yêu cầu Cung ứng",
         to: "/supply-requests",
         icon: <MarkEmailUnreadOutlinedIcon />,
-        roles: [UserRole.ADMIN, UserRole.USER],
+        roles: [UserRole.ADMIN],
       },
       {
         title: "Tuyển dụng",

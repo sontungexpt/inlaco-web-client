@@ -29,17 +29,7 @@ const SupplyRequestForm = ({
       validationSchema={validationSchema}
       onSubmit={onSubmit}
     >
-      {({
-        values,
-        errors,
-        touched,
-        isValid,
-        dirty,
-        isSubmitting,
-        handleBlur,
-        handleChange,
-        handleSubmit,
-      }) => (
+      {({ isValid, dirty, isSubmitting, handleSubmit }) => (
         <Box component="form" onSubmit={handleSubmit} m={3}>
           {/* ===== HEADER ===== */}
           <SectionWrapper display="flex" justifyContent="space-between" mb={4}>

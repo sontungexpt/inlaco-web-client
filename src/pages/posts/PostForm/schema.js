@@ -18,9 +18,10 @@ export const FORM_SCHEMA = Yup.object({
   content: Yup.string().required("Nội dung bài viết không được để trống"),
   company: Yup.string(),
   description: Yup.string(),
-  image: Yup.object({
-    url: Yup.string().url("Must be a valid URL").nullable(),
-  }),
+  image: requiredFile(),
+  // image: Yup.object({
+  //   url: Yup.string().url("Must be a valid URL").nullable(),
+  // }),
   attachments: Yup.array().of(
     Yup.object({
       name: Yup.string().required(),

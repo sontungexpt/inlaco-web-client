@@ -18,14 +18,7 @@ const formatDisplayValue = (value, type) => {
   return value ?? "";
 };
 
-const InfoTextField = ({
-  type,
-  value,
-  sx,
-  fullWidth = true,
-  slotProps,
-  ...props
-}) => {
+const InfoTextField = ({ type, value, sx, fullWidth = true, ...props }) => {
   return (
     <TextField
       {...props}
@@ -46,9 +39,6 @@ const InfoTextField = ({
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]} // Merging styles with spread operator
-      slotProps={
-        slotProps // Merging slotProps with spread operator
-      }
       type={type}
     />
   );

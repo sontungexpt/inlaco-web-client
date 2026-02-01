@@ -1,11 +1,11 @@
 import axios, { HttpStatusCode } from "axios";
-import AppProperty from "@constants/AppProperty";
 import { localStorage, sessionStorage, StorageKey } from "@utils/storage";
 import { TokenMutex } from "./TokenMutex";
 import AuthEndpoint from "@/endpoints/AuthEndpoint";
+import Env from "@/config/env.config";
 
 const privateRequest = axios.create({
-  baseURL: AppProperty.INLACO_API_URL,
+  baseURL: Env.BASE_API_URL,
   headers: {
     post: {
       "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export async function refreshAccessToken() {
 
     try {
       const response = await axios.post(
-        `${AppProperty.INLACO_API_URL}${AuthEndpoint.REFRESH_TOKEN}`,
+        `${Env.BASE_API_URL}${AuthEndpoint.REFRESH_TOKEN}`,
         null,
         {
           headers: {

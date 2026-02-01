@@ -1,4 +1,3 @@
-// contractForm.initial.ts
 import { DEFAULT_CONTRACT_FORM_VALUES } from "./defaults";
 import { mapContractToFormValues } from "./mapper";
 

@@ -7,7 +7,7 @@ const BaseTabBar = ({
   onChange,
   singleTab = false,
   color = "primary",
-  variant = "standard",
+  variant = "fullWidth",
   centered = true,
   sx,
   tabSx,

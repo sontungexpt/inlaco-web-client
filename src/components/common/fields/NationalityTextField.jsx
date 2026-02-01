@@ -4,24 +4,11 @@ import { InfoTextField } from ".";
 import CountryCodes from "@/constants/CountryCodes";
 
 const NationalityTextField = ({
-  sx,
-  slotProps,
-  multiline,
-  minRow,
-  value,
-  maxRow,
-  rows,
   component: TextField = InfoTextField,
   ...props
 }) => {
   return (
-    <TextField
-      {...props}
-      value={value || ""}
-      multiline={multiline}
-      rows={rows}
-      select
-    >
+    <TextField {...props} select>
       {CountryCodes.map((country) => (
         <MenuItem key={country.code} value={country.code}>
           {`${country.code} - ${country.name}`}

@@ -91,17 +91,7 @@ export default function PostForm() {
       enableReinitialize
       onSubmit={handleFormSubmission}
     >
-      {({
-        values,
-        errors,
-        touched,
-        dirty,
-        isValid,
-        isSubmitting,
-        handleBlur,
-        handleChange,
-        handleSubmit,
-      }) => (
+      {({ values, dirty, isValid, isSubmitting, handleSubmit }) => (
         <Box component="form" onSubmit={handleSubmit}>
           <SectionWrapper>
             <PageTitle

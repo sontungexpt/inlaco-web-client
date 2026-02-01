@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Box, Button, Stack } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { PageTitle, BaseTabBar } from "@components/common";
@@ -10,47 +10,54 @@ import { useRecruitmentPosts, useCandidates } from "@/hooks/services/post";
 import RecruitmentList from "./RecruitmentList";
 import CandidateTable from "./CandidateTable";
 import useAllowedRole from "@/hooks/useAllowedRole";
+const TABS = {
+  POSTS: 0,
+  CANDIDATES: 1,
+};
 
 export default function CrewRecruitment() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const isAdmin = useAllowedRole("ADMIN");
+
   const NUMBER_POST_PER_PAGE = 10;
   const NUMBER_CANDIDATE_PER_PAGE = 10;
 
-  // If had initital tab then only show one bar
-  const INITITAL_TAB = state?.tab === "CANDIDATE" ? 1 : state?.tab;
-  const INITIAL_RECRUIMENT_POST_ID =
-    state?.candidate?.recruitmentPostId || null;
-  const INITIAL_STATUS = state?.candidate?.status || "APPLIED";
-  const INITIAL_POST_PAGE = state?.post?.page || 0;
+  const init = useMemo(
+    () => ({
+      tab: state?.tab
+        ? state.tab === "CANDIDATE"
+          ? TABS.CANDIDATES
+          : TABS.POSTS
+        : null,
+      postPage: state?.post?.page ?? 0,
+      candidateStatus: state?.candidate?.status ?? "APPLIED",
+      candidatePostId: state?.candidate?.recruitmentPostId ?? null,
+      candidatePage: state?.candidate?.page ?? 0,
+    }),
+    [state],
+  );
 
-  const [tab, setTab] = useState(INITITAL_TAB || 0);
-  const [postPage, setPostPage] = useState(INITIAL_POST_PAGE);
+  const [tab, setTab] = useState(init.tab || TABS.POSTS);
+  const [postPage, setPostPage] = useState(init.postPage);
+  const [filterStatus, setFilterStatus] = useState(init.candidateStatus);
+  const [paginationModel, setPaginationModel] = useState({
+    page: init.candidatePage,
+    pageSize: NUMBER_CANDIDATE_PER_PAGE,
+  });
 
   const { data: postData, isLoading: postsLoading } = useRecruitmentPosts(
     postPage,
     NUMBER_POST_PER_PAGE,
   );
-
   const posts = postData?.content || [];
-
-  // candidate state
-
-  const [filterCandidateStatus, setFilterCandidateStatus] =
-    useState(INITIAL_STATUS);
-
-  const [paginationModel, setPaginationModel] = useState({
-    page: state?.candidate?.page || 0,
-    pageSize: NUMBER_CANDIDATE_PER_PAGE,
-  });
 
   const {
     data: { content: candidates = [], totalElements: totalCandidates = 0 } = {},
     isLoading: candidateLoading,
   } = useCandidates({
-    status: filterCandidateStatus,
-    recruitmentPostId: INITIAL_RECRUIMENT_POST_ID,
+    status: filterStatus,
+    recruitmentPostId: init.candidatePostId,
     page: paginationModel.page,
     sizePerPage: paginationModel.pageSize,
   });
@@ -103,16 +110,17 @@ export default function CrewRecruitment() {
           <BaseTabBar
             tabs={[
               {
+                value: TABS.POSTS,
                 label: "Danh sách bài đăng",
               },
               {
+                value: TABS.CANDIDATES,
                 label: "Danh sách đơn ứng tuyển",
               },
             ]}
-            variant={"fullWidth"}
             value={tab}
-            singleTab={Boolean(INITITAL_TAB)}
-            onChange={setTab}
+            singleTab={Boolean(init.tab)}
+            onChange={(e, tab) => setTab(tab)}
             color={Color.SecondaryBlue}
             sx={{
               backgroundColor: Color.SecondaryWhite,
@@ -123,7 +131,7 @@ export default function CrewRecruitment() {
       </Box>
 
       {/* ===== TAB 1: BÀI ĐĂNG ===== */}
-      {tab === 0 && (
+      {tab === TABS.POSTS && (
         <RecruitmentList
           loading={postsLoading}
           posts={posts}
@@ -138,19 +146,19 @@ export default function CrewRecruitment() {
       )}
 
       {/* ===== TAB 2: ỨNG VIÊN ===== */}
-      {tab === 1 && (
+      {tab === TABS.CANDIDATES && (
         <CandidateTable
           loading={candidateLoading}
-          filterStatus={filterCandidateStatus}
+          filterStatus={filterStatus}
           onAdminMemberDetailClick={(id) =>
-            navigate(`/recruitment/candidates/${id}`)
+            navigate(`/recruitments/candidates/${id}`)
           }
           onCreateCrewMemberClick={(candidateId) =>
             navigate(`/crews/add/${candidateId}`, {
               state: { candidateInfo: candidateId },
             })
           }
-          onFilterStatusChange={setFilterCandidateStatus}
+          onFilterStatusChange={setFilterStatus}
           candidates={candidates}
           totalCandidates={totalCandidates}
           paginationModel={paginationModel}

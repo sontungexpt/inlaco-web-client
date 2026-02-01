@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  TextField,
   Button,
   Typography,
   InputAdornment,
@@ -110,17 +109,7 @@ const SignUpPage = () => {
         validationSchema={SIGN_UP_SCHEMA}
         onSubmit={handleSignUpClick}
       >
-        {({
-          values,
-          errors,
-          touched,
-          dirty,
-          isValid,
-          isSubmitting,
-          handleChange,
-          handleBlur,
-          handleSubmit,
-        }) => (
+        {({ dirty, isValid, isSubmitting, handleSubmit }) => (
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -133,6 +122,7 @@ const SignUpPage = () => {
               paddingLeft: 5,
               paddingRight: 5,
               width: "100%",
+              gap: 3,
               paddingTop: 2,
             }}
           >

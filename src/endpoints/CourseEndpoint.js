@@ -7,7 +7,7 @@ const CourseEndpoint = {
   CANCLE_COURSE: (id) => `/v1/courses/force_cancel/${id}`,
   CANCEL_REGISTRATION: (id) => `/v1/courses/registration/cancellation/${id}`,
 
-  ENROLL_COURSE: (id) => `/v1/courses/registration${id}`,
+  ENROLL_COURSE: (id) => `/v1/courses/registration/${id}`,
 
   MARK_COURSE_COMPLETED: (courseId, userId) =>
     `/v1/courses/${courseId}/completation/${userId}`,

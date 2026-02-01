@@ -34,3 +34,8 @@ export const fetchCourseDetail = async (courseId) => {
   );
   return res.data;
 };
+
+export const enrollCourse = async (courseId) => {
+  const res = await privateRequest.post(CourseEndpoint.ENROLL_COURSE(courseId));
+  return res.data;
+};

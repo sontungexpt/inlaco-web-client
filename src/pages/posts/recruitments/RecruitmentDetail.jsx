@@ -107,14 +107,14 @@ const RecruitmentDetail = () => {
               variant="contained"
               disabled={isTogglingRegistrationStatus}
               onClick={toggleRegistrationStatus}
+              loading={isTogglingRegistrationStatus}
               startIcon={
-                isTogglingRegistrationStatus ? (
-                  <CircularProgress size={22} />
-                ) : !active ? (
+                !isTogglingRegistrationStatus &&
+                (!active ? (
                   <CheckCircleRoundedIcon />
                 ) : (
                   <EventBusyRoundedIcon />
-                )
+                ))
               }
               sx={{
                 py: 1.1,
