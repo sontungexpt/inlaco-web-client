@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
     async ({ email, password, rememberMe }) => {
       try {
         const response = await loginAPI(email, password);
-        const { accessToken, refreshToken } = response.data.jwt;
+        const { accessToken, refreshToken } = response.data;
 
         localStorage.setItem(StorageKey.REMEMBER_ME, rememberMe);
 

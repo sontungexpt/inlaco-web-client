@@ -93,17 +93,17 @@ export function dateToMUIDatetime(date, type = "datetime-local") {
 
   const pad = (n) => String(n).padStart(2, "0");
   const yyyy = date.getFullYear();
-  const mm = pad(date.getMonth() + 1);
+  const MM = pad(date.getMonth() + 1);
   const dd = pad(date.getDate());
   if (type === "date") {
-    return `${yyyy}-${mm}-${dd}`;
+    return `${yyyy}-${MM}-${dd}`;
   }
 
   const hh = pad(date.getHours());
   const mi = pad(date.getMinutes());
 
   if (type === "datetime-local") {
-    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+    return `${yyyy}-${MM}-${dd}T${hh}:${mi}`;
   } else if (type === "time") {
     return `${hh}:${mi}`;
   }

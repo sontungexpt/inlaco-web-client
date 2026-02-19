@@ -1,38 +1,26 @@
+import { flattenFilter } from "@/utils/filter";
 import PostEndpoint from "@endpoints/PostEndpoint";
 import { privateRequest, publicRequest } from "@utils/request";
 
 export const fetchPosts = async ({
   page = 0,
   pageSize = 20,
-  type = "NEWS",
   sort = null,
+  filter = {
+    type: "NEWS",
+  },
 }) => {
   const response = await publicRequest.get(PostEndpoint.GET_POSTS, {
     params: {
       page,
-      type,
       size: pageSize,
       sort,
+      ...flattenFilter(filter),
     },
   });
   return response.data;
 };
 
-/**
- * @typedef {Object} CreatePostPayload
- * @property {string} type
- * @property {string} title
- * @property {string} content
- * @property {string} company
- * @property {string} description
- * @property {string} recruitmentStartDate
- * @property {string} recruitmentEndDate
- * @property {string} position
- * @property {number[]} expectedSalary
- * @property {string} workLocation
- *
- * @param {CreatePostPayload} postInfo
- */
 export const createPost = async (postInfo) => {
   const response = await privateRequest.post(
     PostEndpoint.CREATE_POST,
@@ -57,17 +45,15 @@ export const fetchUniquePost = async (postID) => {
 export const fetchCandidates = async ({
   page,
   pageSize = 10,
-  status,
-  recruitmentPostId,
   sort = null,
+  filter,
 }) => {
   const response = await privateRequest.get(PostEndpoint.GET_ALL_CANDIDATES, {
     params: {
       page,
-      recruitmentPostId,
       size: pageSize,
-      status,
       sort,
+      ...flattenFilter(filter),
     },
   });
   return response.data;

@@ -22,10 +22,12 @@ export const searchCrewMembers = async ({
 }) => {
   const response = await privateRequest.get(CrewEndpoint.SEARCH, {
     params: {
-      q: query,
       page,
       size,
-      filter: filter && filter.toString(),
+      ...flattenFilter({
+        ...filter,
+        keyword: query,
+      }),
     },
   });
   return response.data;

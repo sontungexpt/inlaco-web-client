@@ -10,10 +10,23 @@ import { BaseDataGrid } from "@/components/common";
 
 const CustomFooter = ({ filterStatus, onFilterStatusChange }) => {
   const STATUS_FILTERS = [
-    { label: "Đã nộp", value: "APPLIED" },
-    { label: "Đang trong vòng phỏng vấn", value: "WAIT_FOR_INTERVIEW" },
-    { label: "Từ chối", value: "REJECTED" },
-    { label: "Đã thuê", value: "HIRED" },
+    { label: "Đã nộp hồ sơ", value: CandidateStatus.APPLIED },
+    { label: "Đang sàng lọc", value: CandidateStatus.SCREENING },
+    {
+      label: "Đã lên lịch phỏng vấn",
+      value: CandidateStatus.INTERVIEW_SCHEDULED,
+    },
+    { label: "Đã phỏng vấn", value: CandidateStatus.INTERVIEWED },
+    { label: "Đã gửi offer", value: CandidateStatus.OFFERED },
+    { label: "Ứng viên xác nhận", value: CandidateStatus.CONFIRMED },
+    {
+      label: "Hợp đồng chưa kí",
+      value: CandidateStatus.CONTRACT_PENDING_SIGNATURE,
+    },
+    { label: "Hợp đồng đã kí", value: CandidateStatus.CONTRACT_SIGNED },
+    { label: "Hợp đồng có hiệu lực", value: CandidateStatus.HIRED },
+    { label: "Từ chối", value: CandidateStatus.REJECTED },
+    { label: "Ứng viên rút hồ sơ", value: CandidateStatus.WITHDRAWN },
   ];
 
   return (

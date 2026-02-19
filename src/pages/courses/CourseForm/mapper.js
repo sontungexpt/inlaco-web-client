@@ -1,9 +1,13 @@
 import { datetimeToISO } from "@/utils/converter";
 
-export const mapValuesToRequestBody = (values) => ({
+export const mapValuesToRequestBody = (
+  values,
+  { trainingProviderLogoAssetId, wallpaperAssetId },
+) => ({
   // insitive infos
   teacherName: values.instructorName,
   trainingProviderName: values.institute,
+  trainingProviderLogo: trainingProviderLogoAssetId,
 
   // course infos
   name: values.courseName,
@@ -15,4 +19,5 @@ export const mapValuesToRequestBody = (values) => ({
   startRegistrationAt: datetimeToISO(values.startRegistrationAt),
   endRegistrationAt: datetimeToISO(values.endRegistrationAt),
   achievedPosition: values.achievedPosition,
+  wallpaper: wallpaperAssetId,
 });

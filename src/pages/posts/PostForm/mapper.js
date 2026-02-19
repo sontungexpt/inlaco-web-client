@@ -8,8 +8,13 @@ export const mapPostToFormValues = (post) => {
   };
 };
 
-export const mapValuesToRequestBody = (values) => ({
+export const mapValuesToRequestBody = (
+  values,
+  { imageAssetId, attachmentsAssetIds },
+) => ({
   ...values,
+  image: imageAssetId,
+  attachments: attachmentsAssetIds,
   recruitmentStartDate: datetimeToISO(values.recruitmentStartDate),
   recruitmentEndDate: datetimeToISO(values.recruitmentEndDate),
 });

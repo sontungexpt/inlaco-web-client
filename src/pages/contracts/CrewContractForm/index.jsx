@@ -29,6 +29,7 @@ import { SCHEMA } from "./schema";
 import { RECEIVE_METHOD } from "./defaults";
 import TemplateDialog from "../components/TemplateDialog";
 import { mapValuesToRequestBody } from "./mapper";
+import ContractType from "@/constants/ContractTemplateType";
 
 const CrewContractForm = () => {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const CrewContractForm = () => {
   const freezedContract = contractInfo?.freezed;
 
   const createContract = async (values) => {
-    const uploadRespone = await cloudinaryUpload(
+    const contractFile = await cloudinaryUpload(
       values.contractFile,
       UploadStrategy.CONTRACT_FILE,
     );
@@ -55,7 +56,8 @@ const CrewContractForm = () => {
     const contract = await createLaborContract(
       candidateProfileId,
       mapValuesToRequestBody(values, {
-        contractFileAssetId: uploadRespone?.assetId || uploadRespone?.asset_id,
+        contractFile: contractFile?.assetId || contractFile?.asset_id,
+        attachments: null,
       }),
     );
     return contract;
@@ -66,15 +68,15 @@ const CrewContractForm = () => {
     //   values.contractFile,
     //   UploadStrategy.CONTRACT_FILE,
     // );
-    const changedValues = keepChangedFields(
-      contractInfo,
-      mapValuesToRequestBody(values, {}),
-    );
+    const oldRequest = mapValuesToRequestBody(initialValues, {});
+    const newRequest = mapValuesToRequestBody(values, {});
+    const patchRequest = keepChangedFields(oldRequest, newRequest);
 
     //Calling API to create a new crew member
     const contract = await editContract(
       contractInfo?.id,
-      changedValues,
+      patchRequest,
+      ContractType.LABOR_CONTRACT,
       freezedContract,
     );
 
@@ -116,15 +118,7 @@ const CrewContractForm = () => {
       validationSchema={SCHEMA}
       onSubmit={handleFormSubmission}
     >
-      {({
-        values,
-        errors,
-        touched,
-        isValid,
-        dirty,
-        isSubmitting,
-        handleSubmit,
-      }) => {
+      {({ values, isValid, dirty, isSubmitting, handleSubmit }) => {
         return (
           <Box p={2} component="form" onSubmit={handleSubmit}>
             {/* ===== Sticky Header ===== */}

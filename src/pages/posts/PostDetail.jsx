@@ -6,7 +6,7 @@ import { usePost } from "@/hooks/services/post";
 import CenterCircularProgress from "@/components/common/CenterCircularProgress";
 import Color from "@/constants/Color";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { MarkdownPreview } from "@/components/common";
+import { CloudinaryImage, MarkdownPreview } from "@/components/common";
 
 export default function PostDetail() {
   const { id } = useParams();
@@ -22,7 +22,7 @@ export default function PostDetail() {
         borderRadius: 4,
         m: 3,
         px: { xs: 3, sm: 6 },
-        py: { xs: 4, sm: 6 },
+        py: { xs: 12, sm: 12 },
       }}
     >
       {/* ===== Top Actions ===== */}
@@ -66,7 +66,6 @@ export default function PostDetail() {
           fontSize: { xs: 28, sm: 36 },
           fontWeight: 800,
           lineHeight: 1.25,
-          mb: 2,
         }}
       >
         {post.title}
@@ -85,6 +84,14 @@ export default function PostDetail() {
           {post.description}
         </Typography>
       )}
+
+      <CloudinaryImage
+        url={post.image.url}
+        publicId={post.image.publicId}
+        name={post.image.displayName}
+        height={300}
+        mb={4}
+      />
 
       <Divider color={Color.PrimaryBlackPlaceHolder} />
 

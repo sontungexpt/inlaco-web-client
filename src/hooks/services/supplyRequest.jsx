@@ -4,10 +4,10 @@ import {
 } from "@/services/supplyReqServices";
 import { useQuery } from "@tanstack/react-query";
 
-export const useSupplyRequests = ({ page = 0, pageSize = 20, status }) => {
+export const useSupplyRequests = ({ page = 0, pageSize = 20, filter }) => {
   return useQuery({
-    queryKey: ["supply-requests", page, pageSize, status],
-    queryFn: () => fetchSupplyRequests({ page, pageSize, status }),
+    queryKey: ["supply-requests", page, pageSize, filter],
+    queryFn: () => fetchSupplyRequests({ page, pageSize, filter }),
     staleTime: 1000 * 60 * 5, // cache 5 min
     keepPreviousData: true,
   });

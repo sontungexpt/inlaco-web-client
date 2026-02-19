@@ -71,7 +71,11 @@ export default function CourseDetail() {
   const navigate = useNavigate();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
-  const { data: course, isLoading, refetch } = useCourse(id);
+  const {
+    data: { course, ...userCourseState } = {},
+    isLoading,
+    refetch,
+  } = useCourse(id);
   const progress = course?.completionProgress ?? 0;
 
   const [enrollLoading, setEnrollLoading] = useState(false);
@@ -274,7 +278,7 @@ export default function CourseDetail() {
       </SectionWrapper>
 
       {/* ================= USER PROGRESS ================= */}
-      {course.enrolled && (
+      {userCourseState.enrolled && (
         <SectionWrapper title="Tiến độ học viên">
           <Card>
             <CardContent>
@@ -289,10 +293,10 @@ export default function CourseDetail() {
                 />
               </Box>
 
-              {course.certificateUrl && (
+              {userCourseState.certificate && (
                 <Button
                   variant="outlined"
-                  href={course.certificateUrl}
+                  href={userCourseState.certificate.url}
                   target="_blank"
                 >
                   Xem chứng chỉ

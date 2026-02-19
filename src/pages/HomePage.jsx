@@ -159,7 +159,7 @@ const NewsCard = ({
   );
 };
 
-export default function HomePage({ newsPerPage = 12 }) {
+export default function HomePage({ pageSize = 12 }) {
   const navigate = useNavigate();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
@@ -170,7 +170,11 @@ export default function HomePage({ newsPerPage = 12 }) {
     isLoading,
     isError,
     refetch: refetchNews,
-  } = usePosts({ page, size: newsPerPage });
+  } = usePosts({
+    page,
+    pageSize: pageSize,
+    filter: {},
+  });
 
   if (isLoading) {
     return <CenterCircularProgress />;
@@ -230,7 +234,8 @@ export default function HomePage({ newsPerPage = 12 }) {
               id={post.id}
               title={post.title}
               description={post.description}
-              image={post.image}
+              imageSrc={post.image.url}
+              imagePublicId={post.image.publicId}
               date={post.date}
               onClick={() => navigate(`/posts/${post.id}`)}
               onDetailClick={() => navigate(`/posts/${post.id}`)}

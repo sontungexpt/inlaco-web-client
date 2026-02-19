@@ -34,6 +34,7 @@ import {
   InfoItem,
   MarkdownPreview,
 } from "@/components/common";
+import CandidateStatus from "@/constants/CandidateStatus";
 
 const RecruitmentDetail = () => {
   const navigate = useNavigate();
@@ -251,7 +252,7 @@ const RecruitmentDetail = () => {
                           tab: "CANDIDATE",
                           candidate: {
                             recruitmentPostId: id,
-                            status: "APPLIED",
+                            status: CandidateStatus.SCREENING,
                           },
                         },
                       })

@@ -23,6 +23,10 @@ export default function SupplyRequest({ PAGE_SIZE = 6 }) {
   } = useSupplyRequests({
     page: paginationModel.page,
     pageSize: paginationModel.pageSize,
+    filter: {
+      // keyword: "",
+      // status:
+    },
   });
 
   const columns = useMemo(

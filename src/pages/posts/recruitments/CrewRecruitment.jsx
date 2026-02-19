@@ -46,20 +46,22 @@ export default function CrewRecruitment() {
     pageSize: NUMBER_CANDIDATE_PER_PAGE,
   });
 
-  const { data: postData, isLoading: postsLoading } = useRecruitmentPosts(
-    postPage,
-    NUMBER_POST_PER_PAGE,
-  );
+  const { data: postData, isLoading: postsLoading } = useRecruitmentPosts({
+    page: postPage,
+    pageSize: NUMBER_POST_PER_PAGE,
+  });
   const posts = postData?.content || [];
 
   const {
     data: { content: candidates = [], totalElements: totalCandidates = 0 } = {},
     isLoading: candidateLoading,
   } = useCandidates({
-    status: filterStatus,
-    recruitmentPostId: init.candidatePostId,
     page: paginationModel.page,
-    sizePerPage: paginationModel.pageSize,
+    pageSize: paginationModel.pageSize,
+    filter: {
+      status: filterStatus,
+      recruitmentPostId: init.candidatePostId,
+    },
   });
 
   return (

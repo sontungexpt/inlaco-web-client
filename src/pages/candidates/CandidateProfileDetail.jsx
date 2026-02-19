@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { PageTitle, SectionWrapper, StatusLabel } from "@components/common";
-import { Box, Button, Grid, CircularProgress } from "@mui/material";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
+import { Box, Button, Grid, Select, MenuItem } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
 import Color from "@constants/Color";
 import { reviewCandidateApplication } from "@/services/postServices";
@@ -13,6 +11,64 @@ import { FilePreviewCard, InfoItem } from "@/components/common";
 import CenterCircularProgress from "@/components/common/CenterCircularProgress";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";
+
+const STATUS_CONFIG = {
+  [CandidateStatus.APPLIED]: {
+    label: "Đã nộp hồ sơ",
+    color: Color.PrimaryBlackPlaceHolder,
+    next: ["SCREENING", "REJECTED", "WITHDRAWN"],
+  },
+  [CandidateStatus.SCREENING]: {
+    label: "Đang duyệt",
+    color: Color.PrimaryBlue,
+    next: ["INTERVIEW_SCHEDULED", "REJECTED"],
+  },
+  [CandidateStatus.INTERVIEW_SCHEDULED]: {
+    label: "Đã lên lịch phỏng vấn",
+    color: Color.PrimaryGreen,
+    next: ["INTERVIEWED", "REJECTED"],
+  },
+  [CandidateStatus.INTERVIEWED]: {
+    label: "Đã phỏng vấn",
+    color: Color.SecondaryGold,
+    next: ["OFFERED", "REJECTED"],
+  },
+  [CandidateStatus.OFFERED]: {
+    label: "Đã gửi offer",
+    color: Color.PrimaryBlue,
+    next: ["REJECTED", "CONFIRMED"],
+  },
+  [CandidateStatus.CONFIRMED]: {
+    label: "Ứng viên xác nhận",
+    color: Color.PrimaryGreen,
+    next: [],
+  },
+  [CandidateStatus.CONTRACT_PENDING_SIGNATURE]: {
+    label: "Hợp đồng đang chờ kí kết",
+    color: Color.PrimaryGreen,
+    next: [],
+  },
+  [CandidateStatus.CONTRACT_SIGNED]: {
+    label: "Hợp đồng đang đã kí",
+    color: Color.PrimaryGreen,
+    next: [],
+  },
+  [CandidateStatus.HIRED]: {
+    label: "Hợp đồng có hiệu lực",
+    color: Color.PrimaryGreen,
+    next: [],
+  },
+  [CandidateStatus.REJECTED]: {
+    label: "Từ chối",
+    color: Color.PrimaryOrgange,
+    next: [],
+  },
+  [CandidateStatus.WITHDRAWN]: {
+    label: "Ứng viên rút hồ sơ",
+    color: Color.PrimaryBlackPlaceHolder,
+    next: [],
+  },
+};
 
 const CandidateProfileDetail = () => {
   const navigate = useNavigate();
@@ -31,44 +87,16 @@ const CandidateProfileDetail = () => {
   // accept || reject
   const [reviewingButtonId, setReviewingButtonId] = useState(null);
 
-  const reviewCandidate = async (status) => {
-    setReviewingButtonId(status);
+  const handleChangeStatus = async (newStatus) => {
+    setReviewingButtonId(newStatus);
     try {
-      await reviewCandidateApplication(candidateID, status);
-      refetchCandidateInfo();
-      toast.success("Thay đổi trạng thái thành công!");
+      await reviewCandidateApplication(candidateID, newStatus);
+      await refetchCandidateInfo();
+      toast.success("Cập nhật trạng thái thành công!");
     } catch {
-      toast.error("Thay đổi trạng thái thất bại!");
+      toast.error("Cập nhật thất bại!");
     }
     setReviewingButtonId(null);
-  };
-
-  const STATUS_MAP = {
-    [CandidateStatus.APPLIED]: "Đã nộp",
-    [CandidateStatus.WAIT_FOR_INTERVIEW]: "Đang đợi phỏng vấn",
-    [CandidateStatus.REJECTED]: "Từ chối",
-    [CandidateStatus.HIRED]: "Ứng cử viên đã được thuê",
-  };
-
-  const handleApproveClick = async () => {
-    if (status === CandidateStatus.REJECTED) {
-      await reviewCandidate(CandidateStatus.WAIT_FOR_INTERVIEW);
-    } else if (status === CandidateStatus.APPLIED) {
-      await reviewCandidate(CandidateStatus.WAIT_FOR_INTERVIEW);
-    } else if (status === CandidateStatus.WAIT_FOR_INTERVIEW) {
-      navigate(`/crew-contracts/form`, {
-        state: {
-          candidateProfileId: candidateID,
-          type: "create",
-        },
-      });
-    } else if (status === CandidateStatus.HIRED) {
-      navigate(`/crew-contracts/${candidateID}`);
-    }
-  };
-
-  const handleDeclineClick = async () => {
-    await reviewCandidate(CandidateStatus.REJECTED);
   };
 
   if (isLoading) {
@@ -92,81 +120,98 @@ const CandidateProfileDetail = () => {
           />
 
           <StatusLabel
-            label={STATUS_MAP[candidateInfo?.status] || "Lỗi"}
-            color={
-              status === CandidateStatus.APPLIED
-                ? Color.PrimaryBlackPlaceHolder
-                : status === CandidateStatus.REJECTED
-                  ? Color.PrimaryOrgange
-                  : status === CandidateStatus.WAIT_FOR_INTERVIEW
-                    ? Color.PrimaryGreen
-                    : Color.SecondaryGold
-            }
+            label={STATUS_CONFIG[status]?.label}
+            color={STATUS_CONFIG[status]?.color}
           />
         </Box>
 
-        {/* ACTION BUTTONS */}
-        {isAdmin && (
-          <Box
-            sx={{
-              display: "flex",
-              gap: 2,
-              mt: 3,
-            }}
-          >
-            <Button
-              variant="contained"
-              onClick={handleApproveClick}
-              disabled={reviewingButtonId}
-              sx={{
-                color: Color.PrimaryWhite,
-                bgcolor: Color.PrimaryBlue,
-                borderRadius: 2,
-                textTransform: "none",
-                fontWeight: 600,
-                ":hover": { opacity: 0.9, bgcolor: Color.PrimaryBlue },
-              }}
-              startIcon={
-                reviewingButtonId &&
-                reviewingButtonId !== CandidateStatus.REJECTED ? (
-                  <CircularProgress size={24} />
-                ) : (
-                  <CheckCircleRoundedIcon />
-                )
-              }
-            >
-              {status === CandidateStatus.HIRED
-                ? "Xem hợp đồng"
-                : status === CandidateStatus.WAIT_FOR_INTERVIEW
-                  ? "Tạo hợp đồng"
-                  : "Chấp nhận"}
-            </Button>
+        {/* {isAdmin && STATUS_CONFIG[status]?.next.length > 0 && ( */}
+        {/*   <Box sx={{ display: "flex", gap: 2, mt: 3, flexWrap: "wrap" }}> */}
+        {/*     {STATUS_CONFIG[status].next.map((nextStatus) => ( */}
+        {/*       <Button */}
+        {/*         key={nextStatus} */}
+        {/*         variant="contained" */}
+        {/*         onClick={() => handleChangeStatus(nextStatus)} */}
+        {/*         disabled={reviewingButtonId} */}
+        {/*         sx={{ */}
+        {/*           bgcolor: STATUS_CONFIG[nextStatus].color, */}
+        {/*           color: Color.PrimaryWhite, */}
+        {/*           borderRadius: 2, */}
+        {/*           textTransform: "none", */}
+        {/*           fontWeight: 600, */}
+        {/*           ":hover": { opacity: 0.9 }, */}
+        {/*         }} */}
+        {/*       > */}
+        {/*         {STATUS_CONFIG[nextStatus].label} */}
+        {/*       </Button> */}
+        {/*     ))} */}
+        {/*   </Box> */}
+        {/* )} */}
 
-            {status !== CandidateStatus.HIRED &&
-              status !== CandidateStatus.REJECTED && (
-                <Button
-                  variant="contained"
-                  onClick={handleDeclineClick}
-                  disabled={reviewingButtonId}
-                  sx={{
-                    bgcolor: Color.PrimaryOrgange,
-                    color: Color.PrimaryWhite,
-                    borderRadius: 2,
-                    textTransform: "none",
-                    fontWeight: 600,
-                    ":hover": { opacity: 0.9, bgcolor: Color.PrimaryOrgange },
-                  }}
-                  startIcon={
-                    reviewingButtonId === CandidateStatus.REJECTED ? (
-                      <CircularProgress size={24} />
-                    ) : (
-                      <CancelRoundedIcon />
-                    )
-                  }
-                >
-                  Từ chối
-                </Button>
-              )}
+        {/* ACTION SECTION */}
+        {isAdmin && (
+          <Box sx={{ display: "flex", gap: 2, mt: 3, flexWrap: "wrap" }}>
+            {STATUS_CONFIG[status]?.next?.length > 0 && (
+              <Select
+                value=""
+                displayEmpty
+                disabled={!!reviewingButtonId}
+                size="small"
+                sx={{ minWidth: 240, borderRadius: 2 }}
+                renderValue={() => "Chuyển trạng thái"}
+                onChange={(e) => handleChangeStatus(e.target.value)}
+              >
+                {STATUS_CONFIG[status].next.map((nextStatus) => (
+                  <MenuItem key={nextStatus} value={nextStatus}>
+                    {STATUS_CONFIG[nextStatus].label}
+                  </MenuItem>
+                ))}
+              </Select>
+            )}
+
+            {/* CREATE CONTRACT */}
+            {status === CandidateStatus.CONFIRMED && (
+              <Button
+                variant="contained"
+                sx={{
+                  bgcolor: Color.SecondaryGold,
+                  color: Color.PrimaryWhite,
+                  borderRadius: 2,
+                  textTransform: "none",
+                  fontWeight: 600,
+                  ":hover": { opacity: 0.9, bgcolor: Color.SecondaryGold },
+                }}
+                onClick={() =>
+                  navigate(`/crew-contracts/form`, {
+                    state: {
+                      candidateProfileId: candidateID,
+                      type: "create",
+                    },
+                  })
+                }
+              >
+                Tạo hợp đồng
+              </Button>
+            )}
+
+            {/* VIEW CONTRACT */}
+            {(status === CandidateStatus.CONTRACT_PENDING_SIGNATURE ||
+              status === CandidateStatus.HIRED ||
+              status === CandidateStatus.CONTRACT_SIGNED) && (
+              <Button
+                variant="outlined"
+                sx={{ borderRadius: 2 }}
+                onClick={() =>
+                  navigate(`/crew-contracts/${candidateID}`, {
+                    state: {
+                      usedApplicationId: true,
+                    },
+                  })
+                }
+              >
+                Xem hợp đồng
+              </Button>
+            )}
           </Box>
         )}
       </SectionWrapper>

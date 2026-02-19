@@ -36,9 +36,11 @@ const CourseForm = () => {
       ]);
 
       const newCourse = await createCourse(
-        mapValuesToRequestBody(values),
-        wallPaper.asset_id,
-        trainingProviderLogo.asset_id,
+        mapValuesToRequestBody(values, {
+          trainingProviderLogoAssetId:
+            trainingProviderLogo.assetId || trainingProviderLogo.asset_id,
+          wallpaperAssetId: wallPaper.assetId || wallPaper.asset_id,
+        }),
       );
 
       toast.success("Tạo khóa học thành công!");

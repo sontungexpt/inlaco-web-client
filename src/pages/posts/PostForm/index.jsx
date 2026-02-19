@@ -18,6 +18,8 @@ import { buildInitialValues } from "./initial";
 import { mapValuesToRequestBody } from "./mapper";
 import toast from "react-hot-toast";
 import LoadErrorState from "@/components/common/states/LoadErrorState";
+import cloudinaryUpload from "@/services/cloudinaryServices";
+import UploadStrategy from "@/constants/UploadStrategy";
 
 export default function PostForm() {
   const navigate = useNavigate();
@@ -52,9 +54,22 @@ export default function PostForm() {
 
   const handleFormSubmission = async (values, { resetForm }) => {
     try {
+      const [image] = await Promise.all([
+        cloudinaryUpload(values.image, UploadStrategy.POST_IMAGE),
+        // cloudinaryUpload(
+        //   values.instituteLogo,
+        //   UploadStrategy.TRAINING_PROVIDER_LOGO,
+        // ),
+      ]);
+
       const newPost =
         mode === FormMode.CREATE
-          ? await createPost(mapValuesToRequestBody(values))
+          ? await createPost(
+              mapValuesToRequestBody(values, {
+                imageAssetId: image.assetId || image.asset_id,
+                attachmentsAssetIds: [],
+              }),
+            )
           : await updatePost(postId, mapValuesToRequestBody(values));
       resetForm();
       viewPostDetail(newPost);

@@ -1,14 +1,15 @@
 import SupplyRequestEndpoint from "@/endpoints/SupplyRequestEndpoint";
+import { flattenFilter } from "@/utils/filter";
 import { privateRequest } from "@/utils/request";
 
-export const fetchSupplyRequests = async ({ page, pageSize, status }) => {
+export const fetchSupplyRequests = async ({ page, pageSize, filter }) => {
   const response = await privateRequest.get(
     SupplyRequestEndpoint.GET_SUPPLY_REQUESTS,
     {
       params: {
         page,
         size: pageSize,
-        status,
+        ...flattenFilter(filter),
       },
     },
   );

@@ -36,6 +36,13 @@ export const fetchUniqueContract = async (contractID) => {
   return response.data;
 };
 
+export const fetchUniqueContractByApplicationId = async (applicationId) => {
+  const response = await privateRequest.get(
+    ContractEndpoint.GET_CONTRACT_BY_APPLICATION_ID(applicationId),
+  );
+  return response.data;
+};
+
 export const getCrewContractByID_API = async (contractID) => {
   try {
     const response = await privateRequest.get(
@@ -61,7 +68,7 @@ export const getSupplyContractByID_API = async (contractID) => {
 export const createLaborContract = async (
   crewMemberID,
   contract,
-  contractFilePubId,
+  contractFileAssetId,
 ) => {
   const response = await privateRequest.post(
     ContractEndpoint.CREATE_LABOR_CONTRACT(crewMemberID),
@@ -71,7 +78,7 @@ export const createLaborContract = async (
     },
     {
       params: {
-        contractFilePubId,
+        contractFileAssetId,
       },
     },
   );
@@ -101,7 +108,6 @@ export const editContract = async (
   id,
   newDatas,
   type = ContractType.LABOR_CONTRACT,
-  newVersion,
 ) => {
   const response = await privateRequest.patch(
     ContractEndpoint.UPDATE_CONTRACT(id),
@@ -110,9 +116,7 @@ export const editContract = async (
       type: type,
     },
     {
-      params: {
-        newVersion: !!newVersion,
-      },
+      params: {},
     },
   );
   return response.data;
