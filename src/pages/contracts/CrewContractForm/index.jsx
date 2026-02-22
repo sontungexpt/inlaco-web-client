@@ -64,12 +64,16 @@ const CrewContractForm = () => {
   };
 
   const updateContract = async (values) => {
-    // const uploadRespone = await cloudinaryUpload(
-    //   values.contractFile,
-    //   UploadStrategy.CONTRACT_FILE,
-    // );
+    const contractFile = await cloudinaryUpload(
+      values.contractFile,
+      UploadStrategy.CONTRACT_FILE,
+    );
+
     const oldRequest = mapValuesToRequestBody(initialValues, {});
-    const newRequest = mapValuesToRequestBody(values, {});
+    const newRequest = mapValuesToRequestBody(values, {
+      contractFile: contractFile?.assetId || contractFile?.asset_id,
+      attachments: null,
+    });
     const patchRequest = keepChangedFields(oldRequest, newRequest);
 
     //Calling API to create a new crew member

@@ -85,17 +85,46 @@ export default function PostDetail() {
         </Typography>
       )}
 
-      <CloudinaryImage
-        url={post.image.url}
-        publicId={post.image.publicId}
-        name={post.image.displayName}
-        height={300}
-        mb={4}
-      />
+      {post.image && (
+        <Paper
+          elevation={0}
+          sx={{
+            mt: 4,
+            mb: 4,
+            borderRadius: 4,
+            overflow: "hidden",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+            transition: "all 0.3s ease",
+            "&:hover": {
+              boxShadow: "0 14px 40px rgba(0,0,0,0.12)",
+              transform: "translateY(-2px)",
+            },
+          }}
+        >
+          <CloudinaryImage
+            url={post.image.url}
+            publicId={post.image.publicId}
+            style={{
+              width: "100%",
+              height: "auto",
+              maxHeight: 520,
+              objectFit: "cover",
+              display: "block",
+            }}
+          />
+        </Paper>
+      )}
 
       <Divider color={Color.PrimaryBlackPlaceHolder} />
 
-      <MarkdownPreview>{post.content}</MarkdownPreview>
+      <MarkdownPreview
+        sx={{
+          fontSize: 18,
+          color: "text.secondary",
+        }}
+      >
+        {post.content}
+      </MarkdownPreview>
     </Paper>
   );
 }

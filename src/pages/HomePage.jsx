@@ -200,6 +200,11 @@ export default function HomePage({ pageSize = 12 }) {
     );
   }
 
+  const navigateToDetail = (id, type) => {
+    if (type === "RECRUITMENT") navigate(`/recruitments/${id}`);
+    else navigate(`/posts/${id}`);
+  };
+
   return (
     <Box m="20px">
       <SectionWrapper>
@@ -237,8 +242,8 @@ export default function HomePage({ pageSize = 12 }) {
               imageSrc={post.image.url}
               imagePublicId={post.image.publicId}
               date={post.date}
-              onClick={() => navigate(`/posts/${post.id}`)}
-              onDetailClick={() => navigate(`/posts/${post.id}`)}
+              onClick={() => navigateToDetail(post.id, post.type)}
+              onDetailClick={() => navigateToDetail(post.id, post.type)}
             />
           </Grid>
         ))}

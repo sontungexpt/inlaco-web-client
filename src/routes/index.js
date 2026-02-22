@@ -179,7 +179,7 @@ export const AppRoutes = [
       {
         path: ":id",
         element: lazy(
-          () => import("@pages/posts/recruitments/RecruitmentDetail"),
+          () => import("@/pages/posts/recruitments/RecruitmentPostDetail"),
         ),
       },
       {
