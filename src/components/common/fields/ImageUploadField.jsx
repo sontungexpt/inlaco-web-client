@@ -173,6 +173,8 @@ const ImageUploadField = ({
             key={img.publicId || img.url || img.id || idx}
             onClick={openDialog}
             sx={{
+              flex: 1, // take remaining space
+              minWidth: 0, // prevent overflow
               position: "relative",
               cursor: disabled ? "default" : "pointer",
               border: "2px solid",

@@ -5,16 +5,13 @@ import { dateToMUIDatetime, isoToMUIDateTime } from "@/utils/converter";
 import Color from "@/constants/Color";
 
 const formatDisplayValue = (value, type) => {
-  if (
-    (type === "date" || type === "datetime-local" || type === "time") &&
-    typeof value === "string" &&
-    Regex.ISO_REGEX.test(value)
-  ) {
-    return isoToMUIDateTime(value, type);
-  } else if (value instanceof Date) {
-    return dateToMUIDatetime(value, type);
+  if (type === "date" || type === "datetime-local" || type === "time") {
+    if (typeof value === "string" && Regex.ISO_REGEX.test(value)) {
+      return isoToMUIDateTime(value, type);
+    } else if (value instanceof Date) {
+      return dateToMUIDatetime(value, type);
+    }
   }
-
   return value ?? "";
 };
 

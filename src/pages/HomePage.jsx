@@ -58,7 +58,8 @@ const NewsCard = ({
         }}
       >
         <CloudinaryImage
-          height="180"
+          height={180}
+          width="100%"
           publicId={imagePublicId}
           src={imageSrc}
           alt={title}
@@ -124,12 +125,13 @@ const NewsCard = ({
         <Typography
           variant="body2"
           sx={{
-            mt: 1.2,
+            my: 2,
             color: "text.secondary",
             display: "-webkit-box",
-            WebkitLineClamp: 3,
+            WebkitLineClamp: 2, // chỉ hiển thị tối đa 2 dòng
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
           {description}
@@ -141,7 +143,6 @@ const NewsCard = ({
           size="small"
           sx={{
             mt: "auto",
-            alignSelf: "flex-start",
             borderRadius: 2,
             textTransform: "none",
             fontWeight: 600,
