@@ -18,12 +18,9 @@ export const fetchCourses = async ({
   return response.data;
 };
 
-export const createCourse = async (payload, wallpaperAssetId, logoAssetId) => {
+export const createCourse = async (payload) => {
   const res = await privateRequest.post(CourseEndpoint.CREATE_COURSE, payload, {
-    params: {
-      wallpaperAssetId,
-      logoAssetId,
-    },
+    params: {},
   });
   return res.data;
 };

@@ -81,7 +81,7 @@ export default function CourseDetail() {
   const [enrollLoading, setEnrollLoading] = useState(false);
   const [toggleLoading, setToggleLoading] = useState(false);
 
-  // TODO: handle toggle
+  // TODO: Toggle course registration
   const handleToggleRegistration = async () => {
     setToggleLoading(true);
     // await toggleCourseRegister(course.id);

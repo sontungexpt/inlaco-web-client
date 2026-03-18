@@ -1,34 +1,51 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchCrewContracts,
   fetchUniqueContract,
   fetchUniqueContractByApplicationId,
 } from "@/services/contractServices";
 
+// ----- Contract Query Key -----
+export const ContractQueryKey = {
+  ALL: ["contracts"],
+  LIST: ({ page, pageSize, signed, type }) => [
+    ...ContractQueryKey.ALL,
+    page,
+    pageSize,
+    signed,
+    type,
+  ],
+  DETAIL: (id) => ["contract", id],
+  APPLICATION: (applicationId) => ["application-contract", applicationId],
+};
+
+// ----- List of contracts -----
 export function useContracts({ page = 0, pageSize = 12, signed, type }) {
   return useQuery({
-    queryKey: ["contracts", page, pageSize, signed, type],
+    queryKey: ContractQueryKey.LIST({ page, pageSize, signed, type }),
     queryFn: () => fetchCrewContracts({ page, pageSize, signed, type }),
     staleTime: 1000 * 60 * 4, // cache 4 min
   });
 }
 
-export function useContract(id, props) {
+// ----- Single contract -----
+export function useContract(id, props = {}) {
   return useQuery({
-    enabled: !!id,
-    stableTime: 1000 * 60 * 4, // cache 4 min
-    ...props,
-    queryKey: ["contract", id],
+    queryKey: ContractQueryKey.DETAIL(id),
     queryFn: () => fetchUniqueContract(id),
+    enabled: !!id,
+    staleTime: 1000 * 60 * 4,
+    ...props,
   });
 }
 
-export function useApplicationContract(applictionId, props) {
+// ----- Contract by application -----
+export function useApplicationContract(applicationId, props = {}) {
   return useQuery({
-    enabled: !!applictionId,
-    stableTime: 1000 * 60 * 4, // cache 4 min
+    queryKey: ContractQueryKey.APPLICATION(applicationId),
+    queryFn: () => fetchUniqueContractByApplicationId(applicationId),
+    enabled: !!applicationId,
+    staleTime: 1000 * 60 * 4,
     ...props,
-    queryKey: ["application-contract", applictionId],
-    queryFn: () => fetchUniqueContractByApplicationId(applictionId),
   });
 }

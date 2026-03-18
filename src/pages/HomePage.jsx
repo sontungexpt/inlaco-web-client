@@ -113,9 +113,10 @@ const NewsCard = ({
           lineHeight={1.3}
           sx={{
             display: "-webkit-box",
-            WebkitLineClamp: 2,
+            WebkitLineClamp: 1,
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
           {title}
@@ -125,7 +126,7 @@ const NewsCard = ({
         <Typography
           variant="body2"
           sx={{
-            my: 2,
+            my: 1,
             color: "text.secondary",
             display: "-webkit-box",
             WebkitLineClamp: 2, // chỉ hiển thị tối đa 2 dòng

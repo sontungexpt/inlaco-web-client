@@ -1,29 +1,61 @@
-import { fetchCourseDetail, fetchCourses } from "@/services/courseServices";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchCourses,
+  fetchCourseDetail,
+  createCourse,
+  enrollCourse,
+} from "@/services/courseServices";
 
-export const useCourse = (id) => {
-  return useQuery({
-    queryKey: ["course", id],
-    queryFn: () => fetchCourseDetail(id),
-    enabled: !!id,
-  });
+// ----- Query Keys -----
+export const CourseQueryKey = {
+  ALL: ["courses"],
+  DETAIL: (id) => ["course", id],
 };
 
+// ----- Queries -----
 export const useCourses = ({
-  page,
+  page = 0,
   pageSize = 20,
   nonExpired = true,
   sort = null,
-}) => {
+} = {}) => {
   return useQuery({
-    queryKey: ["courses", page, pageSize, nonExpired, sort],
-    queryFn: () =>
-      fetchCourses({
-        nonExpired,
-        page,
-        pageSize,
-        sort,
-      }),
+    queryKey: [...CourseQueryKey.ALL, page, pageSize, nonExpired, sort],
+    queryFn: () => fetchCourses({ nonExpired, page, pageSize, sort }),
     staleTime: 1000 * 60 * 5, // cache 5 phút
+  });
+};
+
+export const useCourse = (id) => {
+  return useQuery({
+    queryKey: CourseQueryKey.DETAIL(id),
+    queryFn: () => fetchCourseDetail(id),
+    enabled: !!id,
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
+// ----- Mutations -----
+export const useCreateCourse = (options = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    ...options,
+    mutationFn: ({ payload }) => createCourse(payload),
+    onSuccess: (data, variables, context) => {
+      options?.onSuccess?.(data, variables, context);
+      queryClient.invalidateQueries({ queryKey: CourseQueryKey.ALL });
+    },
+  });
+};
+
+export const useEnrollCourse = (options = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    ...options,
+    mutationFn: enrollCourse,
+    onSuccess: (data, courseId, context) => {
+      options?.onSuccess?.(data, courseId, context);
+      queryClient.invalidateQueries({ queryKey: CourseQueryKey.ALL });
+    },
   });
 };

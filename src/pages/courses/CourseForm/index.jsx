@@ -8,7 +8,6 @@ import { Box, Button, MenuItem, Grid, CircularProgress } from "@mui/material";
 import Color from "@constants/Color";
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
-import { createCourse } from "@/services/courseServices";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import cloudinaryUpload from "@/services/cloudinaryServices";
@@ -16,9 +15,11 @@ import UploadStrategy from "@/constants/UploadStrategy";
 import { FORM_SCHEMA } from "./schema";
 import { DEFAULT_INITIAL_VALUES } from "./defaults";
 import { mapValuesToRequestBody } from "./mapper";
+import { useCreateCourse } from "@/hooks/services/course";
 
 const CourseForm = () => {
   const navigate = useNavigate();
+  const { mutateAsync: createCourse } = useCreateCourse();
 
   const CERTIFICATED_COURSE_OPTIONS = ["Có", "Không"];
 
@@ -35,13 +36,13 @@ const CourseForm = () => {
         ),
       ]);
 
-      const newCourse = await createCourse(
-        mapValuesToRequestBody(values, {
+      const newCourse = await createCourse({
+        payload: mapValuesToRequestBody(values, {
+          wallpaperAssetId: wallPaper.assetId || wallPaper.asset_id,
           trainingProviderLogoAssetId:
             trainingProviderLogo.assetId || trainingProviderLogo.asset_id,
-          wallpaperAssetId: wallPaper.assetId || wallPaper.asset_id,
         }),
-      );
+      });
 
       toast.success("Tạo khóa học thành công!");
       navigate(`/courses/${newCourse.id}`);
@@ -108,12 +109,18 @@ const CourseForm = () => {
           {/* ===== TRAINING PROVIDER ===== */}
           <SectionWrapper title="Thông tin cơ sở đào tạo*:">
             <Grid container spacing={2} alignItems="center">
-              <Grid size={{ xs: 12, sm: 4, md: 3 }}>
+              <Grid
+                sx={{
+                  display: "flex",
+                  justifyContent: "center", // căn ngang
+                  alignItems: "center", // căn dọc nếu cần
+                }}
+                size={{ xs: 12, sm: 4, md: 2 }}
+              >
                 <ImageUploadFieldFormik
                   variant="circle"
-                  size={120}
+                  size={140}
                   name="instituteLogo"
-                  sx={{ mx: { xs: "auto", sm: 0 } }}
                 />
               </Grid>
 
@@ -121,7 +128,7 @@ const CourseForm = () => {
                 <InfoTextFieldFormik label="Đơn vị đào tạo" name="institute" />
               </Grid>
 
-              <Grid size={{ xs: 12, md: 4 }}>
+              <Grid size={{ xs: 12, md: 5 }}>
                 <InfoTextFieldFormik
                   label="Tên giảng viên"
                   name="instructorName"
