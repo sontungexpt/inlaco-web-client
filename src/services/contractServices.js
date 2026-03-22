@@ -65,21 +65,15 @@ export const getSupplyContractByID_API = async (contractID) => {
   }
 };
 
-export const createLaborContract = async (
-  crewMemberID,
-  contract,
-  contractFileAssetId,
-) => {
+export const createLaborContract = async (candidateId, contract) => {
   const response = await privateRequest.post(
-    ContractEndpoint.CREATE_LABOR_CONTRACT(crewMemberID),
+    ContractEndpoint.CREATE_LABOR_CONTRACT(candidateId),
     {
       ...contract,
       type: "LABOR_CONTRACT",
     },
     {
-      params: {
-        contractFileAssetId,
-      },
+      params: {},
     },
   );
   return response.data;

@@ -1,8 +1,12 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchCrewContracts,
   fetchUniqueContract,
   fetchUniqueContractByApplicationId,
+  activeContract,
+  createLaborContract,
+  createSupplyContract,
+  editContract,
 } from "@/services/contractServices";
 
 // ----- Contract Query Key -----
@@ -10,13 +14,18 @@ export const ContractQueryKey = {
   ALL: ["contracts"],
   LIST: ({ page, pageSize, signed, type }) => [
     ...ContractQueryKey.ALL,
+    "list",
     page,
     pageSize,
     signed,
     type,
   ],
-  DETAIL: (id) => ["contract", id],
-  APPLICATION: (applicationId) => ["application-contract", applicationId],
+  DETAIL: (id) => [...ContractQueryKey.ALL, "detail", id],
+  APPLICATION: (applicationId) => [
+    ...ContractQueryKey.ALL,
+    "application-contract",
+    applicationId,
+  ],
 };
 
 // ----- List of contracts -----
@@ -49,3 +58,76 @@ export function useApplicationContract(applicationId, props = {}) {
     ...props,
   });
 }
+
+export const useActiveContract = ({ onSuccess, onError, ...options }) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    ...options,
+    mutationFn: (contractID) => activeContract(contractID),
+    onSuccess: (data, contractID, context) => {
+      // invalidate detail + list
+      queryClient.invalidateQueries({
+        queryKey: ContractQueryKey.ALL,
+      });
+      onSuccess?.(data, contractID, context);
+    },
+  });
+};
+
+export const useCreateLaborContract = ({ onSuccess, ...options }) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    ...options,
+    mutationFn: ({ candidateId, contract, contractFileAssetId }) =>
+      createLaborContract(candidateId, contract, contractFileAssetId),
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({
+        queryKey: ContractQueryKey.ALL,
+      });
+      onSuccess?.(data, variables, context);
+    },
+  });
+};
+
+export const useCreateSupplyContract = ({ onSuccess, ...options }) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    ...options,
+    mutationFn: ({
+      supplyRequestId,
+      contract,
+      contractFileAssetId,
+      shipImageAssetId,
+    }) =>
+      createSupplyContract(
+        supplyRequestId,
+        contract,
+        contractFileAssetId,
+        shipImageAssetId,
+      ),
+
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({
+        queryKey: ContractQueryKey.ALL,
+      });
+      onSuccess?.(data, variables, context);
+    },
+  });
+};
+
+export const useEditContract = ({ onSuccess, ...options }) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    ...options,
+    mutationFn: ({ id, newDatas, type }) => editContract(id, newDatas, type),
+    onSuccess: (data, variables, context) => {
+      // invalidate detail + list
+      queryClient.invalidateQueries({
+        queryKey: ContractQueryKey.ALL,
+      });
+      onSuccess?.(data, variables, context);
+    },
+  });
+};

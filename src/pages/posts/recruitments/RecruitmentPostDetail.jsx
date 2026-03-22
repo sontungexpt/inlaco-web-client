@@ -24,9 +24,7 @@ import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { usePost } from "@/hooks/services/post";
-import { useMutation } from "@tanstack/react-query";
-import { changeRegistrationRecruitmentPostStatus } from "@/services/postServices";
+import { usePost, useToggleRecruitmentPostStatus } from "@/hooks/services/post";
 import { dateToLocaleString } from "@/utils/converter";
 import {
   CenterCircularProgress,
@@ -34,6 +32,7 @@ import {
   MarkdownPreview,
 } from "@/components/common";
 import CandidateStatus from "@/constants/CandidateStatus";
+import { useRecruitmentStatus } from "./useRecruitmentStatus";
 
 const RecruitmentDetail = () => {
   const navigate = useNavigate();
@@ -42,17 +41,15 @@ const RecruitmentDetail = () => {
   const { roles } = useAuthContext();
   const isAdmin = roles.includes("ADMIN");
 
-  const { data: post, isLoading, refetch: refetchPost } = usePost(id);
+  const { data: post, isLoading } = usePost(id);
   const active = Boolean(post?.active);
+
+  const status = useRecruitmentStatus(post);
 
   const {
     mutate: toggleRegistrationStatus,
     isPending: isTogglingRegistrationStatus,
-  } = useMutation({
-    mutationFn: () => changeRegistrationRecruitmentPostStatus(id, !active),
-    onSuccess: () => {
-      refetchPost();
-    },
+  } = useToggleRecruitmentPostStatus({
     onError: () => {
       toast.error("Thay đổi trạng thái thất bại!");
     },
@@ -97,8 +94,8 @@ const RecruitmentDetail = () => {
           }}
         >
           <Chip
-            label={active ? "Đang tuyển" : "Đã đóng"}
-            color={active ? "success" : "error"}
+            label={status.label}
+            color={status.color}
             sx={{ fontSize: 14, px: 2 }}
           />
 
@@ -106,7 +103,12 @@ const RecruitmentDetail = () => {
             <Button
               variant="contained"
               disabled={isTogglingRegistrationStatus}
-              onClick={toggleRegistrationStatus}
+              onClick={() => {
+                toggleRegistrationStatus({
+                  id,
+                  active: !active,
+                });
+              }}
               loading={isTogglingRegistrationStatus}
               startIcon={
                 !isTogglingRegistrationStatus &&
@@ -223,7 +225,7 @@ const RecruitmentDetail = () => {
               {!isAdmin && (
                 <Button
                   fullWidth
-                  disabled={!isAdmin && !active}
+                  disabled={!status.isOpen}
                   variant="contained"
                   color="primary"
                   sx={{ py: 1.2, borderRadius: 2 }}

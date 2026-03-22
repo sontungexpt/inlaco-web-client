@@ -1,14 +1,43 @@
 import {
+  changeRegistrationRecruitmentPostStatus,
   fetchCandidates,
   fetchPosts,
   fetchUniqueCandidate,
   fetchUniquePost,
 } from "@/services/postServices";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+
+export const PostQueryKey = {
+  ALL: ["posts"],
+
+  LIST: ({ page, pageSize, filter, sort }) => [
+    ...PostQueryKey.ALL,
+    "list",
+    page,
+    pageSize,
+    filter,
+    sort,
+  ],
+
+  DETAIL: (id) => [...PostQueryKey.ALL, "detail", id],
+
+  ALL_CANDIDATES: ["candidates"],
+
+  CANDIDATES: ({ page, pageSize, sort, filter }) => [
+    ...PostQueryKey.ALL_CANDIDATES,
+    "list",
+    page,
+    pageSize,
+    sort,
+    filter,
+  ],
+
+  CANDIDATE_DETAIL: (id) => [...PostQueryKey.ALL_CANDIDATES, "detail", id],
+};
 
 export const usePost = (id) => {
   return useQuery({
-    queryKey: ["post", id],
+    queryKey: PostQueryKey.DETAIL(id),
     queryFn: () => fetchUniquePost(id),
     enabled: !!id,
     retry: 1,
@@ -17,9 +46,9 @@ export const usePost = (id) => {
 
 export const usePosts = ({ page, pageSize = 20, sort = null, filter }) => {
   return useQuery({
-    queryKey: ["posts", page, pageSize, filter, sort],
+    queryKey: PostQueryKey.LIST({ page, pageSize, filter, sort }),
     queryFn: () => fetchPosts({ page, pageSize, filter, sort }),
-    staleTime: 1000 * 60 * 5, // cache 5 phút
+    staleTime: 1000 * 60 * 5,
   });
 };
 
@@ -42,7 +71,7 @@ export const useRecruitmentPosts = ({
 
 export const useCandidates = ({ page, pageSize = 20, sort = null, filter }) => {
   return useQuery({
-    queryKey: ["candidates", page, pageSize, sort, filter],
+    queryKey: PostQueryKey.CANDIDATES({ page, pageSize, sort, filter }),
     queryFn: () =>
       fetchCandidates({
         page,
@@ -50,16 +79,31 @@ export const useCandidates = ({ page, pageSize = 20, sort = null, filter }) => {
         sort,
         filter,
       }),
-    staleTime: 1000 * 60, // cache 1 phút
+    staleTime: 1000 * 60,
   });
 };
 
 export const useCandidate = (candidateId) => {
   return useQuery({
-    queryKey: ["candidate-profile", candidateId],
+    queryKey: PostQueryKey.CANDIDATE_DETAIL(candidateId),
     enabled: !!candidateId,
     queryFn: () => fetchUniqueCandidate(candidateId),
     staleTime: 1000 * 60 * 2,
-    retry: 1,
+  });
+};
+
+export const useToggleRecruitmentPostStatus = ({ onSuccess, ...options }) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    ...options,
+    mutationFn: ({ id, active }) =>
+      changeRegistrationRecruitmentPostStatus(id, active),
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({
+        queryKey: PostQueryKey.ALL,
+      });
+      onSuccess?.(...args);
+    },
   });
 };

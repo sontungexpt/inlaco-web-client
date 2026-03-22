@@ -22,7 +22,7 @@ import cloudinaryUpload from "@/services/cloudinaryServices";
 import UploadStrategy from "@/constants/UploadStrategy";
 import toast from "react-hot-toast";
 import { keepChangedFields } from "@/utils/object";
-import { useContract } from "@/hooks/services/contract";
+import { ContractQueryKey, useContract } from "@/hooks/services/contract";
 import { useCandidate } from "@/hooks/services/post";
 import { buildInitialValues } from "./initial";
 import { SCHEMA } from "./schema";
@@ -30,36 +30,41 @@ import { RECEIVE_METHOD } from "./defaults";
 import TemplateDialog from "../components/TemplateDialog";
 import { mapValuesToRequestBody } from "./mapper";
 import ContractType from "@/constants/ContractTemplateType";
+import { useContractFormParams } from "./useContractFormParams";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CrewContractForm = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  // const { candidateProfileId, contractId, formType } = useContractFormParams();
   const {
     state: { candidateProfileId, contractId, type: formType = "create" } = {},
   } = useLocation();
-  const updatingForm = formType === "update";
+
+  const IS_UPDATE_FORM = formType === "update";
 
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
 
   const { data: candidateInfo, isLoading: candidateInfoLoading } =
     useCandidate(candidateProfileId);
+
   const { data: contractInfo, isLoading: contractInfoLoading } =
     useContract(contractId);
-  const freezedContract = contractInfo?.freezed;
+
+  const IS_FREEZED_CONTRACT = contractInfo?.freezed;
 
   const createContract = async (values) => {
     const contractFile = await cloudinaryUpload(
       values.contractFile,
       UploadStrategy.CONTRACT_FILE,
     );
-
-    //Calling API to create a new crew member
-    const contract = await createLaborContract(
-      candidateProfileId,
-      mapValuesToRequestBody(values, {
+    const contract = await createLaborContract({
+      candidateId: candidateProfileId,
+      contract: mapValuesToRequestBody(values, {
         contractFile: contractFile?.assetId || contractFile?.asset_id,
         attachments: null,
       }),
-    );
+    });
     return contract;
   };
 
@@ -81,7 +86,7 @@ const CrewContractForm = () => {
       contractInfo?.id,
       patchRequest,
       ContractType.LABOR_CONTRACT,
-      freezedContract,
+      IS_FREEZED_CONTRACT,
     );
 
     return contract;
@@ -89,15 +94,19 @@ const CrewContractForm = () => {
 
   const handleFormSubmission = async (values, helpers) => {
     try {
-      const contract = updatingForm
+      const contract = IS_UPDATE_FORM
         ? await updateContract(values, helpers)
         : await createContract(values, helpers);
       if (!contract?.id) return;
+
+      queryClient.invalidateQueries({
+        queryKey: ContractQueryKey.ALL,
+      });
       helpers.resetForm();
       navigate(`/crew-contracts/${contract.id}`);
     } catch (err) {
-      const msg = updatingForm
-        ? freezedContract
+      const msg = IS_UPDATE_FORM
+        ? IS_FREEZED_CONTRACT
           ? "Thêm phụ lục thất bại"
           : "Cập nhật hợp đồng thất bại"
         : "Tạo hợp đồng thất bại";
@@ -108,11 +117,11 @@ const CrewContractForm = () => {
   const initialValues = useMemo(
     () =>
       buildInitialValues({
-        updatingForm,
+        updatingForm: IS_UPDATE_FORM,
         candidateInfo,
         contractInfo,
       }),
-    [updatingForm, candidateInfo, contractInfo],
+    [IS_UPDATE_FORM, candidateInfo, contractInfo],
   );
 
   return (
@@ -187,8 +196,8 @@ const CrewContractForm = () => {
                     color: Color.PrimaryBlack,
                   }}
                 >
-                  {updatingForm
-                    ? freezedContract
+                  {IS_UPDATE_FORM
+                    ? IS_FREEZED_CONTRACT
                       ? "Thêm phụ lục"
                       : "Sửa hợp đồng"
                     : "Tạo hợp đồng"}

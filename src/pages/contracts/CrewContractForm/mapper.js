@@ -70,7 +70,7 @@ export const mapValuesToRequestBody = (
       {
         partyName: values?.partyB?.fullName,
         representer: values?.partyB?.fullName,
-        representerPosition: values?.partyB?.representativePos,
+        representerPosition: values?.jobInfo?.position,
         address: values?.partyB?.permanentAddr,
         phone: values?.partyB?.phone,
         type: "LABOR",
