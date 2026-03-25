@@ -1,5 +1,5 @@
 import { privateRequest } from "@/utils/request";
-import ContractEndpoint from "@/endpoints/ContractEndpoint";
+import ContractEndpoint from "@/endpoints/contract.endpoint";
 import ContractType from "@/constants/ContractTemplateType";
 
 export const activeContract = async (contractID) => {
@@ -29,9 +29,14 @@ export const fetchCrewContracts = async ({
   return response.data;
 };
 
-export const fetchUniqueContract = async (contractID) => {
+export const fetchUniqueContract = async (contractID, version) => {
   const response = await privateRequest.get(
     ContractEndpoint.GET_CONTRACT_BY_ID(contractID),
+    {
+      params: {
+        version: version,
+      },
+    },
   );
   return response.data;
 };
@@ -135,4 +140,11 @@ export const editSupplyContractAPI = async (contractID, contractInfo) => {
   } catch (err) {
     return err.response;
   }
+};
+
+export const getContractVersions = async (contractID) => {
+  const response = await privateRequest.get(
+    ContractEndpoint.GET_CONTRACT_OLD_VERSIONS(contractID),
+  );
+  return response.data;
 };

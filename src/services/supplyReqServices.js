@@ -1,4 +1,4 @@
-import SupplyRequestEndpoint from "@/endpoints/SupplyRequestEndpoint";
+import SupplyRequestEndpoint from "@/endpoints/supply-request.endpoint";
 import { flattenFilter } from "@/utils/filter";
 import { privateRequest } from "@/utils/request";
 

@@ -1,7 +1,7 @@
 import axios, { HttpStatusCode } from "axios";
 import { localStorage, sessionStorage, StorageKey } from "@utils/storage";
 import { TokenMutex } from "./TokenMutex";
-import AuthEndpoint from "@/endpoints/AuthEndpoint";
+import AuthEndpoint from "@/endpoints/auth.endpoint";
 import Env from "@/config/env.config";
 
 const privateRequest = axios.create({

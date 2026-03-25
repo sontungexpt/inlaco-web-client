@@ -16,6 +16,7 @@ import { useState } from "react";
 import Color from "@constants/Color";
 import toast from "react-hot-toast";
 import { downloadFile } from "@/utils/docDownload";
+import NoShipPhoto from "@assets/images/no-ship-photo.png";
 
 const TemplateContractCard = ({
   image,
@@ -91,11 +92,7 @@ const TemplateContractCard = ({
             <CardMedia
               height={180}
               component="img"
-              image={
-                imageError || !image
-                  ? require("@assets/images/no-ship-photo.png")
-                  : image
-              }
+              image={imageError || !image ? NoShipPhoto : image}
               alt={title}
               onError={() => setImageError(true)}
               sx={{ objectFit: "cover", filter: "brightness(0.95)" }}

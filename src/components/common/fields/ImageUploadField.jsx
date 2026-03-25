@@ -5,6 +5,7 @@ import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { useRef, useMemo, useEffect } from "react";
 import { CloudinaryImage } from "..";
 import { formatSize, isValidFileType, normalize } from "./helper";
+import NoImagePhoto from "@assets/images/no-image-photo.png";
 
 /* ================= styled ================= */
 
@@ -190,11 +191,7 @@ const ImageUploadField = ({
           >
             <CloudinaryImage
               publicId={img.publicId}
-              src={
-                img.url ||
-                placeholderImage ||
-                require("@assets/images/no-ship-photo.png")
-              }
+              src={img.url || placeholderImage || NoImagePhoto}
               sx={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
 

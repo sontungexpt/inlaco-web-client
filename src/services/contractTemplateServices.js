@@ -1,5 +1,5 @@
 import { privateRequest } from "@/utils/request";
-import ContractTemplateEndpoint from "@/endpoints/ContractTemplateEndpoint";
+import ContractTemplateEndpoint from "@/endpoints/contract-template.endpoint";
 
 export const fetchContractTemplates = async ({ page, pageSize, sort }) => {
   const response = await privateRequest.get(

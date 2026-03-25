@@ -3,7 +3,7 @@ import { Box, Paper, Typography, Divider, Button } from "@mui/material";
 import { useParams, useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
-import { useContract } from "@/hooks/services/contract";
+import { useContract } from "@/queries/contract.query";
 import { activeContract } from "@/services/contractServices";
 import { dateToLocaleString } from "@/utils/converter";
 import useAllowedRole from "@/hooks/useAllowedRole";
@@ -18,6 +18,7 @@ import {
   LoadErrorState,
   SectionWrapper,
 } from "@/components/common";
+import Color from "@/constants/Color";
 
 const SupplyContractDetail = () => {
   const { id } = useParams();
@@ -134,6 +135,41 @@ const SupplyContractDetail = () => {
             title="Phụ lục & tài liệu"
             files={contract.attachments || []}
           />
+
+          {contract.version > 1 && (
+            <Box
+              sx={{
+                mt: 4,
+                backgroundColor: Color.BackgroundLight,
+                textAlign: "center",
+              }}
+            >
+              <Typography
+                variant="subtitle1"
+                fontWeight={600}
+                color={Color.PrimaryBlue}
+                sx={{ mb: 1 }}
+              >
+                Hợp đồng này có nhiều phiên bản
+              </Typography>
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: 2,
+                  textTransform: "none",
+                  fontWeight: 600,
+                  backgroundColor: Color.PrimaryBlue,
+                  color: Color.PrimaryWhite,
+                  ":hover": {
+                    backgroundColor: Color.PrimaryDarkBlue,
+                  },
+                }}
+                onClick={() => navigate(`/contracts/${id}/old-versions`)}
+              >
+                Xem các phiên bản cũ
+              </Button>
+            </Box>
+          )}
         </Paper>
       </Box>
     </ContractDetailLayout>

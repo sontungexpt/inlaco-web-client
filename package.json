@@ -32,7 +32,6 @@
     "react-markdown": "^10.1.0",
     "react-pro-sidebar": "^1.1.0",
     "react-router": "^7.9.6",
-    "react-scripts": "^5.0.1",
     "react-syntax-highlighter": "^16.1.0",
     "remark-gfm": "^4.0.1",
     "spring-filter-query-builder": "^1.1.1",
@@ -41,38 +40,19 @@
     "xlsx": "^0.18.5",
     "yup": "^1.7.1"
   },
-  "overrides": {
-    "typescript": "^5.9.3"
-  },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.91.2",
-    "babel-plugin-module-resolver": "^5.0.2",
-    "babel-plugin-react-compiler": "^1.0.0",
-    "customize-cra": "^1.0.0",
-    "react-app-rewired": "^2.2.1"
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.2"
   }
 }

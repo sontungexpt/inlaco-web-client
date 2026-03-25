@@ -22,7 +22,7 @@ import cloudinaryUpload from "@/services/cloudinaryServices";
 import UploadStrategy from "@/constants/UploadStrategy";
 import toast from "react-hot-toast";
 import { keepChangedFields } from "@/utils/object";
-import { ContractQueryKey, useContract } from "@/hooks/services/contract";
+import { ContractQueryKey, useContract } from "@/queries/contract.query";
 import { useCandidate } from "@/hooks/services/post";
 import { buildInitialValues } from "./initial";
 import { SCHEMA } from "./schema";

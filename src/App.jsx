@@ -92,6 +92,7 @@ export const buildRoutes = (routes, pub = false) => {
 };
 
 export default function App() {
+  console.log("render App");
   return (
     <Suspense fallback={<PageCircularProgress />}>
       <Routes>

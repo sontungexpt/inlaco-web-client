@@ -29,7 +29,7 @@ import { mapValuesToRequestBody } from "./mapper";
 import { FORM_SCHEMA } from "./schema";
 import { buildInitialValues } from "./initial";
 import { useSupplyRequest } from "@/hooks/services/supplyRequest";
-import { useContract } from "@/hooks/services/contract";
+import { useContract } from "@/queries/contract.query";
 import { keepChangedFields } from "@/utils/object";
 import InfoTextFieldFormik from "@/components/common/fields/InfoTextFieldFormik";
 import FormMode from "@/constants/FormMode";

@@ -1,5 +1,5 @@
 import { privateRequest } from "@utils/request";
-import CourseEndpoint from "../endpoints/CourseEndpoint";
+import CourseEndpoint from "../endpoints/course.endpoint";
 
 export const fetchCourses = async ({
   nonExpired = true,

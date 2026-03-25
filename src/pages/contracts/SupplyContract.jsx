@@ -8,7 +8,7 @@ import {
 } from "@components/common";
 import { Box, MenuItem } from "@mui/material";
 import { useLocation, useNavigate } from "react-router";
-import { useContracts } from "@/hooks/services/contract";
+import { useContracts } from "@/queries/contract.query";
 import { isoToLocalDatetime } from "@/utils/converter";
 import ContractType from "@/constants/ContractTemplateType";
 

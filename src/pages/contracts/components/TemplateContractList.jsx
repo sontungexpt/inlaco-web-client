@@ -1,6 +1,5 @@
-import { SearchBar } from "@/components/global";
-import Color from "@/constants/Color";
-import { useContractTemplates } from "@/hooks/services/contractTemplate";
+import { SearchBar } from "@/components/common";
+import { useContractTemplates } from "@/queries/contract-template.query";
 import {
   Grid,
   Box,

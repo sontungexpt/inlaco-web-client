@@ -85,6 +85,12 @@ export const SidebarConfig = [
     short: "K",
     items: [
       {
+        title: "Tạo yêu cầu Cung ứng",
+        to: "/supply-requests/form",
+        icon: <MarkEmailUnreadOutlinedIcon />,
+        roles: [UserRole.USER],
+      },
+      {
         title: "Yêu cầu Cung ứng",
         to: "/supply-requests",
         icon: <MarkEmailUnreadOutlinedIcon />,

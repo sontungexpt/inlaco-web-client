@@ -1,4 +1,4 @@
-import AuthEndpoint from "@/endpoints/AuthEndpoint";
+import AuthEndpoint from "@/endpoints/auth.endpoint";
 import { publicRequest } from "@/utils/request";
 
 export const login = async (email, password) => {

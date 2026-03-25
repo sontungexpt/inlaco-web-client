@@ -9,7 +9,7 @@ import {
 import { Box, MenuItem } from "@mui/material";
 import { useLocation, useNavigate } from "react-router";
 import { isoToLocalDatetime } from "@utils/converter";
-import { useContracts } from "@/hooks/services/contract";
+import { useContracts } from "@/queries/contract.query";
 
 const CrewContract = ({ pageSize = 10 }) => {
   const navigate = useNavigate();

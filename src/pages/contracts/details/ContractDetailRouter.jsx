@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router";
-import { useContract } from "@/hooks/services/contract";
+import { useContract } from "@/queries/contract.query";
 
 import CrewContractDetail from "./CrewContractDetail";
 import SupplyContractDetail from "./SupplyContractDetail";

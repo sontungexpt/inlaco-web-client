@@ -13,7 +13,7 @@ const cld = new Cloudinary({
 
 const NO_AVATAR_URL =
   "https://www.kindpng.com/picc/m/22-223863_no-avatar-png-circle-transparent-png.png";
-const NO_IMAGE_URL = require("@assets/images/no-ship-photo.png");
+const NO_IMAGE_URL = import("@assets/images/no-ship-photo.png");
 
 const CloudinaryImage = ({
   publicId,

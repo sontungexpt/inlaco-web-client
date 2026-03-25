@@ -102,7 +102,7 @@ const LoginPage = () => {
           alt="inlaco-logo"
           width="54"
           height="54"
-          src={require("@assets/images/inlaco-logo.png")}
+          src={import("@assets/images/inlaco-logo.png")}
           style={{ cursor: "pointer" }}
         />
       </Box>

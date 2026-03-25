@@ -10,6 +10,8 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import Color from "@constants/Color";
 import SidebarConfig, { Action } from "@/constants/SidebarConfig";
 import { CloudinaryImage } from "@/components/common";
+import Logo from "@assets/images/inlaco-logo.png";
+import ProfileLogoPlaceHolder from "@assets/images/profile-logo-placeholder.jpg";
 
 const Item = memo(({ title, icon, active, onClick }) => (
   <MenuItem
@@ -110,11 +112,7 @@ const SideBar = () => {
             {/* LOGO */}
             {!collapsed && (
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <img
-                  src={require("@assets/images/inlaco-logo.png")}
-                  alt="logo"
-                  style={{ width: 60 }}
-                />
+                <img src={Logo} alt="logo" style={{ width: 60 }} />
               </Box>
             )}
 
@@ -141,7 +139,7 @@ const SideBar = () => {
             alignItems="center"
           >
             <CloudinaryImage
-              fallback={require("@assets/images/profile-logo-placeholder.jpg")}
+              fallback={ProfileLogoPlaceHolder}
               publicId={user?.avatar?.publicId}
               src={user?.avatar?.url}
               alt="profile"

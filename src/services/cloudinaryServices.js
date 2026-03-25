@@ -1,6 +1,6 @@
 import axios from "axios";
 import { privateRequest } from "@/utils/request";
-import UploadEndpoint from "@/endpoints/UploadEndpoint";
+import UploadEndpoint from "@/endpoints/upload.endpoint";
 import Env from "@/config/env.config";
 
 export const getUploadOptions = async (strategy, params) => {

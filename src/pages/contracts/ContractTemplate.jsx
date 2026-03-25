@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { PageTitle, SearchBar } from "@components/global";
+import { useRef, useState } from "react";
+import { PageTitle } from "@components/common";
 import { Box, Button } from "@mui/material";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import Color from "@constants/Color";
@@ -8,58 +8,42 @@ import toast from "react-hot-toast";
 import TemplateContractList from "./components/TemplateContractList";
 import UploadTemplateDialog from "./components/UploadTemplateDialog";
 import TemplateContractCard from "./components/TemplateContractCard";
-import cloudinaryUpload from "@/services/cloudinaryServices";
-import UploadStrategy from "@/constants/UploadStrategy";
 import {
-  removeTemplate,
-  uploadTemplate,
-} from "@/services/contractTemplateServices";
+  useRemoveContractTemplate,
+  useUploadContractTemplate,
+} from "@/queries/contract-template.query";
 
 const ContractTemplate = ({ PAGE_SIZE = 8 }) => {
   const [openUpload, setOpenUpload] = useState(false);
   const templateListRef = useRef(null);
   const [deletingId, setDeletingId] = useState(null);
 
-  const uploadNewTemplate = async (
-    { name, description, file, contractType },
-    { resetForm },
-  ) => {
-    try {
-      const cldResponse = await cloudinaryUpload(
-        file,
-        UploadStrategy.CONTRACT_TEMPLATE,
-        { name },
-      );
-
-      await uploadTemplate(
-        {
-          name,
-          description,
-          type: contractType,
-        },
-        cldResponse.asset_id,
-      );
-
-      toast.success("Upload template thành công");
-      templateListRef.current?.refetch();
-      resetForm();
-      setOpenUpload(false);
-    } catch {
-      toast.error("Upload template thất bại");
-    }
-  };
-
-  const removeContractTemplate = async (id) => {
-    setDeletingId(id);
-    try {
-      await removeTemplate(id);
-      templateListRef.current?.refetch();
-      toast.success("Xoá template thành công");
-    } catch {
-      toast.error("Xoá template thất bại");
-    }
-    setDeletingId(null);
-  };
+  const { mutate: uploadNewTemplate, isLoading: uploading } =
+    useUploadContractTemplate({
+      onSuccess: () => {
+        toast.success("Upload template thành công");
+        formikHelpers.resetForm();
+        setOpenUpload(false);
+      },
+      onError: () => {
+        toast.error("Upload template thất bại");
+      },
+    });
+  const { mutate: removeTemplate, isLoading: removing } =
+    useRemoveContractTemplate({
+      onInit: (id) => {
+        setDeletingId(id);
+      },
+      onSuccess: () => {
+        toast.success("Xoá template thành công");
+      },
+      onError: () => {
+        toast.error("Xoá template thất bại");
+      },
+      onSettled: () => {
+        setDeletingId(null);
+      },
+    });
 
   return (
     <Box px={3} py={2}>
@@ -126,7 +110,7 @@ const ContractTemplate = ({ PAGE_SIZE = 8 }) => {
               title={item.name}
               type={item.type}
               dowloadFileName={item.name}
-              onDelete={() => removeContractTemplate(item.id)}
+              onDelete={() => removeTemplate(item.id)}
             />
           )}
         />

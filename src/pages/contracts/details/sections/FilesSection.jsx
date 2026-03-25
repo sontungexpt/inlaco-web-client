@@ -21,7 +21,7 @@ const FilesSection = ({ title, files = [] }) => {
           ))}
         </Stack>
       ) : (
-        <Typography color="text.secondary">Không có tài liệu</Typography>
+        <Typography color="text.secondary">Không có tài liệu nào</Typography>
       )}
     </>
   );

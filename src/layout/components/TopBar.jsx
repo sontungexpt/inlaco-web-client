@@ -2,7 +2,6 @@ import { Box, IconButton, Typography } from "@mui/material";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import NavSearchBar from "@components/global/NavSearchBar";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router";
 import { Menu, MenuItem } from "@mui/material";
@@ -40,13 +39,6 @@ const TopBar = () => {
       p={2}
       sx={{ width: "100%", height: "10%" }}
     >
-      {/* SEARCH BAR */}
-      <NavSearchBar
-        placeholder={"Tìm kiếm trang......"}
-        backgroundColor={Color.SecondaryBlue}
-        color={Color.PrimaryWhite}
-      />
-
       {/* ICONS */}
       <Box display="flex">
         <IconButton onClick={handleMenuClick}>

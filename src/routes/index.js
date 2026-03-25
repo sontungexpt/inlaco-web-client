@@ -87,6 +87,10 @@ export const AppRoutes = [
           () => import("@/pages/contracts/details/CrewContractDetail"),
         ),
       },
+      {
+        path: ":id/old-versions",
+        element: lazy(() => import("@/pages/contracts/ContractOldVersions")),
+      },
       // { path: ":id/create-addendum", element: CrewContractAddendum },
     ],
   },
@@ -125,19 +129,21 @@ export const AppRoutes = [
 
   {
     path: "/supply-requests",
-    roles: [UserRole.ADMIN],
     children: [
       {
         index: true,
         element: lazy(() => import("@/pages/supplication/SupplyRequest")),
+        roles: [UserRole.ADMIN],
       },
       {
         path: ":id",
         element: lazy(() => import("@/pages/supplication/SupplyRequestDetail")),
+        roles: [UserRole.ADMIN],
       },
       {
         path: "form",
         element: lazy(() => import("@/pages/supplication/CreateSupplyRequest")),
+        roles: [UserRole.USER],
       },
     ],
   },

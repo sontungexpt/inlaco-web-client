@@ -1,5 +1,5 @@
 import { flattenFilter } from "@/utils/filter";
-import PostEndpoint from "@endpoints/PostEndpoint";
+import PostEndpoint from "@endpoints/post.endpoint";
 import { privateRequest, publicRequest } from "@utils/request";
 
 export const fetchPosts = async ({

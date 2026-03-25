@@ -1,4 +1,4 @@
-import UserEndpoint from "@/endpoints/UserEndpoint";
+import UserEndpoint from "@/endpoints/user.endpoint";
 import { privateRequest } from "@/utils/request";
 
 export const fetchUserProfile = async () => {
