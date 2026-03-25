@@ -1,14 +1,14 @@
 import { useMemo, useState, useEffect } from "react";
 import { Box } from "@mui/material";
-import AppProperty from "@/constants/AppProperty";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { fill } from "@cloudinary/url-gen/actions/resize";
 import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
 import { dpr } from "@cloudinary/url-gen/actions/delivery";
+import Env from "@/config/env.config";
 
 const cld = new Cloudinary({
-  cloud: { cloudName: AppProperty.CLOUDINARY_CLOUD_NAME },
+  cloud: { cloudName: Env.CLOUDINARY_CLOUD_NAME },
 });
 
 const NO_AVATAR_URL =

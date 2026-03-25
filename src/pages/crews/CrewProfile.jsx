@@ -1,10 +1,7 @@
-import React, {} from "react";
 import { Grid, Box, Stack } from "@mui/material";
 import PageTitle from "@components/common/PageTitle";
 import CenterCircularProgress from "@components/common/CenterCircularProgress";
-import { dateToLocaleString } from "@utils/converter";
 import { CloudinaryImage, InfoItem, SectionWrapper } from "@/components/common";
-import Color from "@constants/Color";
 import { useCrewProfile } from "@/hooks/services/crew";
 import { useParams } from "react-router";
 

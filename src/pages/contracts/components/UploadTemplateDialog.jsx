@@ -20,6 +20,7 @@ const UploadTemplateDialog = ({
   onSubmit,
   accept = "*",
   initialValues,
+  isSubmitting: externalSubmitting,
 }) => {
   const TEMPLATE_TYPES = [
     { value: ContractType.LABOR_CONTRACT, label: "Hợp đồng lao động" },
@@ -150,13 +151,15 @@ const UploadTemplateDialog = ({
               <Button
                 type="submit"
                 variant="contained"
-                disabled={!isValid || !dirty || isSubmitting}
+                disabled={!isValid || !dirty}
+                loading={externalSubmitting ?? isSubmitting}
+                loadingIndicator={<CircularProgress size={20} />}
                 sx={{
                   backgroundColor: Color.SecondaryBlue,
                   fontWeight: 600,
                 }}
               >
-                {isSubmitting ? <CircularProgress size={20} /> : "Tải lên"}
+                Tải lên
               </Button>
             </DialogActions>
           </Box>

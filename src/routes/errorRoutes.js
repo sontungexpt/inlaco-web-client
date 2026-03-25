@@ -5,7 +5,7 @@ export const ErrorRoutes = [
   {
     // Public
     path: RoutePath.E403,
-    element: lazy(() => import("@pages/errors/E403")),
+    element: lazy(() => import("@pages/errors/E403Page")),
     layout: false,
     public: true,
   },

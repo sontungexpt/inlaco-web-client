@@ -10,15 +10,15 @@ import {
   SimpleMarkdownEditor,
 } from "@/components/common";
 import { FORM_SCHEMA } from "./schema";
-import { createPost, updatePost } from "@/services/postServices";
+import { createPost, updatePost } from "@/services/post.service";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { usePost } from "@/hooks/services/post";
+import { usePost } from "@/queries/post.query";
 import FormMode from "@/constants/FormMode";
 import { buildInitialValues } from "./initial";
 import { mapValuesToRequestBody } from "./mapper";
 import toast from "react-hot-toast";
 import LoadErrorState from "@/components/common/states/LoadErrorState";
-import cloudinaryUpload from "@/services/cloudinaryServices";
+import cloudinaryUpload from "@/services/cloudinary.service";
 import UploadStrategy from "@/constants/UploadStrategy";
 
 export default function PostForm() {

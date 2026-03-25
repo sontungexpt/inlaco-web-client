@@ -1,14 +1,17 @@
-import React from "react";
 import { Paper, Typography, Button, Chip, Stack, Divider } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
+import { usePost } from "@/queries/post.query";
 
-import { usePost } from "@/hooks/services/post";
-import CenterCircularProgress from "@/components/common/CenterCircularProgress";
 import Color from "@/constants/Color";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { CloudinaryImage, MarkdownPreview } from "@/components/common";
 
-export default function PostDetail() {
+import {
+  CenterCircularProgress,
+  CloudinaryImage,
+  MarkdownPreview,
+} from "@/components/common";
+
+export default function PostDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: post, isLoading } = usePost(id);

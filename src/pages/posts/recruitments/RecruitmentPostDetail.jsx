@@ -24,7 +24,7 @@ import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { usePost, useToggleRecruitmentPostStatus } from "@/hooks/services/post";
+import { usePost, useToggleRecruitmentPostStatus } from "@/queries/post.query";
 import { dateToLocaleString } from "@/utils/converter";
 import {
   CenterCircularProgress,

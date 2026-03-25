@@ -1,5 +1,3 @@
-// export * from "../global";
-
 export * from "./datagrid";
 export * from "./fields";
 export * from "./states";

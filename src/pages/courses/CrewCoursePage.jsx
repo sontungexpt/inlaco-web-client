@@ -13,7 +13,7 @@ import CourseCard from "./components/CourseCard";
 import { useCourses } from "@/hooks/services/course";
 import useAllowedRole from "@/hooks/useAllowedRole";
 
-export default function CrewCourse() {
+export default function CrewCoursePage() {
   const navigate = useNavigate();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
@@ -28,6 +28,7 @@ export default function CrewCourse() {
     isLoading,
     isError,
   } = useCourses({ page, pageSize: 12 });
+
   if (isLoading) {
     return <CenterCircularProgress />;
   }

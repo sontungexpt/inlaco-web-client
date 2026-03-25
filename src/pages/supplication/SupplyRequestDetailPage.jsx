@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import toast from "react-hot-toast";
 
 import { reviewSupplyRequest } from "@/services/supplyReqServices";
 import { useSupplyRequest } from "@/hooks/services/supplyRequest";
-import { isoToLocalDatetime, dateToLocaleString } from "@/utils/converter";
+import { dateToLocaleString } from "@/utils/converter";
 
 import Color from "@constants/Color";
 import {
@@ -24,7 +24,7 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import NoteAddRoundedIcon from "@mui/icons-material/NoteAddRounded";
 
-export default function SupplyRequestDetail() {
+export default function SupplyRequestDetailPage() {
   const navigate = useNavigate();
   const { id } = useParams();
 

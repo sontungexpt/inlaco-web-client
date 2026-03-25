@@ -18,7 +18,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import Color from "@constants/Color";
 import { HttpStatusCode } from "axios";
-import { signUp } from "@/services/authServices";
+import { signUp } from "@/services/auth.service";
 import { requiredString } from "@/utils/yupHelpers";
 import Regex from "@/constants/Regex";
 import { InfoTextFieldFormik } from "@/components/common";

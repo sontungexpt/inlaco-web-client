@@ -3,13 +3,13 @@ import { Box, Button, Typography, Link, Stack } from "@mui/material";
 import { ShipInfoCell } from "@components/mobilization";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { useNavigate } from "react-router";
-import { isoToLocalDatetime } from "@/utils/converter";
+import { isoToDatetime } from "@/utils/converter";
 import Color from "@constants/Color";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import { useSupplyRequests } from "@/hooks/services/supplyRequest";
 import { PageTitle, BaseDataGrid, DetailActionCell } from "@/components/common";
 
-export default function SupplyRequest({ PAGE_SIZE = 6 }) {
+export default function SupplyRequestPage({ PAGE_SIZE = 6 }) {
   const navigate = useNavigate();
   const isAdmin = useAllowedRole("ADMIN");
 
@@ -70,10 +70,10 @@ export default function SupplyRequest({ PAGE_SIZE = 6 }) {
               Thời gian thuê
             </Typography>
             <Typography ml={2} variant="body2" color="text.secondary" noWrap>
-              Bắt đầu: {isoToLocalDatetime(rentalStartDate)}
+              Bắt đầu: {isoToDatetime(rentalStartDate)}
             </Typography>
             <Typography ml={2} variant="body2" color="text.secondary" noWrap>
-              Kết thúc: {isoToLocalDatetime(rentalEndDate)}
+              Kết thúc: {isoToDatetime(rentalEndDate)}
             </Typography>
 
             {/* Detail link */}

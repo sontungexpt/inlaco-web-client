@@ -4,7 +4,7 @@ import {
   fetchPosts,
   fetchUniqueCandidate,
   fetchUniquePost,
-} from "@/services/postServices";
+} from "@/services/post.service";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 
 export const PostQueryKey = {

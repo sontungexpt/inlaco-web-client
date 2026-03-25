@@ -10,13 +10,13 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
+      "@assets/*": ["assets/*"],
       "@constants/*": ["src/constants/*"],
       "@components/*": ["src/components/*"],
       "@endpoints/*": ["src/endpoints/*"],
       "@hooks/*": ["src/hooks/*"],
       "@pages/*": ["src/pages/*"],
       "@utils/*": ["src/utils/*"],
-      "@assets/*": ["src/assets/*"],
       "@types/*": ["types/*"]
     }
   },

@@ -1,4 +1,4 @@
-import AppProperty from "../constants/AppProperty";
+import AppProperty from "../config/app.config";
 export { default as StorageKey } from "@constants/StorageKey";
 
 const _localStorage = window.localStorage;

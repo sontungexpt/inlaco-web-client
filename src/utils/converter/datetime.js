@@ -26,7 +26,7 @@
  * isoToLocalFormatted("2025-11-30T06:15:00.000Z", "HH:MM:SS");
  * // → "13:15:00"
  */
-export function isoToLocalDatetime(isoString, format = "dd/mm/yyyy HH:MM") {
+export function isoToDatetime(isoString, format = "dd/mm/yyyy HH:MM") {
   try {
     const date = new Date(isoString);
     if (isNaN(date.getTime())) throw new Error("Invalid ISO string");

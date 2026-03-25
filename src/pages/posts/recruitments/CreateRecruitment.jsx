@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { PageTitle } from "@components/common";
 import { Box } from "@mui/material";
-import { createPost } from "@/services/postServices";
+import { createPost } from "@/services/post.service";
 import { useNavigate } from "react-router";
 import PostForm from "../PostForm";
 import { useMutation } from "@tanstack/react-query";

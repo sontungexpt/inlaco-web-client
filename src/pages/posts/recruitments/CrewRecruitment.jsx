@@ -5,7 +5,7 @@ import { PageTitle, BaseTabBar } from "@components/common";
 import { useNavigate, useLocation } from "react-router";
 import Color from "@constants/Color";
 
-import { useRecruitmentPosts, useCandidates } from "@/hooks/services/post";
+import { useRecruitmentPosts, useCandidates } from "@/queries/post.query";
 
 import RecruitmentList from "./RecruitmentList";
 import CandidateTable from "./CandidateTable";

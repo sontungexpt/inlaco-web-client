@@ -22,7 +22,7 @@ import Color from "@constants/Color";
 import Regex from "@/constants/Regex";
 import SectionWrapper from "@/components/common/SectionWrapper";
 import toast from "react-hot-toast";
-import cloudinaryUpload from "@/services/cloudinaryServices";
+import cloudinaryUpload from "@/services/cloudinary.service";
 import UploadStrategy from "@/constants/UploadStrategy";
 import { datetimeToISO } from "@/utils/converter";
 

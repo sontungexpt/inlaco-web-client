@@ -1,4 +1,5 @@
 import { privateRequest } from "@/utils/request";
+import { flattenFilter } from "@/utils/filter";
 import ContractEndpoint from "@/endpoints/contract.endpoint";
 import ContractType from "@/constants/ContractTemplateType";
 
@@ -9,20 +10,14 @@ export const activeContract = async (contractID) => {
   return response.data;
 };
 
-export const fetchCrewContracts = async ({
-  page,
-  pageSize,
-  signed,
-  type = "LABOR_CONTRACT",
-}) => {
+export const fetchContracts = async ({ page, pageSize, filter }) => {
   const response = await privateRequest.get(
     ContractEndpoint.GET_ALL_CONTRACTS,
     {
       params: {
         page,
         size: pageSize,
-        signed,
-        type,
+        ...flattenFilter(filter),
       },
     },
   );

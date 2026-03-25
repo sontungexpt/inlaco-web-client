@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { COLOR } from "../../assets/Color";
+import Color from "@constants/Color";
 
 const ScheduleCell = ({
   startDate,
@@ -7,7 +7,6 @@ const ScheduleCell = ({
   startLocation,
   endLocation,
   backgroundColor,
-  color = COLOR.PrimaryBlack,
   sx = [],
 }) => {
   return (
@@ -29,12 +28,12 @@ const ScheduleCell = ({
             margin: 0,
             fontSize: 18,
             fontWeight: 700,
-            color: COLOR.PrimaryBlack,
+            color: Color.PrimaryBlack,
           }}
         >
           {startLocation}
         </p>
-        <p style={{ margin: 0, fontSize: 13, color: COLOR.SecondaryBlack }}>
+        <p style={{ margin: 0, fontSize: 13, color: Color.SecondaryBlack }}>
           {startDate}
         </p>
       </Box>
@@ -47,12 +46,12 @@ const ScheduleCell = ({
             margin: 0,
             fontSize: 18,
             fontWeight: 700,
-            color: COLOR.PrimaryBlack,
+            color: Color.PrimaryBlack,
           }}
         >
           {endLocation}
         </p>
-        <p style={{ margin: 0, fontSize: 13, color: COLOR.SecondaryBlack }}>
+        <p style={{ margin: 0, fontSize: 13, color: Color.SecondaryBlack }}>
           {estimatedEndTime}
         </p>
       </Box>

@@ -13,7 +13,6 @@
     "@fullcalendar/timegrid": "^6.1.19",
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
-    "@mui/styled-engine-sc": "^7.3.5",
     "@mui/x-data-grid": "^8.19.0",
     "@tanstack/react-query": "^5.90.11",
     "@testing-library/jest-dom": "^6.9.1",
@@ -27,6 +26,7 @@
     "jszip-utils": "^0.1.0",
     "pizzip": "^3.2.0",
     "react": "19.2.0",
+    "react-data-grid": "^7.0.0-beta.59",
     "react-dom": "19.2.0",
     "react-hot-toast": "^2.6.0",
     "react-markdown": "^10.1.0",
@@ -35,7 +35,6 @@
     "react-syntax-highlighter": "^16.1.0",
     "remark-gfm": "^4.0.1",
     "spring-filter-query-builder": "^1.1.1",
-    "styled-components": "^6.1.19",
     "web-vitals": "^5.1.0",
     "xlsx": "^0.18.5",
     "yup": "^1.7.1"
@@ -43,6 +42,7 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
+    "chrome-stable": "BROWSER=google-chrome-stable BROWSER_ARGS='--new-window' vite --open",
     "build": "vite build",
     "preview": "vite preview"
   },

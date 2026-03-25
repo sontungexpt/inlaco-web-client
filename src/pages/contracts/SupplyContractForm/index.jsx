@@ -20,9 +20,9 @@ import { useNavigate, useParams } from "react-router";
 import {
   createSupplyContract,
   editContract,
-} from "@/services/contractServices";
+} from "@/services/contract.service";
 import TemplateDialog from "../components/TemplateDialog";
-import cloudinaryUpload from "@/services/cloudinaryServices";
+import cloudinaryUpload from "@/services/cloudinary.service";
 import UploadStrategy from "@/constants/UploadStrategy";
 import toast from "react-hot-toast";
 import { mapValuesToRequestBody } from "./mapper";

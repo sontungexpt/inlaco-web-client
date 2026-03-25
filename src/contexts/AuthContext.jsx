@@ -7,7 +7,7 @@ import { localStorage, sessionStorage } from "@utils/storage";
 import {
   login as loginAPI,
   logout as logoutAPI,
-} from "@/services/authServices";
+} from "@/services/auth.service";
 import { useProfile } from "@/hooks/services/user";
 import { PageCircularProgress } from "@/components/common";
 

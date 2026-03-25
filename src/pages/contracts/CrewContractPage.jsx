@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   BaseDataGrid,
   PageTitle,
@@ -8,10 +8,11 @@ import {
 } from "@components/common";
 import { Box, MenuItem } from "@mui/material";
 import { useLocation, useNavigate } from "react-router";
-import { isoToLocalDatetime } from "@utils/converter";
+import { isoToDatetime } from "@utils/converter";
 import { useContracts } from "@/queries/contract.query";
+import ContractType from "@/constants/ContractTemplateType";
 
-const CrewContract = ({ pageSize = 10 }) => {
+const CrewContractPage = ({ pageSize = 10 }) => {
   const navigate = useNavigate();
   const { initialPage = 0 } = useLocation().state || {};
 
@@ -22,12 +23,18 @@ const CrewContract = ({ pageSize = 10 }) => {
   });
 
   const {
-    data: { content: crewContracts, totalElements: totalContracts } = {},
+    data: {
+      content: crewContracts = [],
+      totalElements: totalContracts = 0,
+    } = {},
     isLoading,
   } = useContracts({
     page: paginationModel.page,
     pageSize: paginationModel.pageSize,
-    signed: isSignedContract,
+    filter: {
+      signed: isSignedContract,
+      type: ContractType.LABOR_CONTRACT,
+    },
   });
 
   const handleStatusChange = (event) => {
@@ -58,7 +65,7 @@ const CrewContract = ({ pageSize = 10 }) => {
       flex: 1,
       align: "center",
       valueFormatter: (params) => {
-        return params ? isoToLocalDatetime(params, "dd/mm/yyyy HH:MM") : "";
+        return params ? isoToDatetime(params, "dd/mm/yyyy HH:MM") : "";
       },
     },
     {
@@ -68,7 +75,7 @@ const CrewContract = ({ pageSize = 10 }) => {
       flex: 1,
       align: "center",
       valueFormatter: (params) => {
-        return params ? isoToLocalDatetime(params, "dd/mm/yyyy HH:MM") : "";
+        return params ? isoToDatetime(params, "dd/mm/yyyy HH:MM") : "";
       },
     },
     {
@@ -90,49 +97,47 @@ const CrewContract = ({ pageSize = 10 }) => {
         title="HỢP ĐỒNG THUYỀN VIÊN"
         subtitle="Danh sách các hợp đồng của Thuyền viên"
       />
-      <Box mt="40px" maxWidth={1600}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            gap: 2,
-          }}
-        >
-          <SearchBar
-            size="small"
-            placeholder={
-              "Nhập tên hoặc mã thuyền viên cần tìm kiếm (VD: Nguyễn Văn A,...)"
-            }
-          />
-
-          <InfoTextField
-            select
-            size="small"
-            margin="none"
-            required
-            label="Trạng thái"
-            value={isSignedContract}
-            onChange={handleStatusChange}
-          >
-            {STATUS_FILTERS.map((status) => (
-              <MenuItem key={status.value} value={status.value}>
-                {status.label}
-              </MenuItem>
-            ))}
-          </InfoTextField>
-        </Box>
-        <BaseDataGrid
-          loading={isLoading}
-          columns={columns}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          rowCount={totalContracts}
-          rows={crewContracts}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          gap: 2,
+        }}
+      >
+        <SearchBar
+          size="small"
+          placeholder={
+            "Nhập tên hoặc mã thuyền viên cần tìm kiếm (VD: Nguyễn Văn A,...)"
+          }
         />
+
+        <InfoTextField
+          select
+          size="small"
+          margin="none"
+          required
+          label="Trạng thái"
+          value={isSignedContract}
+          onChange={handleStatusChange}
+        >
+          {STATUS_FILTERS.map((status) => (
+            <MenuItem key={status.value} value={status.value}>
+              {status.label}
+            </MenuItem>
+          ))}
+        </InfoTextField>
       </Box>
+      <BaseDataGrid
+        loading={isLoading}
+        columns={columns}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        rowCount={totalContracts}
+        rows={crewContracts}
+      />
     </Box>
   );
 };
 
-export default CrewContract;
+export default CrewContractPage;

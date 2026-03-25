@@ -2,7 +2,7 @@ import { Box, Button, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useNavigate } from "react-router";
 
-export default function E403() {
+export default function E403Page() {
   const navigate = useNavigate();
 
   return (

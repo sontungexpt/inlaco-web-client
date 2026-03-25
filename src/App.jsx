@@ -101,7 +101,10 @@ export default function App() {
         {buildRoutes(AppRoutes)}
 
         {/* fallback */}
-        <Route path="*" element={lazy(() => import("@/pages/errors/E404"))} />
+        <Route
+          path="*"
+          element={lazy(() => import("@/pages/errors/E404Page"))}
+        />
       </Routes>
     </Suspense>
   );

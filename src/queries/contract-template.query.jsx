@@ -3,8 +3,8 @@ import {
   removeTemplate,
   uploadTemplate,
   fetchContractTemplates,
-} from "@/services/contractTemplateServices";
-import cloudinaryUpload from "@/services/cloudinaryServices";
+} from "@/services/contract-template.service";
+import cloudinaryUpload from "@/services/cloudinary.service";
 import UploadStrategy from "@/constants/UploadStrategy";
 
 export const ContractTemplateQueryKey = {
@@ -37,7 +37,6 @@ export function useUploadContractTemplate({ onSuccess, ...options }) {
         UploadStrategy.CONTRACT_TEMPLATE,
         { name },
       );
-
       return uploadTemplate({ name, description, type }, cldResponse.asset_id);
     },
     onSuccess: (data, variables, context) => {

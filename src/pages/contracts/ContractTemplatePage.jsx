@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { PageTitle } from "@components/common";
 import { Box, Button } from "@mui/material";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
@@ -15,35 +15,23 @@ import {
 
 const ContractTemplate = ({ PAGE_SIZE = 8 }) => {
   const [openUpload, setOpenUpload] = useState(false);
-  const templateListRef = useRef(null);
   const [deletingId, setDeletingId] = useState(null);
 
-  const { mutate: uploadNewTemplate, isLoading: uploading } =
+  const { mutate: uploadNewTemplate, isPending: isUploading } =
     useUploadContractTemplate({
       onSuccess: () => {
         toast.success("Upload template thành công");
-        formikHelpers.resetForm();
         setOpenUpload(false);
       },
-      onError: () => {
-        toast.error("Upload template thất bại");
-      },
+      onError: () => toast.error("Upload template thất bại"),
     });
-  const { mutate: removeTemplate, isLoading: removing } =
-    useRemoveContractTemplate({
-      onInit: (id) => {
-        setDeletingId(id);
-      },
-      onSuccess: () => {
-        toast.success("Xoá template thành công");
-      },
-      onError: () => {
-        toast.error("Xoá template thất bại");
-      },
-      onSettled: () => {
-        setDeletingId(null);
-      },
-    });
+
+  const { mutate: removeTemplate } = useRemoveContractTemplate({
+    onInit: (id) => setDeletingId(id),
+    onSuccess: () => toast.success("Xoá template thành công"),
+    onError: () => toast.error("Xoá template thất bại"),
+    onSettled: () => setDeletingId(null),
+  });
 
   return (
     <Box px={3} py={2}>
@@ -100,7 +88,6 @@ const ContractTemplate = ({ PAGE_SIZE = 8 }) => {
       <Box sx={{ maxWidth: 1400, mx: "auto" }}>
         <TemplateContractList
           pageSize={PAGE_SIZE}
-          ref={templateListRef}
           render={(item) => (
             <TemplateContractCard
               key={item.id}
@@ -119,9 +106,20 @@ const ContractTemplate = ({ PAGE_SIZE = 8 }) => {
       {/* ===== Upload Dialog ===== */}
       <UploadTemplateDialog
         open={openUpload}
+        isSubmitting={isUploading}
         onClose={() => setOpenUpload(false)}
         accept=".doc,.docx"
-        onSubmit={uploadNewTemplate}
+        onSubmit={(
+          { name, description, file, contractType },
+          { resetForm },
+        ) => {
+          uploadNewTemplate(
+            { name, description, file, type: contractType },
+            {
+              onSuccess: resetForm,
+            },
+          );
+        }}
       />
     </Box>
   );

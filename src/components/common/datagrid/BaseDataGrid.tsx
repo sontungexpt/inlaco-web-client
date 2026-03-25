@@ -1,7 +1,77 @@
-import React, { useMemo, useRef } from "react";
+// import "react-data-grid/lib/styles.css";
+// import { useMemo } from "react";
+// import { DataGrid } from "react-data-grid";
+// import Color from "@constants/Color";
+
+// const BaseDataGrid = ({
+//   rows,
+//   columns,
+//   rowCount,
+//   paginationModel,
+//   pageSizeOptions = [],
+//   onPaginationModelChange,
+//   headerAlign = "center",
+//   loading,
+//   sx = {},
+//   ...props
+// }) => {
+//   const pageSize = paginationModel?.pageSize ?? 10;
+//   const page = paginationModel?.page ?? 0;
+
+//   // Map MUI columns → react-data-grid columns
+//   const rdgColumns = useMemo(
+//     () =>
+//       columns.map((col) => ({
+//         key: col.field,
+//         name: col.headerName,
+//         width: col.width,
+//         minWidth: col.minWidth ?? 150,
+//         resizable: false,
+//         sortable: col.sortable ?? false,
+//         headerRenderer: () => (
+//           <div
+//             style={{
+//               textAlign: headerAlign,
+//               fontWeight: 700,
+//               color: Color.PrimaryWhite,
+//               backgroundColor: Color.SecondaryBlue,
+//               padding: "8px 4px",
+//             }}
+//           >
+//             {col.headerName}
+//           </div>
+//         ),
+//         formatter: col.valueFormatter
+//           ? ({ row }) => col.valueFormatter({ value: row[col.field], row })
+//           : undefined,
+//       })),
+//     [columns, headerAlign],
+//   );
+
+//   // Pagination logic
+//   const paginatedRows = useMemo(() => {
+//     if (!rows) return [];
+//     const start = page * pageSize;
+//     return rows.slice(start, start + pageSize);
+//   }, [rows, page, pageSize]);
+
+//   return (
+//     <DataGrid
+//       columns={rdgColumns}
+//       rows={paginatedRows}
+//       rowKeyGetter={(row) => row.id}
+//       className="rdg-light"
+//       {...props}
+//     />
+//   );
+// };
+
+// export default BaseDataGrid;
+
+import { useMemo, useRef } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import Color from "@constants/Color";
 import { NoValuesOverlay } from "@components/common";
+import Color from "@constants/Color";
 
 const BaseDataGrid = ({
   rows,

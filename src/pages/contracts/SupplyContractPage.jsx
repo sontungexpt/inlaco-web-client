@@ -9,10 +9,10 @@ import {
 import { Box, MenuItem } from "@mui/material";
 import { useLocation, useNavigate } from "react-router";
 import { useContracts } from "@/queries/contract.query";
-import { isoToLocalDatetime } from "@/utils/converter";
+import { isoToDatetime } from "@/utils/converter";
 import ContractType from "@/constants/ContractTemplateType";
 
-const SupplyContract = ({ pageSize = 10 }) => {
+const SupplyContractPage = ({ pageSize = 10 }) => {
   const navigate = useNavigate();
   const { initialPage = 0 } = useLocation().state || {};
 
@@ -28,8 +28,10 @@ const SupplyContract = ({ pageSize = 10 }) => {
   } = useContracts({
     page: paginationModel.page,
     pageSize: paginationModel.pageSize,
-    type: ContractType.SUPPLY_CONTRACT,
-    signed: isSignedContract,
+    filter: {
+      signed: isSignedContract,
+      type: ContractType.SUPPLY_CONTRACT,
+    },
   });
 
   const STATUS_FILTERS = [
@@ -62,7 +64,7 @@ const SupplyContract = ({ pageSize = 10 }) => {
       flex: 1,
       align: "center",
       valueFormatter: (params) => {
-        return params ? isoToLocalDatetime(params) : "";
+        return params ? isoToDatetime(params) : "";
       },
     },
     {
@@ -72,7 +74,7 @@ const SupplyContract = ({ pageSize = 10 }) => {
       flex: 1,
       align: "center",
       valueFormatter: (params) => {
-        return params ? isoToLocalDatetime(params) : "";
+        return params ? isoToDatetime(params) : "";
       },
     },
     {
@@ -135,4 +137,4 @@ const SupplyContract = ({ pageSize = 10 }) => {
   );
 };
 
-export default SupplyContract;
+export default SupplyContractPage;

@@ -1,10 +1,13 @@
-import React from "react";
 import { Box, Button, Select, MenuItem } from "@mui/material";
 import { GridFooter, GridFooterContainer } from "@mui/x-data-grid";
 import Color from "@constants/Color";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
-import { isoStringToAppDateString } from "@/utils/converter";
+import {
+  dateToLocaleString,
+  isoStringToAppDateString,
+  isoToDatetime,
+} from "@/utils/converter";
 import CandidateStatus from "@/constants/CandidateStatus";
 import { BaseDataGrid } from "@/components/common";
 
@@ -153,7 +156,7 @@ const CandidateTable = ({
             width: "100%",
           }}
         >
-          {isoStringToAppDateString(params.value)}
+          {dateToLocaleString(params.value)}
         </Box>
       ),
     },

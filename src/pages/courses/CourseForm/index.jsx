@@ -10,7 +10,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
-import cloudinaryUpload from "@/services/cloudinaryServices";
+import cloudinaryUpload from "@/services/cloudinary.service";
 import UploadStrategy from "@/constants/UploadStrategy";
 import { FORM_SCHEMA } from "./schema";
 import { DEFAULT_INITIAL_VALUES } from "./defaults";

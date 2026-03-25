@@ -1,25 +1,24 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getContractVersions,
-  fetchCrewContracts,
+  fetchContracts,
   fetchUniqueContract,
   fetchUniqueContractByApplicationId,
   activeContract,
   createLaborContract,
   createSupplyContract,
   editContract,
-} from "@/services/contractServices";
+} from "@/services/contract.service";
 
 // ----- Contract Query Key -----
 export const ContractQueryKey = {
   ALL: ["contracts"],
-  LIST: ({ page, pageSize, signed, type }) => [
+  LIST: ({ page, pageSize, filter }) => [
     ...ContractQueryKey.ALL,
     "list",
     page,
     pageSize,
-    signed,
-    type,
+    filter,
   ],
   DETAIL: (id) => [...ContractQueryKey.ALL, "detail", id],
   APPLICATION: (applicationId) => [
@@ -35,10 +34,10 @@ export const ContractQueryKey = {
 };
 
 // ----- List of contracts -----
-export function useContracts({ page = 0, pageSize = 12, signed, type }) {
+export function useContracts({ page = 0, pageSize = 12, filter }) {
   return useQuery({
-    queryKey: ContractQueryKey.LIST({ page, pageSize, signed, type }),
-    queryFn: () => fetchCrewContracts({ page, pageSize, signed, type }),
+    queryKey: ContractQueryKey.LIST({ page, pageSize, filter }),
+    queryFn: () => fetchContracts({ page, pageSize, filter }),
     staleTime: 1000 * 60 * 4, // cache 4 min
   });
 }

@@ -7,7 +7,7 @@ import {
   Card,
   Typography,
 } from "@mui/material";
-import { isoToLocalDatetime } from "@/utils/converter";
+import { isoToDatetime } from "@/utils/converter";
 import React from "react";
 import Color from "@constants/Color";
 import { useRecruitmentStatus } from "./useRecruitmentStatus";
@@ -30,8 +30,8 @@ const RecruitmentCard = ({
 }) => {
   const status = useRecruitmentStatus(post);
 
-  const recruitmentStartDate = isoToLocalDatetime(post?.recruitmentStartDate);
-  const recruitmentEndDate = isoToLocalDatetime(post?.recruitmentEndDate);
+  const recruitmentStartDate = isoToDatetime(post?.recruitmentStartDate);
+  const recruitmentEndDate = isoToDatetime(post?.recruitmentEndDate);
 
   return (
     <Grid

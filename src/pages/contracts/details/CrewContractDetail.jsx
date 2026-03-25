@@ -4,7 +4,7 @@ import { useParams, useNavigate, useLocation } from "react-router";
 import toast from "react-hot-toast";
 
 import { useApplicationContract, useContract } from "@/queries/contract.query";
-import { activeContract } from "@/services/contractServices";
+import { activeContract } from "@/services/contract.service";
 import { dateToLocaleString } from "@/utils/converter";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";

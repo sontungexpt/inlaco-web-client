@@ -75,7 +75,7 @@ export const AppRoutes = [
     children: [
       {
         index: true,
-        element: lazy(() => import("@/pages/contracts/CrewContract")),
+        element: lazy(() => import("@/pages/contracts/CrewContractPage")),
       },
       {
         path: "form",
@@ -101,7 +101,7 @@ export const AppRoutes = [
     children: [
       {
         index: true,
-        element: lazy(() => import("@/pages/contracts/SupplyContract")),
+        element: lazy(() => import("@/pages/contracts/SupplyContractPage")),
       },
       {
         path: "create/:requestId",
@@ -123,7 +123,7 @@ export const AppRoutes = [
 
   {
     path: "/template-contracts",
-    element: lazy(() => import("@/pages/contracts/ContractTemplate")),
+    element: lazy(() => import("@/pages/contracts/ContractTemplatePage")),
     roles: ADMIN_SAILOR,
   },
 
@@ -132,17 +132,21 @@ export const AppRoutes = [
     children: [
       {
         index: true,
-        element: lazy(() => import("@/pages/supplication/SupplyRequest")),
+        element: lazy(() => import("@/pages/supplication/SupplyRequestPage")),
         roles: [UserRole.ADMIN],
       },
       {
         path: ":id",
-        element: lazy(() => import("@/pages/supplication/SupplyRequestDetail")),
+        element: lazy(
+          () => import("@/pages/supplication/SupplyRequestDetailPage"),
+        ),
         roles: [UserRole.ADMIN],
       },
       {
         path: "form",
-        element: lazy(() => import("@/pages/supplication/CreateSupplyRequest")),
+        element: lazy(
+          () => import("@/pages/supplication/CreateSupplyRequestPage"),
+        ),
         roles: [UserRole.USER],
       },
     ],
@@ -154,7 +158,7 @@ export const AppRoutes = [
       {
         // View post
         path: ":id",
-        element: lazy(() => import("@/pages/posts/PostDetail")),
+        element: lazy(() => import("@/pages/posts/PostDetailPage")),
       },
       {
         path: "create",
@@ -209,7 +213,7 @@ export const AppRoutes = [
     children: [
       {
         index: true,
-        element: lazy(() => import("@pages/courses/CrewCourse")),
+        element: lazy(() => import("@/pages/courses/CrewCoursePage")),
       },
       {
         path: ":id",
