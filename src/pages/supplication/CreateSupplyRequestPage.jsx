@@ -17,7 +17,7 @@ import ScheduleSendRoundedIcon from "@mui/icons-material/ScheduleSendRounded";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router";
-import { createSupplyRequest } from "@/services/supplyReqServices";
+import { createSupplyRequest } from "@/services/supply-request.service";
 import Color from "@constants/Color";
 import Regex from "@/constants/Regex";
 import SectionWrapper from "@/components/common/SectionWrapper";

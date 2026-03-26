@@ -1,7 +1,8 @@
-import privateRequest from "../utils/privateRequest";
-import CrewEndpoint from "../endpoints/crew.endpoint";
-import { dateStringToISOString } from "../utils/converter";
+import CrewEndpoint from "@/endpoints/crew.endpoint";
+
+import { datetimeToISO } from "@/utils/converter";
 import { flattenFilter } from "@/utils/filter";
+import { privateRequest } from "@/utils/request";
 
 export const fetchCrewMembers = async ({ page, size, filter }) => {
   const response = await privateRequest.get(CrewEndpoint.GET_ALL_CREWS, {
@@ -51,7 +52,7 @@ export const editCrewMemberProfileAPI = async (
     const response = await privateRequest.patch(
       `${CrewEndpoint.GENERAL}/${crewMemberID}`,
       {
-        birthDate: dateStringToISOString(crewMemberInfo.dob),
+        birthDate: datetimeToISO(crewMemberInfo.dob),
         fullName: crewMemberInfo.fullName,
         email: crewMemberInfo.email,
         phoneNumber: crewMemberInfo.phoneNumber,

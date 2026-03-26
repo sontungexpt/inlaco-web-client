@@ -1,6 +1,5 @@
-import React from "react";
-import { Box, Typography, Chip, CircularProgress } from "@mui/material";
-import { SectionWrapper } from "@/components/common";
+import { Box, Typography, Chip } from "@mui/material";
+import { CenterCircularProgress, SectionWrapper } from "@/components/common";
 
 const ContractDetailLayout = ({
   title,
@@ -11,21 +10,11 @@ const ContractDetailLayout = ({
   footer,
 }) => {
   if (loading) {
-    return (
-      <Box
-        height="100vh"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <CenterCircularProgress />;
   }
 
   return (
     <Box>
-      {/* ===== HEADER ===== */}
       <Box position="sticky" top={0} zIndex={10}>
         <SectionWrapper
           sx={{

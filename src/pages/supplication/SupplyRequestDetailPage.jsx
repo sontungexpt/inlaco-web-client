@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import toast from "react-hot-toast";
 
-import { reviewSupplyRequest } from "@/services/supplyReqServices";
+import { reviewSupplyRequest } from "@/services/supply-request.service";
 import { useSupplyRequest } from "@/hooks/services/supplyRequest";
 import { dateToLocaleString } from "@/utils/converter";
 

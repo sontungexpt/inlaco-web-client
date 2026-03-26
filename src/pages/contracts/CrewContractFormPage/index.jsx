@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   SectionWrapper,
   FileUploadFieldFormik,
@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, useSearchParams } from "react-router";
 import Color from "@constants/Color";
 import { createLaborContract, editContract } from "@/services/contract.service";
 import cloudinaryUpload from "@/services/cloudinary.service";
@@ -30,10 +30,16 @@ import { RECEIVE_METHOD } from "./defaults";
 import TemplateDialog from "../components/TemplateDialog";
 import { mapValuesToRequestBody } from "./mapper";
 import ContractType from "@/constants/ContractTemplateType";
-import { useContractFormParams } from "./useContractFormParams";
 import { useQueryClient } from "@tanstack/react-query";
 
-const CrewContractForm = () => {
+// export const useContractFormParams = () => {
+//   const { candidateProfileId, contractId } = useParams();
+//   const [searchParams] = useSearchParams();
+//   const formType = searchParams.get("type") || "create";
+//   return { candidateProfileId, contractId, formType };
+// };
+
+const CrewContractFormPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   // const { candidateProfileId, contractId, formType } = useContractFormParams();
@@ -54,30 +60,39 @@ const CrewContractForm = () => {
   const IS_FREEZED_CONTRACT = contractInfo?.freezed;
 
   const createContract = async (values) => {
-    const contractFile = await cloudinaryUpload(
-      values.contractFile,
-      UploadStrategy.CONTRACT_FILE,
-    );
+    const [contractFile, ...attachmentFiles] = await Promise.all([
+      cloudinaryUpload(values.contractFile, UploadStrategy.CONTRACT_FILE),
+      ...values.attachments.map((file) =>
+        cloudinaryUpload(file, UploadStrategy.ATTACHMENT),
+      ),
+    ]);
+
     const contract = await createLaborContract({
       candidateId: candidateProfileId,
       contract: mapValuesToRequestBody(values, {
         contractFile: contractFile?.assetId || contractFile?.asset_id,
-        attachments: null,
+        attachments: attachmentFiles.map(
+          (file) => file?.assetId || file?.asset_id,
+        ),
       }),
     });
     return contract;
   };
 
   const updateContract = async (values) => {
-    const contractFile = await cloudinaryUpload(
-      values.contractFile,
-      UploadStrategy.CONTRACT_FILE,
-    );
+    const [contractFile, ...attachmentFiles] = await Promise.all([
+      cloudinaryUpload(values.contractFile, UploadStrategy.CONTRACT_FILE),
+      ...values.attachments.map((file) =>
+        cloudinaryUpload(file, UploadStrategy.ATTACHMENT),
+      ),
+    ]);
 
     const oldRequest = mapValuesToRequestBody(initialValues, {});
     const newRequest = mapValuesToRequestBody(values, {
       contractFile: contractFile?.assetId || contractFile?.asset_id,
-      attachments: null,
+      attachments: attachmentFiles.map(
+        (file) => file?.assetId || file?.asset_id,
+      ),
     });
     const patchRequest = keepChangedFields(oldRequest, newRequest);
 
@@ -463,6 +478,14 @@ const CrewContractForm = () => {
               <FileUploadFieldFormik required name="contractFile" />
             </SectionWrapper>
 
+            <SectionWrapper title="Đính kèm">
+              <FileUploadFieldFormik
+                required={false}
+                multiple
+                name="attachmentFiles"
+              />
+            </SectionWrapper>
+
             <TemplateDialog
               open={openTemplateDialog}
               onClose={() => setOpenTemplateDialog(false)}
@@ -478,4 +501,4 @@ const CrewContractForm = () => {
   );
 };
 
-export default CrewContractForm;
+export default CrewContractFormPage;

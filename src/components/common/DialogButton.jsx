@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Dialog } from "@mui/material";
 
-const DialogButton = ({ children, dialog = Dialog, ...props }) => {
+const DialogButton = ({ children, dialog = Dialog, ...buttonProps }) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -10,7 +10,7 @@ const DialogButton = ({ children, dialog = Dialog, ...props }) => {
 
   return (
     <>
-      <Button {...props} onClick={handleOpen}>
+      <Button {...buttonProps} onClick={handleOpen}>
         {children}
       </Button>
 

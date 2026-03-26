@@ -1,4 +1,3 @@
-import React from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   Box,
@@ -14,15 +13,15 @@ import Color from "@constants/Color";
 import CenterCircularProgress from "@/components/common/CenterCircularProgress";
 import { useContractOldVersions } from "@/queries/contract.query";
 
-const ContractOldVersions = () => {
-  const { contractId } = useParams();
+const ContractOldVersionPage = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const {
-    data: versions = [],
+    data: contracts = [],
     isLoading,
     isError,
-  } = useContractOldVersions(contractId);
+  } = useContractOldVersions(id);
 
   if (isLoading) return <CenterCircularProgress />;
 
@@ -68,13 +67,13 @@ const ContractOldVersions = () => {
 
       {/* List */}
       <SectionWrapper title="Danh sách phiên bản">
-        {versions.length === 0 ? (
+        {contracts.length === 0 ? (
           <Typography align="center" color={Color.PrimaryGray} sx={{ mt: 2 }}>
             Không có phiên bản nào được tìm thấy.
           </Typography>
         ) : (
           <Grid container spacing={3}>
-            {versions.map((v) => (
+            {contracts.map((v) => (
               <Grid
                 key={v.id}
                 size={{
@@ -105,7 +104,11 @@ const ContractOldVersions = () => {
                     <Button
                       fullWidth
                       variant="contained"
-                      onClick={() => navigate(`/contracts/version/${v.id}`)}
+                      onClick={() =>
+                        navigate(
+                          `/crew-contracts/${v.id}?version=${v.version.num}`,
+                        )
+                      }
                       sx={{
                         borderRadius: 2,
                         textTransform: "none",
@@ -127,4 +130,4 @@ const ContractOldVersions = () => {
   );
 };
 
-export default ContractOldVersions;
+export default ContractOldVersionPage;

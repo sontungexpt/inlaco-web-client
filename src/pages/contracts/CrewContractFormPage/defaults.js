@@ -2,6 +2,7 @@
 export const DEFAULT_CONTRACT_FORM_VALUES = {
   title: "",
   contractFile: null,
+  attachmentFiles: [],
   partyA: {
     cardPhoto: "",
     compName: "Công ty INLACO Hải Phòng",

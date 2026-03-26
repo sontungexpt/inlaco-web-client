@@ -10,7 +10,6 @@ import {
   editContract,
 } from "@/services/contract.service";
 
-// ----- Contract Query Key -----
 export const ContractQueryKey = {
   ALL: ["contracts"],
   LIST: ({ page, pageSize, filter }) => [
@@ -33,7 +32,6 @@ export const ContractQueryKey = {
   ],
 };
 
-// ----- List of contracts -----
 export function useContracts({ page = 0, pageSize = 12, filter }) {
   return useQuery({
     queryKey: ContractQueryKey.LIST({ page, pageSize, filter }),
@@ -42,7 +40,6 @@ export function useContracts({ page = 0, pageSize = 12, filter }) {
   });
 }
 
-// ----- Single contract -----
 export function useContract(id, version = null, options = {}) {
   return useQuery({
     queryKey: ContractQueryKey.DETAIL(id),
@@ -144,7 +141,6 @@ export const useEditContract = ({ onSuccess, ...options }) => {
     ...options,
     mutationFn: ({ id, newDatas, type }) => editContract(id, newDatas, type),
     onSuccess: (data, variables, context) => {
-      // invalidate detail + list
       queryClient.invalidateQueries({
         queryKey: ContractQueryKey.ALL,
       });

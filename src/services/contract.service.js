@@ -43,29 +43,7 @@ export const fetchUniqueContractByApplicationId = async (applicationId) => {
   return response.data;
 };
 
-export const getCrewContractByID_API = async (contractID) => {
-  try {
-    const response = await privateRequest.get(
-      `${ContractEndpoint.GENERAL}/${contractID}`,
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
-};
-
-export const getSupplyContractByID_API = async (contractID) => {
-  try {
-    const response = await privateRequest.get(
-      `${ContractEndpoint.GENERAL}/${contractID}`,
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
-};
-
-export const createLaborContract = async (candidateId, contract) => {
+export const createLaborContract = async ({ candidateId, contract }) => {
   const response = await privateRequest.post(
     ContractEndpoint.CREATE_LABOR_CONTRACT(candidateId),
     {

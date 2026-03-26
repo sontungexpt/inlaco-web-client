@@ -1,15 +1,21 @@
-import React, { useState } from "react";
-import { PageTitle, SectionWrapper, StatusLabel } from "@components/common";
-import { Box, Button, Grid, Select, MenuItem } from "@mui/material";
-import { useNavigate, useParams } from "react-router";
-import Color from "@constants/Color";
-import { reviewCandidateApplication } from "@/services/post.service";
-import { useCandidate } from "@/queries/post.query";
-import CandidateStatus from "@/constants/CandidateStatus";
 import toast from "react-hot-toast";
-import { FilePreviewCard, InfoItem } from "@/components/common";
-import CenterCircularProgress from "@/components/common/CenterCircularProgress";
+
+import {
+  FilePreviewCard,
+  InfoItem,
+  PageTitle,
+  SectionWrapper,
+  StatusLabel,
+  CenterCircularProgress,
+} from "@components/common";
+import { Box, Button, Grid, Select, MenuItem } from "@mui/material";
+
+import { useNavigate, useParams } from "react-router";
+import { useCandidate, useReviewCandidate } from "@/queries/post.query";
 import useAllowedRole from "@/hooks/useAllowedRole";
+
+import Color from "@constants/Color";
+import CandidateStatus from "@/constants/CandidateStatus";
 import UserRole from "@/constants/UserRole";
 
 const STATUS_CONFIG = {
@@ -36,7 +42,7 @@ const STATUS_CONFIG = {
   [CandidateStatus.OFFERED]: {
     label: "Đã gửi offer",
     color: Color.PrimaryBlue,
-    next: ["REJECTED", "CONFIRMED"],
+    next: ["CONFIRMED", "REJECTED"],
   },
   [CandidateStatus.CONFIRMED]: {
     label: "Ứng viên xác nhận",
@@ -70,34 +76,22 @@ const STATUS_CONFIG = {
   },
 };
 
-const CandidateProfileDetail = () => {
+const CandidateProfileDetailPage = () => {
   const navigate = useNavigate();
   const { candidateID } = useParams();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
-  const {
-    data: candidateInfo,
-    isLoading,
-    refetch: refetchCandidateInfo,
-  } = useCandidate(candidateID);
+  const { data: candidateInfo, isLoading } = useCandidate(candidateID);
 
   const resume = candidateInfo?.resume;
   const status = candidateInfo?.status;
 
-  // accept || reject
-  const [reviewingButtonId, setReviewingButtonId] = useState(null);
-
-  const handleChangeStatus = async (newStatus) => {
-    setReviewingButtonId(newStatus);
-    try {
-      await reviewCandidateApplication(candidateID, newStatus);
-      await refetchCandidateInfo();
-      toast.success("Cập nhật trạng thái thành công!");
-    } catch {
-      toast.error("Cập nhật thất bại!");
-    }
-    setReviewingButtonId(null);
-  };
+  const { mutateAsync: reviewCandidate, isPending: isReviewing } =
+    useReviewCandidate({
+      candidateId: candidateID,
+      onSuccess: () => toast.success("Cập nhật trạng thái thành công!"),
+      onError: () => toast.error("Cập nhật thất bại!"),
+    });
 
   if (isLoading) {
     return <CenterCircularProgress />;
@@ -152,21 +146,24 @@ const CandidateProfileDetail = () => {
         {isAdmin && (
           <Box sx={{ display: "flex", gap: 2, mt: 3, flexWrap: "wrap" }}>
             {STATUS_CONFIG[status]?.next?.length > 0 && (
-              <Select
-                value=""
-                displayEmpty
-                disabled={!!reviewingButtonId}
-                size="small"
-                sx={{ minWidth: 240, borderRadius: 2 }}
-                renderValue={() => "Chuyển trạng thái"}
-                onChange={(e) => handleChangeStatus(e.target.value)}
-              >
-                {STATUS_CONFIG[status].next.map((nextStatus) => (
-                  <MenuItem key={nextStatus} value={nextStatus}>
-                    {STATUS_CONFIG[nextStatus].label}
-                  </MenuItem>
-                ))}
-              </Select>
+              <>
+                <Select
+                  value=""
+                  displayEmpty
+                  disabled={!!isReviewing}
+                  size="small"
+                  sx={{ minWidth: 240, borderRadius: 2 }}
+                  renderValue={() => "Chuyển trạng thái"}
+                  onChange={(e) => reviewCandidate(e.target.value)}
+                >
+                  {STATUS_CONFIG[status].next.map((nextStatus) => (
+                    <MenuItem key={nextStatus} value={nextStatus}>
+                      {STATUS_CONFIG[nextStatus].label}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {isReviewing && <CircularProgress size={24} />}
+              </>
             )}
 
             {/* CREATE CONTRACT */}
@@ -202,11 +199,7 @@ const CandidateProfileDetail = () => {
                 variant="outlined"
                 sx={{ borderRadius: 2 }}
                 onClick={() =>
-                  navigate(`/crew-contracts/${candidateID}`, {
-                    state: {
-                      usedApplicationId: true,
-                    },
-                  })
+                  navigate(`/crew-contracts/application/${candidateID}`, {})
                 }
               >
                 Xem hợp đồng
@@ -269,4 +262,4 @@ const CandidateProfileDetail = () => {
   );
 };
 
-export default CandidateProfileDetail;
+export default CandidateProfileDetailPage;

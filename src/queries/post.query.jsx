@@ -4,6 +4,7 @@ import {
   fetchPosts,
   fetchUniqueCandidate,
   fetchUniquePost,
+  reviewCandidateApplication,
 } from "@/services/post.service";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 
@@ -104,6 +105,30 @@ export const useToggleRecruitmentPostStatus = ({ onSuccess, ...options }) => {
         queryKey: PostQueryKey.ALL,
       });
       onSuccess?.(...args);
+    },
+  });
+};
+
+export const useReviewCandidate = ({
+  candidateId,
+  onSuccess,
+  ...options
+} = {}) => {
+  const queryClient = useQueryClient();
+
+  const fn =
+    (candidateId &&
+      ((status) => reviewCandidateApplication(candidateId, status))) ||
+    (({ id, status }) => reviewCandidateApplication(id, status));
+
+  return useMutation({
+    ...options,
+    mutationFn: fn,
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({
+        queryKey: PostQueryKey.CANDIDATE_DETAIL(variables.id),
+      });
+      onSuccess?.(data, variables, context);
     },
   });
 };

@@ -1,7 +1,7 @@
 import {
   fetchSupplyRequests,
   fetchUniqueSupplyRequest,
-} from "@/services/supplyReqServices";
+} from "@/services/supply-request.service";
 import { useQuery } from "@tanstack/react-query";
 
 export const useSupplyRequests = ({ page = 0, pageSize = 20, filter }) => {

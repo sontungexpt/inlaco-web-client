@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import {
   PageTitle,
   SectionWrapper,
@@ -5,17 +6,20 @@ import {
   ImageUploadFieldFormik,
 } from "@components/common";
 import { Box, Button, MenuItem, Grid, CircularProgress } from "@mui/material";
-import Color from "@constants/Color";
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
+
 import cloudinaryUpload from "@/services/cloudinary.service";
+
+import { useNavigate } from "react-router";
+import { useCreateCourse } from "@/queries/course.query";
+
+import Color from "@constants/Color";
 import UploadStrategy from "@/constants/UploadStrategy";
+
 import { FORM_SCHEMA } from "./schema";
 import { DEFAULT_INITIAL_VALUES } from "./defaults";
 import { mapValuesToRequestBody } from "./mapper";
-import { useCreateCourse } from "@/hooks/services/course";
 
 const CourseForm = () => {
   const navigate = useNavigate();

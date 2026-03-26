@@ -1,61 +1,57 @@
-import React from "react";
-import { Box, Paper, Typography, Divider, Button } from "@mui/material";
-import { useParams, useNavigate } from "react-router";
 import toast from "react-hot-toast";
+import { Box, Paper, Typography, Divider, Button } from "@mui/material";
+import { useNavigate } from "react-router";
 
-import { useContract } from "@/queries/contract.query";
-import { activeContract } from "@/services/contract.service";
+import Color from "@/constants/Color";
+import UserRole from "@/constants/UserRole";
+
 import { dateToLocaleString } from "@/utils/converter";
 import useAllowedRole from "@/hooks/useAllowedRole";
-import UserRole from "@/constants/UserRole";
 
 import ContractDetailLayout from "./ContractDetailLayout";
 import PartySection from "./sections/PartySection";
-import ShipInfoSection from "./sections/ShipInfoSection";
 import FilesSection from "./sections/FilesSection";
+import { useCrewContractDetail } from "./hooks/use-contract-detail";
 import {
   ConfirmButton,
   LoadErrorState,
   SectionWrapper,
 } from "@/components/common";
-import Color from "@/constants/Color";
+import { useActiveContract } from "@/queries/contract.query";
 
-const SupplyContractDetail = () => {
-  const { id } = useParams();
+const CrewContractDetailPage = () => {
   const navigate = useNavigate();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
   const {
     data: contract = {},
     isError,
+    error,
     isLoading,
-    refetch: refetchContract,
-  } = useContract(id);
+    refetch,
+  } = useCrewContractDetail();
 
-  const approve = async () => {
-    try {
-      await activeContract(id);
-      toast.success("Ký kết thành công");
-      refetchContract();
-    } catch {
-      toast.error("Ký kết thất bại");
-    }
-  };
+  const { mutate: approveContract, isPending: isApproving } = useActiveContract(
+    {
+      onSuccess: () => toast.success("Ký kết hợp đồng thành công"),
+      onError: () => toast.error("Ký kết thất bại"),
+    },
+  );
 
-  if (isError) {
+  if (isError && error?.response?.status === 404) {
     return (
       <LoadErrorState
         title="Không thể tải hợp đồng"
-        subtitle="Hợp đồng không tồn tại hoặc đã bị xóa"
-        onRetry={() => refetchContract()}
+        subtitle="Hợp đồng không tồn tại hoặc đã bị xoa"
+        onRetry={() => refetch()}
       />
     );
   }
 
   return (
     <ContractDetailLayout
-      title="Chi tiết hợp đồng cung ứng thuyền viên"
-      contractId={id}
+      title="Chi tiết hợp đồng thuyền viên"
+      contractId={contract.id}
       signed={contract.signed}
       loading={isLoading}
       footer={
@@ -64,9 +60,16 @@ const SupplyContractDetail = () => {
             sx={{ display: "flex", gap: 2, justifyContent: "center" }}
           >
             <Button
-              variant="contained"
               color="warning"
-              onClick={() => navigate(`/supply-contracts/${id}/edit`, {})}
+              variant="contained"
+              onClick={() =>
+                navigate("/crew-contracts/form", {
+                  state: {
+                    contractId: contract.id,
+                    type: "update",
+                  },
+                })
+              }
             >
               {contract.freezed ? "Thêm phụ lục" : "Sửa hợp đồng"}
             </Button>
@@ -74,9 +77,10 @@ const SupplyContractDetail = () => {
             {!contract.signed && (
               <ConfirmButton
                 variant="contained"
-                onConfirm={approve}
-                confirmTitle="XÁC NHẬN KÝ KẾT"
-                confirmContent="Hợp đồng sẽ không thể chỉnh sửa sau khi ký"
+                loading={isApproving}
+                onConfirm={() => approveContract(contract.id)}
+                confirmTitle="XÁC NHẬN KÝ KẾT HỢP ĐỒNG"
+                confirmDescription="Hợp đồng sẽ không thể chỉnh sửa sau khi ký"
               >
                 XÁC NHẬN KÝ KẾT
               </ConfirmButton>
@@ -94,8 +98,9 @@ const SupplyContractDetail = () => {
             fontFamily: `"Times New Roman", serif`,
           }}
         >
+          {/* ===== TITLE ===== */}
           <Typography align="center" fontWeight={700} fontSize={22}>
-            HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN
+            HỢP ĐỒNG LAO ĐỘNG THUYỀN VIÊN
           </Typography>
 
           <Typography align="center" fontWeight={700} fontSize={18}>
@@ -104,39 +109,51 @@ const SupplyContractDetail = () => {
 
           <Divider sx={{ my: 3 }} />
 
+          {/* ===== PARTIES ===== */}
           <PartySection title="BÊN A" party={contract.initiator} />
           <PartySection title="BÊN B" party={contract.partners?.[0]} />
 
-          <Typography fontWeight={700}>ĐIỀU 1. NỘI DUNG</Typography>
-          <Typography>
-            Cung ứng <b>{contract.numOfCrews}</b> thuyền viên theo yêu cầu.
-          </Typography>
+          <Divider sx={{ my: 3 }} />
+
+          {/* ===== JOB INFO ===== */}
+          <Typography fontWeight={700}>ĐIỀU 1. CÔNG VIỆC</Typography>
+          <Typography>{contract.jobInfo?.jobDescription}</Typography>
 
           <Typography fontWeight={700} mt={2}>
             ĐIỀU 2. THỜI HẠN
           </Typography>
           <Typography>
-            Từ {dateToLocaleString(contract.activationDate, "date")} đến{" "}
-            {dateToLocaleString(contract.expiredDate, "date")}
+            Từ{" "}
+            {contract.activationDate &&
+              dateToLocaleString(contract.activationDate, "date")}{" "}
+            đến{" "}
+            {contract.expiredDate &&
+              dateToLocaleString(contract.expiredDate, "date")}
           </Typography>
+
+          <Typography fontWeight={700} mt={2}>
+            ĐIỀU 3. TIỀN LƯƠNG
+          </Typography>
+          <Typography>Lương cơ bản: {contract.basicSalary} VNĐ</Typography>
+          <Typography>Phụ cấp: {contract.allowance}</Typography>
+          <Typography>Hình thức: {contract.receiveMethod}</Typography>
 
           <Divider sx={{ my: 3 }} />
 
-          <ShipInfoSection shipInfo={contract.shipInfo} />
-
+          {/* ===== FILES ===== */}
           <FilesSection
-            title="Hợp đồng giấy"
+            title="Hợp đồng giấy chi tiết"
             files={contract.contractFile ? [contract.contractFile] : []}
           />
 
           <Divider sx={{ my: 3 }} />
 
           <FilesSection
-            title="Phụ lục & tài liệu"
+            title="Tài liệu đính kèm"
             files={contract.attachments || []}
           />
 
-          {contract.version > 1 && (
+          {(contract?.version?.num || 0) > 1 && (
             <Box
               sx={{
                 mt: 4,
@@ -161,10 +178,12 @@ const SupplyContractDetail = () => {
                   backgroundColor: Color.PrimaryBlue,
                   color: Color.PrimaryWhite,
                   ":hover": {
-                    backgroundColor: Color.PrimaryDarkBlue,
+                    backgroundColor: Color.PrimaryHoverBlue,
                   },
                 }}
-                onClick={() => navigate(`/contracts/${id}/old-versions`)}
+                onClick={() =>
+                  navigate(`/crew-contracts/${contract.id}/old-versions`)
+                }
               >
                 Xem các phiên bản cũ
               </Button>
@@ -176,4 +195,4 @@ const SupplyContractDetail = () => {
   );
 };
 
-export default SupplyContractDetail;
+export default CrewContractDetailPage;

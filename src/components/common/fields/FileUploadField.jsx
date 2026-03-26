@@ -64,7 +64,11 @@ const FileUploadField = ({
   const inputRef = useRef(null);
   const [dragOver, setDragOver] = useState(false);
 
-  const files = useMemo(() => normalize(value).map(normalizeFile), [value]);
+  const files = useMemo(() => {
+    if (!value) return [];
+    return normalize(value).map(normalizeFile);
+  }, [value]);
+
   const handleFilesAdded = (fileList) => {
     if (!fileList || disabled) return;
     const incoming = Array.from(fileList);

@@ -1,9 +1,7 @@
-import React from "react";
 import { Box, Paper, Typography, Divider, Button } from "@mui/material";
-import { useParams, useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
-import { useApplicationContract, useContract } from "@/queries/contract.query";
 import { activeContract } from "@/services/contract.service";
 import { dateToLocaleString } from "@/utils/converter";
 import useAllowedRole from "@/hooks/useAllowedRole";
@@ -11,6 +9,7 @@ import UserRole from "@/constants/UserRole";
 
 import ContractDetailLayout from "./ContractDetailLayout";
 import PartySection from "./sections/PartySection";
+import ShipInfoSection from "./sections/ShipInfoSection";
 import FilesSection from "./sections/FilesSection";
 import {
   ConfirmButton,
@@ -18,38 +17,27 @@ import {
   SectionWrapper,
 } from "@/components/common";
 import Color from "@/constants/Color";
+import { useContractDetail } from "./hooks/use-contract-detail";
 
-/* ================= DETAIL ================= */
-const CrewContractDetail = () => {
-  const { id } = useParams();
-  const { usedApplicationId } = useLocation().state || {};
+const SupplyContractDetail = () => {
+  // const { }
+  //   const { id } = useParams();
   const navigate = useNavigate();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
-
-  const isApplicationContract = Boolean(usedApplicationId);
-
-  const contractQuery = useContract(id, {
-    enabled: !isApplicationContract && !!id,
-  });
-
-  const applicationContractQuery = useApplicationContract(id, {
-    enabled: isApplicationContract && !!id,
-  });
 
   const {
     data: contract = {},
     isError,
-    error,
     isLoading,
-    refetch,
-  } = isApplicationContract ? applicationContractQuery : contractQuery;
+    refetch: refetchContract,
+  } = useContractDetail(id);
 
-  if (isError && error?.response?.status === 404) {
+  if (isError) {
     return (
       <LoadErrorState
         title="Không thể tải hợp đồng"
-        subtitle="Hợp đồng không tồn tại hoặc đã bị xoa"
-        onRetry={() => refetch()}
+        subtitle="Hợp đồng không tồn tại hoặc đã bị xóa"
+        onRetry={() => refetchContract()}
       />
     );
   }
@@ -57,8 +45,8 @@ const CrewContractDetail = () => {
   const approve = async () => {
     try {
       await activeContract(id);
-      toast.success("Ký kết hợp đồng thành công");
-      refetch();
+      toast.success("Ký kết thành công");
+      refetchContract();
     } catch {
       toast.error("Ký kết thất bại");
     }
@@ -66,7 +54,7 @@ const CrewContractDetail = () => {
 
   return (
     <ContractDetailLayout
-      title="Chi tiết hợp đồng thuyền viên"
+      title="Chi tiết hợp đồng cung ứng thuyền viên"
       contractId={id}
       signed={contract.signed}
       loading={isLoading}
@@ -76,16 +64,9 @@ const CrewContractDetail = () => {
             sx={{ display: "flex", gap: 2, justifyContent: "center" }}
           >
             <Button
-              color="warning"
               variant="contained"
-              onClick={() =>
-                navigate("/crew-contracts/form", {
-                  state: {
-                    contractId: contract.id,
-                    type: "update",
-                  },
-                })
-              }
+              color="warning"
+              onClick={() => navigate(`/supply-contracts/${id}/edit`, {})}
             >
               {contract.freezed ? "Thêm phụ lục" : "Sửa hợp đồng"}
             </Button>
@@ -94,8 +75,8 @@ const CrewContractDetail = () => {
               <ConfirmButton
                 variant="contained"
                 onConfirm={approve}
-                confirmTitle="XÁC NHẬN KÝ KẾT HỢP ĐỒNG"
-                confirmContent="Hợp đồng sẽ không thể chỉnh sửa sau khi ký"
+                confirmTitle="XÁC NHẬN KÝ KẾT"
+                confirmDescription="Hợp đồng sẽ không thể chỉnh sửa sau khi ký"
               >
                 XÁC NHẬN KÝ KẾT
               </ConfirmButton>
@@ -113,9 +94,8 @@ const CrewContractDetail = () => {
             fontFamily: `"Times New Roman", serif`,
           }}
         >
-          {/* ===== TITLE ===== */}
           <Typography align="center" fontWeight={700} fontSize={22}>
-            HỢP ĐỒNG LAO ĐỘNG THUYỀN VIÊN
+            HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN
           </Typography>
 
           <Typography align="center" fontWeight={700} fontSize={18}>
@@ -124,51 +104,39 @@ const CrewContractDetail = () => {
 
           <Divider sx={{ my: 3 }} />
 
-          {/* ===== PARTIES ===== */}
           <PartySection title="BÊN A" party={contract.initiator} />
           <PartySection title="BÊN B" party={contract.partners?.[0]} />
 
-          <Divider sx={{ my: 3 }} />
-
-          {/* ===== JOB INFO ===== */}
-          <Typography fontWeight={700}>ĐIỀU 1. CÔNG VIỆC</Typography>
-          <Typography>{contract.jobInfo?.jobDescription}</Typography>
+          <Typography fontWeight={700}>ĐIỀU 1. NỘI DUNG</Typography>
+          <Typography>
+            Cung ứng <b>{contract.numOfCrews}</b> thuyền viên theo yêu cầu.
+          </Typography>
 
           <Typography fontWeight={700} mt={2}>
             ĐIỀU 2. THỜI HẠN
           </Typography>
           <Typography>
-            Từ{" "}
-            {contract.activationDate &&
-              dateToLocaleString(contract.activationDate, "date")}{" "}
-            đến{" "}
-            {contract.expiredDate &&
-              dateToLocaleString(contract.expiredDate, "date")}
+            Từ {dateToLocaleString(contract.activationDate, "date")} đến{" "}
+            {dateToLocaleString(contract.expiredDate, "date")}
           </Typography>
-
-          <Typography fontWeight={700} mt={2}>
-            ĐIỀU 3. TIỀN LƯƠNG
-          </Typography>
-          <Typography>Lương cơ bản: {contract.basicSalary} VNĐ</Typography>
-          <Typography>Phụ cấp: {contract.allowance}</Typography>
-          <Typography>Hình thức: {contract.receiveMethod}</Typography>
 
           <Divider sx={{ my: 3 }} />
 
-          {/* ===== FILES ===== */}
+          <ShipInfoSection shipInfo={contract.shipInfo} />
+
           <FilesSection
-            title="Hợp đồng giấy chi tiết"
+            title="Hợp đồng giấy"
             files={contract.contractFile ? [contract.contractFile] : []}
           />
 
           <Divider sx={{ my: 3 }} />
 
           <FilesSection
-            title="Tài liệu đính kèm"
+            title="Phụ lục & tài liệu"
             files={contract.attachments || []}
           />
 
-          {contract.version >= 1 && (
+          {contract.version > 1 && (
             <Box
               sx={{
                 mt: 4,
@@ -193,10 +161,10 @@ const CrewContractDetail = () => {
                   backgroundColor: Color.PrimaryBlue,
                   color: Color.PrimaryWhite,
                   ":hover": {
-                    backgroundColor: Color.PrimaryDarkBlue,
+                    backgroundColor: Color.PrimaryHoverBlue,
                   },
                 }}
-                onClick={() => navigate(`/crew-contracts/${id}/old-versions`)}
+                onClick={() => navigate(`/contracts/${id}/old-versions`)}
               >
                 Xem các phiên bản cũ
               </Button>
@@ -208,4 +176,4 @@ const CrewContractDetail = () => {
   );
 };
 
-export default CrewContractDetail;
+export default SupplyContractDetail;

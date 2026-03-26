@@ -4,12 +4,19 @@ import {
   fetchCourseDetail,
   createCourse,
   enrollCourse,
-} from "@/services/courseServices";
+} from "@/services/course.service";
 
-// ----- Query Keys -----
 export const CourseQueryKey = {
   ALL: ["courses"],
-  DETAIL: (id) => ["course", id],
+  LIST: ({ page, pageSize, nonExpired, sort }) => [
+    ...CourseQueryKey.ALL,
+    "list",
+    page,
+    pageSize,
+    nonExpired,
+    sort,
+  ],
+  DETAIL: (id) => [...CourseQueryKey.ALL, "detail", id],
 };
 
 // ----- Queries -----
@@ -20,7 +27,7 @@ export const useCourses = ({
   sort = null,
 } = {}) => {
   return useQuery({
-    queryKey: [...CourseQueryKey.ALL, page, pageSize, nonExpired, sort],
+    queryKey: CourseQueryKey.LIST({ page, pageSize, nonExpired, sort }),
     queryFn: () => fetchCourses({ nonExpired, page, pageSize, sort }),
     staleTime: 1000 * 60 * 5, // cache 5 phút
   });

@@ -79,17 +79,29 @@ export const AppRoutes = [
       },
       {
         path: "form",
-        element: lazy(() => import("@/pages/contracts/CrewContractForm")),
+        element: lazy(() => import("@/pages/contracts/CrewContractFormPage")),
       },
       {
         path: ":id",
         element: lazy(
-          () => import("@/pages/contracts/details/CrewContractDetail"),
+          () =>
+            import(
+              "@/pages/contracts/ContractDetailPage/CrewContractDetailPage"
+            ),
+        ),
+      },
+      {
+        path: "application/:applicationId",
+        element: lazy(
+          () =>
+            import(
+              "@/pages/contracts/ContractDetailPage/CrewContractDetailPage"
+            ),
         ),
       },
       {
         path: ":id/old-versions",
-        element: lazy(() => import("@/pages/contracts/ContractOldVersions")),
+        element: lazy(() => import("@/pages/contracts/ContractOldVersionPage")),
       },
       // { path: ":id/create-addendum", element: CrewContractAddendum },
     ],
@@ -113,9 +125,7 @@ export const AppRoutes = [
       },
       {
         path: ":id",
-        element: lazy(
-          () => import("@/pages/contracts/details/SupplyContractDetail"),
-        ),
+        element: lazy(() => import("@/pages/contracts/ContractDetailPage")),
       },
       // { path: ":id/create-addendum", element: SupplyContractAddendum },
     ],
@@ -195,7 +205,7 @@ export const AppRoutes = [
       {
         path: "candidates/:candidateID",
         element: lazy(
-          () => import("@/pages/candidates/CandidateProfileDetail"),
+          () => import("@/pages/candidates/CandidateProfileDetailPage"),
         ),
       },
       {
@@ -217,11 +227,11 @@ export const AppRoutes = [
       },
       {
         path: ":id",
-        element: lazy(() => import("@pages/courses/CourseDetail")),
+        element: lazy(() => import("@pages/courses/CourseDetailPage")),
       },
       {
         path: "create",
-        element: lazy(() => import("@pages/courses/CourseForm")),
+        element: lazy(() => import("@pages/courses/CourseFormPage")),
       },
     ],
   },

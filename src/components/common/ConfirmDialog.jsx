@@ -53,10 +53,9 @@ const ConfirmDialog = ({
           color={confirmColor}
           variant={confirmVariant}
           disabled={loading}
-          startIcon={
-            loading ? <CircularProgress size={16} color="inherit" /> : null
-          }
-          autoFocus={confirmColor !== "error"} // danger → focus cancel
+          loading={loading}
+          loadingIndicator={<CircularProgress size={16} color="inherit" />}
+          autoFocus={confirmColor !== "error"}
         >
           {confirmText}
         </Button>

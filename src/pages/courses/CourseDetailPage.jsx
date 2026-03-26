@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -21,7 +21,7 @@ import {
   HourglassBottomRounded,
   CancelRounded,
 } from "@mui/icons-material";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 
 import {
   PageTitle,
@@ -31,11 +31,11 @@ import {
   CenterCircularProgress,
 } from "@components/common";
 import Color from "@constants/Color";
-import { useCourse } from "@/hooks/services/course";
+import { useCourse } from "@/queries/course.query";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";
 import { dateToLocaleString } from "@/utils/converter";
-import { enrollCourse } from "@/services/courseServices";
+import { enrollCourse } from "@/services/course.service";
 import toast from "react-hot-toast";
 
 /* ================= Utils ================= */
@@ -66,9 +66,8 @@ const StatusChip = ({ course }) => {
 };
 
 /* ================= Main Page ================= */
-export default function CourseDetail() {
+export default function CourseDetailPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
   const {

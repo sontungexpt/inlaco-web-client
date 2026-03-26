@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import { ShipInfoCell, ScheduleCell } from "../components/mobilization";
 import { useNavigate } from "react-router";
 import { getMyMobilizationAPI } from "../services/mobilizationServices";
-import { fetchMyCrewProfile } from "../services/crewServices";
+import { fetchMyCrewProfile } from "../services/crew.service";
 import { formatDateTime } from "@utils/converter";
 import { HttpStatusCode } from "axios";
 import { PageTitle, BaseDataGrid, DetailActionCell } from "@/components/common";
