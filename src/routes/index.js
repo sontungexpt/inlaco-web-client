@@ -142,14 +142,12 @@ export const AppRoutes = [
     children: [
       {
         index: true,
-        element: lazy(() => import("@/pages/supplication/SupplyRequestPage")),
+        element: lazy(() => import("@/pages/SupplyRequestPage")),
         roles: [UserRole.ADMIN],
       },
       {
         path: ":id",
-        element: lazy(
-          () => import("@/pages/supplication/SupplyRequestDetailPage"),
-        ),
+        element: lazy(() => import("@/pages/SupplyRequestDetailPage")),
         roles: [UserRole.ADMIN],
       },
       {
@@ -204,9 +202,7 @@ export const AppRoutes = [
       },
       {
         path: "candidates/:candidateID",
-        element: lazy(
-          () => import("@/pages/candidates/CandidateProfileDetailPage"),
-        ),
+        element: lazy(() => import("@/pages/CandidateProfileDetailPage")),
       },
       {
         path: "apply/:recruitmentId",
@@ -223,15 +219,15 @@ export const AppRoutes = [
     children: [
       {
         index: true,
-        element: lazy(() => import("@/pages/courses/CrewCoursePage")),
+        element: lazy(() => import("@/pages/CrewCoursePage")),
       },
       {
         path: ":id",
-        element: lazy(() => import("@pages/courses/CourseDetailPage")),
+        element: lazy(() => import("@pages/CourseDetailPage")),
       },
       {
         path: "create",
-        element: lazy(() => import("@pages/courses/CourseFormPage")),
+        element: lazy(() => import("@pages/CourseFormPage")),
       },
     ],
   },

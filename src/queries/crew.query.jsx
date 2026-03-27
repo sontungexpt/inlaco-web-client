@@ -3,12 +3,30 @@ import {
   fetchCrewMembers,
   fetchMyCrewProfile,
   fetchSpecificCrewProfile,
-} from "@/services/crewServices";
-import { stableFilterKey } from "@/utils/filter";
+} from "@/services/crew.service";
+
+export const CrewQueryKey = {
+  ALL: ["crews"],
+
+  MEMBERS: {
+    ALL: [...CrewQueryKey.ALL, "members"],
+    LIST: ({ page, size, filter }) => [
+      ...CrewQueryKey.MEMBERS.ALL,
+      page,
+      size,
+      filter,
+    ],
+  },
+
+  PROFILE: {
+    ALL: [...CrewQueryKey.ALL, "profiles"],
+    DETAIL: (id) => [...CrewQueryKey.PROFILE.ALL, id],
+  },
+};
 
 export function useCrewMembers({ page = 0, size = 12, filter }) {
   return useQuery({
-    queryKey: ["crew-members", page, size].concat(stableFilterKey(filter)),
+    queryKey: CrewQueryKey.MEMBERS.LIST({ page, size, filter }),
     queryFn: () => fetchCrewMembers({ page, size, filter }),
     staleTime: 1000 * 30, // cache 30s
   });

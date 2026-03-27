@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Box, Typography, Button, Stack, Paper } from "@mui/material";
 import { Link } from "react-router";
 import EmailIcon from "@mui/icons-material/Email";
@@ -6,7 +6,7 @@ import Color from "@constants/Color";
 
 const RESEND_TIMEOUT = 30;
 
-const VerifyEmailConfirmation = () => {
+const VerifyEmailConfirmationPage = () => {
   const [cooldown, setCooldown] = useState(RESEND_TIMEOUT);
 
   const isDisabled = cooldown > 0;
@@ -77,4 +77,4 @@ const VerifyEmailConfirmation = () => {
   );
 };
 
-export default VerifyEmailConfirmation;
+export default VerifyEmailConfirmationPage;

@@ -1,4 +1,4 @@
-import Env from "@/config/env.config";
+import { Env } from "@/config/env.config";
 import axios from "axios";
 
 const publicRequest = axios.create({

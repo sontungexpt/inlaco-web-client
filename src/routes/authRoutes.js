@@ -5,21 +5,21 @@ export const AuthRoutes = [
   {
     // Public
     path: RoutePath.Auth.Login,
-    element: lazy(() => import("@pages/auth/LoginPage")),
+    element: lazy(() => import("@/pages/LoginPage")),
     layout: false,
   },
 
   {
     // Public
     path: RoutePath.Auth.SignUp,
-    element: lazy(() => import("@pages/auth/SignUpPage")),
+    element: lazy(() => import("@/pages/SignUpPage")),
     layout: false,
   },
 
   {
     // Public
     path: RoutePath.Auth.VerifyEmailConfirmation,
-    element: lazy(() => import("@pages/auth/VerifyEmailConfirmation")),
+    element: lazy(() => import("@/pages/VerifyEmailConfirmationPage")),
     layout: false,
   },
 ];

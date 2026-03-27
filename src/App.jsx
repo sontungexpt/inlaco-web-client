@@ -1,5 +1,5 @@
 import { Routes, Outlet, Route, Navigate } from "react-router";
-import React, { Fragment, lazy, Suspense } from "react";
+import { Fragment, lazy, Suspense } from "react";
 import { useAuthContext } from "./contexts/AuthContext";
 import { PageCircularProgress } from "./components/common";
 import { AppRoutes, AuthRoutes, ErrorRoutes } from "./routes";
@@ -101,10 +101,7 @@ export default function App() {
         {buildRoutes(AppRoutes)}
 
         {/* fallback */}
-        <Route
-          path="*"
-          element={lazy(() => import("@/pages/errors/E404Page"))}
-        />
+        <Route path="*" element={lazy(() => import("@/pages/E404Page"))} />
       </Routes>
     </Suspense>
   );

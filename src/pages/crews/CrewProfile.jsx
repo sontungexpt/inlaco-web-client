@@ -2,7 +2,7 @@ import { Grid, Box, Stack } from "@mui/material";
 import PageTitle from "@components/common/PageTitle";
 import CenterCircularProgress from "@components/common/CenterCircularProgress";
 import { CloudinaryImage, InfoItem, SectionWrapper } from "@/components/common";
-import { useCrewProfile } from "@/hooks/services/crew";
+import { useCrewProfile } from "@/queries/crew.query";
 import { useParams } from "react-router";
 
 export default function CrewProfile() {

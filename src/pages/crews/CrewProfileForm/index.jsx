@@ -25,7 +25,7 @@ import { datetimeToISO } from "@utils/converter";
 import { buildInitialValues } from "@/pages/mobilization/MobilizationForm/initial";
 import { HttpStatusCode } from "axios";
 import { FORM_SCHEMA } from "./schema";
-import { useCrewProfile } from "@/hooks/services/crew";
+import { useCrewProfile } from "@/queries/crew.query";
 
 export default function CrewProfileForm() {
   const navigate = useNavigate();

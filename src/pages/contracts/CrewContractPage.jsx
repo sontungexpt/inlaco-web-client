@@ -7,16 +7,23 @@ import {
   DetailActionCell,
 } from "@components/common";
 import { Box, MenuItem } from "@mui/material";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { isoToDatetime } from "@utils/converter";
 import { useContracts } from "@/queries/contract.query";
 import ContractType from "@/constants/ContractTemplateType";
 
+const useCrewContractParams = () => {
+  const [searchParams] = useSearchParams();
+  const initialPage = searchParams.get("page") || 0;
+  return { initialPage };
+};
+
 const CrewContractPage = ({ pageSize = 10 }) => {
   const navigate = useNavigate();
-  const { initialPage = 0 } = useLocation().state || {};
+  const { initialPage = 0 } = useCrewContractParams();
 
   const [isSignedContract, setIsSignedContract] = useState(true);
+  const [searchText, setSearchText] = useState("");
   const [paginationModel, setPaginationModel] = useState({
     page: initialPage || 0,
     pageSize: pageSize,
@@ -33,6 +40,7 @@ const CrewContractPage = ({ pageSize = 10 }) => {
     pageSize: paginationModel.pageSize,
     filter: {
       signed: isSignedContract,
+      keyword: searchText,
       type: ContractType.LABOR_CONTRACT,
     },
   });
@@ -103,13 +111,13 @@ const CrewContractPage = ({ pageSize = 10 }) => {
           flexDirection: "row",
           justifyContent: "space-between",
           gap: 2,
+          my: 1,
         }}
       >
         <SearchBar
+          onSearch={(q) => setSearchText(q)}
           size="small"
-          placeholder={
-            "Nhập tên hoặc mã thuyền viên cần tìm kiếm (VD: Nguyễn Văn A,...)"
-          }
+          placeholder="Nhập tên hoặc mã thuyền viên cần tìm kiếm"
         />
 
         <InfoTextField
@@ -128,6 +136,7 @@ const CrewContractPage = ({ pageSize = 10 }) => {
           ))}
         </InfoTextField>
       </Box>
+
       <BaseDataGrid
         loading={isLoading}
         columns={columns}

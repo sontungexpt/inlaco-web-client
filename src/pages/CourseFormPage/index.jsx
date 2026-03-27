@@ -6,10 +6,11 @@ import {
   ImageUploadFieldFormik,
 } from "@components/common";
 import { Box, Button, MenuItem, Grid, CircularProgress } from "@mui/material";
+
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik } from "formik";
 
-import cloudinaryUpload from "@/services/cloudinary.service";
+import { cloudinaryUpload } from "@/services/cloudinary.service";
 
 import { useNavigate } from "react-router";
 import { useCreateCourse } from "@/queries/course.query";
@@ -21,7 +22,7 @@ import { FORM_SCHEMA } from "./schema";
 import { DEFAULT_INITIAL_VALUES } from "./defaults";
 import { mapValuesToRequestBody } from "./mapper";
 
-const CourseForm = () => {
+const CourseFormPage = () => {
   const navigate = useNavigate();
   const { mutateAsync: createCourse } = useCreateCourse();
 
@@ -233,4 +234,4 @@ const CourseForm = () => {
   );
 };
 
-export default CourseForm;
+export default CourseFormPage;

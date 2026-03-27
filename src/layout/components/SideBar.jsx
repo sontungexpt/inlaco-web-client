@@ -6,11 +6,11 @@ import { useNavigate, useLocation } from "react-router";
 /* ===== Icons ===== */
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
-import { useAuthContext } from "../../contexts/AuthContext";
 import Color from "@constants/Color";
 import SidebarConfig, { Action } from "@/constants/SidebarConfig";
 import { CloudinaryImage } from "@/components/common";
 import { ImageAssets } from "@/constants/Asset";
+import { useAuthContext } from "@/contexts/auth.context";
 
 const Item = memo(({ title, icon, active, onClick }) => (
   <MenuItem
@@ -33,7 +33,7 @@ const Item = memo(({ title, icon, active, onClick }) => (
 ));
 
 const SideBar = () => {
-  const { user, hasRole, logout } = useAuthContext();
+  const { user, includesRole, logout } = useAuthContext();
 
   /* ===== ACTION MAP ===== */
   const ACTION_MAP = {
@@ -50,8 +50,8 @@ const SideBar = () => {
     location.pathname === path || location.pathname.startsWith(path + "/");
 
   const hasAnyRole = useCallback(
-    (roles = []) => roles.length === 0 || roles.some(hasRole),
-    [hasRole],
+    (roles = []) => roles.length === 0 || roles.some(includesRole),
+    [includesRole],
   );
 
   /* ===== Filter menu by role (memoized) ===== */

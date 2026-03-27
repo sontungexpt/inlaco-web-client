@@ -49,8 +49,8 @@ export const useCreateCourse = (options = {}) => {
     ...options,
     mutationFn: ({ payload }) => createCourse(payload),
     onSuccess: (data, variables, context) => {
-      options?.onSuccess?.(data, variables, context);
       queryClient.invalidateQueries({ queryKey: CourseQueryKey.ALL });
+      options?.onSuccess?.(data, variables, context);
     },
   });
 };
@@ -61,8 +61,8 @@ export const useEnrollCourse = (options = {}) => {
     ...options,
     mutationFn: enrollCourse,
     onSuccess: (data, courseId, context) => {
-      options?.onSuccess?.(data, courseId, context);
       queryClient.invalidateQueries({ queryKey: CourseQueryKey.ALL });
+      options?.onSuccess?.(data, courseId, context);
     },
   });
 };

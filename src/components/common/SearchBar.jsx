@@ -80,6 +80,7 @@ const SearchBar = ({
   const inputRef = useRef(null);
   const anchorRef = useRef(null);
   const mountedRef = useRef(false);
+  const popperRef = useRef(null);
 
   /* =========================
    * Helpers
@@ -93,7 +94,7 @@ const SearchBar = ({
 
   const runSearch = useCallback(
     async (keyword) => {
-      if (!onSearch && keyword.length >= minLength) {
+      if (!onSearch || keyword.length < minLength) {
         setDropdownOpened(false);
         return;
       }
@@ -108,12 +109,35 @@ const SearchBar = ({
         }
       } finally {
         setInnerLoading(false);
+        if (dropdown) setDropdownOpened(true);
       }
-
-      if (dropdown) setDropdownOpened(true);
     },
     [onSearch, minLength, dropdown, loading],
   );
+
+  useEffect(() => {
+    const handleFocusChange = () => {
+      const activeEl = document.activeElement;
+
+      const isInside =
+        anchorRef.current?.contains(activeEl) ||
+        popperRef.current?.contains(activeEl);
+
+      if (!isInside) {
+        setDropdownOpened(false);
+
+        if (autoCollapseOnBlur && !inputValue) {
+          setIsCollapsed(true);
+        }
+
+        onBlur?.();
+      }
+    };
+    document.addEventListener("focusin", handleFocusChange);
+    return () => {
+      document.removeEventListener("focusin", handleFocusChange);
+    };
+  }, [inputValue, autoCollapseOnBlur, onBlur]);
 
   useEffect(() => {
     if (!isCollapsed && !disabled) {
@@ -155,7 +179,7 @@ const SearchBar = ({
     setInputValue(value ?? "");
   }, [value, isControlled, suppressSearchOnValueChange]); // eslint-disable-line
 
-  /* =========================
+  /* ==================
    * Auto search (debounce)
    * ========================= */
   useEffect(() => {
@@ -237,11 +261,18 @@ const SearchBar = ({
         e.preventDefault();
         setActiveOptionIndex((i) => clampIndex(i - 1));
         break;
+      case "Tab":
+        if (options[activeOptionIndex]) {
+          handleSelectOption(options[activeOptionIndex]);
+        }
+        break;
       case "Enter":
         e.preventDefault();
-        options[activeOptionIndex]
-          ? handleSelectOption(options[activeOptionIndex])
-          : runSearch(inputValue);
+        if (options[activeOptionIndex]) {
+          handleSelectOption(options[activeOptionIndex]);
+        } else {
+          runSearch(inputValue);
+        }
         break;
       case "Escape":
         setDropdownOpened(false);
@@ -257,22 +288,12 @@ const SearchBar = ({
     const value =
       typeof option === "string"
         ? option
-        : (mapOptionToValue(option, ...params) ?? "");
+        : (mapOptionToValue?.(option, ...params) ?? "");
 
     changeSourceRef.current = SOURCE.INTERNAL;
     setInputValue(value);
     setDropdownOpened(false);
     onSelectOption?.(option, ...params);
-  };
-
-  const handleBlur = (e, ...params) => {
-    setDropdownOpened(false);
-
-    if (autoCollapseOnBlur && !inputValue) {
-      setIsCollapsed(true);
-    }
-
-    onBlur?.(e, ...params);
   };
 
   const mergedSx = useMemo(
@@ -297,6 +318,31 @@ const SearchBar = ({
     [sx, isCollapsed, collapseWidth],
   );
 
+  const startAdornment = useMemo(
+    () => (
+      <InputAdornment position="start" sx={{ cursor: "pointer" }}>
+        {finalLoading ? (
+          <CircularProgress size={18} />
+        ) : (
+          showSearchIcon && <SearchRoundedIcon fontSize="small" />
+        )}
+      </InputAdornment>
+    ),
+    [finalLoading, showSearchIcon],
+  );
+
+  const endAdornment = useMemo(() => {
+    if (isCollapsed || !inputValue || finalLoading || disabled) return null;
+
+    return (
+      <InputAdornment position="end">
+        <IconButton size="small" onClick={handleClear}>
+          <CloseRoundedIcon fontSize="small" />
+        </IconButton>
+      </InputAdornment>
+    );
+  }, [isCollapsed, inputValue, finalLoading, disabled, handleClear]);
+
   /* =========================
    * Render
    * ========================= */
@@ -313,33 +359,12 @@ const SearchBar = ({
         size={size}
         sx={mergedSx}
         onChange={handleInputChange}
-        onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         onClick={handleClick}
         slotProps={{
           input: {
-            startAdornment: (
-              <InputAdornment
-                position="start"
-                sx={{
-                  cursor: "pointer",
-                }}
-              >
-                {finalLoading ? (
-                  <CircularProgress size={18} />
-                ) : (
-                  showSearchIcon && <SearchRoundedIcon fontSize="small" />
-                )}
-              </InputAdornment>
-            ),
-            endAdornment:
-              !isCollapsed && inputValue && !finalLoading && !disabled ? (
-                <InputAdornment position="end">
-                  <IconButton size="small" onClick={handleClear}>
-                    <CloseRoundedIcon fontSize="small" />
-                  </IconButton>
-                </InputAdornment>
-              ) : null,
+            startAdornment,
+            endAdornment,
           },
           ...slotProps,
         }}
@@ -347,13 +372,14 @@ const SearchBar = ({
 
       {dropdown && (
         <Popper
+          ref={popperRef}
           placement="bottom-start"
-          {...slotProps?.poper}
+          {...slotProps?.popper}
           open={dropdownOpened && options.length > 0}
           anchorEl={anchorRef.current}
           style={{
             zIndex: 1300,
-            ...slotProps?.poper?.style,
+            ...slotProps?.popper?.style,
             width: matchAnchorWidth
               ? anchorRef.current?.getBoundingClientRect().width
               : undefined,

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Box, Button, Typography, Link, Stack } from "@mui/material";
 import { ShipInfoCell } from "@components/mobilization";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";

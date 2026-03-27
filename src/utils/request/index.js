@@ -1,2 +1,2 @@
-export { default as publicRequest } from "./publicRequest";
-export { default as privateRequest } from "./privateRequest";
+export { default as publicRequest } from "./public-request";
+export { default as privateRequest } from "./private-request";
