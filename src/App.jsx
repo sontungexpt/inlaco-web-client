@@ -1,17 +1,15 @@
 import { Routes, Outlet, Route, Navigate } from "react-router";
 import { Fragment, lazy, Suspense } from "react";
-import { useAuthContext } from "./contexts/AuthContext";
+import { useAuthContext } from "./contexts/auth.context";
 import { PageCircularProgress } from "./components/common";
 import { AppRoutes, AuthRoutes, ErrorRoutes } from "./routes";
 import MainLayout from "./layout/MainLayout";
 
 function AuthGuard({ children = <Outlet /> }) {
-  const { isLoading, isAuthenticated } = useAuthContext();
+  const { isBooting, isAuthenticated } = useAuthContext();
 
-  console.log("render AuthGuard");
-  if (isLoading) {
-    return <PageCircularProgress />;
-  } else if (!isAuthenticated) {
+  console.log("render AuthGuard", isAuthenticated);
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
   console.log("render AuthGuard child");
@@ -19,14 +17,19 @@ function AuthGuard({ children = <Outlet /> }) {
 }
 
 function RoleGuard({ allowedRoles, children = <Outlet /> }) {
-  const { hasRole, roles: userRoles, hasRoles } = useAuthContext();
+  const { includesRole, roles: userRoles, includesAllRoles } = useAuthContext();
   if (!allowedRoles) return children;
   console.log("render RoleGuard");
 
   const allowed =
     typeof allowedRoles === "function"
-      ? allowedRoles({ hasRole, userRoles, hasRoles })
-      : allowedRoles.some((r) => hasRole(r));
+      ? allowedRoles({
+          hasRole: includesRole,
+          includesRole: includesRole,
+          userRoles,
+          hasRoles: includesAllRoles,
+        })
+      : allowedRoles.some((r) => includesRole(r));
 
   if (!allowed) return <Navigate to="/403" replace />;
   return children;

@@ -1,4 +1,4 @@
-import axios, { HttpStatusCode } from "axios";
+import axios, { HttpStatusCode, isAxiosError } from "axios";
 import { TokenMutex } from "./token-mutex";
 import { AuthEndpoint } from "@/endpoints/auth.endpoint";
 import { tokenStore } from "@/shared/auth/token-store";
@@ -14,15 +14,6 @@ const privateRequest = axios.create({
     put: SHARED_JSON_HEADER,
     patch: { "Content-Type": "application/merge-patch+json" },
   },
-});
-
-// ======================== REQUEST ========================
-privateRequest.interceptors.request.use((config) => {
-  const token = tokenStore.getAccessToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
 });
 
 const tokenMutex = new TokenMutex();
@@ -58,11 +49,40 @@ async function refreshAccessToken() {
       await tokenStore.setTokens(newAccessToken, newRefreshToken);
       return newAccessToken;
     } catch (error) {
-      await tokenStore.clear();
+      console.debug(error);
+      if (isAxiosError(error)) {
+        if (error.response?.status === HttpStatusCode.Unauthorized) {
+          await tokenStore.clear();
+        }
+      }
       throw error;
     }
   });
 }
+
+async function ensureAccessToken(): Promise<string | null> {
+  let token = tokenStore.getAccessToken();
+  if (!token) {
+    const refreshToken = tokenStore.getRefreshToken();
+    if (!refreshToken) return null;
+    try {
+      token = await refreshAccessToken();
+    } catch {
+      return null;
+    }
+  }
+  return token;
+}
+
+// ======================== REQUEST ========================
+privateRequest.interceptors.request.use(async (config) => {
+  const token = await ensureAccessToken();
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 // ======================== RESPONSE ========================
 privateRequest.interceptors.response.use(

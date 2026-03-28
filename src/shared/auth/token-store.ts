@@ -9,10 +9,11 @@ class TokenStore {
 
   async init() {
     const rememberMe = localStorage.getItem(StorageKey.REMEMBER_ME, false);
+    console.debug("rememberMe", rememberMe);
     this.detectStorage(rememberMe);
     this.accessToken = this.storage.getItem(StorageKey.ACCESS_TOKEN);
     this.refreshToken = this.storage.getItem(StorageKey.REFRESH_TOKEN);
-    return !!this.accessToken;
+    return !!(this.accessToken || this.refreshToken);
   }
 
   getUid() {
@@ -34,7 +35,6 @@ class TokenStore {
   }
 
   detectStorage(rememberMe: boolean) {
-    console.debug("detectStorage", rememberMe);
     this.storage = rememberMe ? localStorage : sessionStorage;
     console.debug("storage", rememberMe ? "localStorage" : "sessionStorage");
   }

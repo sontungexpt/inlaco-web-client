@@ -1,5 +1,5 @@
 // contractForm.mapper.ts
-import { datetimeToISO, isoToMUIDateTime } from "@utils/converter";
+import { datetimeToISO, dateToMUIDatetime } from "@utils/converter";
 
 export const mapContractToFormValues = (contractInfo) => {
   const partyA = contractInfo?.initiator;
@@ -25,8 +25,8 @@ export const mapContractToFormValues = (contractInfo) => {
     },
 
     jobInfo: {
-      startDate: isoToMUIDateTime(contractInfo?.activationDate),
-      endDate: isoToMUIDateTime(contractInfo?.expiredDate),
+      startDate: dateToMUIDatetime(contractInfo?.activationDate),
+      endDate: dateToMUIDatetime(contractInfo?.expiredDate),
       workingLocation: contractInfo?.workingLocation || "",
       position: contractInfo?.position || "",
       jobDescription: contractInfo?.customAttributes?.[0]?.value || "",

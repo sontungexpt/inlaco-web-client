@@ -1,13 +1,12 @@
-import React, {} from "react";
 import { TextField } from "@mui/material";
 import Regex from "@/constants/Regex";
-import { dateToMUIDatetime, isoToMUIDateTime } from "@/utils/converter";
+import { dateToMUIDatetime } from "@/utils/converter";
 import Color from "@/constants/Color";
 
 const formatDisplayValue = (value, type) => {
   if (type === "date" || type === "datetime-local" || type === "time") {
     if (typeof value === "string" && Regex.ISO_REGEX.test(value)) {
-      return isoToMUIDateTime(value, type);
+      return dateToMUIDatetime(value, type);
     } else if (value instanceof Date) {
       return dateToMUIDatetime(value, type);
     }

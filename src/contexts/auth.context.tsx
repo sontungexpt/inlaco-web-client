@@ -13,6 +13,7 @@ import * as accountService from "@/services/account.service";
 import { tokenStore } from "@/shared/auth/token-store";
 import type { LoginPayload, LoginResponse } from "@/types/auth";
 import { AccountProfileResponse } from "@/types/api/account.api";
+import { PageCircularProgress } from "@/components/common";
 
 export type RoleHelpers = {
   includesRole: (role: string) => boolean;
@@ -57,6 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (err) {
       console.debug(err);
       setUser(null);
+      return null;
     }
   };
 
@@ -66,9 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsBooting(true);
       try {
         const ok = await tokenStore.init();
-        if (ok) {
-          await fetchProfile();
-        }
+        if (ok) await fetchProfile();
       } catch (err) {
         console.debug(err);
       } finally {
@@ -124,9 +124,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       includesRole: (role) => !!user?.roles?.includes(role),
       includesAllRoles: (roles) => roles.every((r) => user?.roles?.includes(r)),
 
-      // status
-      // isLoading : status=="LoggingIn",
-
       // Compatible with old version
       accountName: user?.name ?? "",
       hasRole: (role) => !!user?.roles?.includes(role),
@@ -134,6 +131,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }),
     [status, user, isBooting, login, logout],
   );
+
+  if (isBooting) {
+    return <PageCircularProgress />;
+  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -94,27 +94,6 @@ export const editContract = async (
   return response.data;
 };
 
-export const editSupplyContractAPI = async (contractID, contractInfo) => {
-  try {
-    const response = await privateRequest.patch(
-      `${ContractEndpoint.GENERAL}/${contractID}`,
-      {
-        title: contractInfo.title,
-        initiator: contractInfo.initiator,
-        signedPartners: contractInfo.signedPartners,
-        terms: [],
-        activationDate: contractInfo.activationDate,
-        expiredDate: contractInfo.expiredDate,
-        type: "SUPPLY_CONTRACT",
-        customAttributes: contractInfo.customAttributes,
-      },
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
-};
-
 export const getContractVersions = async (contractID) => {
   const response = await privateRequest.get(
     ContractEndpoint.GET_CONTRACT_OLD_VERSIONS(contractID),
