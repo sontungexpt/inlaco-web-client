@@ -8,6 +8,7 @@ import {
   Dialog,
   Box,
   CircularProgress,
+  GridProps,
 } from "@mui/material";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
@@ -17,6 +18,22 @@ import Color from "@constants/Color";
 import toast from "react-hot-toast";
 import { downloadFile } from "@/utils/docDownload";
 import NoShipPhoto from "@assets/images/no-ship-photo.png";
+
+export type TemplateContractCardProps = {
+  image?: string;
+  title?: string;
+  type?: string;
+  url?: string;
+  gridSize?: number;
+  initialData?: any;
+  dowloadFileName?: string;
+  color?: string;
+  sx?: GridProps["sx"];
+  showDelete?: boolean;
+  onDelete?: () => void;
+  isDeleting?: boolean;
+  onDownload?: () => void;
+};
 
 const TemplateContractCard = ({
   image,
@@ -32,7 +49,7 @@ const TemplateContractCard = ({
   onDelete,
   isDeleting = false,
   onDownload,
-}) => {
+}: TemplateContractCardProps) => {
   const [imageError, setImageError] = useState(false);
   const [openPreview, setOpenPreview] = useState(false);
 
@@ -45,29 +62,31 @@ const TemplateContractCard = ({
     setOpenPreview(false);
   };
 
-  const handleDownload = async (e) => {
+  const handleDownload = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     e.stopPropagation();
-    if (onDownload) return await onDownload(e);
+
+    if (onDownload) {
+      onDownload();
+      return;
+    }
 
     try {
-      await downloadFile({ url, initialData, dowloadFileName });
+      await downloadFile({
+        url: url as string,
+        initialData,
+        dowloadFileName,
+      });
     } catch (err) {
-      if (err.properties?.errors) {
-        console.table(
-          err.properties.errors.map((e) => ({
-            tag: e.properties?.xtag,
-            message: e.message,
-          })),
-        );
-      }
-
+      console.debug(err);
       toast.error("Download file thất bại");
     }
   };
 
   return (
     <>
-      <Grid size={gridSize} sx={[...(Array.isArray(sx) ? sx : [sx])]}>
+      <Grid size={gridSize} sx={sx}>
         <Card
           onClick={handleOpenPreview}
           sx={{
@@ -116,7 +135,6 @@ const TemplateContractCard = ({
                 transition: "all 0.25s ease",
               }}
             >
-              {/* Download */}
               <IconButton
                 onClick={handleDownload}
                 sx={{
@@ -146,7 +164,6 @@ const TemplateContractCard = ({
             </Box>
           </Box>
 
-          {/* ===== CONTENT ===== */}
           <CardContent sx={{ p: 2 }}>
             <Typography
               variant="subtitle1"
@@ -169,7 +186,6 @@ const TemplateContractCard = ({
         </Card>
       </Grid>
 
-      {/* ===== PREVIEW MODAL ===== */}
       <Dialog
         open={openPreview}
         onClose={handleClosePreview}
@@ -194,11 +210,12 @@ const TemplateContractCard = ({
             <CloseRoundedIcon />
           </IconButton>
         </Box>
+
         <Box sx={{ width: "100%", height: "90vh" }}>
           <iframe
             title="template-preview"
             src={`https://docs.google.com/gview?url=${encodeURIComponent(
-              url,
+              url as string,
             )}&embedded=true`}
             style={{ width: "100%", height: "100%", border: "none" }}
           />

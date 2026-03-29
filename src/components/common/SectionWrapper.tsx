@@ -1,6 +1,24 @@
-import React, {} from "react";
-import { Paper, Typography } from "@mui/material";
+import { ReactNode } from "react";
+import {
+  Paper,
+  Typography,
+  PaperProps,
+  BoxProps,
+  TypographyProps,
+} from "@mui/material";
 import SectionDivider from "./SectionDivider";
+
+export type SectionWrapperProps = PaperProps & {
+  elevation?: number;
+  px?: number;
+  py?: number;
+  mb?: number;
+  children: ReactNode;
+  sx?: BoxProps["sx"];
+  title?: string;
+  titleProps?: TypographyProps;
+  divider?: boolean;
+};
 
 const SectionWrapper = ({
   elevation = 1,
@@ -13,19 +31,19 @@ const SectionWrapper = ({
   titleProps,
   divider,
   ...props
-}) => (
+}: SectionWrapperProps) => (
   <Paper
     {...props}
     elevation={elevation}
     sx={[
       {
-        px: px,
-        py: py,
-        mb: mb,
+        px,
+        py,
+        mb,
         borderRadius: 2,
         backgroundColor: "background.paper",
       },
-      ...(Array.isArray(sx) ? sx : [sx]),
+      ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
     ]}
   >
     {title &&
@@ -36,6 +54,7 @@ const SectionWrapper = ({
           {title}
         </Typography>
       ))}
+
     {children}
   </Paper>
 );

@@ -18,10 +18,15 @@ export const ContractTemplateQueryKey = {
   ],
 };
 
-export function useContractTemplates({ page = 0, pageSize = 12, sort } = {}) {
+export function useContractTemplates({
+  page = 0,
+  pageSize = 12,
+  sort,
+  filter,
+} = {}) {
   return useQuery({
-    queryKey: ContractTemplateQueryKey.LIST({ page, pageSize, sort }),
-    queryFn: () => fetchContractTemplates({ page, pageSize, sort }),
+    queryKey: ContractTemplateQueryKey.LIST({ page, pageSize, sort, filter }),
+    queryFn: () => fetchContractTemplates({ page, pageSize, sort, filter }),
     staleTime: 1000 * 60 * 4, // cache 4 min
   });
 }

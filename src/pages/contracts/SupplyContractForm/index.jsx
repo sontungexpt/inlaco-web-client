@@ -28,7 +28,7 @@ import toast from "react-hot-toast";
 import { mapValuesToRequestBody } from "./mapper";
 import { FORM_SCHEMA } from "./schema";
 import { buildInitialValues } from "./initial";
-import { useSupplyRequest } from "@/hooks/services/supplyRequest";
+import { useSupplyRequest } from "@/queries/supply-request.query";
 import { useContract } from "@/queries/contract.query";
 import { keepChangedFields } from "@/utils/object";
 import InfoTextFieldFormik from "@/components/common/fields/InfoTextFieldFormik";
@@ -342,9 +342,8 @@ const SupplyContractForm = () => {
             </Grid>
           </SectionWrapper>
 
-          <SectionWrapper title="Bản mềm">
+          <SectionWrapper title="Hợp đồng bản giấy (Có thể tải lên sau nhưng sẽ yêu cầu khi kí)">
             <FileUploadFieldFormik
-              required
               name="contractFile"
               helperText={touched.contractFile && errors.contractFile}
             />

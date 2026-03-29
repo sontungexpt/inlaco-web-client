@@ -1,4 +1,3 @@
-import React from "react";
 import { Typography, Divider, Box } from "@mui/material";
 import { CloudinaryImage } from "@/components/common";
 

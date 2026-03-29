@@ -166,17 +166,17 @@ export const AppRoutes = [
       {
         // View post
         path: ":id",
-        element: lazy(() => import("@/pages/posts/PostDetailPage")),
+        element: lazy(() => import("@/pages/PostDetailPage")),
       },
       {
         path: "create",
         roles: ["ADMIN"],
-        element: lazy(() => import("@/pages/posts/PostForm")),
+        element: lazy(() => import("@/pages/PostFormPage")),
       },
       {
         path: "edit/:id", // edit post
         roles: ["ADMIN"],
-        element: lazy(() => import("@/pages/posts/PostForm")),
+        element: lazy(() => import("@/pages/PostFormPage")),
       },
     ],
   },
@@ -192,7 +192,7 @@ export const AppRoutes = [
       },
       {
         path: "create",
-        element: lazy(() => import("@/pages/posts/PostForm")),
+        element: lazy(() => import("@/pages/PostFormPage")),
       },
       {
         path: ":id",

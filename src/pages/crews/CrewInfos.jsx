@@ -10,7 +10,7 @@ import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRound
 import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined";
 
 import { useNavigate } from "react-router";
-import { useCrewMembers } from "@/queries/crew.query";
+import { useCrewMembers } from "@/queries/crew-profile.query";
 import { dateToLocaleString } from "@/utils/converter";
 
 import Color from "@constants/Color";

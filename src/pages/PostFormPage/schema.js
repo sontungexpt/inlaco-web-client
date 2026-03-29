@@ -1,16 +1,5 @@
 import * as Yup from "yup";
-import Regex from "@/constants/Regex";
-import { now, yesterday } from "@/utils/date";
-import {
-  requiredString,
-  optionalString,
-  requiredNumber,
-  optionalNumber,
-  requiredFile,
-  dateAfter,
-  dateMax,
-} from "@/utils/yupHelpers";
-import { dateBefore } from "@/utils/yupHelpers";
+import { requiredFile } from "@/utils/validation/yupHelpers";
 
 export const FORM_SCHEMA = Yup.object({
   type: Yup.string().required("Loại bài viết là bắt buộc"),

@@ -7,7 +7,9 @@ import {
   dateBefore,
   dateAfter,
   requiredVnPhoneNumber,
-} from "@/utils/yupHelpers";
+  optionalFile,
+  optionalFiles,
+} from "@/utils/validation/yupHelpers";
 
 export const FORM_SCHEMA = Yup.object({
   title: requiredString("Tiêu đề không được để trống"),
@@ -31,11 +33,11 @@ export const FORM_SCHEMA = Yup.object({
   contractInfo: Yup.object({
     startDate: dateBefore("endDate", "Ngày bắt đầu phải trước ngày kết thúc"),
     endDate: dateAfter("startDate", "Ngày kết thúc phải sau ngày bắt đầu"),
-    numOfCrewMember: requiredNumber(
-      "Số thuyền viên không được để trống",
-      1,
-      "Phải có ít nhất 1 thuyền viên",
-    ),
+    numOfCrewMember: requiredNumber({
+      requiredMsg: "Số thuyền viên không được để trống",
+      min: 1,
+      minMsg: "Phải có ít nhất 1 thuyền viên",
+    }),
   }),
 
   shipInfo: Yup.object({
@@ -47,5 +49,6 @@ export const FORM_SCHEMA = Yup.object({
     description: optionalString(),
   }),
 
-  contractFile: requiredFile("Vui lòng tải lên hợp đồng bản giấy"),
+  contractFile: optionalFile("Vui lòng tải lên hợp đồng bản giấy"),
+  attachmentFiles: optionalFiles(),
 });

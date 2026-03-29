@@ -12,11 +12,11 @@ import { Box, Button, Grid, Select, MenuItem } from "@mui/material";
 
 import { useNavigate, useParams } from "react-router";
 import { useCandidate, useReviewCandidate } from "@/queries/post.query";
-import useAllowedRole from "@/hooks/useAllowedRole";
 
 import Color from "@constants/Color";
 import CandidateStatus from "@/constants/CandidateStatus";
 import UserRole from "@/constants/UserRole";
+import { useAllowedRole } from "@/contexts/auth.context";
 
 const STATUS_CONFIG = {
   [CandidateStatus.APPLIED]: {
@@ -119,29 +119,6 @@ const CandidateProfileDetailPage = () => {
           />
         </Box>
 
-        {/* {isAdmin && STATUS_CONFIG[status]?.next.length > 0 && ( */}
-        {/*   <Box sx={{ display: "flex", gap: 2, mt: 3, flexWrap: "wrap" }}> */}
-        {/*     {STATUS_CONFIG[status].next.map((nextStatus) => ( */}
-        {/*       <Button */}
-        {/*         key={nextStatus} */}
-        {/*         variant="contained" */}
-        {/*         onClick={() => handleChangeStatus(nextStatus)} */}
-        {/*         disabled={reviewingButtonId} */}
-        {/*         sx={{ */}
-        {/*           bgcolor: STATUS_CONFIG[nextStatus].color, */}
-        {/*           color: Color.PrimaryWhite, */}
-        {/*           borderRadius: 2, */}
-        {/*           textTransform: "none", */}
-        {/*           fontWeight: 600, */}
-        {/*           ":hover": { opacity: 0.9 }, */}
-        {/*         }} */}
-        {/*       > */}
-        {/*         {STATUS_CONFIG[nextStatus].label} */}
-        {/*       </Button> */}
-        {/*     ))} */}
-        {/*   </Box> */}
-        {/* )} */}
-
         {/* ACTION SECTION */}
         {isAdmin && (
           <Box sx={{ display: "flex", gap: 2, mt: 3, flexWrap: "wrap" }}>
@@ -179,12 +156,9 @@ const CandidateProfileDetailPage = () => {
                   ":hover": { opacity: 0.9, bgcolor: Color.SecondaryGold },
                 }}
                 onClick={() =>
-                  navigate(`/crew-contracts/form`, {
-                    state: {
-                      candidateProfileId: candidateID,
-                      type: "create",
-                    },
-                  })
+                  navigate(
+                    `/crew-contracts/form?type=create&candidateId=${candidateID}`,
+                  )
                 }
               >
                 Tạo hợp đồng

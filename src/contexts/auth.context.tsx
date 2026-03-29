@@ -123,11 +123,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       includesRole: (role) => !!user?.roles?.includes(role),
       includesAllRoles: (roles) => roles.every((r) => user?.roles?.includes(r)),
-
-      // Compatible with old version
-      accountName: user?.name ?? "",
-      hasRole: (role) => !!user?.roles?.includes(role),
-      hasRoles: (roles) => roles.every((r) => user?.roles?.includes(r)),
     }),
     [status, user, isBooting, login, logout],
   );
@@ -146,4 +141,9 @@ export const useAuthContext = () => {
     throw new Error("useAuthContext must be used within AuthProvider");
   }
   return ctx;
+};
+
+export const useAllowedRole = (role: string) => {
+  const { includesRole } = useAuthContext();
+  return includesRole(role);
 };

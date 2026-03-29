@@ -4,21 +4,21 @@ import { lazy } from "react";
 export const AuthRoutes = [
   {
     // Public
-    path: RoutePath.Auth.Login,
+    path: RoutePath.Login,
     element: lazy(() => import("@/pages/LoginPage")),
     layout: false,
   },
 
   {
     // Public
-    path: RoutePath.Auth.SignUp,
+    path: RoutePath.SignUp,
     element: lazy(() => import("@/pages/SignUpPage")),
     layout: false,
   },
 
   {
     // Public
-    path: RoutePath.Auth.VerifyEmailConfirmation,
+    path: RoutePath.VerifyEmailConfirmation,
     element: lazy(() => import("@/pages/VerifyEmailConfirmationPage")),
     layout: false,
   },

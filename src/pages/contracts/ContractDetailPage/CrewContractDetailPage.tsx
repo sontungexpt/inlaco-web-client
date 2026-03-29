@@ -6,7 +6,6 @@ import Color from "@/constants/Color";
 import UserRole from "@/constants/UserRole";
 
 import { dateToLocaleString } from "@/utils/converter";
-import useAllowedRole from "@/hooks/useAllowedRole";
 
 import ContractDetailLayout from "./ContractDetailLayout";
 import PartySection from "./sections/PartySection";
@@ -18,6 +17,9 @@ import {
   SectionWrapper,
 } from "@/components/common";
 import { useActiveContract } from "@/queries/contract.query";
+import { useAllowedRole } from "@/contexts/auth.context";
+import { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
+import { ErrorResponse } from "@/types/api/shared/response.api";
 
 const CrewContractDetailPage = () => {
   const navigate = useNavigate();
@@ -34,11 +36,31 @@ const CrewContractDetailPage = () => {
   const { mutate: approveContract, isPending: isApproving } = useActiveContract(
     {
       onSuccess: () => toast.success("Ký kết hợp đồng thành công"),
-      onError: () => toast.error("Ký kết thất bại"),
+      onError: (err) => {
+        if (err instanceof AxiosError) {
+          const response = err.response as AxiosResponse<ErrorResponse>;
+          if (
+            err.status === HttpStatusCode.BadRequest &&
+            response.data.errorCode == "CONTRACT_ERR_002"
+          ) {
+            toast.error(
+              "Hợp đồng chưa đầy đủ thông tin: " +
+                response.data.message +
+                ". Vui lòng bổ sung hợp đồng.",
+            );
+          }
+          return;
+        }
+        toast.error("Ký kết thất bại");
+      },
     },
   );
 
-  if (isError && error?.response?.status === 404) {
+  if (
+    isError &&
+    error instanceof AxiosError &&
+    error?.response?.status === 404
+  ) {
     return (
       <LoadErrorState
         title="Không thể tải hợp đồng"
@@ -63,12 +85,9 @@ const CrewContractDetailPage = () => {
               color="warning"
               variant="contained"
               onClick={() =>
-                navigate("/crew-contracts/form", {
-                  state: {
-                    contractId: contract.id,
-                    type: "update",
-                  },
-                })
+                navigate(
+                  `/crew-contracts/form?type=update&contractId=${contract.id}`,
+                )
               }
             >
               {contract.freezed ? "Thêm phụ lục" : "Sửa hợp đồng"}
@@ -157,7 +176,7 @@ const CrewContractDetailPage = () => {
             <Box
               sx={{
                 mt: 4,
-                backgroundColor: Color.BackgroundLight,
+                backgroundColor: Color.PrimaryBlue,
                 textAlign: "center",
               }}
             >

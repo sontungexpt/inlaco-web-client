@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { resolveComponent } from "@/utils/component";
 import { dateToLocaleString } from "@/utils/converter";

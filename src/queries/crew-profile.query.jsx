@@ -34,7 +34,7 @@ export function useCrewMembers({ page = 0, size = 12, filter }) {
 
 export function useCrewProfile(id = "me") {
   return useQuery({
-    queryKey: ["crew-profile", id],
+    queryKey: CrewQueryKey.PROFILE.DETAIL(id),
     queryFn: () =>
       id === "me" ? fetchMyCrewProfile() : fetchSpecificCrewProfile(id),
     staleTime: 1000 * 30, // cache 30s

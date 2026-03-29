@@ -6,7 +6,7 @@ import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { useLocation, useNavigate } from "react-router";
 import Color from "@constants/Color";
 import { dateToLocaleString } from "@/utils/converter";
-import { useMobilizations } from "@/hooks/services/mobilization";
+import { useMobilizations } from "@/queries/mobilization.query";
 
 const Mobilization = ({ pageSize = 10 }) => {
   const navigate = useNavigate();

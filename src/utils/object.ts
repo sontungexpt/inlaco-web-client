@@ -1,4 +1,11 @@
-export function keepChangedFields(oldVal, newVal) {
+type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
+};
+
+export function keepChangedFields<T>(
+  oldVal: T,
+  newVal: T,
+): DeepPartial<T> | undefined | null {
   // 1. giống hệt (primitive / reference)
   if (oldVal === newVal) return undefined;
 
@@ -36,16 +43,19 @@ export function keepChangedFields(oldVal, newVal) {
   }
 
   // 6. Object: merge đệ quy
-  const result = {};
+  const result: Partial<Record<keyof T, any>> = {};
   let hasChange = false;
 
   const keys = new Set([
     ...Object.keys(oldVal || {}),
     ...Object.keys(newVal || {}),
-  ]);
+  ]) as Set<keyof T>;
 
   for (const key of keys) {
-    const diff = keepChangedFields(oldVal?.[key], newVal?.[key]);
+    const diff = keepChangedFields(
+      (oldVal as any)?.[key],
+      (newVal as any)?.[key],
+    );
 
     if (diff !== undefined) {
       result[key] = diff;

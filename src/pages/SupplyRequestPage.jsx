@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 import { isoToDatetime } from "@/utils/converter";
 import Color from "@constants/Color";
 import useAllowedRole from "@/hooks/useAllowedRole";
-import { useSupplyRequests } from "@/hooks/services/supplyRequest";
+import { useSupplyRequests } from "@/queries/supply-request.query";
 import { PageTitle, BaseDataGrid, DetailActionCell } from "@/components/common";
 
 export default function SupplyRequestPage({ PAGE_SIZE = 6 }) {

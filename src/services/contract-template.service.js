@@ -1,7 +1,13 @@
 import { privateRequest } from "@/utils/request";
 import ContractTemplateEndpoint from "@/endpoints/contract-template.endpoint";
+import { flattenFilter } from "@/utils/filter";
 
-export const fetchContractTemplates = async ({ page, pageSize, sort }) => {
+export const fetchContractTemplates = async ({
+  page,
+  pageSize,
+  sort,
+  filter,
+}) => {
   const response = await privateRequest.get(
     ContractTemplateEndpoint.GET_ALL_TEMPLATES,
     {
@@ -9,6 +15,7 @@ export const fetchContractTemplates = async ({ page, pageSize, sort }) => {
         page,
         size: pageSize,
         sort,
+        ...flattenFilter(filter),
       },
     },
   );

@@ -4,7 +4,7 @@ import {
   requiredFile,
   requiredString,
   requiredVnPhoneNumber,
-} from "@/utils/yupHelpers";
+} from "@/utils/validation/yupHelpers";
 
 import * as Yup from "yup";
 

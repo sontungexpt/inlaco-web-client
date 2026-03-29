@@ -2,8 +2,18 @@ import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { saveAs } from "file-saver";
 
-export const downloadFile = async ({ url, initialData, dowloadFileName }) => {
-  // 1 Fetch file docx
+type DownloadFileParams<T = Record<string, any>> = {
+  url: string;
+  initialData: T | (() => T);
+  dowloadFileName: string;
+};
+
+export const downloadFile = async <T = Record<string, any>>({
+  url,
+  initialData,
+  dowloadFileName,
+}: DownloadFileParams<T>): Promise<void> => {
+  // 1. Fetch file docx
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error("Fetch template failed");
@@ -11,24 +21,23 @@ export const downloadFile = async ({ url, initialData, dowloadFileName }) => {
 
   const content = await res.arrayBuffer();
 
-  // 2 Load zip
+  // 2. Load zip
   const zip = new PizZip(content);
 
-  // 3 Init docxtemplater
+  // 3. Init docxtemplater
   const doc = new Docxtemplater(zip, {
     paragraphLoop: true,
     linebreaks: true,
-    parser(tag) {
+    parser(tag: string) {
       const splitted = tag.split(".");
       return {
-        get(scope) {
-          if (tag === ".") {
-            return scope;
-          }
+        get(scope: any) {
+          if (tag === ".") return scope;
+
           let s = scope;
-          for (let i = 0, len = splitted.length; i < len; i++) {
+          for (let i = 0; i < splitted.length; i++) {
             const key = splitted[i];
-            s = s[key];
+            s = s?.[key];
           }
           return s;
         },
@@ -36,20 +45,23 @@ export const downloadFile = async ({ url, initialData, dowloadFileName }) => {
     },
   });
 
-  // 4 Prepare data
-  const data = typeof initialData === "function" ? initialData() : initialData;
+  // 4. Prepare data
+  const data: T =
+    typeof initialData === "function"
+      ? (initialData as () => T)()
+      : initialData;
 
-  // 5 Render (API mới)
+  // 5. Render
   doc.render(data);
 
-  // 6 Generate file
-  const out = doc.getZip().generate({
+  // 6. Generate file
+  const out: Blob = doc.getZip().generate({
     type: "blob",
     mimeType:
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   });
 
-  // 7 Save
+  // 7. Save
   saveAs(out, dowloadFileName);
 };
 

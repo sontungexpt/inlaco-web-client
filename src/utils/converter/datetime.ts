@@ -41,27 +41,35 @@ export function isoToDatetime(
 /**
  * Convert "yyyy-mm-dd HH:mm:ss" → ISO string (UTC)
  */
-export function datetimeToISO(input: string): string | null {
+export function datetimeToISO(
+  input: string | Date | null | undefined,
+): string | null {
+  if (!input) return null;
+
   try {
-    if (!input) throw new Error("Empty date string");
+    if (input instanceof Date) {
+      if (isNaN(input.getTime())) throw new Error("Invalid Date object");
+      return input.toISOString();
+    }
+    if (typeof input !== "string") return null;
 
-    const normalized = input.trim().replace(/\s+/, "T");
+    const trimmed = input.trim();
 
-    const [datePart, timePart = "00:00:00"] = normalized.split("T");
-    const [year, month, day] = datePart.split("-").map(Number);
-    const [hours = 0, minutes = 0, seconds = 0] = timePart
-      .split(":")
-      .map(Number);
+    if (!isNaN(Date.parse(trimmed))) {
+      return new Date(trimmed).toISOString();
+    }
 
-    const date = new Date(
-      Date.UTC(year, month - 1, day, hours, minutes, seconds),
-    );
+    const normalized = trimmed.replace(" ", "T");
 
-    if (isNaN(date.getTime())) throw new Error("Invalid datetime");
+    const date = new Date(normalized);
+
+    if (isNaN(date.getTime())) {
+      throw new Error("Invalid datetime");
+    }
 
     return date.toISOString();
   } catch (error) {
-    console.error("Error converting to ISOString:", error);
+    console.error(`Error converting ${input} to ISOString:`, error);
     return null;
   }
 }

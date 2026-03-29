@@ -1,7 +1,7 @@
-import { MediaAsset } from "./shared/media.api";
+import { Asset } from "./shared/asset.api";
 
 export interface AccountProfileResponse {
   name: string;
-  avatar: MediaAsset;
+  avatar: Asset;
   roles: string[];
 }

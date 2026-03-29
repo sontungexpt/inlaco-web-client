@@ -1,4 +1,4 @@
-import { MediaAsset } from "./shared/media.api";
+import { Asset } from "./shared/asset.api";
 
 /* ===================== Course ===================== */
 
@@ -10,8 +10,8 @@ export type CourseResponse = {
   description?: string;
 
   /* ===== Media ===== */
-  wallpaper?: MediaAsset;
-  trainingProviderLogo?: MediaAsset;
+  wallpaper?: Asset;
+  trainingProviderLogo?: Asset;
 
   /* ===== Training info ===== */
   trainingProviderName?: string;
@@ -19,7 +19,7 @@ export type CourseResponse = {
 
   /* ===== Certification ===== */
   certified?: boolean;
-  certificate?: MediaAsset;
+  certificate?: Asset;
 
   /* ===== Students ===== */
   limitStudent?: number;
@@ -59,9 +59,9 @@ export type CourseDetailResponse = {
   note: string;
 
   trainingProviderName: string;
-  trainingProviderLogo: MediaAsset;
+  trainingProviderLogo: Asset;
 
-  wallpaper: MediaAsset;
+  wallpaper: Asset;
 
   teacherName: string;
 

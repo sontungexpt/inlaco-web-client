@@ -1,17 +1,33 @@
-import React from "react";
 import { Box, Button } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import PageTitle from "../PageTitle";
 import { useNavigate } from "react-router";
 
+export type LoadErrorStateProps = {
+  title?: string;
+  subtitle?: string;
+
+  showBack?: boolean;
+  onBack?: () => void;
+  showRetry?: boolean;
+  onRetry?: () => void;
+
+  minHeight?: number;
+};
+
 export default function LoadErrorState({
   title = "Không thể tải dữ liệu",
   subtitle = "Dữ liệu không tồn tại hoặc đã bị xóa",
+  showBack = true,
   onBack,
+
+  showRetry = true,
   onRetry,
+
   minHeight = 300,
-}) {
+}: LoadErrorStateProps) {
   const navigate = useNavigate();
+
   return (
     <Box
       display="flex"
@@ -26,13 +42,13 @@ export default function LoadErrorState({
       <PageTitle title={title} subtitle={subtitle} />
 
       <Box mt={3} display="flex" gap={2}>
-        {onBack && (
+        {showBack && (
           <Button variant="outlined" onClick={onBack || (() => navigate(-1))}>
             Quay lại
           </Button>
         )}
 
-        {onRetry && (
+        {showRetry && (
           <Button variant="contained" onClick={onRetry}>
             Thử lại
           </Button>

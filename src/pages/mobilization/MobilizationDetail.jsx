@@ -6,7 +6,7 @@ import { useParams } from "react-router";
 
 import Color from "@/constants/Color";
 import { dateToLocaleString } from "@/utils/converter";
-import { useMobilization } from "@/hooks/services/mobilization";
+import { useMobilization } from "@/queries/mobilization.query";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";
 

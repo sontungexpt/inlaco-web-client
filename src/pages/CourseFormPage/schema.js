@@ -5,7 +5,7 @@ import {
   requiredFile,
   requiredNumber,
   requiredString,
-} from "@/utils/yupHelpers";
+} from "@/utils/validation/yupHelpers";
 import * as Yup from "yup";
 
 export const FORM_SCHEMA = Yup.object().shape({
@@ -46,7 +46,7 @@ export const FORM_SCHEMA = Yup.object().shape({
     ),
   description: requiredString("Mô tả khóa học không được để trống"),
   isCertificatedCourse: requiredString("Vui lòng chọn một lựa chọn"),
-  limitStudent: requiredNumber("Vui lòng nhập số người học"),
+  limitStudent: requiredNumber({ requiredMsg: "Vui lòng nhập số người học" }),
   archivedPosition: requiredString(
     "Vui lòng nhập vị trí đạt được sau khi hoàn thành khoá học",
   ),

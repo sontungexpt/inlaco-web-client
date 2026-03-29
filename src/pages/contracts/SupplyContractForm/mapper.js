@@ -1,5 +1,18 @@
-// contractForm.mapper.ts
 import { datetimeToISO, dateToMUIDatetime } from "@utils/converter";
+
+const mapPartyA = (a = {}) => ({
+  compName: a.partyName || "",
+  compAddress: a.address || "",
+  compPhoneNumber: a.phone || "",
+  representative: a.representer || "",
+  representativePos: a.representerPosition || "",
+});
+
+const mapPartyB = (b = {}) => ({
+  fullName: b.partyName || "",
+  phone: b.phone || "",
+  birthPlace: b.birthPlace || "",
+});
 
 export const mapContractToFormValues = (contractInfo) => {
   const partyA = contractInfo?.initiator;
@@ -7,6 +20,7 @@ export const mapContractToFormValues = (contractInfo) => {
   return {
     title: contractInfo?.title || "",
     contractFile: null,
+    attachments: [],
 
     partyA: {
       compName: partyA?.partyName || "",

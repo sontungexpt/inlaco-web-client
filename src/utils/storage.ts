@@ -25,6 +25,7 @@ const createStorage = (storage: Storage): StorageAPI => ({
   getItem<T>(key: string, defaultValue: T | null = null): T | null {
     try {
       const value = storage.getItem(PREFIX + key);
+      console.debug("Retrieved:", key, value);
       return value ? (JSON.parse(value) as T) : defaultValue;
     } catch (err) {
       console.error("Storage getItem error:", err);

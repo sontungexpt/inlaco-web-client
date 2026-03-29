@@ -1,0 +1,200 @@
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseMutationOptions,
+} from "@tanstack/react-query";
+import {
+  getContractVersions,
+  fetchContracts,
+  fetchUniqueContract,
+  fetchLaborContractByApplicationId,
+  activeContract,
+  createLaborContract,
+  createSupplyContract,
+  editContract,
+} from "@/services/contract.service";
+import {
+  BaseContract,
+  ContractType,
+  LaborContract,
+  NewCrewSupplyContract,
+  NewLaborContract,
+} from "@/types/api/contract.api";
+import { ErrorResponse } from "@/types/api/shared/response.api";
+import { PageableResponse } from "@/types/api/shared/pageable.api";
+import { AxiosError } from "axios";
+
+export type ContractPageParamsQuery = {
+  page: number;
+  pageSize: number;
+  filter: {
+    type: ContractType;
+  };
+};
+
+export const ContractQueryKey = {
+  ALL: ["contracts"],
+  LIST: ({ page, pageSize, filter }: ContractPageParamsQuery) => [
+    ...ContractQueryKey.ALL,
+    "list",
+    page,
+    pageSize,
+    filter,
+  ],
+  DETAIL: (id: string) => [...ContractQueryKey.ALL, "detail", id],
+  APPLICATION: (applicationId: string) => [
+    ...ContractQueryKey.ALL,
+    "application-contract",
+    applicationId,
+  ],
+  OLD_VERSIONS: (contractId: string) => [
+    ...ContractQueryKey.ALL,
+    "old-versions",
+    contractId,
+  ],
+};
+
+export function useContracts({
+  page = 0,
+  pageSize = 12,
+  filter,
+}: ContractPageParamsQuery) {
+  return useQuery<PageableResponse<BaseContract>, ErrorResponse>({
+    queryKey: ContractQueryKey.LIST({ page, pageSize, filter }),
+    queryFn: () => fetchContracts({ page, pageSize, filter }),
+    staleTime: 1000 * 60 * 4, // cache 4 min
+  });
+}
+
+export function useContract(id?: string, version?: number, options = {}) {
+  return useQuery<BaseContract, AxiosError<ErrorResponse>>({
+    ...options,
+    enabled: !!id,
+    queryKey: ContractQueryKey.DETAIL(id as string),
+    queryFn: () => fetchUniqueContract(id as string, version),
+    staleTime: 1000 * 60 * 4,
+  });
+}
+
+export const useContractOldVersions = (contractId: string, options = {}) => {
+  return useQuery<BaseContract[], AxiosError<ErrorResponse>>({
+    ...options,
+    queryKey: ContractQueryKey.OLD_VERSIONS(contractId),
+    queryFn: () => getContractVersions(contractId),
+    enabled: !!contractId, // Only fetch if contractID is provided
+  });
+};
+
+// ----- Contract by application -----
+export function useApplicationContract(applicationId: string, props = {}) {
+  return useQuery<LaborContract, AxiosError<ErrorResponse>>({
+    queryKey: ContractQueryKey.APPLICATION(applicationId),
+    queryFn: () => fetchLaborContractByApplicationId(applicationId),
+    enabled: !!applicationId,
+    staleTime: 1000 * 60 * 4,
+    ...props,
+  });
+}
+
+export const useActiveContract = ({
+  onSuccess,
+  ...options
+}: UseMutationOptions<unknown, AxiosError<ErrorResponse>, string>) => {
+  const queryClient = useQueryClient();
+  return useMutation<unknown, AxiosError<ErrorResponse>, string>({
+    ...options,
+    mutationFn: (contractID) => activeContract(contractID),
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({
+        queryKey: ContractQueryKey.ALL,
+      });
+      onSuccess?.(...args);
+    },
+  });
+};
+
+export const useCreateLaborContract = (
+  options: UseMutationOptions<
+    LaborContract,
+    AxiosError<ErrorResponse>,
+    { candidateId: string; contract: NewLaborContract }
+  >,
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    ...options,
+    mutationFn: ({ candidateId, contract }) =>
+      createLaborContract(candidateId, contract),
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({
+        queryKey: ContractQueryKey.ALL,
+      });
+      options?.onSuccess?.(...args);
+    },
+  });
+};
+
+export const useCreateSupplyContract = ({
+  onSuccess,
+  ...options
+}: UseMutationOptions<
+  unknown,
+  AxiosError<ErrorResponse>,
+  {
+    supplyRequestId: string;
+    contract: NewCrewSupplyContract;
+    contractFileAssetId: string;
+    shipImageAssetId: string;
+  }
+>) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    ...options,
+    mutationFn: ({
+      supplyRequestId,
+      contract,
+      contractFileAssetId,
+      shipImageAssetId,
+    }) =>
+      createSupplyContract(
+        supplyRequestId,
+        contract,
+        contractFileAssetId,
+        shipImageAssetId,
+      ),
+
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({
+        queryKey: ContractQueryKey.ALL,
+      });
+      onSuccess?.(...args);
+    },
+  });
+};
+
+export const useEditContract = ({
+  onSuccess,
+  ...options
+}: UseMutationOptions<
+  unknown,
+  AxiosError<ErrorResponse>,
+  {
+    id: string;
+    newDatas: any;
+    type: ContractType;
+  }
+>) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    ...options,
+    mutationFn: ({ id, newDatas, type }) => editContract(id, newDatas, type),
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({
+        queryKey: ContractQueryKey.ALL,
+      });
+      onSuccess?.(...args);
+    },
+  });
+};

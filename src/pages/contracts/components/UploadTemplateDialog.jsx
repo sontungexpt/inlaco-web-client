@@ -12,7 +12,7 @@ import Color from "@constants/Color";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { InfoTextField, FileUploadFieldFormik } from "@/components/common";
-import ContractType from "@/constants/ContractTemplateType";
+import { ContractType } from "@/types/api/contract.api";
 
 const UploadTemplateDialog = ({
   open,

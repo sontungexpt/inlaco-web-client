@@ -4,6 +4,7 @@ import {
   FileUploadFieldFormik,
   PageTitle,
   InfoTextFieldFormik,
+  CenterCircularProgress,
 } from "@components/common";
 import {
   Box,
@@ -14,109 +15,141 @@ import {
   InputAdornment,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
-import { Formik } from "formik";
-import { useLocation, useNavigate, useSearchParams } from "react-router";
+import { Formik, FormikHelpers } from "formik";
+import { useNavigate, useSearchParams } from "react-router";
 import Color from "@constants/Color";
 import { createLaborContract, editContract } from "@/services/contract.service";
-import cloudinaryUpload from "@/services/cloudinary.service";
+import cloudinaryUpload, { FileRequest } from "@/services/cloudinary.service";
 import UploadStrategy from "@/constants/UploadStrategy";
 import toast from "react-hot-toast";
 import { keepChangedFields } from "@/utils/object";
 import { ContractQueryKey, useContract } from "@/queries/contract.query";
 import { useCandidate } from "@/queries/post.query";
-import { buildInitialValues } from "./initial";
-import { SCHEMA } from "./schema";
-import { RECEIVE_METHOD } from "./defaults";
+import {
+  BASE_FORM_VALUES,
+  buildInitialValues,
+  RECEIVE_METHOD,
+} from "./initial";
+import { FormValues, SCHEMA } from "./schema";
 import TemplateDialog from "../components/TemplateDialog";
-import { mapValuesToRequestBody } from "./mapper";
-import ContractType from "@/constants/ContractTemplateType";
-import { useQueryClient } from "@tanstack/react-query";
+import {
+  mapCandidateInfoToFormValues,
+  mapContractToFormValues,
+  mapValuesToRequestBody,
+} from "./mapper";
 
-// export const useContractFormParams = () => {
-//   const { candidateProfileId, contractId } = useParams();
-//   const [searchParams] = useSearchParams();
-//   const formType = searchParams.get("type") || "create";
-//   return { candidateProfileId, contractId, formType };
-// };
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  BaseContract,
+  ContractType,
+  LaborContract,
+  NewLaborContract,
+} from "@/types/api/contract.api";
+import { useFormikSubmitWithScroll } from "@/hooks/useFormikSubmitWithScroll";
+
+export enum FormType {
+  CREATE = "create",
+  UPDATE = "update",
+}
+
+export interface CrewContractFormParams {
+  candidateId?: string;
+  contractId?: string;
+  formType?: FormType;
+}
+
+export const useContractFormParams = (): CrewContractFormParams => {
+  const [searchParams] = useSearchParams();
+  const contractId = searchParams.get("contractId") || undefined;
+  const formType = (searchParams.get("type") as FormType) || FormType.CREATE;
+  const candidateId = searchParams.get("candidateId") || undefined;
+  return { candidateId, contractId, formType };
+};
 
 const CrewContractFormPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  // const { candidateProfileId, contractId, formType } = useContractFormParams();
-  const {
-    state: { candidateProfileId, contractId, type: formType = "create" } = {},
-  } = useLocation();
+  const { candidateId, contractId, formType } = useContractFormParams();
 
-  const IS_UPDATE_FORM = formType === "update";
+  const IS_UPDATE_FORM = formType === FormType.UPDATE;
 
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
 
   const { data: candidateInfo, isLoading: candidateInfoLoading } =
-    useCandidate(candidateProfileId);
+    useCandidate(candidateId);
 
   const { data: contractInfo, isLoading: contractInfoLoading } =
     useContract(contractId);
 
   const IS_FREEZED_CONTRACT = contractInfo?.freezed;
 
-  const createContract = async (values) => {
-    const [contractFile, ...attachmentFiles] = await Promise.all([
-      cloudinaryUpload(values.contractFile, UploadStrategy.CONTRACT_FILE),
-      ...values.attachments.map((file) =>
-        cloudinaryUpload(file, UploadStrategy.ATTACHMENT),
-      ),
+  const createContract = async (values: FormValues) => {
+    const [contractFileResult, ...attachmentResults] = await Promise.all([
+      // keep the order
+      values.contractFile &&
+        cloudinaryUpload(
+          values.contractFile as FileRequest,
+          UploadStrategy.CONTRACT_FILE,
+        ),
+      ...(values.attachmentFiles?.map((f) =>
+        cloudinaryUpload(f, UploadStrategy.CONTRACT_FILE),
+      ) || []),
     ]);
 
-    const contract = await createLaborContract({
-      candidateId: candidateProfileId,
-      contract: mapValuesToRequestBody(values, {
-        contractFile: contractFile?.assetId || contractFile?.asset_id,
-        attachments: attachmentFiles.map(
-          (file) => file?.assetId || file?.asset_id,
-        ),
+    return await createLaborContract(
+      candidateId as string,
+      mapValuesToRequestBody(values, {
+        contractFile: contractFileResult.assetId,
+        attachments: attachmentResults.map((file) => file.assetId),
       }),
-    });
-    return contract;
+    );
   };
 
-  const updateContract = async (values) => {
+  const updateContract = async (values: FormValues) => {
     const [contractFile, ...attachmentFiles] = await Promise.all([
-      cloudinaryUpload(values.contractFile, UploadStrategy.CONTRACT_FILE),
-      ...values.attachments.map((file) =>
-        cloudinaryUpload(file, UploadStrategy.ATTACHMENT),
-      ),
+      // keep the order
+      values.contractFile &&
+        cloudinaryUpload(values.contractFile, UploadStrategy.CONTRACT_FILE),
+      ...(values?.attachmentFiles?.map((file) =>
+        cloudinaryUpload(file, UploadStrategy.CONTRACT_FILE),
+      ) || []),
     ]);
 
     const oldRequest = mapValuesToRequestBody(initialValues, {});
     const newRequest = mapValuesToRequestBody(values, {
-      contractFile: contractFile?.assetId || contractFile?.asset_id,
-      attachments: attachmentFiles.map(
-        (file) => file?.assetId || file?.asset_id,
-      ),
+      contractFile: contractFile?.assetId,
+      attachments: attachmentFiles?.map((file) => file?.assetId),
     });
-    const patchRequest = keepChangedFields(oldRequest, newRequest);
 
-    //Calling API to create a new crew member
-    const contract = await editContract(
-      contractInfo?.id,
+    const patchRequest = keepChangedFields(
+      oldRequest,
+      newRequest,
+    ) as NewLaborContract;
+
+    const contract = await editContract<NewLaborContract>(
+      (contractInfo as LaborContract).id as string,
       patchRequest,
       ContractType.LABOR_CONTRACT,
-      IS_FREEZED_CONTRACT,
     );
 
     return contract;
   };
 
-  const handleFormSubmission = async (values, helpers) => {
+  const handleFormSubmission = async (
+    values: FormValues,
+    helpers: FormikHelpers<FormValues>,
+  ) => {
     try {
       const contract = IS_UPDATE_FORM
-        ? await updateContract(values, helpers)
-        : await createContract(values, helpers);
+        ? await updateContract(values)
+        : await createContract(values);
+
       if (!contract?.id) return;
 
       queryClient.invalidateQueries({
         queryKey: ContractQueryKey.ALL,
       });
+
       helpers.resetForm();
       navigate(`/crew-contracts/${contract.id}`);
     } catch (err) {
@@ -131,11 +164,12 @@ const CrewContractFormPage = () => {
 
   const initialValues = useMemo(
     () =>
-      buildInitialValues({
-        updatingForm: IS_UPDATE_FORM,
-        candidateInfo,
-        contractInfo,
-      }),
+      IS_UPDATE_FORM
+        ? mapContractToFormValues(
+            BASE_FORM_VALUES,
+            contractInfo as LaborContract,
+          )
+        : mapCandidateInfoToFormValues(BASE_FORM_VALUES, candidateInfo),
     [IS_UPDATE_FORM, candidateInfo, contractInfo],
   );
 
@@ -144,9 +178,14 @@ const CrewContractFormPage = () => {
       initialValues={initialValues}
       enableReinitialize
       validationSchema={SCHEMA}
+      validateOnChange={false}
+      validateOnBlur={true}
       onSubmit={handleFormSubmission}
     >
-      {({ values, isValid, dirty, isSubmitting, handleSubmit }) => {
+      {(formik) => {
+        const { values, isValid, dirty, isSubmitting, handleSubmit } = formik;
+        // const handleSubmitClick = useFormikSubmitWithScroll(formik);
+
         return (
           <Box p={2} component="form" onSubmit={handleSubmit}>
             {/* ===== Sticky Header ===== */}
@@ -182,27 +221,22 @@ const CrewContractFormPage = () => {
                 >
                   Tải template
                 </Button>
+
                 <Button
                   type="submit"
+                  // type="button"
+                  // onClick={handleSubmitClick}
+
                   variant="contained"
                   disabled={
-                    !isValid ||
                     !dirty ||
                     isSubmitting ||
-                    candidateInfoLoading ||
-                    contractInfoLoading
+                    contractInfoLoading ||
+                    candidateInfoLoading
                   }
-                  startIcon={
-                    isSubmitting ? (
-                      <CircularProgress
-                        size={22}
-                        mr={2}
-                        sx={{ color: Color.PrimaryBlack }}
-                      />
-                    ) : (
-                      <SaveIcon />
-                    )
-                  }
+                  loading={isSubmitting}
+                  loadingIndicator={<CircularProgress size={22} />}
+                  startIcon={!isSubmitting && <SaveIcon />}
                   sx={{
                     minWidth: 150,
                     px: 3,
@@ -211,16 +245,12 @@ const CrewContractFormPage = () => {
                     color: Color.PrimaryBlack,
                   }}
                 >
-                  {IS_UPDATE_FORM
-                    ? IS_FREEZED_CONTRACT
-                      ? "Thêm phụ lục"
-                      : "Sửa hợp đồng"
-                    : "Tạo hợp đồng"}
+                  {IS_UPDATE_FORM ? "Sửa hợp đồng" : "Tạo hợp đồng"}
                 </Button>
               </Box>
             </SectionWrapper>
 
-            {/* ===== Title ===== */}
+            {/* ===== TITLE ===== */}
             <SectionWrapper>
               <Grid container spacing={2}>
                 <Grid size={6}>
@@ -229,53 +259,53 @@ const CrewContractFormPage = () => {
               </Grid>
             </SectionWrapper>
 
-            {/* ===== Party A ===== */}
+            {/* ===== EMPLOYER (BÊN A) ===== */}
             <SectionWrapper title="Người sử dụng lao động (Bên A)">
               <Grid container spacing={2} mt={1}>
-                <Grid size={4}>
+                <Grid size={6}>
                   <InfoTextFieldFormik
                     label="Tên công ty"
-                    name="partyA.compName"
+                    name="employer.companyName"
                   />
                 </Grid>
 
                 <Grid size={6}>
                   <InfoTextFieldFormik
                     label="Địa chỉ"
-                    name="partyA.compAddress"
+                    name="employer.companyAddress"
                   />
                 </Grid>
 
-                <Grid size={2}>
+                <Grid size={4}>
                   <InfoTextFieldFormik
                     label="Số điện thoại"
-                    name="partyA.compPhoneNumber"
+                    name="employer.companyPhone"
                   />
                 </Grid>
 
                 <Grid size={4}>
                   <InfoTextFieldFormik
                     label="Người đại diện"
-                    name="partyA.representative"
+                    name="employer.representativeName"
                   />
                 </Grid>
 
-                <Grid size={3}>
+                <Grid size={4}>
                   <InfoTextFieldFormik
                     label="Chức vụ"
-                    name="partyA.representativePos"
+                    name="employer.representativePosition"
                   />
                 </Grid>
               </Grid>
             </SectionWrapper>
 
-            {/* ===== Party B ===== */}
+            {/* ===== EMPLOYEE (BÊN B) ===== */}
             <SectionWrapper title="Người lao động (Bên B)">
               <Grid container spacing={2} mt={1}>
                 <Grid size={6}>
                   <InfoTextFieldFormik
                     label="Họ và tên"
-                    name="partyB.fullName"
+                    name="employee.fullName"
                   />
                 </Grid>
 
@@ -283,64 +313,68 @@ const CrewContractFormPage = () => {
                   <InfoTextFieldFormik
                     type="date"
                     label="Ngày sinh"
-                    name="partyB.dob"
+                    name="employee.birthDate"
                   />
                 </Grid>
+
                 <Grid size={3}>
                   <InfoTextFieldFormik
                     label="Nơi sinh"
-                    name="partyB.birthPlace"
+                    name="employee.birthPlace"
                   />
                 </Grid>
 
-                <Grid size={2}>
+                <Grid size={4}>
                   <InfoTextFieldFormik
                     label="Quốc tịch"
-                    name="partyB.nationality"
+                    name="employee.nationality"
                   />
                 </Grid>
 
-                <Grid size={5}>
+                <Grid size={4}>
+                  <InfoTextFieldFormik
+                    label="SĐT"
+                    name="employee.phoneNumber"
+                  />
+                </Grid>
+
+                <Grid size={12}>
                   <InfoTextFieldFormik
                     label="Địa chỉ thường trú"
-                    name="partyB.permanentAddr"
-                  />
-                </Grid>
-                <Grid size={5}>
-                  <InfoTextFieldFormik
-                    label="Địa chỉ tạm trú"
-                    name="partyB.temporaryAddr"
+                    name="employee.permanentAddress"
                   />
                 </Grid>
 
-                <Grid size={3}>
+                <Grid size={12}>
                   <InfoTextFieldFormik
-                    label="Số điện thoại"
-                    name="partyB.phone"
+                    label="Địa chỉ tạm trú"
+                    name="employee.temporaryAddress"
                   />
                 </Grid>
+
+                {/* CCCD */}
                 <Grid size={12}>
-                  <SectionWrapper title="Thông tin Căn cước công dân">
+                  <SectionWrapper title="Thông tin CCCD">
                     <Grid container spacing={2}>
                       <Grid size={4}>
                         <InfoTextFieldFormik
-                          label="Số Căn cước công dân"
-                          name="partyB.ciNumber"
+                          label="Số CCCD"
+                          name="employee.idCardNumber"
                         />
                       </Grid>
 
-                      <Grid size={3}>
+                      <Grid size={4}>
                         <InfoTextFieldFormik
                           type="date"
                           label="Ngày cấp"
-                          name="partyB.ciIssueDate"
+                          name="employee.idCardIssueDate"
                         />
                       </Grid>
 
-                      <Grid size={5}>
+                      <Grid size={4}>
                         <InfoTextFieldFormik
                           label="Nơi cấp"
-                          name="partyB.ciIssuePlace"
+                          name="employee.idCardIssuePlace"
                         />
                       </Grid>
                     </Grid>
@@ -349,7 +383,7 @@ const CrewContractFormPage = () => {
               </Grid>
             </SectionWrapper>
 
-            {/* ===== Job Info ===== */}
+            {/* ===== JOB INFO ===== */}
             <SectionWrapper title="Thông tin công việc">
               <Grid container spacing={2} mt={1}>
                 <Grid size={4}>
@@ -369,46 +403,35 @@ const CrewContractFormPage = () => {
                 </Grid>
 
                 <Grid size={4}>
-                  <InfoTextFieldFormik
-                    label="Vị trí chuyên môn"
-                    name="jobInfo.position"
-                  />
+                  <InfoTextFieldFormik label="Vị trí" name="jobInfo.position" />
                 </Grid>
+
                 <Grid size={12}>
                   <InfoTextFieldFormik
                     label="Địa điểm làm việc"
-                    name="jobInfo.workingLocation"
+                    name="jobInfo.workLocation"
                   />
                 </Grid>
 
                 <Grid size={12}>
                   <InfoTextFieldFormik
-                    label="Mô tả công việc"
                     multiline
                     rows={5}
+                    label="Mô tả công việc"
                     name="jobInfo.jobDescription"
                   />
                 </Grid>
               </Grid>
             </SectionWrapper>
 
-            {/* ===== Salary ===== */}
-            <SectionWrapper
-              title="Thống tin lương"
-              sx={{
-                p: 3,
-                mb: 3,
-                borderRadius: 2,
-                background:
-                  "linear-gradient(135deg, rgba(255,215,0,0.15), transparent)",
-              }}
-            >
+            {/* ===== SALARY ===== */}
+            <SectionWrapper title="Thông tin lương">
               <Grid container spacing={2} mt={1}>
                 <Grid size={6}>
                   <InfoTextFieldFormik
                     type="number"
                     label="Lương cơ bản"
-                    name="salaryInfo.basicSalary"
+                    name="salaryInfo.baseSalary"
                     slotProps={{
                       input: {
                         endAdornment: (
@@ -430,7 +453,7 @@ const CrewContractFormPage = () => {
                   <InfoTextFieldFormik
                     select
                     label="Hình thức trả lương"
-                    name="salaryInfo.receiveMethod"
+                    name="salaryInfo.paymentMethod"
                   >
                     {RECEIVE_METHOD.map((m) => (
                       <MenuItem key={m} value={m}>
@@ -442,30 +465,31 @@ const CrewContractFormPage = () => {
 
                 <Grid size={6}>
                   <InfoTextFieldFormik
-                    label="Thời hạn trả lương"
+                    label="Ngày trả lương"
                     name="salaryInfo.payday"
                   />
                 </Grid>
+
                 <Grid size={6}>
                   <InfoTextFieldFormik
-                    label="Thời hạn được xét nâng lương"
-                    name="salaryInfo.salaryReviewPeriod"
+                    label="Chu kỳ xét lương"
+                    name="salaryInfo.salaryReviewCycle"
                   />
                 </Grid>
 
-                {values.salaryInfo?.receiveMethod ===
+                {values.salaryInfo?.paymentMethod ===
                   "Chuyển khoản ngân hàng" && (
                   <>
                     <Grid size={6}>
                       <InfoTextFieldFormik
-                        label="Tài khoản ngân hàng"
-                        name="salaryInfo.bankAccount"
+                        label="Số tài khoản"
+                        name="salaryInfo.bankAccountNumber"
                       />
                     </Grid>
+
                     <Grid size={6}>
                       <InfoTextFieldFormik
-                        id="bankName"
-                        label="Tên ngân hàng"
+                        label="Ngân hàng"
                         name="salaryInfo.bankName"
                       />
                     </Grid>
@@ -474,19 +498,21 @@ const CrewContractFormPage = () => {
               </Grid>
             </SectionWrapper>
 
-            <SectionWrapper title="Hợp đồng">
-              <FileUploadFieldFormik required name="contractFile" />
+            {/* ===== FILES ===== */}
+            <SectionWrapper title="Hợp đồng (Có thể tải lên sau nhưng bắt buộc khi xác nhận)">
+              <FileUploadFieldFormik required={false} name="contractFile" />
             </SectionWrapper>
 
             <SectionWrapper title="Đính kèm">
               <FileUploadFieldFormik
-                required={false}
-                multiple
                 name="attachmentFiles"
+                multiple
+                required={false}
               />
             </SectionWrapper>
 
             <TemplateDialog
+              type={ContractType.LABOR_CONTRACT}
               open={openTemplateDialog}
               onClose={() => setOpenTemplateDialog(false)}
               title="Chọn template hợp đồng"

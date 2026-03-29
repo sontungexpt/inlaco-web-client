@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router";
 import toast from "react-hot-toast";
 
 import { reviewSupplyRequest } from "@/services/supply-request.service";
-import { useSupplyRequest } from "@/hooks/services/supplyRequest";
+import { useSupplyRequest } from "@/queries/supply-request.query";
 import { dateToLocaleString } from "@/utils/converter";
 
 import Color from "@constants/Color";

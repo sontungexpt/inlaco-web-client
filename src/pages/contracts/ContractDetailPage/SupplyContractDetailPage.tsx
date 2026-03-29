@@ -2,9 +2,7 @@ import { Box, Paper, Typography, Divider, Button } from "@mui/material";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
-import { activeContract } from "@/services/contract.service";
 import { dateToLocaleString } from "@/utils/converter";
-import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";
 
 import ContractDetailLayout from "./ContractDetailLayout";
@@ -18,10 +16,10 @@ import {
 } from "@/components/common";
 import Color from "@/constants/Color";
 import { useContractDetail } from "./hooks/use-contract-detail";
+import { useAllowedRole } from "@/contexts/auth.context";
+import { useActiveContract } from "@/queries/contract.query";
 
 const SupplyContractDetail = () => {
-  // const { }
-  //   const { id } = useParams();
   const navigate = useNavigate();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
@@ -30,7 +28,14 @@ const SupplyContractDetail = () => {
     isError,
     isLoading,
     refetch: refetchContract,
-  } = useContractDetail(id);
+  } = useContractDetail();
+
+  const { mutate: approveContract, isPending: isApproving } = useActiveContract(
+    {
+      onSuccess: () => toast.success("Ký kết hợp đồng thành công"),
+      onError: () => toast.error("Ký kết thất bại"),
+    },
+  );
 
   if (isError) {
     return (
@@ -42,20 +47,10 @@ const SupplyContractDetail = () => {
     );
   }
 
-  const approve = async () => {
-    try {
-      await activeContract(id);
-      toast.success("Ký kết thành công");
-      refetchContract();
-    } catch {
-      toast.error("Ký kết thất bại");
-    }
-  };
-
   return (
     <ContractDetailLayout
       title="Chi tiết hợp đồng cung ứng thuyền viên"
-      contractId={id}
+      contractId={contract.id}
       signed={contract.signed}
       loading={isLoading}
       footer={
@@ -66,7 +61,9 @@ const SupplyContractDetail = () => {
             <Button
               variant="contained"
               color="warning"
-              onClick={() => navigate(`/supply-contracts/${id}/edit`, {})}
+              onClick={() =>
+                navigate(`/supply-contracts/${contract.id}/edit`, {})
+              }
             >
               {contract.freezed ? "Thêm phụ lục" : "Sửa hợp đồng"}
             </Button>
@@ -74,7 +71,8 @@ const SupplyContractDetail = () => {
             {!contract.signed && (
               <ConfirmButton
                 variant="contained"
-                onConfirm={approve}
+                loading={isApproving}
+                onConfirm={() => approveContract(contract.id)}
                 confirmTitle="XÁC NHẬN KÝ KẾT"
                 confirmDescription="Hợp đồng sẽ không thể chỉnh sửa sau khi ký"
               >
@@ -140,7 +138,7 @@ const SupplyContractDetail = () => {
             <Box
               sx={{
                 mt: 4,
-                backgroundColor: Color.BackgroundLight,
+                backgroundColor: Color.PrimaryBlue,
                 textAlign: "center",
               }}
             >
@@ -164,7 +162,9 @@ const SupplyContractDetail = () => {
                     backgroundColor: Color.PrimaryHoverBlue,
                   },
                 }}
-                onClick={() => navigate(`/contracts/${id}/old-versions`)}
+                onClick={() =>
+                  navigate(`/contracts/${contract.id}/old-versions`)
+                }
               >
                 Xem các phiên bản cũ
               </Button>

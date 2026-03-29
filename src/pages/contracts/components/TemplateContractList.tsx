@@ -1,13 +1,16 @@
-import { SearchBar } from "@/components/common";
+import { CenterCircularProgress, SearchBar } from "@/components/common";
 import { useContractTemplates } from "@/queries/contract-template.query";
-import {
-  Grid,
-  Box,
-  Pagination,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
+import { ContractType } from "@/types/api/contract.api";
+import { Grid, Box, Pagination, Typography, BoxProps } from "@mui/material";
 import { useImperativeHandle, useState } from "react";
+
+export type TemplateContractListProps = BoxProps & {
+  type?: ContractType;
+  render: (template: any) => React.ReactNode;
+  pageSize?: number;
+  emptyText?: string;
+  ref?: any;
+};
 
 const TemplateContractList = ({
   type,
@@ -16,7 +19,7 @@ const TemplateContractList = ({
   emptyText = "Không có template nào",
   ref,
   ...props
-}) => {
+}: TemplateContractListProps) => {
   const [page, setPage] = useState(0);
 
   const {
@@ -26,7 +29,9 @@ const TemplateContractList = ({
   } = useContractTemplates({
     page,
     pageSize: pageSize,
-    type,
+    filter: {
+      type,
+    },
   });
 
   useImperativeHandle(ref, () => ({
@@ -34,18 +39,7 @@ const TemplateContractList = ({
   }));
 
   if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <CenterCircularProgress />;
   }
 
   if (!templates.length) {

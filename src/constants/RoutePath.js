@@ -3,14 +3,15 @@ const RoutePath = {
   E403: "/403",
   Account: "/account",
 
-  Auth: {
-    Login: "/login",
-    SignUp: "/sign-up",
-    VerifyEmailConfirmation: "/verify-email-confirmation",
-  },
+  Login: "/login",
+  SignUp: "/sign-up",
+  VerifyEmailConfirmation: "/verify-email-confirmation",
 
   Crew: {
     Root: "/crews",
+
+    Index: "/crews",
+
     Add: (candidateId = ":candidateID") => `/crews/add/${candidateId}`,
     Detail: (id = ":id") => `/crews/${id}`,
     MyProfile: "/crews/my-profile",
@@ -18,6 +19,13 @@ const RoutePath = {
 
   Mobilization: {
     Root: "/mobilizations",
+    Index: "/mobilizations",
+
+    Children: {
+      Form: "/form",
+      Detail: (id = ":id") => `/detail/${id}`,
+    },
+
     Form: "/mobilizations/form",
     Detail: (id = ":id") => `/mobilizations/${id}`,
     My: "/mobilizations/my-mobilizations",

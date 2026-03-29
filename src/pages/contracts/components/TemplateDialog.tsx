@@ -1,21 +1,39 @@
-import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { Dialog, DialogContent, DialogProps, DialogTitle } from "@mui/material";
 import { Typography, IconButton } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import TemplateContractList from "./TemplateContractList";
 import TemplateContractCard from "./TemplateContractCard";
+import { ContractType } from "@/types/api/contract.api";
+
+export type TemplateDialogProps = DialogProps & {
+  type?: ContractType;
+  initialData: (() => any) | any;
+  title: string;
+  render?: (item: any) => React.ReactNode;
+};
 
 export default function TemplateDialog({
   open,
+  onClose,
   type,
   initialData,
-  onClose,
   title,
-  render,
   sx,
+  render = (item) => (
+    <TemplateContractCard
+      key={item.id}
+      url={item.metadata?.url}
+      title={item.name}
+      type={item.type}
+      dowloadFileName={item.name}
+      initialData={initialData}
+    />
+  ),
   ...props
-}) {
+}: TemplateDialogProps) {
   return (
     <Dialog
+      {...props}
       sx={[
         {
           display: "flex",
@@ -25,8 +43,7 @@ export default function TemplateDialog({
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
       open={open}
-      onClose={onClose}
-      {...props}
+      onClose={onClose as DialogProps["onClose"]}
     >
       <DialogTitle
         sx={{
@@ -40,24 +57,13 @@ export default function TemplateDialog({
           {title}
         </Typography>
 
-        <IconButton onClick={onClose}>
+        <IconButton onClick={(e) => onClose?.(e, "backdropClick")}>
           <CloseRoundedIcon />
         </IconButton>
       </DialogTitle>
 
       <DialogContent>
-        <TemplateContractList
-          render={(item) => (
-            <TemplateContractCard
-              key={item.id}
-              url={item.metadata?.url}
-              title={item.name}
-              type={item.type}
-              dowloadFileName={item.name}
-              initialData={initialData}
-            />
-          )}
-        />
+        <TemplateContractList type={type} render={render} />
       </DialogContent>
     </Dialog>
   );

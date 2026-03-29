@@ -1,4 +1,4 @@
-import { MediaAsset } from "./shared/media.api";
+import { Asset } from "./shared/asset.api";
 
 export enum PostType {
   NEWS = "NEWS",
@@ -15,7 +15,7 @@ export interface PostResponse {
   company?: string;
   updatedDate: string;
   active: boolean;
-  image?: MediaAsset;
+  image?: Asset;
   attachments?: any[];
   authorId?: string;
 }

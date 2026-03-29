@@ -23,11 +23,11 @@ import { AxiosError, HttpStatusCode } from "axios";
 import * as Yup from "yup";
 
 import Color from "@constants/Color";
-import Regex from "@/constants/Regex";
+import Regex from "@/utils/validation/Regex";
 
 import { InfoTextFieldFormik } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
-import { requiredString } from "@/utils/yupHelpers";
+import { requiredString } from "@/utils/validation/yupHelpers";
 import { ImageAssets } from "@/constants/Asset";
 import toast from "react-hot-toast";
 

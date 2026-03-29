@@ -5,7 +5,7 @@ import {
   dateAfter,
   requiredVnPhoneNumber,
   requiredEmail,
-} from "@/utils/yupHelpers";
+} from "@/utils/validation/yupHelpers";
 
 export const FORM_SCHEMA = Yup.object().shape({
   partnerName: requiredString("Tên công ty không được để trống"),

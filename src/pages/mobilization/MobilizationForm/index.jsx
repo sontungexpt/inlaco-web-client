@@ -17,9 +17,9 @@ import Color from "@constants/Color";
 import { FORM_SCHEMA } from "./schema";
 import { mapValuesToRequestBody } from "./mapper";
 import { DEFAULT_INITIAL_VALUES } from "./defaults";
-import { searchCrewMembers } from "@/services/crewServices";
 import { sfEqual } from "spring-filter-query-builder";
 import toast from "react-hot-toast";
+import { fetchCrewMembers } from "@/services/crew.service";
 
 const CrewOptionItem = ({ cardId, fullName, active }) => (
   <Box
@@ -57,11 +57,13 @@ const CrewSearchEditCell = ({
   const handleSearch = useCallback(async (keyword) => {
     if (!keyword) return;
     try {
-      const res = await searchCrewMembers({
+      const res = await fetchCrewMembers({
         query: keyword,
         page: 0,
         size: 10,
-        filter: sfEqual("workStatus", "AVAILABLE"),
+        filter: {
+          workStatus: "AVAILABLE",
+        },
       });
       setOptions(res.content || []);
     } catch (err) {}

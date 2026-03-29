@@ -1,5 +1,5 @@
 import { TextField } from "@mui/material";
-import Regex from "@/constants/Regex";
+import Regex from "@/utils/validation/Regex";
 import { dateToMUIDatetime } from "@/utils/converter";
 import Color from "@/constants/Color";
 
