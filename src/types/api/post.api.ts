@@ -6,16 +6,44 @@ export enum PostType {
   COURSE = "COURSE",
 }
 
-export interface PostResponse {
+export interface Post {
   id: string;
   type: PostType;
   title: string;
   content: string;
   description?: string;
   company?: string;
-  updatedDate: string;
-  active: boolean;
+  updatedAt: string;
   image?: Asset;
   attachments?: any[];
   authorId?: string;
+}
+
+export interface RecruitmentPost extends Post {
+  position: string;
+  expectedSalary: string;
+  active: boolean;
+  workLocation: string;
+  recruitmentStartDate: string; //iso
+  recruitmentEndDate: string; //iso
+  type: PostType.RECRUITMENT;
+}
+
+export interface NewPost {
+  type: PostType;
+  title: string;
+  content: string;
+  description?: string;
+  company?: string;
+  image?: Asset;
+  attachments?: any[];
+}
+
+export interface NewRecruitmentPost extends NewPost {
+  position: string;
+  expectedSalary: string;
+  workLocation: string;
+  recruitmentStartDate: string; //iso
+  recruitmentEndDate: string; //iso
+  type: PostType.RECRUITMENT;
 }

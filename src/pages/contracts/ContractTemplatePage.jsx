@@ -5,15 +5,15 @@ import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import Color from "@constants/Color";
 import toast from "react-hot-toast";
 
-import TemplateContractList from "./components/TemplateContractList";
-import UploadTemplateDialog from "./components/UploadTemplateDialog";
-import TemplateContractCard from "./components/TemplateContractCard";
+import TemplateContractList from "@/components/contract-templates/TemplateContractList";
+import UploadTemplateDialog from "@/components/contract-templates/UploadTemplateDialog";
+import TemplateContractCard from "@/components/contract-templates/TemplateContractCard";
 import {
   useRemoveContractTemplate,
   useUploadContractTemplate,
 } from "@/queries/contract-template.query";
 
-const ContractTemplate = ({ PAGE_SIZE = 8 }) => {
+const ContractTemplatePage = ({ PAGE_SIZE = 8 }) => {
   const [openUpload, setOpenUpload] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
@@ -125,4 +125,4 @@ const ContractTemplate = ({ PAGE_SIZE = 8 }) => {
   );
 };
 
-export default ContractTemplate;
+export default ContractTemplatePage;

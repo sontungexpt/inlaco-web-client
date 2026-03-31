@@ -1,35 +1,61 @@
-type DeepPartial<T> = {
-  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
+export type DeepPartial<T> = T extends Function
+  ? T
+  : T extends Array<infer U>
+    ? DeepPartial<U>[]
+    : T extends object
+      ? { [K in keyof T]?: DeepPartial<T[K]> }
+      : T;
+
+type Options = {
+  keepPaths?: string[];
 };
 
-export function keepChangedFields<T>(
+function keepChangedFieldsInternal<T>(
   oldVal: T,
   newVal: T,
+  options: Options = {},
+  path = "",
 ): DeepPartial<T> | undefined | null {
-  // 1. giống hệt (primitive / reference)
-  if (oldVal === newVal) return undefined;
+  const keepPaths = new Set(options.keepPaths ?? []);
 
-  // 2. field bị xoá
+  function shouldKeepPath(currentPath: string): boolean {
+    return [...keepPaths].some((p) => {
+      const regex = new RegExp("^" + p.replace(/\[\]/g, "\\[\\d+\\]") + "$");
+      return regex.test(currentPath);
+    });
+  }
+
+  // ========================
+  // NULL / UNDEFINED HANDLING
+  // ========================
   if (oldVal !== undefined && newVal === undefined) {
     return null;
   }
 
-  // 3. primitive / null
-  if (
-    typeof oldVal !== "object" ||
-    typeof newVal !== "object" ||
-    oldVal === null ||
-    newVal === null
-  ) {
-    return newVal;
+  // ========================
+  // PRIMITIVE OR STRICT EQUAL
+  // ========================
+  const isObject =
+    oldVal !== null &&
+    typeof oldVal === "object" &&
+    newVal !== null &&
+    typeof newVal === "object";
+
+  if (!isObject) {
+    if (oldVal === newVal) return undefined;
+    return newVal as DeepPartial<T>;
   }
 
-  // 4. File: luôn replace
+  // ========================
+  // FILE OVERRIDE
+  // ========================
   if (newVal instanceof File) {
-    return newVal;
+    return newVal as DeepPartial<T>;
   }
 
-  // 5. Array: replace toàn bộ nếu khác
+  // ========================
+  // ARRAY HANDLING (REPLACE STRATEGY)
+  // ========================
   if (Array.isArray(oldVal) || Array.isArray(newVal)) {
     if (
       Array.isArray(oldVal) &&
@@ -39,23 +65,41 @@ export function keepChangedFields<T>(
     ) {
       return undefined;
     }
-    return newVal;
+
+    return newVal as DeepPartial<T>;
   }
 
-  // 6. Object: merge đệ quy
-  const result: Partial<Record<keyof T, any>> = {};
+  // ========================
+  // OBJECT DIFF
+  // ========================
+  const result: any = {};
   let hasChange = false;
 
   const keys = new Set([
-    ...Object.keys(oldVal || {}),
-    ...Object.keys(newVal || {}),
-  ]) as Set<keyof T>;
+    ...Object.keys(oldVal ?? {}),
+    ...Object.keys(newVal ?? {}),
+  ]) as Set<string>;
 
   for (const key of keys) {
-    const diff = keepChangedFields(
+    const currentPath = path ? `${path}.${key}` : key;
+
+    const isKept = shouldKeepPath(currentPath);
+
+    const diff = keepChangedFieldsInternal(
       (oldVal as any)?.[key],
       (newVal as any)?.[key],
+      options,
+      currentPath,
     );
+
+    // ========================
+    // KEEP PATH OVERRIDE (HIGHEST PRIORITY)
+    // ========================
+    if (isKept) {
+      result[key] = (newVal as any)?.[key];
+      hasChange = true;
+      continue;
+    }
 
     if (diff !== undefined) {
       result[key] = diff;
@@ -63,5 +107,16 @@ export function keepChangedFields<T>(
     }
   }
 
-  return hasChange ? result : undefined;
+  // ========================
+  // FINAL RESULT
+  // ========================
+  return hasChange ? (result as DeepPartial<T>) : undefined;
+}
+
+export function keepChangedFields<T>(
+  oldVal: T,
+  newVal: T,
+  options: Options = {},
+): DeepPartial<T> | undefined | null {
+  return keepChangedFieldsInternal(oldVal, newVal, options);
 }

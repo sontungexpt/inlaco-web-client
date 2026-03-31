@@ -1,5 +1,6 @@
 import { Asset } from "./shared/asset.api";
-import { PageParams } from "./shared/pageable.api";
+import { PageParams } from "./shared/base.api";
+import { ShipInfo } from "./shared/ship-info.api";
 
 export interface DynamicAttribute {
   key: string;
@@ -92,16 +93,6 @@ export interface LaborContract extends BaseContract {
   receiveMethod?: string;
   payday?: string;
   salaryReviewPeriod?: string;
-}
-
-export interface ShipInfo {
-  imoNumber: string;
-  registrationNumber: string;
-  countryISO?: string;
-  name: string;
-  description?: string;
-  image?: Asset;
-  type?: string;
 }
 
 export interface CrewSupplyContract extends BaseContract {

@@ -18,6 +18,7 @@ import Color from "@/constants/Color";
 import { useContractDetail } from "./hooks/use-contract-detail";
 import { useAllowedRole } from "@/contexts/auth.context";
 import { useActiveContract } from "@/queries/contract.query";
+import { useSignContract } from "./hooks/use-sign-contract";
 
 const SupplyContractDetail = () => {
   const navigate = useNavigate();
@@ -30,12 +31,7 @@ const SupplyContractDetail = () => {
     refetch: refetchContract,
   } = useContractDetail();
 
-  const { mutate: approveContract, isPending: isApproving } = useActiveContract(
-    {
-      onSuccess: () => toast.success("Ký kết hợp đồng thành công"),
-      onError: () => toast.error("Ký kết thất bại"),
-    },
-  );
+  const { mutate: signContract, isPending: isApproving } = useSignContract();
 
   if (isError) {
     return (
@@ -72,7 +68,7 @@ const SupplyContractDetail = () => {
               <ConfirmButton
                 variant="contained"
                 loading={isApproving}
-                onConfirm={() => approveContract(contract.id)}
+                onConfirm={() => signContract(contract.id)}
                 confirmTitle="XÁC NHẬN KÝ KẾT"
                 confirmDescription="Hợp đồng sẽ không thể chỉnh sửa sau khi ký"
               >

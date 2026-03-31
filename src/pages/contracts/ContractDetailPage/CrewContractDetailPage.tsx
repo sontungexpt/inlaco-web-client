@@ -16,10 +16,9 @@ import {
   LoadErrorState,
   SectionWrapper,
 } from "@/components/common";
-import { useActiveContract } from "@/queries/contract.query";
 import { useAllowedRole } from "@/contexts/auth.context";
-import { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
-import { ErrorResponse } from "@/types/api/shared/response.api";
+import { AxiosError } from "axios";
+import { useSignContract } from "./hooks/use-sign-contract";
 
 const CrewContractDetailPage = () => {
   const navigate = useNavigate();
@@ -33,28 +32,7 @@ const CrewContractDetailPage = () => {
     refetch,
   } = useCrewContractDetail();
 
-  const { mutate: approveContract, isPending: isApproving } = useActiveContract(
-    {
-      onSuccess: () => toast.success("Ký kết hợp đồng thành công"),
-      onError: (err) => {
-        if (err instanceof AxiosError) {
-          const response = err.response as AxiosResponse<ErrorResponse>;
-          if (
-            err.status === HttpStatusCode.BadRequest &&
-            response.data.errorCode == "CONTRACT_ERR_002"
-          ) {
-            toast.error(
-              "Hợp đồng chưa đầy đủ thông tin: " +
-                response.data.message +
-                ". Vui lòng bổ sung hợp đồng.",
-            );
-          }
-          return;
-        }
-        toast.error("Ký kết thất bại");
-      },
-    },
-  );
+  const { mutate: signContract, isPending: isApproving } = useSignContract();
 
   if (
     isError &&
@@ -97,7 +75,7 @@ const CrewContractDetailPage = () => {
               <ConfirmButton
                 variant="contained"
                 loading={isApproving}
-                onConfirm={() => approveContract(contract.id)}
+                onConfirm={() => signContract(contract.id)}
                 confirmTitle="XÁC NHẬN KÝ KẾT HỢP ĐỒNG"
                 confirmDescription="Hợp đồng sẽ không thể chỉnh sửa sau khi ký"
               >

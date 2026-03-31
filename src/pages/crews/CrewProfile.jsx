@@ -1,14 +1,19 @@
 import { Grid, Box } from "@mui/material";
-import PageTitle from "@components/common/PageTitle";
-import CenterCircularProgress from "@components/common/CenterCircularProgress";
-import { CloudinaryImage, InfoItem, SectionWrapper } from "@/components/common";
+import {
+  CenterCircularProgress,
+  PageTitle,
+  CloudinaryImage,
+  InfoItem,
+  SectionWrapper,
+} from "@/components/common";
+
 import { useCrewProfile } from "@/queries/crew-profile.query";
+
 import { useParams } from "react-router";
 
 export default function CrewProfile() {
   const { crewId = "me" } = useParams();
-
-  const { data: profile, isLoading } = useCrewProfile(crewId);
+  const { data: profile, isLoading, isError } = useCrewProfile(crewId);
 
   if (isLoading) return <CenterCircularProgress />;
 

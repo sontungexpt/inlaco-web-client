@@ -4,7 +4,6 @@ import {
   FileUploadFieldFormik,
   PageTitle,
   InfoTextFieldFormik,
-  CenterCircularProgress,
 } from "@components/common";
 import {
   Box,
@@ -25,13 +24,10 @@ import toast from "react-hot-toast";
 import { keepChangedFields } from "@/utils/object";
 import { ContractQueryKey, useContract } from "@/queries/contract.query";
 import { useCandidate } from "@/queries/post.query";
-import {
-  BASE_FORM_VALUES,
-  buildInitialValues,
-  RECEIVE_METHOD,
-} from "./initial";
+import { BASE_FORM_VALUES, RECEIVE_METHOD } from "./initial";
 import { FormValues, SCHEMA } from "./schema";
-import TemplateDialog from "../components/TemplateDialog";
+import TemplateDialog from "@/components/contract-templates/TemplateDialog";
+
 import {
   mapCandidateInfoToFormValues,
   mapContractToFormValues,
@@ -40,12 +36,10 @@ import {
 
 import { useQueryClient } from "@tanstack/react-query";
 import {
-  BaseContract,
   ContractType,
   LaborContract,
   NewLaborContract,
 } from "@/types/api/contract.api";
-import { useFormikSubmitWithScroll } from "@/hooks/useFormikSubmitWithScroll";
 
 export enum FormType {
   CREATE = "create",
@@ -121,10 +115,9 @@ const CrewContractFormPage = () => {
       attachments: attachmentFiles?.map((file) => file?.assetId),
     });
 
-    const patchRequest = keepChangedFields(
-      oldRequest,
-      newRequest,
-    ) as NewLaborContract;
+    const patchRequest = keepChangedFields(oldRequest, newRequest, {
+      keepPaths: ["initiator"],
+    }) as NewLaborContract;
 
     const contract = await editContract<NewLaborContract>(
       (contractInfo as LaborContract).id as string,

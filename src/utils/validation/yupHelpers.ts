@@ -1,4 +1,3 @@
-import { FileRequest } from "@/services/cloudinary.service";
 import Regex from "@/utils/validation/Regex";
 import * as Yup from "yup";
 
@@ -11,7 +10,7 @@ export const requiredString = (msg = "Không được để trống") =>
 export const optionalString = () => string().notRequired();
 
 export const requiredVnPhoneNumber = (
-  msg = "Vui lòng nhập số điện thoại",
+  msg = "Vui lòng nhập số điện thoại Việt Nam hợp lệ",
   invalidMsg = "Số điện thoại không hợp lệ",
 ) => string().matches(Regex.VN_PHONE, invalidMsg).required(msg);
 
@@ -22,6 +21,7 @@ export const requiredEmail = (
 
 export const number = () =>
   Yup.number()
+    .nullable()
     .transform((v, raw) => (raw === "" ? undefined : v))
     .typeError("Phải là số");
 
@@ -76,12 +76,12 @@ export const optionalFiles = (msg = "File không hợp lệ") =>
     .notRequired();
 
 export const requiredFile = (msg = "Vui lòng tải lên file") =>
-  Yup.mixed<null | any>()
+  Yup.mixed<undefined | null | any>()
     .required(msg)
     .test("file", "File không hợp lệ", isValidFile);
 
 export const optionalFile = () =>
-  Yup.mixed<null | any>()
+  Yup.mixed<undefined | null | any>()
     .test("file", "File không hợp lệ", (value) => {
       return !value || isValidFile(value);
     })
@@ -90,7 +90,9 @@ export const optionalFile = () =>
 /* ========= DATE HELPERS ========= */
 
 export const date = () =>
-  Yup.date().transform((v, raw) => (raw === "" ? undefined : v));
+  Yup.date()
+    .nullable()
+    .transform((v, raw) => (raw === "" ? undefined : v));
 
 /**
  * Date must be BEFORE another field
@@ -118,7 +120,7 @@ export const dateMax = (max: Date, msg: string) => date().max(max, msg);
 /** ================= CONDITIONAL ================= */
 export const requiredIf = <T = any>(
   dep: string,
-  condition: (val: T) => boolean,
+  condition: any | ((...values: any[]) => boolean),
   schema: Yup.AnySchema,
 ) =>
   schema.when(dep, {

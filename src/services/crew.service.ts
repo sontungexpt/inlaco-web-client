@@ -1,6 +1,6 @@
 import CrewProfileEndpoint from "@/endpoints/crew-profile.endpoint";
 import { CrewProfileResponse } from "@/types/api/crew-profile";
-import { PageableResponse, PageParams } from "@/types/api/shared/pageable.api";
+import { PageableResponse, PageParams } from "@/types/api/shared/base.api";
 
 import { flattenFilter } from "@/utils/filter";
 import { privateRequest } from "@/utils/request";

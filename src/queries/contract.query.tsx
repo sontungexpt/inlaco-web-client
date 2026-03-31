@@ -21,8 +21,7 @@ import {
   NewCrewSupplyContract,
   NewLaborContract,
 } from "@/types/api/contract.api";
-import { ErrorResponse } from "@/types/api/shared/response.api";
-import { PageableResponse } from "@/types/api/shared/pageable.api";
+import { PageableResponse, ErrorResponse } from "@/types/api/shared/base.api";
 import { AxiosError } from "axios";
 
 export type ContractPageParamsQuery = {
@@ -87,11 +86,11 @@ export const useContractOldVersions = (contractId: string, options = {}) => {
 };
 
 // ----- Contract by application -----
-export function useApplicationContract(applicationId: string, props = {}) {
+export function useApplicationContract(applicationId?: string, props = {}) {
   return useQuery<LaborContract, AxiosError<ErrorResponse>>({
-    queryKey: ContractQueryKey.APPLICATION(applicationId),
-    queryFn: () => fetchLaborContractByApplicationId(applicationId),
     enabled: !!applicationId,
+    queryKey: ContractQueryKey.APPLICATION(applicationId as string),
+    queryFn: () => fetchLaborContractByApplicationId(applicationId as string),
     staleTime: 1000 * 60 * 4,
     ...props,
   });

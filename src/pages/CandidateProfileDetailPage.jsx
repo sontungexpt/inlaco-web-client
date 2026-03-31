@@ -197,7 +197,6 @@ const CandidateProfileDetailPage = () => {
             <InfoItem
               label="Email"
               value={candidateInfo?.email}
-              clickable
               color="primary.main"
               onClick={() => window.open(`mailto:${candidateInfo?.email}`)}
             />

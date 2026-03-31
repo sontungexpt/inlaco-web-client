@@ -10,7 +10,7 @@ import { Box, MenuItem } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router";
 import { isoToDatetime } from "@utils/converter";
 import { useContracts } from "@/queries/contract.query";
-import ContractType from "@/constants/ContractTemplateType";
+import { ContractType } from "@/types/api/contract.api";
 
 const useCrewContractParams = () => {
   const [searchParams] = useSearchParams();

@@ -203,8 +203,7 @@ export default function HomePage({ pageSize = 12 }) {
   }
 
   const navigateToDetail = (id, type) => {
-    if (type === "RECRUITMENT") navigate(`/recruitments/${id}`);
-    else navigate(`/posts/${id}`);
+    navigate(`/posts/${id}`);
   };
 
   return (

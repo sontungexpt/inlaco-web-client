@@ -1,5 +1,5 @@
 /* ===== PROJECT COLOR DEFINITION ===== */
-const Color = {
+export const Color = {
   /* ===============================
    * BRAND
    * =============================== */

@@ -47,7 +47,7 @@ export const useCreateCourse = (options = {}) => {
   const queryClient = useQueryClient();
   return useMutation({
     ...options,
-    mutationFn: ({ payload }) => createCourse(payload),
+    mutationFn: (payload) => createCourse(payload),
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: CourseQueryKey.ALL });
       options?.onSuccess?.(data, variables, context);

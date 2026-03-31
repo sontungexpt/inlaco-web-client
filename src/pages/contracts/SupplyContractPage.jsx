@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   BaseDataGrid,
   PageTitle,
@@ -10,7 +10,7 @@ import { Box, MenuItem } from "@mui/material";
 import { useLocation, useNavigate } from "react-router";
 import { useContracts } from "@/queries/contract.query";
 import { isoToDatetime } from "@/utils/converter";
-import ContractType from "@/constants/ContractTemplateType";
+import { ContractType } from "@/types/api/contract.api";
 
 const SupplyContractPage = ({ pageSize = 10 }) => {
   const navigate = useNavigate();

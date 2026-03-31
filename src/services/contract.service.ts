@@ -11,7 +11,7 @@ import {
   NewLaborContract,
 } from "@/types/api/contract.api";
 
-import { PageParams } from "@/types/api/shared/pageable.api";
+import { PageParams } from "@/types/api/shared/base.api";
 
 export const activeContract = async (contractId: string) => {
   const response = await privateRequest.post(

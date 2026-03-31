@@ -110,9 +110,10 @@ export const mapValuesToRequestBody = (
   const salary = values.salaryInfo;
 
   return {
-    type: ContractType.LABOR_CONTRACT,
-
     title: v(values.title),
+    type: ContractType.LABOR_CONTRACT,
+    contractFile: contractFile as string,
+    attachments: attachments,
 
     initiator: {
       type: PartyType.STATIC,
@@ -171,8 +172,5 @@ export const mapValuesToRequestBody = (
         value: v(job.jobDescription),
       },
     ],
-
-    contractFile,
-    attachments,
   };
 };

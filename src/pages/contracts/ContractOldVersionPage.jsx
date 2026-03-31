@@ -8,7 +8,7 @@ import {
   CardContent,
   CardActions,
 } from "@mui/material";
-import { PageTitle, SectionWrapper } from "@components/common";
+import { LoadErrorState, PageTitle, SectionWrapper } from "@components/common";
 import Color from "@constants/Color";
 import CenterCircularProgress from "@/components/common/CenterCircularProgress";
 import { useContractOldVersions } from "@/queries/contract.query";
@@ -21,22 +21,18 @@ const ContractOldVersionPage = () => {
     data: contracts = [],
     isLoading,
     isError,
+    refetch,
   } = useContractOldVersions(id);
 
   if (isLoading) return <CenterCircularProgress />;
 
   if (isError) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-      >
-        <Typography color="error">
-          Failed to fetch contract versions. Please try again.
-        </Typography>
-      </Box>
+      <LoadErrorState
+        title="Không thể tải hợp đồng"
+        subtitle="Hợp đồng không tồn tại hoặc đã bị xoa"
+        onRetry={() => refetch()}
+      />
     );
   }
 

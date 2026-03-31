@@ -32,7 +32,7 @@ export const AppRoutes = [
       },
       {
         path: "add/:candidateID",
-        element: lazy(() => import("@pages/crews/CrewProfileForm")),
+        element: lazy(() => import("@pages/CrewProfileFormPage")),
       },
       // {
       //   path: ":id",
@@ -117,11 +117,11 @@ export const AppRoutes = [
       },
       {
         path: "create/:requestId",
-        element: lazy(() => import("@/pages/contracts/SupplyContractForm")),
+        element: lazy(() => import("@/pages/contracts/SupplyContractFormPage")),
       },
       {
         path: ":contractId/edit",
-        element: lazy(() => import("@/pages/contracts/SupplyContractForm")),
+        element: lazy(() => import("@/pages/contracts/SupplyContractFormPage")),
       },
       {
         path: ":id",
@@ -186,9 +186,7 @@ export const AppRoutes = [
     children: [
       {
         index: true,
-        element: lazy(
-          () => import("@pages/posts/recruitments/CrewRecruitment"),
-        ),
+        element: lazy(() => import("@/pages/recruitments/CrewRecruitmentPage")),
       },
       {
         path: "create",
@@ -197,7 +195,7 @@ export const AppRoutes = [
       {
         path: ":id",
         element: lazy(
-          () => import("@/pages/posts/recruitments/RecruitmentPostDetail"),
+          () => import("@/pages/PostDetailPage/RecruitmentPostDetailPage"),
         ),
       },
       {
@@ -205,10 +203,8 @@ export const AppRoutes = [
         element: lazy(() => import("@/pages/CandidateProfileDetailPage")),
       },
       {
-        path: "apply/:recruitmentId",
-        element: lazy(
-          () => import("@pages/posts/recruitments/ApplyRecruitment"),
-        ),
+        path: "apply/:postId",
+        element: lazy(() => import("@pages/recruitments/ApplyCVPage")),
       },
     ],
   },
