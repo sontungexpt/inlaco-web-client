@@ -1,24 +1,37 @@
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, BoxProps } from "@mui/material";
 import TableRowsOutlinedIcon from "@mui/icons-material/TableRowsOutlined";
 import Color from "@constants/Color";
+
+export type NoValuesOverlayProps = BoxProps & {
+  text?: string;
+  subText?: string;
+};
 
 const NoValuesOverlay = ({
   text = "KHÔNG CÓ DỮ LIỆU",
   subText = "Hiện chưa có bản ghi nào để hiển thị",
-}) => {
+  sx,
+  ...props
+}: NoValuesOverlayProps) => {
   return (
     <Box
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 1,
-        color: "text.secondary",
-        textAlign: "center",
-        px: 4,
-      }}
+      {...props}
+      sx={[
+        {
+          height: "100%",
+          width: "100%",
+
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+
+          gap: 1,
+          color: "text.secondary",
+          textAlign: "center",
+        },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
     >
       <Box
         sx={{

@@ -5,6 +5,7 @@ import {
   dateAfter,
   requiredVnPhoneNumber,
   requiredEmail,
+  optionalString,
 } from "@/utils/validation/yupHelpers";
 
 export const FORM_SCHEMA = Yup.object().shape({
@@ -29,13 +30,16 @@ export const FORM_SCHEMA = Yup.object().shape({
     name: requiredString("Tên tàu không được để trống"),
     countryISO: requiredString("Quốc tịch tàu không được để trống"),
     shipType: requiredString("Loại tàu không được để trống"),
-    imageUrl: Yup.string().nullable(),
+    image: Yup.string().nullable(),
   }),
 
-  crewMembers: Yup.array()
+  crews: Yup.array()
     .of(
       Yup.object().shape({
-        cardId: requiredString("Số thẻ thuyền viên không được để trống"),
+        id: Yup.string().nullable(),
+        employeeCardId: requiredString(
+          "Số thẻ thuyền viên không được để trống",
+        ),
         fullName: requiredString("Hoten thuyền viên không được sé trống"),
         rankOnBoard: requiredString("Chức danh chuyên môn không được để trống"),
         startDate: dateBefore(
@@ -50,3 +54,5 @@ export const FORM_SCHEMA = Yup.object().shape({
     )
     .min(1, "Phải có ít nhất một thuyền viên"),
 });
+
+export type FormValues = Yup.InferType<typeof FORM_SCHEMA>;

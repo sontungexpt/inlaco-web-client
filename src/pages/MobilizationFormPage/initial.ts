@@ -1,4 +1,6 @@
-export const DEFAULT_INITIAL_VALUES = {
+import { FormValues } from "./schema";
+
+export const BASE_FORM_VALUES: FormValues = {
   status: "PENDING",
 
   partnerName: "",
@@ -6,16 +8,16 @@ export const DEFAULT_INITIAL_VALUES = {
   partnerEmail: "",
   partnerAddress: "",
 
-  startDate: "",
-  endDate: "",
+  startDate: undefined,
+  endDate: undefined,
 
   shipInfo: {
-    imageUrl: "",
+    image: "",
     imonumber: "",
     name: "",
     countryISO: "",
     shipType: "",
   },
 
-  crewMembers: [],
+  crews: [],
 };

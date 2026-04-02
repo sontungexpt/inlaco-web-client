@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback } from "react";
 import {
   PageTitle,
   SectionWrapper,
@@ -6,20 +6,20 @@ import {
   EditableDataGridFormik,
   ImageUploadFieldFormik,
   SearchEditCell,
+  NationalityTextField,
 } from "@components/common";
-import { NationalityTextField } from "@components/common";
 import { Grid, Typography, Box, Button, CircularProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+
+import Color from "@constants/Color";
 import { Formik } from "formik";
 import { useNavigate } from "react-router";
-import { createMobilization } from "@/services/mobilizationServices";
-import Color from "@constants/Color";
+import { createMobilization } from "@/services/mobilization.service";
 import { FORM_SCHEMA } from "./schema";
 import { mapValuesToRequestBody } from "./mapper";
-import { DEFAULT_INITIAL_VALUES } from "./defaults";
-import { sfEqual } from "spring-filter-query-builder";
 import toast from "react-hot-toast";
 import { fetchCrewMembers } from "@/services/crew.service";
+import { BASE_FORM_VALUES } from "./initial";
 
 const CrewOptionItem = ({ cardId, fullName, active }) => (
   <Box
@@ -110,7 +110,7 @@ const MobiliaztionForm = () => {
     }
   };
 
-  const initialValues = useMemo(() => DEFAULT_INITIAL_VALUES, []);
+  const initialValues = useMemo(() => BASE_FORM_VALUES, []);
 
   const columns = useMemo(
     () => [

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   fetchMobilizations,
   fetchSpecificMobilization,
-} from "@/services/mobilizationServices";
+} from "@/services/mobilization.service";
 
 export const MobilizationQueryKey = {
   ALL: ["mobilizations"],

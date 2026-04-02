@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import { ShipInfoCell, ScheduleCell } from "../components/mobilization";
 import { useNavigate } from "react-router";
-import { getMyMobilizationAPI } from "../services/mobilizationServices";
+import { getMyMobilizationAPI } from "../services/mobilization.service";
 import { fetchMyCrewProfile } from "../services/crew.service";
 import { formatDateTime } from "@utils/converter";
 import { HttpStatusCode } from "axios";

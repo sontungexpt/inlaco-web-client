@@ -51,16 +51,16 @@ export const AppRoutes = [
     children: [
       {
         index: true,
-        element: lazy(() => import("@/pages/mobilization/Mobilization")),
+        element: lazy(() => import("@/pages/MobilizationPage")),
       },
       {
         path: "form",
-        element: lazy(() => import("@/pages/mobilization/MobilizationForm")),
+        element: lazy(() => import("@/pages/MobilizationFormPage")),
       },
 
       {
         path: ":id",
-        element: lazy(() => import("@pages/mobilization/MobilizationDetail")),
+        element: lazy(() => import("@pages/MobilizationDetailPage")),
       },
       {
         path: "my-mobilizations",

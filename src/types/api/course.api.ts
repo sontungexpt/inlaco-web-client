@@ -50,6 +50,15 @@ export type CourseResponse = {
   updatedDate?: string;
 };
 
+export enum CourseStatus {
+  PENDING = "PENDING",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  EXPIRED = "EXPIRED",
+  CANCELLED = "CANCELLED",
+  UNKNOWN = "UNKNOWN",
+}
+
 export type CourseDetailResponse = {
   id: string;
   name: string;
@@ -68,13 +77,7 @@ export type CourseDetailResponse = {
   startDate: string; // ISO
   endDate: string; // ISO
 
-  status:
-    | "PENDING" // The course is pending to start
-    | "IN_PROGRESS" // The course is currently in progress
-    | "COMPLETED" // The course has been successfully completed
-    | "EXPIRED" // The course has expired
-    | "CANCELLED" // The course was cancelled
-    | "UNKNOWN"; // The status is unknown
+  status: CourseStatus;
 
   limitStudent: number;
   completionProgress: number;
@@ -100,4 +103,25 @@ export type CourseDetailResponse = {
 
   createdAt: string;
   updatedAt: string;
+};
+
+export type NewCourseRequest = {
+  name: string;
+  trainingProviderName?: string;
+  trainingProviderLogo?: string;
+  teacherName?: string;
+  wallpaper?: string;
+  archivedPosition?: string;
+
+  certified: boolean;
+
+  limitStudent: number;
+
+  description: string;
+
+  startRegistrationAt?: string; // ISO string
+  endRegistrationAt?: string; // ISO string
+
+  startDate: string; // ISO string
+  endDate: string; // ISO string
 };

@@ -1,208 +1,148 @@
-// import "react-data-grid/lib/styles.css";
-// import { useMemo } from "react";
-// import { DataGrid } from "react-data-grid";
-// import Color from "@constants/Color";
+import "react-data-grid/lib/styles.css";
+import {
+  Column,
+  ColumnGroup,
+  ColumnOrColumnGroup,
+  DataGrid,
+  DataGridProps,
+  RenderCellProps,
+} from "react-data-grid";
 
-// const BaseDataGrid = ({
-//   rows,
-//   columns,
-//   rowCount,
-//   paginationModel,
-//   pageSizeOptions = [],
-//   onPaginationModelChange,
-//   headerAlign = "center",
-//   loading,
-//   sx = {},
-//   ...props
-// }) => {
-//   const pageSize = paginationModel?.pageSize ?? 10;
-//   const page = paginationModel?.page ?? 0;
-
-//   // Map MUI columns → react-data-grid columns
-//   const rdgColumns = useMemo(
-//     () =>
-//       columns.map((col) => ({
-//         key: col.field,
-//         name: col.headerName,
-//         width: col.width,
-//         minWidth: col.minWidth ?? 150,
-//         resizable: false,
-//         sortable: col.sortable ?? false,
-//         headerRenderer: () => (
-//           <div
-//             style={{
-//               textAlign: headerAlign,
-//               fontWeight: 700,
-//               color: Color.PrimaryWhite,
-//               backgroundColor: Color.SecondaryBlue,
-//               padding: "8px 4px",
-//             }}
-//           >
-//             {col.headerName}
-//           </div>
-//         ),
-//         formatter: col.valueFormatter
-//           ? ({ row }) => col.valueFormatter({ value: row[col.field], row })
-//           : undefined,
-//       })),
-//     [columns, headerAlign],
-//   );
-
-//   // Pagination logic
-//   const paginatedRows = useMemo(() => {
-//     if (!rows) return [];
-//     const start = page * pageSize;
-//     return rows.slice(start, start + pageSize);
-//   }, [rows, page, pageSize]);
-
-//   return (
-//     <DataGrid
-//       columns={rdgColumns}
-//       rows={paginatedRows}
-//       rowKeyGetter={(row) => row.id}
-//       className="rdg-light"
-//       {...props}
-//     />
-//   );
-// };
-
-// export default BaseDataGrid;
-
-import { useMemo, useRef } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import { NoValuesOverlay } from "@components/common";
+import Skeleton from "@mui/material/Skeleton";
 import Color from "@constants/Color";
+import { ReactNode, useMemo } from "react";
+import NoValuesOverlay from "./NoValuesOverlay";
+import { Box, Pagination } from "@mui/material";
 
-const BaseDataGrid = ({
-  rows,
-  columns,
-  rowCount,
-  slots,
-  paginationModel,
-  header,
-  pageSizeOptions = [],
-  onPaginationModelChange,
-  headerAlign = "center", // undefined to use column align
-  loading,
-  sx = {},
-  ...props
-}) => {
-  const pageSize = paginationModel?.pageSize ?? 10;
-  const paginationMode = paginationModel ? "server" : "client";
+function createSkeletonRows(count = 5): { ____loading: boolean }[] {
+  const rows = [];
+  for (let i = 0; i < count; i++) {
+    rows.push({
+      id: i,
+      ____loading: true,
+    });
+  }
+  return rows;
+}
 
-  // Fix rowCount undefined → avoid reset page
-  const rowCountRef = useRef(rowCount ?? 0);
-  const stableRowCount = useMemo(() => {
-    if (paginationMode === "client") return undefined;
-    if (typeof rowCount === "number") {
-      rowCountRef.current = rowCount;
-    }
-    return rowCountRef.current;
-  }, [paginationMode, rowCount]);
+function getSkeletonWidth(rowIdx: number, colIdx: number) {
+  const seed = (rowIdx + 1) * 31 + (colIdx + 1) * 17;
+  return `${60 + (seed % 40)}%`;
+}
 
+function renderSkeletonCell<R, SR>(p: RenderCellProps<R, SR>) {
   return (
-    <DataGrid
-      disableRowSelectionOnClick
-      disableColumnMenu
-      disableColumnResize
-      showColumnVerticalBorder
-      showCellVerticalBorder
-      getRowHeight={() => "auto"}
-      {...props}
-      rowCount={stableRowCount}
-      pageSizeOptions={[...pageSizeOptions, pageSize]}
-      paginationMode={paginationMode}
-      paginationModel={paginationModel ?? { page: 0, pageSize }}
-      rows={rows}
-      columns={columns}
-      loading={loading}
-      slots={{ noRowsOverlay: NoValuesOverlay, ...slots }}
-      onPaginationModelChange={onPaginationModelChange}
-      sx={[
-        {
-          /* ===== CARD ===== */
-          bgcolor: "#fff",
-          borderRadius: 2,
-          overflow: "hidden",
-          border: "1px solid",
-          borderColor: "divider",
-          boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
-
-          /* ===== HEADER ===== */
-          "& .MuiDataGrid-columnHeaderTitleContainer": {
-            justifyContent: headerAlign,
-          },
-
-          "& .MuiDataGrid-columnHeader": {
-            backgroundColor: Color.SecondaryBlue,
-            color: Color.PrimaryWhite,
-            fontWeight: 700,
-            fontSize: 14,
-          },
-
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: Color.SecondaryBlue,
-            color: Color.PrimaryWhite,
-            borderColor: "divider",
-            borderBottom: "none",
-          },
-
-          /* ===== BODY ===== */
-          "& .MuiDataGrid-cell": {
-            px: 2,
-            py: 1.25,
-            borderColor: "divider",
-            alignItems: "center",
-          },
-
-          "& .MuiDataGrid-columnSeparator": {
-            borderColor: "divider",
-            color: "#000000",
-          },
-
-          /* Zebra rows */
-          "& .MuiDataGrid-row:nth-of-type(even)": {
-            bgcolor: "rgba(0,0,0,0.015)",
-          },
-
-          "& .MuiDataGrid-row:hover": {
-            bgcolor: "rgba(0,0,0,0.04)",
-          },
-
-          "& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within": {
-            outline: "none",
-          },
-
-          /* ===== FOOTER ===== */
-          "& .MuiDataGrid-footerContainer": {
-            backgroundColor: Color.SecondaryBlue,
-            color: Color.PrimaryWhite,
-            borderTop: "none",
-          },
-
-          "& .MuiTablePagination-root": {
-            backgroundColor: Color.SecondaryBlue,
-            color: Color.PrimaryWhite,
-            fontSize: 13,
-          },
-
-          "& .MuiTablePagination-actions svg": {
-            color: Color.PrimaryWhite,
-          },
-
-          "& .MuiTablePagination-selectIcon": {
-            color: Color.PrimaryWhite,
-          },
-
-          "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows":
-            {
-              fontSize: 13,
-            },
-        },
-        ...(Array.isArray(sx) ? sx : [sx]),
-      ]}
+    <Skeleton
+      variant="text"
+      animation="wave"
+      width={getSkeletonWidth(p.rowIdx, p.column.idx)}
+      height={16}
+      sx={{ transform: "none" }}
     />
   );
+}
+
+function injectSkeletonToColumns<R, SR>(
+  columns: readonly ColumnOrColumnGroup<R, SR>[],
+): readonly ColumnOrColumnGroup<R, SR>[] {
+  return columns.map((col: ColumnOrColumnGroup<R, SR>) => {
+    if ("children" in col) {
+      // group
+      return {
+        ...col,
+        children: injectSkeletonToColumns(col.children),
+      } as ColumnGroup<R, SR>;
+    }
+
+    return {
+      ...col,
+      renderCell: (p: RenderCellProps<R & { ____loading: boolean }, SR>) => {
+        if (p.row.____loading)
+          return renderSkeletonCell<R, SR>(p as RenderCellProps<R, SR>);
+        return col.renderCell?.(p as RenderCellProps<R, SR>);
+      },
+    } as Column<R, SR>;
+  });
+}
+
+export type RDGStyle = React.CSSProperties & {
+  [key: `--rdg-${string}`]: string;
 };
 
-export default BaseDataGrid;
+export type BaseDataGridProps<R, SR> = Omit<DataGridProps<R, SR>, "style"> & {
+  style?: RDGStyle;
+  loading?: boolean;
+  noValuesOverlay?: () => ReactNode;
+  footer?: () => ReactNode;
+  skeletonCount?: number;
+};
+
+export default function BaseDataGrid<R, SR = unknown>({
+  rows,
+  columns,
+  loading,
+  style,
+  skeletonCount,
+  noValuesOverlay,
+  footer,
+  ...props
+}: BaseDataGridProps<R, SR>) {
+  const styleResolved: RDGStyle = useMemo(
+    () => ({
+      "--rdg-color": Color.TextPrimary,
+      "--rdg-background-color": Color.PrimaryWhite,
+
+      "--rdg-header-background-color": Color.SecondaryBlue,
+      "--rdg-header-draggable-background-color": Color.PrimaryBlue,
+
+      "--rdg-row-hover-background-color": Color.HoverOverlay,
+      "--rdg-row-selected-background-color": "rgba(77, 133, 216, 0.12)",
+      "--rdg-row-selected-hover-background-color": Color.ActiveOverlay,
+
+      "--rdg-selection-width": "2px",
+      "--rdg-selection-color": Color.PrimaryBlue,
+
+      "--rdg-border-color": Color.PrimaryBlack,
+      "--rdg-border-width": "1px",
+
+      "--rdg-checkbox-focus-color": Color.PrimaryBlue,
+
+      maxHeight: 460,
+      height: "auto",
+
+      ...style,
+    }),
+    [style],
+  );
+
+  const skeletonRows = useMemo(() => {
+    return createSkeletonRows(Math.min(skeletonCount ?? 5, 10)) as R[];
+  }, [skeletonCount]);
+
+  const rowsResolved = useMemo(() => {
+    if (!loading) return rows;
+    if (!rows.length) return skeletonRows;
+    return [...rows, ...skeletonRows];
+  }, [rows, loading, skeletonRows]);
+
+  const columnsResolved = useMemo(() => {
+    return injectSkeletonToColumns(columns);
+  }, [columns]);
+
+  return (
+    <Box>
+      <DataGrid
+        {...props}
+        rows={rowsResolved}
+        columns={columnsResolved}
+        style={styleResolved}
+      />
+
+      {!loading &&
+        rowsResolved.length === 0 &&
+        (noValuesOverlay?.() ?? <NoValuesOverlay />)}
+
+      {footer?.()}
+    </Box>
+  );
+}
