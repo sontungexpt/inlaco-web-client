@@ -5,17 +5,11 @@ import {
   Button,
   Typography,
   InputAdornment,
-  IconButton,
   Checkbox,
-  Divider,
   CircularProgress,
-  Stack,
 } from "@mui/material";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import VpnKeyIcon from "@mui/icons-material/VpnKey";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 import { Formik, FormikHelpers } from "formik";
 import { AxiosError, HttpStatusCode } from "axios";
@@ -23,34 +17,34 @@ import { AxiosError, HttpStatusCode } from "axios";
 import * as Yup from "yup";
 
 import Color from "@constants/Color";
-import Regex from "@/utils/validation/Regex";
 
-import { InfoTextFieldFormik } from "@/components/common";
+import {
+  InfoTextFieldFormik,
+  PasswordTextFieldFormik,
+} from "@/components/common";
+
 import { useAuthContext } from "@/contexts/auth.context";
-import { requiredString } from "@/utils/validation/yupHelpers";
+import { requiredEmail, requiredString } from "@/utils/validation/yupHelpers";
 import { ImageAssets } from "@/constants/Asset";
 import toast from "react-hot-toast";
+
+const LOGIN_SCHEMA = Yup.object().shape({
+  email: requiredEmail("Vui lòng nhập email"),
+  password: requiredString("Vui lòng nhập mật khẩu"),
+});
+
+type FormValues = Yup.InferType<typeof LOGIN_SCHEMA>;
+
+const initialValues = {
+  email: "",
+  password: "",
+} as FormValues;
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuthContext();
 
-  const [isShowPass, setIsShowPass] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-
-  const LOGIN_SCHEMA = Yup.object().shape({
-    email: requiredString("Vui lòng nhập email").email("Email không hợp lệ"),
-    password: requiredString("Vui lòng nhập mật khẩu").matches(
-      Regex.PASSWORD,
-      "Mật khẩu phải có ít nhất 8 ký tự, bao gồm 1 chữ hoa và 1 chữ thường",
-    ),
-  });
-  type FormValues = Yup.InferType<typeof LOGIN_SCHEMA>;
-
-  const initialValues = {
-    email: "",
-    password: "",
-  } as FormValues;
 
   const onSubmit = async (
     values: FormValues,
@@ -69,9 +63,10 @@ export default function LoginPage() {
       if (err instanceof AxiosError) {
         switch (err.status) {
           case HttpStatusCode.Forbidden:
-            setErrors({
-              email:
-                "Email chưa được xác thực, vui lòng kiểm tra email của bạn",
+            navigate("/verify-email-confirmation", {
+              state: {
+                email: values.email,
+              },
             });
             return;
           case HttpStatusCode.NotFound:
@@ -104,7 +99,7 @@ export default function LoginPage() {
           borderRadius: 4,
           overflow: "hidden",
           boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
-          backgroundColor: "#fff",
+          backgroundColor: Color.PrimaryWhite,
         }}
       >
         {/* HEADER */}
@@ -122,6 +117,8 @@ export default function LoginPage() {
         {/* FORM */}
         <Formik
           initialValues={initialValues}
+          validateOnBlur
+          validateOnChange={false}
           validationSchema={LOGIN_SCHEMA}
           onSubmit={onSubmit}
         >
@@ -149,6 +146,7 @@ export default function LoginPage() {
               <InfoTextFieldFormik
                 label="Email"
                 name="email"
+                type="email"
                 margin="normal"
                 fullWidth
                 slotProps={{
@@ -162,34 +160,10 @@ export default function LoginPage() {
                 }}
               />
 
-              {/* PASSWORD */}
-              <InfoTextFieldFormik
+              <PasswordTextFieldFormik
+                margin="normal"
                 label="Mật khẩu"
                 name="password"
-                type={isShowPass ? "text" : "password"}
-                margin="normal"
-                fullWidth
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <VpnKeyIcon />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <IconButton
-                        onClick={() => setIsShowPass((v) => !v)}
-                        edge="end"
-                      >
-                        {isShowPass ? (
-                          <VisibilityIcon />
-                        ) : (
-                          <VisibilityOffIcon />
-                        )}
-                      </IconButton>
-                    ),
-                  },
-                }}
               />
 
               {/* REMEMBER + FORGOT */}

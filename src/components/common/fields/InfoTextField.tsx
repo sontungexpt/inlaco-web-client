@@ -1,25 +1,43 @@
-import { TextField } from "@mui/material";
+import { TextField, TextFieldProps } from "@mui/material";
 import Regex from "@/utils/validation/Regex";
-import { dateToMUIDatetime } from "@/utils/converter";
+import { dateToMUIDatetime, MUIType } from "@/utils/converter";
 import Color from "@/constants/Color";
+import { useMemo } from "react";
 
-const formatDisplayValue = (value, type) => {
+const formatDisplayValue = (
+  value: any,
+  type: React.InputHTMLAttributes<unknown>["type"] | undefined,
+) => {
   if (type === "date" || type === "datetime-local" || type === "time") {
     if (typeof value === "string" && Regex.ISO_REGEX.test(value)) {
-      return dateToMUIDatetime(value, type);
+      return dateToMUIDatetime(value, type as MUIType);
     } else if (value instanceof Date) {
-      return dateToMUIDatetime(value, type);
+      return dateToMUIDatetime(value, type as MUIType);
     }
   }
   return value ?? "";
 };
 
-const InfoTextField = ({ type, value, sx, fullWidth = true, ...props }) => {
+export type InfoTextFieldProps = TextFieldProps & {};
+
+export default function InfoTextField({
+  type,
+  value,
+  sx,
+  fullWidth = true,
+  ...props
+}: InfoTextFieldProps) {
+  const displayValue = useMemo(
+    () => formatDisplayValue(value, type),
+    [value, type],
+  );
+
   return (
     <TextField
       {...props}
-      value={formatDisplayValue(value, type)}
+      value={displayValue}
       fullWidth={fullWidth}
+      type={type}
       sx={[
         {
           backgroundColor: "#FFF",
@@ -34,10 +52,7 @@ const InfoTextField = ({ type, value, sx, fullWidth = true, ...props }) => {
           },
         },
         ...(Array.isArray(sx) ? sx : [sx]),
-      ]} // Merging styles with spread operator
-      type={type}
+      ]}
     />
   );
-};
-
-export default InfoTextField;
+}

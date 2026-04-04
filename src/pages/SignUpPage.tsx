@@ -1,72 +1,81 @@
-import { useState } from "react";
+import { NavLink, useNavigate } from "react-router";
 import {
   Box,
   Button,
   Typography,
   InputAdornment,
-  IconButton,
   CircularProgress,
   Stack,
 } from "@mui/material";
-import { NavLink, useNavigate } from "react-router";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import VpnKeyIcon from "@mui/icons-material/VpnKey";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
-import { Formik } from "formik";
+import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import Color from "@constants/Color";
+
 import { HttpStatusCode } from "axios";
+
 import { signUp } from "@/services/auth.service";
 import { requiredString } from "@/utils/validation/yupHelpers";
-import Regex from "@/utils/validation/Regex";
-import { InfoTextFieldFormik } from "@/components/common";
+
+import {
+  InfoTextFieldFormik,
+  PasswordTextFieldFormik,
+} from "@/components/common";
+
 import { ImageAssets } from "@/constants/Asset";
+import Color from "@constants/Color";
+import Regex from "@/utils/validation/Regex";
+
 import toast from "react-hot-toast";
 
-const SignUpPage = () => {
+const SIGN_UP_SCHEMA = Yup.object().shape({
+  fullName: requiredString("Vui lòng nhập họ tên"),
+  email: requiredString("Vui lòng nhập email").email("Email không hợp lệ"),
+  password: requiredString("Vui lòng nhập mật khẩu").matches(
+    Regex.PASSWORD,
+    "Mật khẩu phải có ít nhất 8 ký tự, bao gồm 1 chữ hoa và 1 chữ thường",
+  ),
+  confirmPassword: requiredString("Vui lòng nhập lại mật khẩu").oneOf(
+    [Yup.ref("password")],
+    "Mật khẩu đã nhập không trùng khớp",
+  ),
+});
+
+type FormValues = Yup.InferType<typeof SIGN_UP_SCHEMA>;
+
+const initialValues = {
+  fullName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+} as FormValues;
+
+export default function SignUpPage() {
   const navigate = useNavigate();
-  const [isShowPass, setIsShowPass] = useState(false);
-  const [isShowConfirmPass, setIsShowConfirmPass] = useState(false);
 
-  const initialValues = {
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  };
-
-  const SIGN_UP_SCHEMA = Yup.object().shape({
-    fullName: requiredString("Vui lòng nhập họ tên"),
-    email: requiredString("Vui lòng nhập email").email("Email không hợp lệ"),
-    password: requiredString("Vui lòng nhập mật khẩu").matches(
-      Regex.PASSWORD,
-      "Mật khẩu phải có ít nhất 8 ký tự, bao gồm 1 chữ hoa và 1 chữ thường",
-    ),
-    confirmPassword: requiredString("Vui lòng nhập lại mật khẩu").oneOf(
-      [Yup.ref("password")],
-      "Mật khẩu đã nhập không trùng khớp",
-    ),
-  });
-
-  const handleSignUpClick = async (values, { setErrors }) => {
+  const handleSignUpClick = async (
+    values: FormValues,
+    { setErrors }: FormikHelpers<FormValues>,
+  ) => {
     try {
-      await signUp(
-        values.fullName,
-        values.email,
-        values.password,
-        values.confirmPassword,
-      );
+      await signUp({
+        fullName: values.fullName,
+        email: values.email,
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+      });
 
       navigate("/verify-email-confirmation");
-    } catch (error) {
+    } catch (error: any) {
+      console.debug(error);
+
       const res = error.response;
+
       if (res.status === HttpStatusCode.Conflict) {
         setErrors({ email: "Email này đã được sử dụng" });
         return;
       }
-      console.debug(error);
+
       toast.error("Đã có lỗi xảy ra. Vui lòng thử lại sau.");
     }
   };
@@ -88,7 +97,7 @@ const SignUpPage = () => {
           borderRadius: 4,
           overflow: "hidden",
           boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
-          backgroundColor: "#fff",
+          backgroundColor: Color.PrimaryWhite,
         }}
       >
         {/* HEADER */}
@@ -149,6 +158,7 @@ const SignUpPage = () => {
 
               {/* EMAIL */}
               <InfoTextFieldFormik
+                type="email"
                 label="Email"
                 name="email"
                 fullWidth
@@ -165,63 +175,17 @@ const SignUpPage = () => {
               />
 
               {/* PASSWORD */}
-              <InfoTextFieldFormik
+              <PasswordTextFieldFormik
+                margin="normal"
                 label="Mật khẩu"
                 name="password"
-                type={isShowPass ? "text" : "password"}
-                fullWidth
-                margin="normal"
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <VpnKeyIcon />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <IconButton
-                        onClick={() => setIsShowPass((v) => !v)}
-                        edge="end"
-                      >
-                        {isShowPass ? (
-                          <VisibilityIcon />
-                        ) : (
-                          <VisibilityOffIcon />
-                        )}
-                      </IconButton>
-                    ),
-                  },
-                }}
               />
 
               {/* CONFIRM PASSWORD */}
-              <InfoTextFieldFormik
+              <PasswordTextFieldFormik
+                margin="normal"
                 label="Xác nhận mật khẩu"
                 name="confirmPassword"
-                type={isShowConfirmPass ? "text" : "password"}
-                fullWidth
-                margin="normal"
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <VpnKeyIcon />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <IconButton
-                        onClick={() => setIsShowConfirmPass((v) => !v)}
-                        edge="end"
-                      >
-                        {isShowConfirmPass ? (
-                          <VisibilityIcon />
-                        ) : (
-                          <VisibilityOffIcon />
-                        )}
-                      </IconButton>
-                    ),
-                  },
-                }}
               />
 
               {/* BUTTON */}
@@ -277,6 +241,4 @@ const SignUpPage = () => {
       </Box>
     </Box>
   );
-};
-
-export default SignUpPage;
+}

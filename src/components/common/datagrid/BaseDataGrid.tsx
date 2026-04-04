@@ -1,5 +1,6 @@
 import "react-data-grid/lib/styles.css";
 import {
+  Cell,
   Column,
   ColumnGroup,
   ColumnOrColumnGroup,
@@ -10,9 +11,10 @@ import {
 
 import Skeleton from "@mui/material/Skeleton";
 import Color from "@constants/Color";
-import { ReactNode, useMemo } from "react";
+import { isValidElement, cloneElement, ReactNode, useMemo } from "react";
 import NoValuesOverlay from "./NoValuesOverlay";
-import { Box, Pagination } from "@mui/material";
+import { Box } from "@mui/material";
+import BaseDataGridFooter from "./BaseDataGridFooter";
 
 function createSkeletonRows(count = 5): { ____loading: boolean }[] {
   const rows = [];
@@ -37,7 +39,9 @@ function renderSkeletonCell<R, SR>(p: RenderCellProps<R, SR>) {
       animation="wave"
       width={getSkeletonWidth(p.rowIdx, p.column.idx)}
       height={16}
-      sx={{ transform: "none" }}
+      sx={{
+        transform: "none",
+      }}
     />
   );
 }
@@ -72,48 +76,66 @@ export type RDGStyle = React.CSSProperties & {
 export type BaseDataGridProps<R, SR> = Omit<DataGridProps<R, SR>, "style"> & {
   style?: RDGStyle;
   loading?: boolean;
-  noValuesOverlay?: () => ReactNode;
-  footer?: () => ReactNode;
+  noValuesOverlay?: ReactNode;
+  footer?: ReactNode;
+  footerRowHeight?: number;
   skeletonCount?: number;
+  showSkeletonTail?: boolean;
 };
+
+const rdgVars: RDGStyle = {
+  "--rdg-font-size": "14px",
+  "--rdg-color": Color.TextPrimary,
+
+  "--rdg-background-color": Color.PrimaryWhite,
+
+  "--rdg-header-background-color": Color.SecondaryBlue,
+  "--rdg-header-draggable-background-color": Color.PrimaryBlue,
+
+  "--rdg-row-hover-background-color": Color.HoverOverlay,
+  "--rdg-row-selected-background-color": "rgba(77, 133, 216, 0.12)",
+  "--rdg-row-selected-hover-background-color": Color.ActiveOverlay,
+
+  "--rdg-selection-width": "2px",
+  "--rdg-selection-color": Color.PrimaryBlue,
+
+  "--rdg-border-color": Color.PrimaryBlack,
+  "--rdg-border-width": "1px",
+
+  "--rdg-checkbox-focus-color": Color.PrimaryBlue,
+} as const;
 
 export default function BaseDataGrid<R, SR = unknown>({
   rows,
   columns,
   loading,
   style,
+
   skeletonCount,
-  noValuesOverlay,
-  footer,
+  showSkeletonTail = false,
+
+  noValuesOverlay = <NoValuesOverlay />,
+  footer = (
+    <BaseDataGridFooter pagination={{ page: 0, pageSize: 10, total: 100000 }} />
+  ),
+
+  headerRowHeight,
+  rowHeight,
+  footerRowHeight,
   ...props
 }: BaseDataGridProps<R, SR>) {
-  const styleResolved: RDGStyle = useMemo(
-    () => ({
-      "--rdg-color": Color.TextPrimary,
-      "--rdg-background-color": Color.PrimaryWhite,
+  const baseRowHeight = typeof rowHeight === "number" ? rowHeight : 40;
+  const headerHeight = headerRowHeight ?? baseRowHeight;
+  const footerHeight = footerRowHeight ?? headerHeight;
 
-      "--rdg-header-background-color": Color.SecondaryBlue,
-      "--rdg-header-draggable-background-color": Color.PrimaryBlue,
-
-      "--rdg-row-hover-background-color": Color.HoverOverlay,
-      "--rdg-row-selected-background-color": "rgba(77, 133, 216, 0.12)",
-      "--rdg-row-selected-hover-background-color": Color.ActiveOverlay,
-
-      "--rdg-selection-width": "2px",
-      "--rdg-selection-color": Color.PrimaryBlue,
-
-      "--rdg-border-color": Color.PrimaryBlack,
-      "--rdg-border-width": "1px",
-
-      "--rdg-checkbox-focus-color": Color.PrimaryBlue,
-
-      maxHeight: 460,
+  const dataGridStyle = useMemo(() => {
+    return {
+      ...rdgVars,
       height: "auto",
-
+      maxHeight: 450,
       ...style,
-    }),
-    [style],
-  );
+    };
+  }, [style]);
 
   const skeletonRows = useMemo(() => {
     return createSkeletonRows(Math.min(skeletonCount ?? 5, 10)) as R[];
@@ -121,7 +143,7 @@ export default function BaseDataGrid<R, SR = unknown>({
 
   const rowsResolved = useMemo(() => {
     if (!loading) return rows;
-    if (!rows.length) return skeletonRows;
+    if (!rows.length || !showSkeletonTail) return skeletonRows;
     return [...rows, ...skeletonRows];
   }, [rows, loading, skeletonRows]);
 
@@ -129,20 +151,29 @@ export default function BaseDataGrid<R, SR = unknown>({
     return injectSkeletonToColumns(columns);
   }, [columns]);
 
+  const footerNode = useMemo(() => {
+    if (!footer) return null;
+    if (!isValidElement(footer)) {
+      throw new Error("footer must be ReactNode");
+    }
+    return cloneElement<any>(footer, {
+      height: footerHeight,
+    });
+  }, [footer]);
+
   return (
-    <Box>
+    <Box sx={rdgVars}>
       <DataGrid
         {...props}
+        style={dataGridStyle}
         rows={rowsResolved}
         columns={columnsResolved}
-        style={styleResolved}
+        rowHeight={rowHeight} // use row height because it allows dynamic row height
+        headerRowHeight={headerHeight}
       />
 
-      {!loading &&
-        rowsResolved.length === 0 &&
-        (noValuesOverlay?.() ?? <NoValuesOverlay />)}
-
-      {footer?.()}
+      {!loading && rowsResolved.length === 0 && noValuesOverlay}
+      {!loading && footerNode}
     </Box>
   );
 }

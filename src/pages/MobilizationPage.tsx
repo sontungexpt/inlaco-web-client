@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { PageTitle, SectionWrapper } from "@components/common";
 
-import { DataGrid, type Column } from "react-data-grid";
-import { Box, Button, Typography, Stack } from "@mui/material";
+import { type Column } from "react-data-grid";
+import { Box, Button } from "@mui/material";
 
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 
 import Color from "@constants/Color";
 import { useLocation, useNavigate } from "react-router";
-import { dateToLocaleString } from "@/utils/converter";
 import { useMobilizations } from "@/queries/mobilization.query";
 import BaseDataGrid from "@/components/common/datagrid/BaseDataGrid";
 
@@ -130,13 +129,6 @@ const MobilizationPage = ({ pageSize = 10 }) => {
         rows={mockMobilizations}
         columns={columns}
       />
-      {/* <BaseDataGrid */}
-      {/*   rows={mobilizations} */}
-      {/*   loading={isLoading} */}
-      {/*   columns={columns} */}
-      {/*   paginationModel={paginationModel} */}
-      {/*   onPaginationModelChange={setPaginationModel} */}
-      {/* /> */}
     </Box>
   );
 };
