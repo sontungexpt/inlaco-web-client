@@ -1,13 +1,29 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, StackProps, Typography } from "@mui/material";
 import { resolveComponent } from "@/utils/component";
-import { dateToLocaleString } from "@/utils/converter";
+import { dateToLocaleString, LocaleType } from "@/utils/converter";
+import { ReactNode } from "react";
 
-const formatDisplayValue = (value, type) => {
+const formatDisplayValue = (value: unknown, type: string | undefined) => {
   if (!value) return "-";
+  if (!type) return value;
   else if (["date", "datetime-local", "time"].includes(type)) {
-    return dateToLocaleString(value, type) || "-";
+    return (
+      dateToLocaleString(value as Date | string, type as LocaleType) || "-"
+    );
   }
   return value;
+};
+
+export type InfoItemProps = StackProps & {
+  label: string;
+  value: unknown;
+  type?: string;
+  color?: string;
+  onClick?: () => void;
+  highlight?: boolean;
+  bold?: boolean;
+  icon?: string;
+  iconColor?: string;
 };
 
 export default function InfoItem({
@@ -21,7 +37,7 @@ export default function InfoItem({
   icon,
   iconColor = "primary",
   ...props
-}) {
+}: InfoItemProps) {
   const valueColor = color || (highlight ? "primary.main" : "text.primary");
   const fontWeight = bold || highlight ? 600 : 500;
 
@@ -53,7 +69,7 @@ export default function InfoItem({
             fontSize: highlight ? 16 : 14,
           }}
         >
-          {formatDisplayValue(value, type)}
+          {formatDisplayValue(value, type) as ReactNode}
         </Typography>
       </Box>
     </Stack>

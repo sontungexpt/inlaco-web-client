@@ -10,7 +10,11 @@ import {
   EditableGridProvider,
   useEditableGridContext,
 } from "@/components/common/datagrid/editable/EditableGridContext";
-import { BaseDataGrid, ErrorTooltip, InfoTextField } from "@components/common";
+import {
+  BaseDataGridOld,
+  ErrorTooltip,
+  InfoTextField,
+} from "@components/common";
 
 const DefaultEditableCell = ({ id, field, value, error, api, type }) => {
   return (
@@ -194,7 +198,7 @@ const EditableDataGridCoreInner = ({
   }, [columns, rowErrors, showErrors]);
 
   return (
-    <BaseDataGrid
+    <BaseDataGridOld
       showToolbar
       {...props}
       slots={{ toolbar: EditableGridToolbar, ...slots }}

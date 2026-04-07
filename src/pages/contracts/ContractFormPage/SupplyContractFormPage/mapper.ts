@@ -1,5 +1,4 @@
 import {
-  ContractType,
   CrewSupplyContract,
   LaborParty,
   PartyType,
@@ -103,7 +102,7 @@ export const mapValuesToRequestBody = (
   numOfCrews: values.numOfCrewMember,
   attachements: attachmentFileIds,
   contractFile: contractFileId,
-  type: ContractType.SUPPLY_CONTRACT,
+  type: "SUPPLY_CONTRACT",
 
   initiator: {
     partyName: values.partyA.compName,

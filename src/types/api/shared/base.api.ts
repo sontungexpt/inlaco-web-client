@@ -11,11 +11,11 @@ export interface PageableResponse<T> {
   empty: boolean;
 }
 
-export interface PageParams {
+export interface PageParams<T = Record<string, any>> {
   page?: number;
   pageSize?: number;
   sort?: string;
-  filter?: Record<string, any>;
+  filter?: T;
 }
 
 export interface ErrorResponse {

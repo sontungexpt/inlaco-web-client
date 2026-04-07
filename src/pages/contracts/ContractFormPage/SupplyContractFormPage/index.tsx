@@ -38,7 +38,6 @@ import { useContract } from "@/queries/contract.query";
 import { keepChangedFields } from "@/utils/object";
 import InfoTextFieldFormik from "@/components/common/fields/InfoTextFieldFormik";
 import {
-  ContractType,
   CrewSupplyContract,
   NewCrewSupplyContract,
 } from "@/types/api/contract.api";
@@ -48,7 +47,7 @@ export enum FormMode {
   CREATE = "CREATE",
 }
 
-const SupplyContractForm = () => {
+const SupplyContractFormPage = () => {
   const navigate = useNavigate();
   const { contractId, requestId: supplyRequestId } = useParams();
   const formMode = contractId ? FormMode.EDIT : FormMode.CREATE;
@@ -116,7 +115,7 @@ const SupplyContractForm = () => {
     const contract = await editContract<NewCrewSupplyContract>(
       (contractInfo as CrewSupplyContract).id as string,
       patchRequest,
-      ContractType.SUPPLY_CONTRACT,
+      "SUPPLY_CONTRACT",
     );
 
     return contract;
@@ -407,4 +406,4 @@ const SupplyContractForm = () => {
     </Formik>
   );
 };
-export default SupplyContractForm;
+export default SupplyContractFormPage;

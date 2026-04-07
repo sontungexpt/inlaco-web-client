@@ -10,8 +10,8 @@ import {
   Button,
   Grid,
   MenuItem,
-  CircularProgress,
   InputAdornment,
+  CircularProgress,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { Formik, FormikHelpers } from "formik";
@@ -35,11 +35,7 @@ import {
 } from "./mapper";
 
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  ContractType,
-  LaborContract,
-  NewLaborContract,
-} from "@/types/api/contract.api";
+import { LaborContract, NewLaborContract } from "@/types/api/contract.api";
 
 export enum FormType {
   CREATE = "create",
@@ -55,7 +51,8 @@ export interface CrewContractFormParams {
 export const useContractFormParams = (): CrewContractFormParams => {
   const [searchParams] = useSearchParams();
   const contractId = searchParams.get("contractId") || undefined;
-  const formType = (searchParams.get("type") as FormType) || FormType.CREATE;
+  const formType =
+    (searchParams.get("formType") as FormType) || FormType.CREATE;
   const candidateId = searchParams.get("candidateId") || undefined;
   return { candidateId, contractId, formType };
 };
@@ -122,7 +119,7 @@ const CrewContractFormPage = () => {
     const contract = await editContract<NewLaborContract>(
       (contractInfo as LaborContract).id as string,
       patchRequest,
-      ContractType.LABOR_CONTRACT,
+      "LABOR_CONTRACT",
     );
 
     return contract;
@@ -505,7 +502,7 @@ const CrewContractFormPage = () => {
             </SectionWrapper>
 
             <TemplateDialog
-              type={ContractType.LABOR_CONTRACT}
+              type="LABOR_CONTRACT"
               open={openTemplateDialog}
               onClose={() => setOpenTemplateDialog(false)}
               title="Chọn template hợp đồng"

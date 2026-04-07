@@ -1,3 +1,4 @@
+import { GifAssets } from "@/constants/Asset";
 import { Box, Container, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router";
 
@@ -26,7 +27,7 @@ export default function E404Page() {
       {/* GIF */}
       <Box
         component="img"
-        src={require("@assets/gifs/404.gif")}
+        src={GifAssets.E404}
         alt="404 animation"
         sx={{
           width: "100%",
@@ -51,7 +52,6 @@ export default function E404Page() {
         color="primary"
         size="large"
         onClick={() => navigate("/")}
-        to="/"
         sx={{ textTransform: "none", borderRadius: 2, px: 4, py: 1.4 }}
       >
         Về trang chủ

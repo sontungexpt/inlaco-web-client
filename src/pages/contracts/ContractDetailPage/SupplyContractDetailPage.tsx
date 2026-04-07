@@ -17,15 +17,14 @@ import {
 import Color from "@/constants/Color";
 import { useContractDetail } from "./hooks/use-contract-detail";
 import { useAllowedRole } from "@/contexts/auth.context";
-import { useActiveContract } from "@/queries/contract.query";
 import { useSignContract } from "./hooks/use-sign-contract";
 
-const SupplyContractDetail = () => {
+const SupplyContractDetailPage = () => {
   const navigate = useNavigate();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
   const {
-    data: contract = {},
+    data: contract = {} as any,
     isError,
     isLoading,
     refetch: refetchContract,
@@ -172,4 +171,4 @@ const SupplyContractDetail = () => {
   );
 };
 
-export default SupplyContractDetail;
+export default SupplyContractDetailPage;

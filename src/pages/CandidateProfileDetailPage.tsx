@@ -8,7 +8,14 @@ import {
   StatusLabel,
   CenterCircularProgress,
 } from "@components/common";
-import { Box, Button, Grid, Select, MenuItem } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  Select,
+  MenuItem,
+  CircularProgress,
+} from "@mui/material";
 
 import { useNavigate, useParams } from "react-router";
 import { useCandidate, useReviewCandidate } from "@/queries/post.query";
@@ -18,31 +25,42 @@ import CandidateStatus from "@/constants/CandidateStatus";
 import UserRole from "@/constants/UserRole";
 import { useAllowedRole } from "@/contexts/auth.context";
 
-const STATUS_CONFIG = {
+const STATUS_CONFIG: Record<
+  CandidateStatus,
+  {
+    label: string;
+    color: string;
+    next: CandidateStatus[];
+  }
+> = {
   [CandidateStatus.APPLIED]: {
     label: "Đã nộp hồ sơ",
     color: Color.PrimaryBlackPlaceHolder,
-    next: ["SCREENING", "REJECTED", "WITHDRAWN"],
+    next: [
+      CandidateStatus.SCREENING,
+      CandidateStatus.REJECTED,
+      CandidateStatus.WITHDRAWN,
+    ],
   },
   [CandidateStatus.SCREENING]: {
     label: "Đang duyệt",
     color: Color.PrimaryBlue,
-    next: ["INTERVIEW_SCHEDULED", "REJECTED"],
+    next: [CandidateStatus.INTERVIEW_SCHEDULED, CandidateStatus.REJECTED],
   },
   [CandidateStatus.INTERVIEW_SCHEDULED]: {
     label: "Đã lên lịch phỏng vấn",
     color: Color.PrimaryGreen,
-    next: ["INTERVIEWED", "REJECTED"],
+    next: [CandidateStatus.INTERVIEWED, CandidateStatus.REJECTED],
   },
   [CandidateStatus.INTERVIEWED]: {
     label: "Đã phỏng vấn",
     color: Color.SecondaryGold,
-    next: ["OFFERED", "REJECTED"],
+    next: [CandidateStatus.OFFERED, CandidateStatus.REJECTED],
   },
   [CandidateStatus.OFFERED]: {
     label: "Đã gửi offer",
     color: Color.PrimaryBlue,
-    next: ["CONFIRMED", "REJECTED"],
+    next: [CandidateStatus.CONFIRMED, CandidateStatus.REJECTED],
   },
   [CandidateStatus.CONFIRMED]: {
     label: "Ứng viên xác nhận",
@@ -84,7 +102,7 @@ const CandidateProfileDetailPage = () => {
   const { data: candidateInfo, isLoading } = useCandidate(candidateID);
 
   const resume = candidateInfo?.resume;
-  const status = candidateInfo?.status;
+  const status = candidateInfo?.status as CandidateStatus;
 
   const { mutateAsync: reviewCandidate, isPending: isReviewing } =
     useReviewCandidate({
@@ -130,7 +148,9 @@ const CandidateProfileDetailPage = () => {
                   disabled={!!isReviewing}
                   size="small"
                   sx={{ minWidth: 240, borderRadius: 2 }}
-                  renderValue={() => "Chuyển trạng thái"}
+                  renderValue={() =>
+                    STATUS_CONFIG[status]?.label ?? "Chuyển trạng thái"
+                  }
                   onChange={(e) => reviewCandidate(e.target.value)}
                 >
                   {STATUS_CONFIG[status].next.map((nextStatus) => (
@@ -157,7 +177,7 @@ const CandidateProfileDetailPage = () => {
                 }}
                 onClick={() =>
                   navigate(
-                    `/crew-contracts/form?type=create&candidateId=${candidateID}`,
+                    `/contracts/form?type=LABOR_CONTRACT&formType=create&candidateId=${candidateID}`,
                   )
                 }
               >
@@ -206,7 +226,6 @@ const CandidateProfileDetailPage = () => {
             <InfoItem
               label="Số điện thoại"
               value={candidateInfo?.phoneNumber}
-              clickable
               onClick={() => window.open(`tel:${candidateInfo?.phoneNumber}`)}
             />
           </Grid>

@@ -29,6 +29,8 @@ const NoValuesOverlay = ({
           gap: 1,
           color: "text.secondary",
           textAlign: "center",
+
+          py: 2,
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
@@ -37,7 +39,6 @@ const NoValuesOverlay = ({
         sx={{
           width: 64,
           height: 64,
-          borderRadius: "50%",
           backgroundColor: "rgba(0,0,0,0.04)",
           display: "flex",
           alignItems: "center",

@@ -15,7 +15,7 @@ import {
   SectionWrapper,
   PageTitle,
   CloudinaryImage,
-  BaseDataGrid,
+  BaseDataGridOld,
   InfoItem,
   CenterCircularProgress,
 } from "@/components/common";
@@ -196,7 +196,7 @@ export default function MobilizationDetail() {
 
       {/* ================= CREW LIST ================= */}
       <SectionWrapper title="Danh sách thuyền viên được điều động">
-        <BaseDataGrid
+        <BaseDataGridOld
           rows={mobilization.crewMembers || []}
           columns={columns}
           paginationModel={paginationModel}

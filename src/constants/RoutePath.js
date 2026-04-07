@@ -1,3 +1,5 @@
+import Index from "@/pages/PostDetailPage";
+
 const RoutePath = {
   Home: "/",
   E403: "/403",
@@ -29,6 +31,10 @@ const RoutePath = {
     Form: "/mobilizations/form",
     Detail: (id = ":id") => `/mobilizations/${id}`,
     My: "/mobilizations/my-mobilizations",
+  },
+
+  Contract: {
+    Index: "/contracts",
   },
 
   CrewContract: {

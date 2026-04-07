@@ -6,7 +6,11 @@ import { getMyMobilizationAPI } from "../services/mobilization.service";
 import { fetchMyCrewProfile } from "../services/crew.service";
 import { formatDateTime } from "@utils/converter";
 import { HttpStatusCode } from "axios";
-import { PageTitle, BaseDataGrid, DetailActionCell } from "@/components/common";
+import {
+  PageTitle,
+  BaseDataGridOld,
+  DetailActionCell,
+} from "@/components/common";
 
 const CrewMyMobilization = () => {
   const navigate = useNavigate();
@@ -272,7 +276,7 @@ const CrewMyMobilization = () => {
             <Typography>THỜI GIAN BIỂU</Typography>
           </Box>
         )} */}
-      <BaseDataGrid
+      <BaseDataGridOld
         loading={loading}
         // disableRowSelectionOnClick
         // disableColumnMenu

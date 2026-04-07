@@ -12,7 +12,6 @@ import Color from "@constants/Color";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { InfoTextField, FileUploadFieldFormik } from "@/components/common";
-import { ContractType } from "@/types/api/contract.api";
 
 const UploadTemplateDialog = ({
   open,
@@ -23,8 +22,8 @@ const UploadTemplateDialog = ({
   isSubmitting: externalSubmitting,
 }) => {
   const TEMPLATE_TYPES = [
-    { value: ContractType.LABOR_CONTRACT, label: "Hợp đồng lao động" },
-    { value: ContractType.SUPPLY_CONTRACT, label: "Hợp đồng cung ứng" },
+    { value: "LABOR_CONTRACT", label: "Hợp đồng lao động" },
+    { value: "SUPPLY_CONTRACT", label: "Hợp đồng cung ứng" },
   ];
 
   const initValues = {

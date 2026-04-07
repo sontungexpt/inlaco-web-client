@@ -17,6 +17,7 @@ import {
 import {
   BaseContract,
   ContractType,
+  FetchContractParams,
   LaborContract,
   NewCrewSupplyContract,
   NewLaborContract,
@@ -24,17 +25,9 @@ import {
 import { PageableResponse, ErrorResponse } from "@/types/api/shared/base.api";
 import { AxiosError } from "axios";
 
-export type ContractPageParamsQuery = {
-  page: number;
-  pageSize: number;
-  filter: {
-    type: ContractType;
-  };
-};
-
 export const ContractQueryKey = {
   ALL: ["contracts"],
-  LIST: ({ page, pageSize, filter }: ContractPageParamsQuery) => [
+  LIST: ({ page, pageSize, filter }: FetchContractParams) => [
     ...ContractQueryKey.ALL,
     "list",
     page,
@@ -58,7 +51,7 @@ export function useContracts({
   page = 0,
   pageSize = 12,
   filter,
-}: ContractPageParamsQuery) {
+}: FetchContractParams) {
   return useQuery<PageableResponse<BaseContract>, ErrorResponse>({
     queryKey: ContractQueryKey.LIST({ page, pageSize, filter }),
     queryFn: () => fetchContracts({ page, pageSize, filter }),

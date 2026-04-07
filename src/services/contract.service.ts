@@ -5,13 +5,12 @@ import {
   BaseContract,
   ContractType,
   CrewSupplyContract,
+  FetchContractParams,
   LaborContract,
   NewContractBase,
   NewCrewSupplyContract,
   NewLaborContract,
 } from "@/types/api/contract.api";
-
-import { PageParams } from "@/types/api/shared/base.api";
 
 export const activeContract = async (contractId: string) => {
   const response = await privateRequest.post(
@@ -24,11 +23,7 @@ export const fetchContracts = async ({
   page,
   pageSize,
   filter,
-}: PageParams & {
-  filter: {
-    type: ContractType;
-  };
-}) => {
+}: FetchContractParams) => {
   const response = await privateRequest.get(
     ContractEndpoint.GET_ALL_CONTRACTS,
     {
@@ -74,7 +69,7 @@ export const createLaborContract = async (
     ContractEndpoint.CREATE_LABOR_CONTRACT(candidateId),
     {
       ...contract,
-      type: ContractType.LABOR_CONTRACT,
+      type: "LABOR_CONTRACT",
     },
   );
   return response.data;
@@ -88,7 +83,7 @@ export const createSupplyContract = async (
 ) => {
   const response = await privateRequest.post<CrewSupplyContract>(
     ContractEndpoint.CREATE_SUPPLY_CONTRACT(supplyRequestId),
-    { ...contract, type: ContractType.SUPPLY_CONTRACT },
+    { ...contract, type: "SUPPLY_CONTRACT" },
     {
       params: {
         contractFileAssetId,
@@ -102,7 +97,7 @@ export const createSupplyContract = async (
 export const editContract = async <T extends NewContractBase>(
   contractId: string,
   newDatas: T,
-  type: ContractType = ContractType.LABOR_CONTRACT,
+  type: ContractType = "LABOR_CONTRACT",
 ) => {
   const response = await privateRequest.patch<BaseContract>(
     ContractEndpoint.UPDATE_CONTRACT(contractId),

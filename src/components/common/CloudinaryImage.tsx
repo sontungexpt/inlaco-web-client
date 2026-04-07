@@ -1,5 +1,5 @@
-import { useMemo, useState, useEffect } from "react";
-import { Box } from "@mui/material";
+import { useMemo, useState, useEffect, useCallback } from "react";
+import { Box, BoxProps } from "@mui/material";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { fill } from "@cloudinary/url-gen/actions/resize";
@@ -15,29 +15,40 @@ const cld = new Cloudinary({
 const NO_AVATAR_URL =
   "https://www.kindpng.com/picc/m/22-223863_no-avatar-png-circle-transparent-png.png";
 
-const CloudinaryImage = ({
+export type CloudinaryImageProps = BoxProps & {
+  publicId?: string;
+  src?: string;
+  fallback?: string;
+  avatar?: boolean;
+  alt?: string;
+};
+
+export default function CloudinaryImage({
   publicId,
   src,
   width,
   height,
   fallback,
-  avatar = false,
-  sx = {},
+  sx,
   alt = "",
+  avatar = false,
   ...props
-}) => {
+}: CloudinaryImageProps) {
   const [hasError, setHasError] = useState(false);
 
   // Reset error when source changes
   useEffect(() => setHasError(false), [publicId, src]);
 
-  const handleError = () => setHasError(true);
+  const handleError = useCallback(() => {
+    setHasError(true);
+  }, []);
 
   const cldImg = useMemo(() => {
-    if (!publicId || hasError) return null;
+    if (!publicId) return null;
     const image = cld.image(publicId);
 
     const resize = fill().gravity(autoGravity());
+
     if (typeof width === "number") resize.width(width);
     if (typeof height === "number") resize.height(height);
 
@@ -48,22 +59,28 @@ const CloudinaryImage = ({
       .delivery(dpr("auto")); // retina safe;
 
     return image;
-  }, [publicId, width, height, hasError]);
+  }, [publicId, width, height]);
 
-  const imageStyle = {
-    width: width ?? "100%",
-    height: height ?? "100%",
-    objectFit: width && height ? "cover" : "contain",
-    display: "block",
-    ...sx,
-  };
+  const imageStyle = useMemo(
+    () => [
+      {
+        width: width ?? "100%",
+        height: height ?? "100%",
+        objectFit: width && height ? "cover" : "contain",
+        display: "block",
+      },
+      ...(Array.isArray(sx) ? sx : [sx]),
+    ],
+    [width, height, sx],
+  );
 
-  // Determine fallback source
-  const fallbackSrc =
-    fallback || (avatar ? NO_AVATAR_URL : ImageAssets.NoImage);
+  const shouldUseFallback = !publicId && !src;
 
   // Render fallback if error or no image
-  if (hasError || (!cldImg && !src)) {
+  if (hasError || shouldUseFallback) {
+    const fallbackSrc =
+      fallback || (avatar ? NO_AVATAR_URL : ImageAssets.NoImage);
+
     return (
       <Box
         {...props}
@@ -101,6 +118,4 @@ const CloudinaryImage = ({
       sx={imageStyle}
     />
   );
-};
-
-export default CloudinaryImage;
+}

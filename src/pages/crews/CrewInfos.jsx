@@ -3,7 +3,7 @@ import {
   PageTitle,
   SearchBar,
   BaseTabBar,
-  BaseDataGrid,
+  BaseDataGridOld,
 } from "@components/common";
 import { Box, Toolbar } from "@mui/material";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
@@ -156,7 +156,7 @@ export default function CrewInfos() {
           marginTop: 4,
         }}
       />
-      <BaseDataGrid
+      <BaseDataGridOld
         disableRowSelectionOnClick
         disableColumnMenu
         disableColumnResize

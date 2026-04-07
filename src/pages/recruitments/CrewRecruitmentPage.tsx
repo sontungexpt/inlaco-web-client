@@ -45,10 +45,7 @@ export default function CrewRecruitment(
   const [tab, setTab] = useState(init.tab || TABS.POSTS);
   const [postPage, setPostPage] = useState(init.postPage);
   const [filterStatus, setFilterStatus] = useState(init.candidateStatus);
-  const [paginationModel, setPaginationModel] = useState({
-    page: init.candidatePage,
-    pageSize: candidatePerPage,
-  });
+  const [candidatePage, setCandidatePage] = useState(init.candidatePage);
 
   const { data: postData, isLoading: postsLoading } = useRecruitmentPosts({
     page: postPage,
@@ -57,11 +54,14 @@ export default function CrewRecruitment(
   const posts = postData?.content || [];
 
   const {
-    data: { content: candidates = [], totalElements: totalCandidates = 0 } = {},
+    data: {
+      content: candidates = [],
+      totalPages: totalCandidatePages = 0,
+    } = {},
     isLoading: candidateLoading,
   } = useCandidates({
-    page: paginationModel.page,
-    pageSize: paginationModel.pageSize,
+    page: candidatePage,
+    pageSize: 30,
     filter: {
       status: filterStatus,
       recruitmentPostId: init.candidatePostId,
@@ -158,19 +158,16 @@ export default function CrewRecruitment(
         <CandidateTable
           loading={candidateLoading}
           filterStatus={filterStatus}
-          onAdminMemberDetailClick={(id: string) =>
+          onDetailClick={(id: string) =>
             navigate(`/recruitments/candidates/${id}`)
-          }
-          onCreateCrewMemberClick={(candidateId: string) =>
-            navigate(`/crews/add/${candidateId}`, {
-              state: { candidateInfo: candidateId },
-            })
           }
           onFilterStatusChange={setFilterStatus}
           candidates={candidates}
-          totalCandidates={totalCandidates}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
+          pagination={{
+            count: totalCandidatePages,
+            page: candidatePage + 1,
+            onChange: (e, page) => setCandidatePage(page - 1),
+          }}
         />
       )}
     </Box>

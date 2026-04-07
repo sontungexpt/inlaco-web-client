@@ -10,7 +10,6 @@ type BaseTabBarProps = TabsProps & {
   color?: string;
   variant?: TabsProps["variant"];
   centered?: boolean;
-  sx?: TabsProps["sx"];
   tabSx?: TabProps["sx"];
 };
 
@@ -51,7 +50,7 @@ const BaseTabBar = ({
     }
   }, [isControlled, value]);
 
-  // auto-fix when tabs changedixsjjb3p6kpnwtiocqko
+  // auto-fix when tabs changed
   useEffect(() => {
     if (!normalizedTabs.length) return;
     const isValid = normalizedTabs.some((t) => t.value === finalValue);

@@ -5,6 +5,7 @@ import HomePage from "@pages/HomePage";
 
 import UserRole from "@/constants/UserRole";
 import RoutePath from "@/constants/RoutePath";
+import path from "node:path";
 
 const ADMIN_SAILOR = [UserRole.ADMIN, UserRole.SAILOR];
 
@@ -68,26 +69,33 @@ export const AppRoutes = [
       },
     ],
   },
-
+  {
+    path: RoutePath.Contract.Index,
+    roles: ADMIN_SAILOR,
+    children: [
+      {
+        index: true,
+        element: lazy(() => import("@/pages/contracts/ContractPage")),
+      },
+      {
+        path: ":id",
+        element: lazy(() => import("@/pages/contracts/ContractDetailPage")),
+      },
+      {
+        path: "form",
+        element: lazy(() => import("@/pages/contracts/ContractFormPage")),
+      },
+    ],
+  },
   {
     path: RoutePath.CrewContract.Root,
     roles: ADMIN_SAILOR,
     children: [
       {
-        index: true,
-        element: lazy(() => import("@/pages/contracts/CrewContractPage")),
-      },
-      {
         path: "form",
-        element: lazy(() => import("@/pages/contracts/CrewContractFormPage")),
-      },
-      {
-        path: ":id",
         element: lazy(
           () =>
-            import(
-              "@/pages/contracts/ContractDetailPage/CrewContractDetailPage"
-            ),
+            import("@/pages/contracts/ContractFormPage/CrewContractFormPage"),
         ),
       },
       {
@@ -112,20 +120,18 @@ export const AppRoutes = [
     roles: ADMIN_SAILOR,
     children: [
       {
-        index: true,
-        element: lazy(() => import("@/pages/contracts/SupplyContractPage")),
-      },
-      {
         path: "create/:requestId",
-        element: lazy(() => import("@/pages/contracts/SupplyContractFormPage")),
+        element: lazy(
+          () =>
+            import("@/pages/contracts/ContractFormPage/SupplyContractFormPage"),
+        ),
       },
       {
         path: ":contractId/edit",
-        element: lazy(() => import("@/pages/contracts/SupplyContractFormPage")),
-      },
-      {
-        path: ":id",
-        element: lazy(() => import("@/pages/contracts/ContractDetailPage")),
+        element: lazy(
+          () =>
+            import("@/pages/contracts/ContractFormPage/SupplyContractFormPage"),
+        ),
       },
       // { path: ":id/create-addendum", element: SupplyContractAddendum },
     ],

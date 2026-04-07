@@ -61,13 +61,13 @@ export const SidebarConfig = [
     items: [
       {
         title: "Hợp đồng Thuyền viên",
-        to: "/crew-contracts",
+        to: "/contracts?type=LABOR_CONTRACT",
         icon: <AssignmentIndOutlinedIcon />,
         roles: [UserRole.ADMIN, UserRole.SAILOR],
       },
       {
         title: "Hợp đồng Cung ứng",
-        to: "/supply-contracts",
+        to: "/contracts?type=SUPPLY_CONTRACT",
         icon: <RequestQuoteOutlinedIcon />,
         roles: [UserRole.ADMIN],
       },

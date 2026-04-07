@@ -2,7 +2,7 @@ import { CenterCircularProgress, LoadErrorState } from "@/components/common";
 
 import CrewContractDetailPage from "./CrewContractDetailPage";
 import SupplyContractDetailPage from "./SupplyContractDetailPage";
-import E404Page from "@/pages/errors/E404Page";
+import E404Page from "@/pages/E404Page";
 
 import { useContractDetail } from "./hooks/use-contract-detail";
 
@@ -30,7 +30,7 @@ export default function ContractDetailPage() {
   }
 
   switch (contract?.type) {
-    case "CREW_CONTRACT":
+    case "LABOR_CONTRACT":
       return <CrewContractDetailPage />;
 
     case "SUPPLY_CONTRACT":

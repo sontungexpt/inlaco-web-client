@@ -1,5 +1,6 @@
 export { default as NoValuesOverlay } from "./NoValuesOverlay";
-export { default as BaseDataGrid } from "./BaseDataGridOld";
+export { default as BaseDataGrid } from "./BaseDataGrid";
+export { default as BaseDataGridOld } from "./BaseDataGridOld";
 export { default as DetailActionCell } from "./DetailActionCell";
 
 export { default as EditableDataGridCore } from "./editable/EditableDataGridCore";

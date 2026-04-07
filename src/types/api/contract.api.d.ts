@@ -44,15 +44,22 @@ export enum ContractStatus {
   SIGNED = "SIGNED",
 }
 
-export enum ContractType {
-  LABOR_CONTRACT = "LABOR_CONTRACT",
-  SUPPLY_CONTRACT = "SUPPLY_CONTRACT",
-}
+export type ContractType = "LABOR_CONTRACT" | "SUPPLY_CONTRACT";
 
-export type FetchCrewContractsParams = {
-  signed?: boolean;
+export type FilterOptions = {
+  keyword?: string;
+
   type?: ContractType;
-} & PageParams;
+  signed?: boolean;
+
+  activationDateStart?: string;
+  activationDateEnd?: string;
+
+  expiredDateStart?: string;
+  expiredDateEnd?: string;
+};
+
+export interface FetchContractParams extends PageParams<FilterOptions> {}
 
 export interface BaseContract {
   id: string;
@@ -77,7 +84,7 @@ export interface BaseContract {
 }
 
 export interface LaborContract extends BaseContract {
-  type: ContractType.LABOR_CONTRACT;
+  type: "LABOR_CONTRACT";
 
   employeeId?: string;
   applicationId?: string;
@@ -96,7 +103,7 @@ export interface LaborContract extends BaseContract {
 }
 
 export interface CrewSupplyContract extends BaseContract {
-  type: ContractType.SUPPLY_CONTRACT;
+  type: "SUPPLY_CONTRACT";
   numOfCrews: number;
   crewRentalRequestId?: string;
   shipInfo?: ShipInfo;
@@ -116,14 +123,14 @@ export interface NewContractBase {
 }
 
 export interface NewCrewSupplyContract extends NewContractBase {
-  type: ContractType.SUPPLY_CONTRACT;
+  type: "SUPPLY_CONTRACT";
   numOfCrews?: number;
   crewRentalRequestId?: string;
   shipInfo?: ShipInfo;
 }
 
 export interface NewLaborContract extends NewContractBase {
-  type: ContractType.LABOR_CONTRACT;
+  type: "LABOR_CONTRACT";
   partners: [LaborParty, ...BaseParty[]];
 
   position: string;

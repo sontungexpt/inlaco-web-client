@@ -1,7 +1,6 @@
 import {
   LaborContract,
   LaborParty,
-  ContractType,
   NewLaborContract,
   PartyType,
 } from "@/types/api/contract.api";
@@ -111,7 +110,7 @@ export const mapValuesToRequestBody = (
 
   return {
     title: v(values.title),
-    type: ContractType.LABOR_CONTRACT,
+    type: "LABOR_CONTRACT",
     contractFile: contractFile as string,
     attachments: attachments,
 
