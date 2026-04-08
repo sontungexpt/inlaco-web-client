@@ -1,8 +1,8 @@
 import E404Page from "@/pages/E404Page";
-import { ContractType } from "@/types/api/contract.api";
 import { useSearchParams } from "react-router";
 import CrewContractFormPage from "./CrewContractFormPage";
 import SupplyContractFormPage from "./SupplyContractFormPage";
+import { ContractType } from "@/types/api/contract.api";
 
 const useContractFormPageParams = (): {
   contractType: ContractType;

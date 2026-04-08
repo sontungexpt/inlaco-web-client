@@ -16,10 +16,13 @@ export const FORM_SCHEMA = Yup.object({
   contractFile: optionalFile(),
   attachmentFiles: optionalFiles(),
   activationDate: dateBefore(
-    "endDate",
+    "expiryDate",
     "Ngày bắt đầu phải trước ngày kết thúc",
   ),
-  expiryDate: dateAfter("startDate", "Ngày kết thúc phải sau ngày bắt đầu"),
+  expiryDate: dateAfter(
+    "activationDate",
+    "Ngày kết thúc phải sau ngày bắt đầu",
+  ),
   numOfCrewMember: requiredNumber({
     requiredMsg: "Số thuyền viên không được để trống",
     min: 1,

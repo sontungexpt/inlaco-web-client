@@ -115,7 +115,7 @@ export const mapValuesToRequestBody = (
     attachments: attachments,
 
     initiator: {
-      type: PartyType.STATIC,
+      type: "STATIC",
       name: v(employer.companyName),
       address: v(employer.companyAddress),
       phone: v(employer.companyPhone),
@@ -126,7 +126,7 @@ export const mapValuesToRequestBody = (
 
     partners: [
       {
-        type: PartyType.LABOR,
+        type: "LABOR",
 
         name: v(employee.fullName),
         representer: v(employee.fullName),

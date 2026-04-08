@@ -1,6 +1,5 @@
 import { Box, Paper, Typography, Divider, Button } from "@mui/material";
 import { useNavigate } from "react-router";
-import toast from "react-hot-toast";
 
 import { dateToLocaleString } from "@/utils/converter";
 import UserRole from "@/constants/UserRole";
@@ -57,7 +56,9 @@ const SupplyContractDetailPage = () => {
               variant="contained"
               color="warning"
               onClick={() =>
-                navigate(`/supply-contracts/${contract.id}/edit`, {})
+                navigate(
+                  `/contracts/${contract.id}?type=SUPPLY_CONTRACT&formType=create`,
+                )
               }
             >
               {contract.freezed ? "Thêm phụ lục" : "Sửa hợp đồng"}

@@ -153,7 +153,11 @@ export default function SupplyRequestDetailPage() {
             {status === "APPROVED" && (
               <Button
                 variant="contained"
-                onClick={() => navigate(`/supply-contracts/create/${id}`)}
+                onClick={() =>
+                  navigate(
+                    `/contracts/form?type=SUPPLY_CONTRACT&formType=create&supplyRequestId=${id}`,
+                  )
+                }
                 startIcon={<NoteAddRoundedIcon />}
                 sx={{
                   minWidth: 200,

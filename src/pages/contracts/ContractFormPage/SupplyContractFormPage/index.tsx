@@ -16,7 +16,7 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import Color from "@constants/Color";
 import { Formik, FormikHelpers } from "formik";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 import {
   createSupplyContract,
   editContract,
@@ -28,7 +28,7 @@ import toast from "react-hot-toast";
 import {
   mapContractToFormValues,
   mapSupplyRequestToFormValues,
-  mapValuesToRequestBody,
+  mapValuesToNewSupplyContract,
 } from "./mapper";
 import { FORM_SCHEMA, FormValues } from "./schema";
 import { BASE_FORM_VALUES } from "./initial";
@@ -43,15 +43,31 @@ import {
 } from "@/types/api/contract.api";
 
 export enum FormMode {
-  EDIT = "EDIT",
-  CREATE = "CREATE",
+  EDIT = "update",
+  CREATE = "create",
 }
+
+export type SypplyContractFormParams = {
+  contractId?: string;
+  supplyRequestId?: string;
+  formType: FormMode;
+};
+
+const useSupplyContractFormParams = (): SypplyContractFormParams => {
+  const [searchParams] = useSearchParams({ formType: FormMode.CREATE });
+  const supplyRequestId = searchParams.get("supplyRequestId") || undefined;
+  const contractId = searchParams.get("contractId") || undefined;
+  const formType =
+    (searchParams.get("formType") as FormMode) || FormMode.CREATE;
+  return { contractId, supplyRequestId, formType };
+};
 
 const SupplyContractFormPage = () => {
   const navigate = useNavigate();
-  const { contractId, requestId: supplyRequestId } = useParams();
-  const formMode = contractId ? FormMode.EDIT : FormMode.CREATE;
-  const isUpdateForm = formMode === FormMode.EDIT;
+  const { contractId, supplyRequestId, formType } =
+    useSupplyContractFormParams();
+
+  const isUpdateForm = formType === FormMode.EDIT;
 
   const { data: supplyRequestInfo, isLoading: requestInfoLoading } =
     useSupplyRequest(supplyRequestId);
@@ -78,10 +94,10 @@ const SupplyContractFormPage = () => {
 
     return createSupplyContract(
       supplyRequestId as string,
-      mapValuesToRequestBody(values, {
+      mapValuesToNewSupplyContract(values, {
         contractFileId: contractFileResult.assetId,
         shipImageId: shipImageResult.assetId,
-        attachmentFileIds: undefined,
+        attachmentFileIds: attachmentResults?.map((file) => file.assetId),
       }),
       contractFileResult.asset_id,
       shipImageResult.asset_id,
@@ -100,8 +116,8 @@ const SupplyContractFormPage = () => {
         ) || []),
       ]);
 
-    const oldRequest = mapValuesToRequestBody(initialValues, {});
-    const newRequest = mapValuesToRequestBody(values, {
+    const oldRequest = mapValuesToNewSupplyContract(initialValues, {} as any);
+    const newRequest = mapValuesToNewSupplyContract(values, {
       shipImageId: shipImageResult?.assetId,
       contractFileId: contractFile?.assetId,
       attachmentFileIds: attachmentFiles?.map((file) => file?.assetId),
@@ -131,7 +147,7 @@ const SupplyContractFormPage = () => {
         : await createContract(values);
       if (!contract?.id) return;
       helpers.resetForm();
-      navigate(`/supply-contracts/${contract.id}`);
+      navigate(`/contracts/${contract.id}`);
     } catch (err) {
       const msg = isUpdateForm
         ? freezedContract
@@ -162,15 +178,7 @@ const SupplyContractFormPage = () => {
       validationSchema={FORM_SCHEMA}
       onSubmit={handleFormSubmission}
     >
-      {({
-        values,
-        errors,
-        touched,
-        isValid,
-        dirty,
-        isSubmitting,
-        handleSubmit,
-      }) => (
+      {({ values, errors, touched, dirty, isSubmitting, handleSubmit }) => (
         <Box component="form" onSubmit={handleSubmit} p={2}>
           {/* ===== Sticky Header ===== */}
           <SectionWrapper
@@ -319,14 +327,14 @@ const SupplyContractFormPage = () => {
           </SectionWrapper>
           <SectionWrapper title="Thông tin hợp đồng*: ">
             <Grid container spacing={2}>
-              <Grid item size={6}>
+              <Grid size={6}>
                 <InfoTextFieldFormik
                   type="datetime-local"
                   label="Ngày bắt đầu hợp đồng"
                   name="activationDate"
                 />
               </Grid>
-              <Grid item size={6}>
+              <Grid size={6}>
                 <InfoTextFieldFormik
                   type="datetime-local"
                   label="Ngày kết thúc hợp đồng"

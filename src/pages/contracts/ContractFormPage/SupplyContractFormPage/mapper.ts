@@ -1,7 +1,7 @@
 import {
   CrewSupplyContract,
   LaborParty,
-  PartyType,
+  NewCrewSupplyContract,
 } from "@/types/api/contract.api";
 import { datetimeToISO } from "@utils/converter";
 import { FormValues } from "./schema";
@@ -84,43 +84,43 @@ export const mapContractToFormValues = (
   };
 };
 
-export const mapValuesToRequestBody = (
+export const mapValuesToNewSupplyContract = (
   values: FormValues,
   {
     shipImageId,
     contractFileId,
     attachmentFileIds,
   }: {
-    shipImageId?: string;
-    contractFileId?: string;
+    shipImageId: string;
+    contractFileId: string;
     attachmentFileIds?: string[];
   },
-) => ({
+): NewCrewSupplyContract => ({
   title: values.title,
-  activationDate: datetimeToISO(values.activationDate),
-  expiredDate: datetimeToISO(values.expiryDate),
+  activationDate: datetimeToISO(values.activationDate) as string,
+  expiredDate: datetimeToISO(values.expiryDate) as string,
   numOfCrews: values.numOfCrewMember,
-  attachements: attachmentFileIds,
+  attachements: attachmentFileIds as string[],
   contractFile: contractFileId,
   type: "SUPPLY_CONTRACT",
 
   initiator: {
-    partyName: values.partyA.compName,
+    name: values.partyA.compName,
     address: values.partyA.compAddress,
     phone: values.partyA.compPhoneNumber,
     representer: values.partyA.representative,
     representerPosition: values.partyA.representativePos,
-    type: PartyType.STATIC,
+    type: "STATIC",
   },
 
   partners: [
     {
-      partyName: values.partyB.compName,
+      name: values.partyB.compName,
       address: values.partyB.compAddress,
       phone: values.partyB.compPhoneNumber,
       representer: values.partyB.representative,
       representerPosition: values.partyB.representativePos,
-      type: PartyType.STATIC,
+      type: "STATIC",
     },
   ],
   shipInfo: {
@@ -128,7 +128,7 @@ export const mapValuesToRequestBody = (
     name: values.shipInfo.name,
     countryISO: values.shipInfo.countryISO,
     type: values.shipInfo.type,
-    description: values.shipInfo.description,
+    description: values.shipInfo.description as string,
     image: shipImageId,
   },
 });

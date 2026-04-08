@@ -1,16 +1,13 @@
 import { Asset } from "./shared/asset.api";
 import { PageParams } from "./shared/base.api";
-import { ShipInfo } from "./shared/ship-info.api";
+import { ShipInfo, ShipInfoRequest } from "./shared/ship-info.api";
 
 export interface DynamicAttribute {
   key: string;
   value: string;
 }
 
-export enum PartyType {
-  STATIC = "STATIC",
-  LABOR = "LABOR",
-}
+export type PartyType = "STATIC" | "LABOR";
 
 export interface BaseParty {
   type: PartyType;
@@ -24,7 +21,7 @@ export interface BaseParty {
 }
 
 export interface LaborParty extends BaseParty {
-  type: PartyType.LABOR;
+  type: "LABOR";
   identificationCardId: string;
   identificationCardIssuedDate?: string;
   identificationCardIssuedPlace: string;
@@ -36,13 +33,12 @@ export interface LaborParty extends BaseParty {
   temporaryAddress?: string;
 }
 
-export enum ContractStatus {
-  DRAFT = "DRAFT",
-  ACTIVE = "ACTIVE",
-  EXPIRED = "EXPIRED",
-  CANCELLED = "CANCELLED",
-  SIGNED = "SIGNED",
-}
+export type ContractStatus =
+  | "DRAFT"
+  | "ACTIVE"
+  | "EXPIRED"
+  | "CANCELLED"
+  | "SIGNED";
 
 export type ContractType = "LABOR_CONTRACT" | "SUPPLY_CONTRACT";
 
@@ -126,7 +122,7 @@ export interface NewCrewSupplyContract extends NewContractBase {
   type: "SUPPLY_CONTRACT";
   numOfCrews?: number;
   crewRentalRequestId?: string;
-  shipInfo?: ShipInfo;
+  shipInfo?: ShipInfoRequest;
 }
 
 export interface NewLaborContract extends NewContractBase {

@@ -22,7 +22,7 @@ const ContractOldVersionPage = () => {
     isLoading,
     isError,
     refetch,
-  } = useContractOldVersions(id);
+  } = useContractOldVersions(id as string);
 
   if (isLoading) return <CenterCircularProgress />;
 
