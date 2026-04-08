@@ -6,6 +6,7 @@ import {
   DataGrid,
   DataGridProps,
   RenderCellProps,
+  Renderers,
   renderValue,
 } from "react-data-grid";
 
@@ -99,15 +100,14 @@ function injectSkeletonToColumns<R, SR>(
       } as ColumnGroup<R, SR>;
     }
 
-    const baseRender = col.renderCell;
-
     return {
       ...col,
       renderCell: (p: RenderCellProps<R & { ____loading: boolean }, SR>) => {
         if (p.row.____loading)
           return renderSkeletonCell<R, SR>(p as RenderCellProps<R, SR>);
+
         const value =
-          baseRender?.(p as RenderCellProps<R, SR>) ?? renderValue(p);
+          col.renderCell?.(p as RenderCellProps<R, SR>) ?? renderValue(p);
 
         let toolTip = (col as RGBColumn<R, SR>).toolTip ?? globalTooltip;
         if (typeof toolTip === "function") {
@@ -212,7 +212,6 @@ export default function BaseDataGrid<R, SR = unknown>({
     }
     return [...rows, ...skeletonRows];
   }, [rows, loading, skeletonRows]);
-  const isEmpty = rowsResolved.length === 0;
 
   const columnsResolved = useMemo(() => {
     return injectSkeletonToColumns(columns, globalTooltip);
@@ -231,38 +230,40 @@ export default function BaseDataGrid<R, SR = unknown>({
   const dataGridStyle = useMemo(() => {
     return {
       ...DEFAULT_RDG_VARS,
-      height: "auto",
-      maxHeight: 450,
+      maxHeight: "90vh",
       ...style,
     };
   }, [style]);
 
+  const renderers: Renderers<R, SR> = useMemo(
+    () => ({
+      noRowsFallback: (
+        <div style={{ gridColumn: "1/-1", placeSelf: "center" }}>
+          {noValuesOverlay}
+        </div>
+      ),
+    }),
+    [],
+  );
+
   return (
-    <Box sx={DEFAULT_RDG_VARS}>
+    <Box sx={[DEFAULT_RDG_VARS, { width: "auto" }]}>
       <DataGrid
         {...props}
+        defaultColumnOptions={{
+          resizable: true,
+          sortable: true,
+          ...props?.defaultColumnOptions,
+        }}
         style={dataGridStyle}
         rows={rowsResolved}
         columns={columnsResolved}
         rowHeight={rowHeight} // use row height because it allows dynamic row height
         headerRowHeight={headerHeight}
+        renderers={renderers}
+        summaryRowHeight={footerHeight}
       />
-      {isEmpty && (
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderStyle: "solid",
-            borderWidth: "var(--rdg-border-width)",
-            borderColor: "var(--rdg-border-color)",
-          }}
-        >
-          {noValuesOverlay}
-        </Box>
-      )}
-      {!loading && footerNode}
+      {!loading && <div style={{ gridColumn: "1/-1" }}>{footerNode}</div>}
     </Box>
   );
 }

@@ -24,6 +24,33 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import NoteAddRoundedIcon from "@mui/icons-material/NoteAddRounded";
 
+const STATUS_MAP = {
+  PENDING: {
+    label: "Đang chờ xác nhận",
+    color: Color.PrimaryBlue,
+  },
+  APPROVED: {
+    label: "Chấp thuận",
+    color: Color.PrimaryGreen,
+  },
+  REJECTED: {
+    label: "Từ chối",
+    color: Color.PrimaryOrgange,
+  },
+  ACTIVE: {
+    label: "Đã kí hợp đồng",
+    color: Color.PrimaryBlackPlaceHolder,
+  },
+  SIGNING: {
+    label: "Đang đợi kí hợp đồng",
+    color: Color.PrimaryBlue,
+  },
+  DONE: {
+    label: "Hợp đồng kết thúc",
+    color: Color.Success,
+  },
+};
+
 export default function SupplyRequestDetailPage() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -49,33 +76,6 @@ export default function SupplyRequestDetailPage() {
   };
 
   if (isLoading) return <CenterCircularProgress />;
-
-  const STATUS_MAP = {
-    PENDING: {
-      label: "Đang chờ xác nhận",
-      color: Color.PrimaryBlue,
-    },
-    APPROVED: {
-      label: "Chấp thuận",
-      color: Color.PrimaryGreen,
-    },
-    REJECTED: {
-      label: "Từ chối",
-      color: Color.PrimaryOrgange,
-    },
-    ACTIVE: {
-      label: "Đã kí hợp đồng",
-      color: Color.PrimaryBlackPlaceHolder,
-    },
-    SIGNING: {
-      label: "Đang đợi kí hợp đồng",
-      color: Color.PrimaryBlue,
-    },
-    DONE: {
-      label: "Hợp đồng kết thúc",
-      color: Color.Success,
-    },
-  };
 
   const status = requestInfo?.status;
 

@@ -7,6 +7,8 @@ import {
   Paper,
   List,
   ListItemButton,
+  PopperProps,
+  TextFieldProps,
 } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
@@ -16,6 +18,44 @@ import { useDebounced } from "@/hooks/useDebounced";
 const SOURCE = {
   USER: "user",
   INTERNAL: "internal",
+};
+
+export type SearchBarProps = Omit<
+  TextFieldProps,
+  "slotProps" | "onChange" | "value"
+> & {
+  value?: string;
+  showSearchIcon: boolean;
+  debounceMs?: number;
+  minLength?: number;
+
+  autoSearch?: boolean;
+  searchOnMount?: boolean;
+  searchAfterClear?: boolean;
+  suppressSearchOnValueChange?: boolean;
+
+  loading?: boolean;
+  dropdown?: boolean;
+  options?: any[];
+  renderOption?: (opt: any, selected: boolean, idx: number) => React.ReactNode;
+  mapOptionToValue?: (opt: any) => string;
+  matchAnchorWidth?: boolean;
+  onSelectOption?: (opt: any) => void;
+
+  collapsible?: boolean;
+  collapsed?: boolean;
+  collapseWidth?: number;
+  autoCollapseOnBlur?: boolean;
+
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent,
+    value: string,
+  ) => void;
+  onSearch?: (value: string) => void;
+
+  slotProps?: TextFieldProps["slotProps"] & {
+    popper?: PopperProps;
+  };
 };
 
 const SearchBar = ({
@@ -55,18 +95,21 @@ const SearchBar = ({
   slotProps,
   sx,
   ...props
-}) => {
+}: SearchBarProps) => {
   /* =========================
    * State & Refs
    * ========================= */
   const isControlled = value !== undefined;
-  const [inputValue, setInputValue] = useState(value ?? "");
+  const [inputValue, setInputValue] = useState<string>(value ?? "");
   const [dropdownOpened, setDropdownOpened] = useState(false);
   const [activeOptionIndex, setActiveOptionIndex] = useState(-1);
   const [innerLoading, setInnerLoading] = useState(false);
-  const [isCollapsed, setIsCollapsedState] = useState(collapsible && collapsed);
+  const [isCollapsed, setIsCollapsedState] = useState<boolean>(
+    collapsible && collapsed,
+  );
+
   const setIsCollapsed = useCallback(
-    (v) => {
+    (v: boolean) => {
       if (collapsible) setIsCollapsedState(v);
     },
     [collapsible],
@@ -75,25 +118,27 @@ const SearchBar = ({
   const debouncedValue = useDebounced(inputValue, debounceMs);
   const finalLoading = typeof loading === "boolean" ? loading : innerLoading;
 
-  const listRef = useRef([]);
+  const listRef = useRef<
+    Array<React.ComponentRef<typeof ListItemButton> | null>
+  >([]);
   const changeSourceRef = useRef(SOURCE.INTERNAL);
-  const inputRef = useRef(null);
-  const anchorRef = useRef(null);
-  const mountedRef = useRef(false);
-  const popperRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const anchorRef = useRef<HTMLDivElement | null>(null);
+  const mountedRef = useRef<boolean>(false);
+  const popperRef = useRef<HTMLDivElement | null>(null);
 
   /* =========================
    * Helpers
    * ========================= */
 
-  const clampIndex = (idx) => {
+  const clampIndex = (idx: number) => {
     if (idx < 0) return options.length - 1;
     if (idx >= options.length) return 0;
     return idx;
   };
 
   const runSearch = useCallback(
-    async (keyword) => {
+    async (keyword: string) => {
       if (!onSearch || keyword.length < minLength) {
         setDropdownOpened(false);
         return;
@@ -103,7 +148,7 @@ const SearchBar = ({
         if (typeof loading !== "boolean") {
           setInnerLoading(true);
         }
-        const res = onSearch?.(keyword);
+        const res = onSearch?.(keyword) as any;
         if (res instanceof Promise) {
           await res;
         }
@@ -115,29 +160,46 @@ const SearchBar = ({
     [onSearch, minLength, dropdown, loading],
   );
 
-  useEffect(() => {
-    const handleFocusChange = () => {
-      const activeEl = document.activeElement;
+  // useEffect(() => {
+  //   const handleFocusChange = () => {
+  //     const activeEl = document.activeElement;
 
-      const isInside =
-        anchorRef.current?.contains(activeEl) ||
-        popperRef.current?.contains(activeEl);
+  //     const isInside =
+  //       anchorRef.current?.contains(activeEl) ||
+  //       popperRef.current?.contains(activeEl);
 
-      if (!isInside) {
-        setDropdownOpened(false);
+  //     if (!isInside) {
+  //       setDropdownOpened(false);
 
-        if (autoCollapseOnBlur && !inputValue) {
-          setIsCollapsed(true);
-        }
+  //       if (autoCollapseOnBlur && !inputValue) {
+  //         setIsCollapsed(true);
+  //       }
 
-        onBlur?.();
+  //       onBlur?.();
+  //     }
+  //   };
+  //   document.addEventListener("focusin", handleFocusChange);
+  //   return () => {
+  //     document.removeEventListener("focusin", handleFocusChange);
+  //   };
+  // }, [inputValue, autoCollapseOnBlur, onBlur]);
+  //
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const next = e.relatedTarget as Node | null;
+
+    const isInside =
+      anchorRef.current?.contains(next) || popperRef.current?.contains(next);
+
+    if (!isInside) {
+      setDropdownOpened(false);
+
+      if (autoCollapseOnBlur && !inputValue) {
+        setIsCollapsed(true);
       }
-    };
-    document.addEventListener("focusin", handleFocusChange);
-    return () => {
-      document.removeEventListener("focusin", handleFocusChange);
-    };
-  }, [inputValue, autoCollapseOnBlur, onBlur]);
+    }
+
+    onBlur?.(e);
+  };
 
   useEffect(() => {
     if (!isCollapsed && !disabled) {
@@ -201,7 +263,7 @@ const SearchBar = ({
   /* =========================
    * Handlers
    * ========================= */
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
     changeSourceRef.current = SOURCE.USER;
     setInputValue(v);
@@ -213,14 +275,14 @@ const SearchBar = ({
     }
   };
 
-  const handleClick = (e) => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isCollapsed) {
       setIsCollapsed(false);
     }
     onClick?.(e);
   };
 
-  const handleClear = (e) => {
+  const handleClear = (e: React.MouseEvent) => {
     changeSourceRef.current = SOURCE.INTERNAL;
     setInputValue("");
     setDropdownOpened(false);
@@ -231,7 +293,7 @@ const SearchBar = ({
     }
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (
       e.key === "ArrowDown" &&
       dropdown &&
@@ -284,16 +346,14 @@ const SearchBar = ({
     onKeyDown?.(e);
   };
 
-  const handleSelectOption = (option, ...params) => {
+  const handleSelectOption = (option: any) => {
     const value =
-      typeof option === "string"
-        ? option
-        : (mapOptionToValue?.(option, ...params) ?? "");
+      typeof option === "string" ? option : (mapOptionToValue?.(option) ?? "");
 
     changeSourceRef.current = SOURCE.INTERNAL;
     setInputValue(value);
     setDropdownOpened(false);
-    onSelectOption?.(option, ...params);
+    onSelectOption?.(option);
   };
 
   const mergedSx = useMemo(
@@ -303,7 +363,7 @@ const SearchBar = ({
         overflow: "hidden",
         maxWidth: isCollapsed ? collapseWidth : undefined,
         minWidth: isCollapsed
-          ? collapseWidth > 50
+          ? collapseWidth && collapseWidth > 50
             ? collapseWidth
             : 50
           : undefined,
@@ -361,12 +421,14 @@ const SearchBar = ({
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onClick={handleClick}
+        onBlur={handleBlur}
         slotProps={{
+          ...slotProps,
           input: {
+            ...slotProps?.input,
             startAdornment,
             endAdornment,
           },
-          ...slotProps,
         }}
       />
 
@@ -389,11 +451,14 @@ const SearchBar = ({
             <List dense>
               {options.map((opt, idx) => (
                 <ListItemButton
-                  ref={(el) => (listRef.current[idx] = el)}
-                  key={opt.key || idx}
+                  ref={(el: any) => (listRef.current[idx] = el)}
+                  key={opt.key ?? `opt-${idx}`}
                   selected={idx === activeOptionIndex}
                   onMouseEnter={() => setActiveOptionIndex(idx)}
-                  onMouseDown={() => handleSelectOption(opt)}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    handleSelectOption(opt);
+                  }}
                 >
                   {renderOption(opt, idx === activeOptionIndex, idx)}
                 </ListItemButton>

@@ -1,5 +1,12 @@
-import { Box, Typography } from "@mui/material";
+import { Box, BoxProps, Typography, TypographyProps } from "@mui/material";
 import Color from "@constants/Color";
+
+export type StatusLabelProps = TypographyProps & {
+  label: string;
+  color?: TypographyProps["color"];
+  sx?: BoxProps["sx"];
+  wrapperProps?: BoxProps;
+};
 
 const StatusLabel = ({
   label,
@@ -8,7 +15,7 @@ const StatusLabel = ({
   color = Color.PrimaryBlack,
   wrapperProps,
   ...props
-}) => {
+}: StatusLabelProps) => {
   return (
     <Box
       p={p}

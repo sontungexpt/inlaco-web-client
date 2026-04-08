@@ -1,43 +1,89 @@
-import React from "react";
-import { Box, Button, CircularProgress, Grid } from "@mui/material";
-import { Formik } from "formik";
-
 import {
   PageTitle,
-  SectionWrapper,
   InfoTextFieldFormik,
-  FileUploadFieldFormik,
   ImageUploadFieldFormik,
   NationalityTextField,
-} from "@/components/common";
-
-import Color from "@constants/Color";
+  FileUploadFieldFormik,
+  SectionWrapper,
+} from "@components/common";
+import {
+  Stack,
+  Box,
+  Button,
+  Typography,
+  Grid,
+  CircularProgress,
+} from "@mui/material";
 import ScheduleSendRoundedIcon from "@mui/icons-material/ScheduleSendRounded";
+import { Formik, FormikHelpers } from "formik";
+import { useNavigate } from "react-router";
+import Color from "@constants/Color";
+import toast from "react-hot-toast";
 
-const SupplyRequestForm = ({
-  title,
-  subtitle,
-  initialValues,
-  validationSchema,
-  onSubmit,
-  submitLabel = "Gửi yêu cầu",
-}) => {
+import cloudinaryUpload from "@/services/cloudinary.service";
+import { createSupplyRequest } from "@/services/supply-request.service";
+
+import UploadStrategy from "@/constants/UploadStrategy";
+
+import { BASE_FORM_VALUES } from "./initial";
+import { FORM_SCHEMA, FormValues } from "./schema";
+import { mapValuesToNewSupplyRequest } from "./mapper";
+
+export default function SupplyRequestFormPage() {
+  const navigate = useNavigate();
+
+  const handleFormSubmission = async (
+    values: FormValues,
+    { resetForm }: FormikHelpers<FormValues>,
+  ) => {
+    try {
+      const [detailFileUploadRes, shipImageUploadRes] = await Promise.all([
+        cloudinaryUpload(
+          values.detailFile,
+          UploadStrategy.CREW_RENTAL_REQUEST_DETAIL_FILE,
+        ),
+        cloudinaryUpload(values.shipInfo.image, UploadStrategy.SHIP_IMAGE),
+      ]);
+
+      const request = await createSupplyRequest(
+        mapValuesToNewSupplyRequest(
+          values,
+          detailFileUploadRes.assetId as string,
+          shipImageUploadRes.assetId as string,
+        ),
+      );
+      resetForm();
+      navigate("/supply-requests");
+    } catch (err) {
+      toast.error("Tạo yêu cầu thất bại!");
+    }
+  };
+
   return (
     <Formik
       validateOnChange={false}
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={onSubmit}
+      validateOnBlur
+      initialValues={BASE_FORM_VALUES}
+      validationSchema={FORM_SCHEMA}
+      onSubmit={handleFormSubmission}
     >
-      {({ isValid, dirty, isSubmitting, handleSubmit }) => (
+      {({ dirty, isSubmitting, handleSubmit }) => (
         <Box component="form" onSubmit={handleSubmit} m={3}>
           {/* ===== HEADER ===== */}
-          <SectionWrapper display="flex" justifyContent="space-between" mb={4}>
-            <PageTitle title={title} subtitle={subtitle} />
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="flex-end"
+            mb={4}
+          >
+            <PageTitle
+              title="GỬI YÊU CẦU CUNG ỨNG"
+              subtitle="Tạo và gửi yêu cầu cung ứng cho công ty INLACO Hải Phòng"
+            />
 
             <Button
               type="submit"
-              disabled={!isValid || !dirty || isSubmitting}
+              disabled={!dirty || isSubmitting}
               sx={{
                 height: 44,
                 px: 3,
@@ -58,22 +104,25 @@ const SupplyRequestForm = ({
                   boxShadow: "none",
                 },
               }}
-              startIcon={
-                isSubmitting ? (
+            >
+              {isSubmitting ? (
+                <Stack direction="row" alignItems="center" spacing={1}>
                   <CircularProgress
                     size={18}
                     sx={{ color: Color.PrimaryBlack }}
                   />
-                ) : (
+                  <Typography fontWeight={600}>Đang gửi...</Typography>
+                </Stack>
+              ) : (
+                <Stack direction="row" alignItems="center" spacing={1}>
                   <ScheduleSendRoundedIcon />
-                )
-              }
-            >
-              {submitLabel}
+                  <Typography fontWeight={700}>Gửi yêu cầu</Typography>
+                </Stack>
+              )}
             </Button>
-          </SectionWrapper>
+          </Box>
 
-          {/* ===== COMPANY INFO ===== */}
+          {/* ===== SECTION: COMPANY INFO ===== */}
           <SectionWrapper title="Thông tin công ty">
             <Grid container spacing={2} rowSpacing={3}>
               <Grid size={4}>
@@ -111,7 +160,7 @@ const SupplyRequestForm = ({
             </Grid>
           </SectionWrapper>
 
-          {/* ===== REQUEST INFO ===== */}
+          {/* ===== SECTION: SCHEDULE ===== */}
           <SectionWrapper title="Thông tin yêu cầu">
             <Grid container spacing={2} rowSpacing={3}>
               <Grid size={4}>
@@ -132,8 +181,8 @@ const SupplyRequestForm = ({
 
               <Grid size={12}>
                 <FileUploadFieldFormik
-                  required
                   accept=".doc,.docx,.pdf,.xls,.xlsx"
+                  required
                   label="Danh sách số lượng cần cung ứng"
                   name="detailFile"
                 />
@@ -141,7 +190,7 @@ const SupplyRequestForm = ({
             </Grid>
           </SectionWrapper>
 
-          {/* ===== SHIP INFO ===== */}
+          {/* ===== SECTION: SHIP INFO ===== */}
           <SectionWrapper title="Thông tin tàu">
             <Grid container spacing={3}>
               <Grid size={6}>
@@ -160,7 +209,6 @@ const SupplyRequestForm = ({
                 />
 
                 <InfoTextFieldFormik label="Loại tàu" name="shipInfo.type" />
-
                 <InfoTextFieldFormik
                   label="Mô tả"
                   name="shipInfo.description"
@@ -172,6 +220,4 @@ const SupplyRequestForm = ({
       )}
     </Formik>
   );
-};
-
-export default SupplyRequestForm;
+}

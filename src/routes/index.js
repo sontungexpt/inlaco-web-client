@@ -158,9 +158,7 @@ export const AppRoutes = [
       },
       {
         path: "form",
-        element: lazy(
-          () => import("@/pages/supplication/CreateSupplyRequestPage"),
-        ),
+        element: lazy(() => import("@/pages/SupplyRequestFormPage")),
         roles: [UserRole.USER],
       },
     ],

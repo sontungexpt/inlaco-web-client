@@ -1,8 +1,16 @@
 import SupplyRequestEndpoint from "@/endpoints/supply-request.endpoint";
+import {
+  NewSupplyRequest,
+  FetchSupplyRequestParams,
+} from "@/types/api/supply-request.api";
 import { flattenFilter } from "@/utils/filter";
 import { privateRequest } from "@/utils/request";
 
-export const fetchSupplyRequests = async ({ page, pageSize, filter }) => {
+export const fetchSupplyRequests = async ({
+  page,
+  pageSize,
+  filter,
+}: FetchSupplyRequestParams) => {
   const response = await privateRequest.get(
     SupplyRequestEndpoint.GET_SUPPLY_REQUESTS,
     {
@@ -16,14 +24,14 @@ export const fetchSupplyRequests = async ({ page, pageSize, filter }) => {
   return response.data;
 };
 
-export const fetchUniqueSupplyRequest = async (id) => {
+export const fetchUniqueSupplyRequest = async (id: string) => {
   const response = await privateRequest.get(
     SupplyRequestEndpoint.GET_UNIQUE_SUPPLY_REQUEST(id),
   );
   return response.data;
 };
 
-export const reviewSupplyRequest = async (id, accepted) => {
+export const reviewSupplyRequest = async (id: string, accepted: boolean) => {
   const response = await privateRequest.post(
     SupplyRequestEndpoint.REVIEW_SUPPLY_REQUEST(id),
     null,
@@ -37,9 +45,9 @@ export const reviewSupplyRequest = async (id, accepted) => {
 };
 
 export const createSupplyRequest = async (
-  request,
-  detailFileAssetId,
-  shipImageAssetId,
+  request: NewSupplyRequest,
+  detailFileAssetId?: string,
+  shipImageAssetId?: string,
 ) => {
   const response = await privateRequest.post(
     SupplyRequestEndpoint.CREATE_SUPPLY_REQUEST,

@@ -84,7 +84,6 @@ export default function ContractPage({ pageSize = 20 }) {
         {
           key: "activationDate",
           name: "Ngày có hiệu lực",
-          sortable: true,
           renderCell: ({ row }) => dateToLocaleString(row.activationDate),
         },
         {
