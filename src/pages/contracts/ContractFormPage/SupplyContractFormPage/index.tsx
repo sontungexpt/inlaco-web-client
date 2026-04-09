@@ -41,37 +41,27 @@ import {
   CrewSupplyContract,
   NewCrewSupplyContract,
 } from "@/types/api/contract.api";
-
-export enum FormMode {
-  EDIT = "update",
-  CREATE = "create",
-}
+import { useFormIdentifider } from "../hooks/useFormIdentifier";
 
 export type SypplyContractFormParams = {
   contractId?: string;
   supplyRequestId?: string;
-  formType: FormMode;
+  isEdit?: boolean;
 };
 
 const useSupplyContractFormParams = (): SypplyContractFormParams => {
-  const [searchParams] = useSearchParams({ formType: FormMode.CREATE });
+  const { contractId, isEdit } = useFormIdentifider();
+  const [searchParams] = useSearchParams({});
   const supplyRequestId = searchParams.get("supplyRequestId") || undefined;
-  const contractId = searchParams.get("contractId") || undefined;
-  const formType =
-    (searchParams.get("formType") as FormMode) || FormMode.CREATE;
-  return { contractId, supplyRequestId, formType };
+  return { contractId, supplyRequestId, isEdit };
 };
 
 const SupplyContractFormPage = () => {
   const navigate = useNavigate();
-  const { contractId, supplyRequestId, formType } =
-    useSupplyContractFormParams();
-
-  const isUpdateForm = formType === FormMode.EDIT;
+  const { contractId, supplyRequestId, isEdit } = useSupplyContractFormParams();
 
   const { data: supplyRequestInfo, isLoading: requestInfoLoading } =
     useSupplyRequest(supplyRequestId);
-
   const { data: contractInfo, isLoading: contractInfoLoading } =
     useContract(contractId);
 
@@ -123,10 +113,9 @@ const SupplyContractFormPage = () => {
       attachmentFileIds: attachmentFiles?.map((file) => file?.assetId),
     });
 
-    const patchRequest = keepChangedFields(
-      oldRequest,
-      newRequest,
-    ) as NewCrewSupplyContract;
+    const patchRequest = keepChangedFields(oldRequest, newRequest, {
+      keepPaths: ["initiator"],
+    }) as NewCrewSupplyContract;
 
     const contract = await editContract<NewCrewSupplyContract>(
       (contractInfo as CrewSupplyContract).id as string,
@@ -142,14 +131,14 @@ const SupplyContractFormPage = () => {
     helpers: FormikHelpers<FormValues>,
   ) => {
     try {
-      const contract = isUpdateForm
+      const contract = isEdit
         ? await updateContract(values)
         : await createContract(values);
       if (!contract?.id) return;
       helpers.resetForm();
       navigate(`/contracts/${contract.id}`);
     } catch (err) {
-      const msg = isUpdateForm
+      const msg = isEdit
         ? freezedContract
           ? "Thêm phụ lục thất bại"
           : "Cập nhật hợp đồng thất bại"
@@ -160,13 +149,13 @@ const SupplyContractFormPage = () => {
 
   const initialValues = useMemo(
     () =>
-      isUpdateForm
+      isEdit
         ? mapContractToFormValues(
             BASE_FORM_VALUES,
             contractInfo as CrewSupplyContract,
           )
         : mapSupplyRequestToFormValues(BASE_FORM_VALUES, supplyRequestInfo),
-    [isUpdateForm, supplyRequestInfo, contractInfo],
+    [isEdit, supplyRequestInfo, contractInfo],
   );
 
   return (
@@ -192,11 +181,11 @@ const SupplyContractFormPage = () => {
           >
             <PageTitle
               title={
-                isUpdateForm
+                isEdit
                   ? "CÂP NHẤT HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN"
                   : "TẠO HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN"
               }
-              subtitle={isUpdateForm ? "Lưu hợp đồng mới" : "Tạo hợp đồng"}
+              subtitle={isEdit ? "Lưu hợp đồng mới" : "Tạo hợp đồng"}
             />
 
             <Box display="flex" gap={2} mt={2}>
@@ -241,7 +230,7 @@ const SupplyContractFormPage = () => {
                   color: Color.PrimaryBlack,
                 }}
               >
-                {isUpdateForm
+                {isEdit
                   ? freezedContract
                     ? "Thêm phụ lục"
                     : "Sửa hợp đồng"
@@ -311,13 +300,13 @@ const SupplyContractFormPage = () => {
                   name="partyB.compPhoneNumber"
                 />
               </Grid>
-              <Grid item size={4}>
+              <Grid size={4}>
                 <InfoTextFieldFormik
                   label="Người đại diện"
                   name="partyB.representative"
                 />
               </Grid>
-              <Grid item size={5}>
+              <Grid size={5}>
                 <InfoTextFieldFormik
                   label="Chức vụ"
                   name="partyB.representativePos"

@@ -13,11 +13,14 @@ export const useSignContract = () => {
           err.status === HttpStatusCode.BadRequest &&
           response.data.errorCode == "CONTRACT_ERR_002"
         ) {
-          toast.error(
-            "Hợp đồng chưa đầy đủ thông tin: " +
-              response.data.message +
-              ". Vui lòng bổ sung hợp đồng.",
-          );
+          if (response.data.data === "status") {
+            toast.error("Hợp đồng đã kí");
+          } else
+            toast.error(
+              "Hợp đồng chưa đầy đủ thông tin: " +
+                response.data.message +
+                ". Vui lòng bổ sung hợp đồng.",
+            );
         }
         return;
       }

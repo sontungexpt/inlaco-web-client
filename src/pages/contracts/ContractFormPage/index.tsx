@@ -4,14 +4,18 @@ import CrewContractFormPage from "./CrewContractFormPage";
 import SupplyContractFormPage from "./SupplyContractFormPage";
 import { ContractType } from "@/types/api/contract.api";
 
-const useContractFormPageParams = (): {
+type ContractFormPageParams = {
   contractType: ContractType;
-} => {
+};
+
+const useContractFormPageParams = (): ContractFormPageParams => {
   const [searchParams] = useSearchParams();
   const contractType = (searchParams.get("type") ||
     "LABOR_CONTRACT") as ContractType;
 
-  return { contractType };
+  return {
+    contractType,
+  };
 };
 
 export default function ContractFormPage() {

@@ -36,33 +36,26 @@ import {
 
 import { useQueryClient } from "@tanstack/react-query";
 import { LaborContract, NewLaborContract } from "@/types/api/contract.api";
-
-export enum FormType {
-  CREATE = "create",
-  UPDATE = "update",
-}
+import { useFormIdentifider } from "../hooks/useFormIdentifier";
 
 export interface CrewContractFormParams {
   candidateId?: string;
   contractId?: string;
-  formType?: FormType;
+  isEdit?: boolean;
 }
 
 export const useContractFormParams = (): CrewContractFormParams => {
+  const { contractId, isEdit } = useFormIdentifider();
   const [searchParams] = useSearchParams();
-  const contractId = searchParams.get("contractId") || undefined;
-  const formType =
-    (searchParams.get("formType") as FormType) || FormType.CREATE;
   const candidateId = searchParams.get("candidateId") || undefined;
-  return { candidateId, contractId, formType };
+  return { candidateId, contractId, isEdit };
 };
 
 const CrewContractFormPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { candidateId, contractId, formType } = useContractFormParams();
 
-  const IS_UPDATE_FORM = formType === FormType.UPDATE;
+  const { candidateId, contractId, isEdit } = useContractFormParams();
 
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
 
@@ -130,7 +123,7 @@ const CrewContractFormPage = () => {
     helpers: FormikHelpers<FormValues>,
   ) => {
     try {
-      const contract = IS_UPDATE_FORM
+      const contract = isEdit
         ? await updateContract(values)
         : await createContract(values);
 
@@ -143,7 +136,7 @@ const CrewContractFormPage = () => {
       helpers.resetForm();
       navigate(`/crew-contracts/${contract.id}`);
     } catch (err) {
-      const msg = IS_UPDATE_FORM
+      const msg = isEdit
         ? IS_FREEZED_CONTRACT
           ? "Thêm phụ lục thất bại"
           : "Cập nhật hợp đồng thất bại"
@@ -154,13 +147,13 @@ const CrewContractFormPage = () => {
 
   const initialValues = useMemo(
     () =>
-      IS_UPDATE_FORM
+      isEdit
         ? mapContractToFormValues(
             BASE_FORM_VALUES,
             contractInfo as LaborContract,
           )
         : mapCandidateInfoToFormValues(BASE_FORM_VALUES, candidateInfo),
-    [IS_UPDATE_FORM, candidateInfo, contractInfo],
+    [isEdit, candidateInfo, contractInfo],
   );
 
   return (
@@ -235,7 +228,7 @@ const CrewContractFormPage = () => {
                     color: Color.PrimaryBlack,
                   }}
                 >
-                  {IS_UPDATE_FORM ? "Sửa hợp đồng" : "Tạo hợp đồng"}
+                  {isEdit ? "Sửa hợp đồng" : "Tạo hợp đồng"}
                 </Button>
               </Box>
             </SectionWrapper>

@@ -83,7 +83,16 @@ export const AppRoutes = [
       },
       {
         path: "form",
-        element: lazy(() => import("@/pages/contracts/ContractFormPage")),
+        children: [
+          {
+            index: true,
+            element: lazy(() => import("@/pages/contracts/ContractFormPage")),
+          },
+          {
+            path: ":id",
+            element: lazy(() => import("@/pages/contracts/ContractFormPage")),
+          },
+        ],
       },
     ],
   },

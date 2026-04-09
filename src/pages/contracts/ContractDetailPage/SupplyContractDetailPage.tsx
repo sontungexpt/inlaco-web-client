@@ -17,6 +17,7 @@ import Color from "@/constants/Color";
 import { useContractDetail } from "./hooks/use-contract-detail";
 import { useAllowedRole } from "@/contexts/auth.context";
 import { useSignContract } from "./hooks/use-sign-contract";
+import { FormMode } from "../ContractFormPage/SupplyContractFormPage";
 
 const SupplyContractDetailPage = () => {
   const navigate = useNavigate();
@@ -56,9 +57,7 @@ const SupplyContractDetailPage = () => {
               variant="contained"
               color="warning"
               onClick={() =>
-                navigate(
-                  `/contracts/${contract.id}?type=SUPPLY_CONTRACT&formType=create`,
-                )
+                navigate(`/contracts/form/${contract.id}?type=SUPPLY_CONTRACT`)
               }
             >
               {contract.freezed ? "Thêm phụ lục" : "Sửa hợp đồng"}

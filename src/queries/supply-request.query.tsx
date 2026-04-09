@@ -3,7 +3,10 @@ import {
   fetchUniqueSupplyRequest,
 } from "@/services/supply-request.service";
 import { ErrorResponse } from "@/types/api/shared/base.api";
-import { FetchSupplyRequestParams } from "@/types/api/supply-request.api";
+import {
+  FetchSupplyRequestParams,
+  SupplyRequest,
+} from "@/types/api/supply-request.api";
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
@@ -32,14 +35,14 @@ export const useSupplyRequests = ({
 };
 
 export const useSupplyRequest = (
-  id: string,
-  params: UseQueryOptions<unknown, AxiosError<ErrorResponse>>,
+  id?: string,
+  params?: UseQueryOptions<SupplyRequest, AxiosError<ErrorResponse>>,
 ) => {
   return useQuery({
     staleTime: 1000 * 60 * 5, // cache 5 min
     ...params,
-    queryKey: SupplyRequestQueryKey.DETAIL(id),
-    queryFn: () => fetchUniqueSupplyRequest(id),
     enabled: !!id,
+    queryKey: SupplyRequestQueryKey.DETAIL(id as string),
+    queryFn: () => fetchUniqueSupplyRequest(id as string),
   });
 };

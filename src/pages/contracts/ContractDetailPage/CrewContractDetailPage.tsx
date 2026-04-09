@@ -18,6 +18,7 @@ import {
 import { useAllowedRole } from "@/contexts/auth.context";
 import { AxiosError } from "axios";
 import { useSignContract } from "./hooks/use-sign-contract";
+import { FormMode } from "../ContractFormPage/SupplyContractFormPage";
 
 const CrewContractDetailPage = () => {
   const navigate = useNavigate();
@@ -62,9 +63,7 @@ const CrewContractDetailPage = () => {
               color="warning"
               variant="contained"
               onClick={() =>
-                navigate(
-                  `/crew-contracts/form?type=update&contractId=${contract.id}`,
-                )
+                navigate(`/contracts/form/${contract.id}?type=LABOR_CONTRACT`)
               }
             >
               {contract.freezed ? "Thêm phụ lục" : "Sửa hợp đồng"}
