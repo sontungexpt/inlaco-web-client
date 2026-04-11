@@ -73,7 +73,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { NoValuesOverlay } from "@components/common";
 import Color from "@constants/Color";
 
-const BaseDataGrid = ({
+const BaseDataGridOld = ({
   rows,
   columns,
   rowCount,
@@ -205,4 +205,4 @@ const BaseDataGrid = ({
   );
 };
 
-export default BaseDataGrid;
+export default BaseDataGridOld;

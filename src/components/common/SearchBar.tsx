@@ -40,7 +40,7 @@ export type SearchBarProps = Omit<
   renderOption?: (opt: any, selected: boolean, idx: number) => React.ReactNode;
   mapOptionToValue?: (opt: any) => string;
   matchAnchorWidth?: boolean;
-  onSelectOption?: (opt: any) => void;
+  onOptionSelected?: (opt: any) => void;
 
   collapsible?: boolean;
   collapsed?: boolean;
@@ -79,7 +79,7 @@ const SearchBar = ({
   renderOption = (opt) => opt?.label ?? String(opt),
   mapOptionToValue,
   matchAnchorWidth = false,
-  onSelectOption,
+  onOptionSelected: onSelectOption,
 
   collapsible = false,
   collapsed = true,

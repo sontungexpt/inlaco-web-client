@@ -1,45 +1,22 @@
 import Color from "@/constants/Color";
-import { Box, Pagination, BoxProps, PaginationProps } from "@mui/material";
+import { Pagination, PaginationProps } from "@mui/material";
 import { ReactNode } from "react";
+import { BaseDataGridBar, BaseDataGridBarProps } from "./BaseDataGridBar";
 
-export type BaseTableFooterProps = BoxProps & {
+export type BaseTableFooterProps = BaseDataGridBarProps & {
   pagination?: PaginationProps;
   pageSizeOptions?: number[];
   showPageSize?: boolean;
   leftCompoent?: ReactNode;
 };
 
-export default function DataGridPaginationFooter({
+export default function BaseDataGridFooter({
   pagination,
-  height,
   leftCompoent,
   ...props
 }: BaseTableFooterProps) {
   return (
-    <Box
-      {...props}
-      sx={[
-        {
-          width: "100%",
-
-          backgroundColor: "var(--rdg-header-background-color)",
-
-          borderWidth: "var(--rdg-border-width)",
-          borderColor: "var(--rdg-border-color)",
-
-          px: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-end",
-
-          color: "var(--rdg-color)",
-          fontSize: "var(--rdg-font-size)",
-
-          height: height,
-        },
-        ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
-      ]}
-    >
+    <BaseDataGridBar {...props}>
       {leftCompoent}
 
       {pagination?.count && (
@@ -48,6 +25,7 @@ export default function DataGridPaginationFooter({
           {...pagination}
           sx={[
             {
+              mx: 1,
               "&& .MuiPagination-ul": {
                 gap: 1.2,
               },
@@ -86,6 +64,6 @@ export default function DataGridPaginationFooter({
           ]}
         />
       )}
-    </Box>
+    </BaseDataGridBar>
   );
 }

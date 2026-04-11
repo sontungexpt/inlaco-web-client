@@ -16,7 +16,7 @@ import {
 import { Column } from "react-data-grid";
 import { SupplyRequest } from "@/types/api/supply-request.api";
 import CountryCodes from "@/constants/CountryCodes";
-import DataGridPaginationFooter from "@/components/common/datagrid/DataGridPaginationFooter";
+import BaseDataGridFooter from "@/components/common/datagrid/BaseDataGridFooter";
 
 export default function SupplyRequestPage({ pageSize = 6 }) {
   const navigate = useNavigate();
@@ -107,22 +107,18 @@ export default function SupplyRequestPage({ pageSize = 6 }) {
         {
           key: "shipInfo.name",
           name: "Tên tàu",
-          renderCell: ({ row }) => row.shipInfo.name,
         },
         {
           key: "shipInfo.imoNumber",
           name: "Số IMO",
-          renderCell: ({ row }) => row.shipInfo.imoNumber,
         },
         {
           key: "shipInfo.type",
           name: "Loại tàu",
-          renderCell: ({ row }) => row.shipInfo.type,
         },
         {
           key: "shipInfo.description",
           name: "Mô tả tàu",
-          renderCell: ({ row }) => row.shipInfo.description,
         },
         {
           key: "action",
@@ -177,7 +173,7 @@ export default function SupplyRequestPage({ pageSize = 6 }) {
           navigateToDetail(row.id);
         }}
         footer={
-          <DataGridPaginationFooter
+          <BaseDataGridFooter
             pagination={{
               page: page + 1,
               onChange: (_, p) => setPage(p - 1),

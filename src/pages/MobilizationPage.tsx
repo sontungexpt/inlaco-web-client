@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PageTitle, SectionWrapper } from "@components/common";
 
 import { type Column } from "react-data-grid";
@@ -7,87 +7,80 @@ import { Box, Button } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 
 import Color from "@constants/Color";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useMobilizations } from "@/queries/mobilization.query";
 import BaseDataGrid from "@/components/common/datagrid/BaseDataGrid";
-
-const mockMobilizations: MobilizationRow[] = [
-  ...Array.from({ length: 20 }, (_, i) => ({
-    id: i.toString(),
-    partnerName: "Company A ",
-    partnerPhone: "0901234567",
-    partnerEmail: "contact@companyA.com",
-    partnerAddress: "Hà Nội",
-    startDate: "2026-04-01T08:00:00Z",
-    estimatedEndDate: "2026-04-10T08:00:00Z",
-    shipInfo: {
-      imoNumber: "IMO1234567",
-      name: "Sea Dragon",
-      countryISO: "VN",
-      type: "Cargo",
-      image: {
-        publicId: "ship1",
-        url: "https://via.placeholder.com/100",
-      },
-    },
-  })),
-];
-
-type MobilizationRow = {
-  id: string;
-  partnerName: string;
-  partnerPhone: string;
-  partnerEmail: string;
-  partnerAddress: string;
-  startDate: string;
-  estimatedEndDate: string;
-
-  shipInfo?: {
-    imoNumber?: string;
-    name?: string;
-    countryISO?: string;
-    type?: string;
-    image?: {
-      publicId?: string;
-      url?: string;
-    };
-  };
-};
-
-const columns: Column<MobilizationRow>[] = [
-  ...Array.from({ length: 20 }, (_, i) => ({
-    key: `col_${i}`,
-    name: `Column ${i}`,
-    width: 200,
-    renderCell: () => <div>Data {i}</div>,
-  })),
-];
+import { MobilizationSchedule } from "@/types/api/mobilization.api";
 
 const MobilizationPage = ({ pageSize = 10 }) => {
   const navigate = useNavigate();
-  const { initialPage = 0 } = useLocation().state || {};
-  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
 
-  const [paginationModel, setPaginationModel] = useState({
-    page: initialPage || 0,
-    pageSize: pageSize,
-  });
-
-  const { data: { content: mobilizations } = {}, isLoading } = useMobilizations(
-    {
-      page: paginationModel.page,
-      pageSize: paginationModel.pageSize,
+  const { data: { content: mobilizations = [] } = {}, isLoading } =
+    useMobilizations({
+      page: page,
+      pageSize: pageSize,
       filter: {},
-    },
-    {},
-  );
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    });
 
-    return () => clearTimeout(timer);
-  }, []);
+  const columns: Column<MobilizationSchedule>[] = useMemo(
+    () =>
+      [
+        {
+          key: "id",
+          name: "ID",
+        },
+        {
+          key: "partnerName",
+          name: "Công ty",
+        },
+        {
+          key: "partnerPhone",
+          name: "Số điện thoại",
+        },
+        {
+          key: "partnerEmail",
+          name: "Email",
+        },
+        {
+          key: "partnerAddress",
+          name: "Địa chiề",
+        },
+        {
+          key: "startDate",
+          name: "Thời gian khởi hành",
+        },
+        {
+          key: "endDate",
+          name: "Thời gian kết thúc",
+        },
+        {
+          key: "shipInfo.imoNumber",
+          name: "Số IMO tàu",
+        },
+        {
+          key: "shipInfo.name",
+          name: "Tên tàu",
+        },
+        {
+          key: "shipInfo.countryISO",
+          name: "Quốc tịch tàu",
+        },
+        {
+          key: "shipInfo.type",
+          name: "Loại tàu",
+        },
+        // {
+        //   key: "shipInfo.image.url",
+        //   name: "Hình ảnh tàu",
+        // },
+        // {
+        //   key: "shipInfo.image.publicId",
+        //   name: "ID hình ảnh tàu",
+        // },
+      ] as Column<MobilizationSchedule>[],
+    [],
+  );
 
   return (
     <Box m="20px">
@@ -124,9 +117,9 @@ const MobilizationPage = ({ pageSize = 10 }) => {
           </Button>
         </Box>
       </SectionWrapper>
-      <BaseDataGrid<MobilizationRow>
-        loading={loading}
-        rows={mockMobilizations}
+      <BaseDataGrid<MobilizationSchedule>
+        loading={isLoading}
+        rows={mobilizations}
         columns={columns}
       />
     </Box>

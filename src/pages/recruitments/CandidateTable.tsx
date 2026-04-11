@@ -12,8 +12,8 @@ import CandidateStatus from "@/constants/CandidateStatus";
 import { BaseDataGrid } from "@/components/common";
 import { Column } from "react-data-grid";
 import { useMemo } from "react";
-import DataGridPaginationFooter from "@/components/common/datagrid/DataGridPaginationFooter";
-import { RGBColumn } from "@/components/common/datagrid/BaseDataGrid";
+import BaseDataGridFooter from "@/components/common/datagrid/BaseDataGridFooter";
+import { BaseDataGridColumn } from "@/components/common/datagrid/BaseDataGrid";
 
 const STATUS_FILTERS = [
   { label: "Đã nộp hồ sơ", value: CandidateStatus.APPLIED },
@@ -46,7 +46,7 @@ const CandidateTableFooter = ({
   onFilterStatusChange?: (status: CandidateStatus) => void;
 }) => {
   return (
-    <DataGridPaginationFooter
+    <BaseDataGridFooter
       {...props}
       leftCompoent={
         <Select<CandidateStatus>

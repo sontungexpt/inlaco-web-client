@@ -40,7 +40,15 @@ export default function InfoTextField({
       type={type}
       sx={[
         {
-          backgroundColor: "#FFF",
+          backgroundColor: Color.PrimaryWhite,
+
+          // root input
+          "& .MuiInputBase-root": {
+            height: "100%",
+            padding: 0,
+            fontSize: "inherit",
+          },
+
           "& .MuiInputBase-input.Mui-disabled": {
             WebkitTextFillColor: Color.PrimaryBlack,
           },

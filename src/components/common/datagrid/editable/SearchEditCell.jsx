@@ -61,7 +61,7 @@ const SearchEditCell = ({
         value={value}
         options={normalizeOptions}
         mapOptionToValue={(opt) => opt.value}
-        onSelectOption={handleSelect}
+        onOptionSelected={handleSelect}
         error={!!error}
         onChange={(e, v) => {
           api.setEditCellValue({ id, field, value: v }, { debounceMs: 120 });

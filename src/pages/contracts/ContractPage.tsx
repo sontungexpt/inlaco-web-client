@@ -11,9 +11,9 @@ import { dateToLocaleString } from "@utils/converter";
 import { useContracts } from "@/queries/contract.query";
 
 import BaseDataGrid, {
-  RGBColumn,
+  BaseDataGridColumn,
 } from "@/components/common/datagrid/BaseDataGrid";
-import DataGridPaginationFooter from "@/components/common/datagrid/DataGridPaginationFooter";
+import BaseDataGridFooter from "@/components/common/datagrid/BaseDataGridFooter";
 import { Column } from "react-data-grid";
 import { ContractType } from "@/types/api/contract.api";
 
@@ -99,7 +99,7 @@ export default function ContractPage({ pageSize = 20 }) {
             <DetailActionCell onClick={() => onContractDetailClick(row.id)} />
           ),
         },
-      ] as RGBColumn<ContractRow>[],
+      ] as BaseDataGridColumn<ContractRow>[],
     [],
   );
 
@@ -158,7 +158,7 @@ export default function ContractPage({ pageSize = 20 }) {
         onCellDoubleClick={({ row }) => onContractDetailClick(row.id)}
         rows={contracts as ContractRow[]}
         footer={
-          <DataGridPaginationFooter
+          <BaseDataGridFooter
             pagination={{
               page: page + 1,
               count: totalPages,

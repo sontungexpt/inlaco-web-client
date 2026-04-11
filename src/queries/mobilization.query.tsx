@@ -1,24 +1,30 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import {
   fetchMobilizations,
   fetchSpecificMobilization,
 } from "@/services/mobilization.service";
+import {
+  FetchMobilizationSchedulesParams,
+  MobilizationSchedule,
+} from "@/types/api/mobilization.api";
+import { ErrorResponse, PageableResponse } from "@/types/api/shared/base.api";
+import { AxiosError } from "axios";
 
 export const MobilizationQueryKey = {
   ALL: ["mobilizations"],
-  LIST: ({ page, pageSize, filter }) => [
+  LIST: ({ page, pageSize, filter }: FetchMobilizationSchedulesParams) => [
     ...MobilizationQueryKey.ALL,
     "list",
     page,
     pageSize,
     filter,
   ],
-  DETAIL: (id) => [...MobilizationQueryKey.ALL, "detail", id],
+  DETAIL: (id: string) => [...MobilizationQueryKey.ALL, "detail", id],
 };
 
 export const useMobilizations = (
-  { page, pageSize, filter },
-  { ...options },
+  { page, pageSize, filter }: FetchMobilizationSchedulesParams,
+  options?: UseQueryOptions<PageableResponse<MobilizationSchedule>>,
 ) => {
   return useQuery({
     ...options,
@@ -32,11 +38,10 @@ export const useMobilizations = (
   });
 };
 
-export const useMobilization = (mobilizationId, ...params) => {
+export const useMobilization = (mobilizationId?: string) => {
   return useQuery({
-    queryKey: MobilizationQueryKey.DETAIL(mobilizationId),
-    queryFn: () => fetchSpecificMobilization(mobilizationId),
     enabled: !!mobilizationId,
-    ...params,
+    queryKey: MobilizationQueryKey.DETAIL(mobilizationId as string),
+    queryFn: () => fetchSpecificMobilization(mobilizationId as string),
   });
 };

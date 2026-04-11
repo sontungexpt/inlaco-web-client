@@ -2,38 +2,42 @@ import "react-data-grid/lib/styles.css";
 import {
   Column,
   ColumnGroup,
-  ColumnOrColumnGroup,
   DataGrid,
+  DataGridHandle,
   DataGridProps,
   RenderCellProps,
-  Renderers,
-  renderValue,
 } from "react-data-grid";
 
 import Skeleton from "@mui/material/Skeleton";
-import Color from "@constants/Color";
-import { isValidElement, cloneElement, ReactNode, useMemo } from "react";
+import {
+  isValidElement,
+  cloneElement,
+  ReactNode,
+  useMemo,
+  useRef,
+  useState,
+  useLayoutEffect,
+} from "react";
 import NoValuesOverlay from "./NoValuesOverlay";
 import { Box, Tooltip } from "@mui/material";
+import {
+  DEFAULT_RDG_ROW_HEIGHT,
+  DEFAULT_RDG_VARS,
+  RDGStyle,
+} from "./constants";
+import { enhanceBar } from "./BaseDataGridBar";
 
-export interface RGBColumn<R, SR = unknown> extends Column<R, SR> {
+export type BaseDataGridColumn<R, SR = unknown> = Column<R, SR> & {
   toolTip?: ((props: RenderCellProps<R, SR>) => ReactNode) | ReactNode;
-}
-
-export type RDGStyle = React.CSSProperties & {
-  [key: `--rdg-${string}`]: string;
 };
 
-export type BaseDataGridProps<R, SR> = Omit<DataGridProps<R, SR>, "style"> & {
-  style?: RDGStyle;
-  loading?: boolean;
-  noValuesOverlay?: ReactNode;
-  footer?: ReactNode;
-  footerRowHeight?: number;
-  skeletonCount?: number;
-  showSkeletonTail?: boolean;
-  globalTooltip?: ((props: RenderCellProps<R, SR>) => ReactNode) | ReactNode;
+export type BaseDataGridColumnGroup<R, SR = unknown> = ColumnGroup<R, SR> & {
+  children: BaseDataGridColumnOrColumnGroup<R, SR>[];
 };
+
+export type BaseDataGridColumnOrColumnGroup<R, SR = unknown> =
+  | BaseDataGridColumn<R, SR>
+  | BaseDataGridColumnGroup<R, SR>;
 
 function createSkeletonRows(count = 5): { ____loading: boolean }[] {
   const rows = [];
@@ -87,118 +91,97 @@ function renderSkeletonCell<R, SR>(p: RenderCellProps<R, SR>) {
     />
   );
 }
-function injectSkeletonToColumns<R, SR>(
-  columns: readonly ColumnOrColumnGroup<R, SR>[],
-  globalTooltip?: ((props: RenderCellProps<R, SR>) => ReactNode) | ReactNode,
-): readonly ColumnOrColumnGroup<R, SR>[] {
-  return columns.map((col: ColumnOrColumnGroup<R, SR>) => {
-    if ("children" in col) {
-      // group
-      return {
-        ...col,
-        children: injectSkeletonToColumns(col.children),
-      } as ColumnGroup<R, SR>;
-    }
 
-    return {
-      ...col,
-      renderCell: (p: RenderCellProps<R & { ____loading: boolean }, SR>) => {
-        if (p.row.____loading)
-          return renderSkeletonCell<R, SR>(p as RenderCellProps<R, SR>);
-
-        const value =
-          col.renderCell?.(p as RenderCellProps<R, SR>) ?? renderValue(p);
-
-        let toolTip = (col as RGBColumn<R, SR>).toolTip ?? globalTooltip;
-        if (typeof toolTip === "function") {
-          toolTip = toolTip(p as RenderCellProps<R, SR>);
-        }
-
-        if (isValidElement(toolTip)) {
-          return cloneElement(toolTip, {}, value);
-        }
-
-        if (
-          toolTip === false || // disable explicit
-          toolTip === "" // empty string
-        ) {
-          return value;
-        }
-
-        const props = {
-          title: "",
-        };
-
-        if (typeof toolTip === "string") {
-          props.title = toolTip;
-        } else if (
-          (toolTip == null || toolTip === true) &&
-          ((typeof value === "string" && value.length > 0) ||
-            typeof value === "number" ||
-            typeof value === "boolean")
-        ) {
-          props.title = String(value);
-        }
-
-        return (
-          <Tooltip placement="bottom-start" arrow {...props}>
-            <div style={{ width: "100%" }}>{value}</div>
-          </Tooltip>
-        );
-      },
-    } as Column<R, SR>;
-  });
+export function renderValue<R, SR>(props: {
+  row: R;
+  column: BaseDataGridColumn<R, SR>;
+}) {
+  const key = props.column.key;
+  const value = key.split(".").reduce<any>((acc, part) => {
+    return acc?.[part];
+  }, props.row);
+  return value as React.ReactNode;
 }
 
-const DEFAULT_RDG_VARS: RDGStyle = {
-  "--rdg-font-size": "14px",
-  "--rdg-color": Color.TextPrimary,
+function useCustomColumns<R, SR>(
+  columns: readonly BaseDataGridColumnOrColumnGroup<R, SR>[],
+  globalTooltip?: any,
+): BaseDataGridColumnOrColumnGroup<R, SR>[] {
+  return useMemo(() => {
+    function transform(
+      cols: readonly BaseDataGridColumnOrColumnGroup<R, SR>[],
+    ): BaseDataGridColumnOrColumnGroup<R, SR>[] {
+      return cols.map((col) => {
+        if ("children" in col) {
+          return {
+            ...col,
+            children: transform(col.children),
+          };
+        }
 
-  "--rdg-background-color": Color.PrimaryWhite,
+        return {
+          ...col,
+          renderCell: (
+            p: RenderCellProps<R & { ____loading: boolean }, SR>,
+          ) => {
+            if (p.row.____loading)
+              return renderSkeletonCell<R, SR>(p as RenderCellProps<R, SR>);
 
-  "--rdg-header-background-color": Color.SecondaryBlue,
-  "--rdg-header-draggable-background-color": Color.PrimaryBlue,
+            const value =
+              col.renderCell?.(p as RenderCellProps<R, SR>) ?? renderValue(p);
 
-  "--rdg-row-hover-background-color": Color.HoverOverlay,
-  "--rdg-row-selected-background-color": "rgba(77, 133, 216, 0.12)",
-  "--rdg-row-selected-hover-background-color": Color.ActiveOverlay,
+            let toolTip =
+              (col as BaseDataGridColumn<R, SR>).toolTip ?? globalTooltip;
+            if (typeof toolTip === "function") {
+              toolTip = toolTip(p as RenderCellProps<R, SR>);
+            }
 
-  "--rdg-selection-width": "2px",
-  "--rdg-selection-color": Color.PrimaryBlue,
+            if (isValidElement(toolTip)) {
+              return cloneElement(toolTip, {}, value);
+            }
 
-  "--rdg-border-color": Color.PrimaryBlack,
-  "--rdg-border-width": "1px",
+            if (
+              toolTip === false || // disable explicit
+              toolTip === "" // empty string
+            ) {
+              return value;
+            }
 
-  "--rdg-checkbox-focus-color": Color.PrimaryBlue,
-} as const;
+            const props = {
+              title: "",
+            };
 
-const DEFAULT_ROW_HEIGHT = 44;
+            if (typeof toolTip === "string") {
+              props.title = toolTip;
+            } else if (
+              (toolTip == null || toolTip === true) &&
+              ((typeof value === "string" && value.length > 0) ||
+                typeof value === "number" ||
+                typeof value === "boolean")
+            ) {
+              props.title = String(value);
+            }
 
-export default function BaseDataGrid<R, SR = unknown>({
-  rows,
-  columns,
-  loading,
-  style,
+            return (
+              <Tooltip placement="bottom-start" arrow {...props}>
+                <div style={{ width: "100%" }}>{value}</div>
+              </Tooltip>
+            );
+          },
+        } as BaseDataGridColumn<R, SR>;
+      });
+    }
 
-  globalTooltip, // If is a function should use useMemo to memoize
+    return transform(columns);
+  }, [columns, globalTooltip]);
+}
 
-  skeletonCount,
-  showSkeletonTail = false,
-
-  noValuesOverlay = <NoValuesOverlay />,
-  footer,
-
-  headerRowHeight,
-  rowHeight = DEFAULT_ROW_HEIGHT,
-  footerRowHeight,
-
-  ...props
-}: BaseDataGridProps<R, SR>) {
-  const baseRowHeight =
-    typeof rowHeight === "number" ? rowHeight : DEFAULT_ROW_HEIGHT;
-  const headerHeight = headerRowHeight ?? baseRowHeight;
-  const footerHeight = footerRowHeight ?? headerHeight;
-
+function useCustomRows<R, SR>(
+  rows: readonly R[],
+  skeletonCount?: number,
+  loading?: boolean,
+  showSkeletonTail?: boolean,
+) {
   const skeletonRows = useMemo(() => {
     return createSkeletonRows(Math.min(skeletonCount ?? 5, 10)) as R[];
   }, [skeletonCount]);
@@ -213,57 +196,149 @@ export default function BaseDataGrid<R, SR = unknown>({
     return [...rows, ...skeletonRows];
   }, [rows, loading, skeletonRows]);
 
-  const columnsResolved = useMemo(() => {
-    return injectSkeletonToColumns(columns, globalTooltip);
-  }, [columns, globalTooltip]);
+  return rowsResolved;
+}
 
-  const footerNode = useMemo(() => {
-    if (!footer) return null;
-    if (!isValidElement(footer)) {
-      throw new Error("footer must be ReactNode");
-    }
-    return cloneElement<any>(footer, {
-      height: footerHeight,
-    });
-  }, [footer]);
+function useCompatibleGridWidth(node: ReactNode, gridWidth: number) {
+  return useMemo(
+    () =>
+      enhanceBar(node, {
+        width: (node as any)?.props?.width ?? gridWidth,
+      }),
+    [node, gridWidth],
+  );
+}
 
-  const dataGridStyle = useMemo(() => {
-    return {
+function useGridSize(gridRef: React.RefObject<DataGridHandle | null>) {
+  const [width, setWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    const el = gridRef.current?.element;
+    if (!el) return;
+
+    const update = () => {
+      setWidth(el.getBoundingClientRect().width);
+    };
+
+    update(); // init
+    const ro = new ResizeObserver(() => update());
+    ro.observe(el);
+
+    return () => ro.disconnect();
+  }, []);
+
+  return { width };
+}
+
+export type BaseDataGridProps<R, SR> = Omit<
+  DataGridProps<R, SR>,
+  "style" | "columns"
+> & {
+  columns: BaseDataGridColumnOrColumnGroup<R, SR>[];
+  style?: RDGStyle;
+  loading?: boolean;
+  noValuesOverlay?: ReactNode;
+  toolbar?: ReactNode;
+  footer?: ReactNode;
+  skeletonCount?: number;
+  showSkeletonTail?: boolean;
+  globalTooltip?: ((props: RenderCellProps<R, SR>) => ReactNode) | ReactNode;
+};
+
+export default function BaseDataGrid<R, SR = unknown>({
+  rows,
+  columns,
+  loading,
+  style,
+
+  toolbar,
+  globalTooltip, // If is a function should use useMemo to memoize
+
+  skeletonCount,
+  showSkeletonTail = false,
+
+  noValuesOverlay = <NoValuesOverlay />,
+
+  footer,
+
+  rowHeight = DEFAULT_RDG_ROW_HEIGHT,
+  headerRowHeight,
+
+  defaultColumnOptions,
+
+  ...props
+}: BaseDataGridProps<R, SR>) {
+  const baseRowHeight =
+    typeof rowHeight === "number" ? rowHeight : DEFAULT_RDG_ROW_HEIGHT;
+  const headerHeight = headerRowHeight ?? baseRowHeight;
+
+  const gridRef = useRef<DataGridHandle>(null);
+  const { width: gridWidth } = useGridSize(gridRef);
+
+  const columnsResolved = useCustomColumns(columns, globalTooltip);
+  const rowsResolved = useCustomRows(
+    rows,
+    skeletonCount,
+    loading,
+    showSkeletonTail,
+  );
+  const isEmpty = rowsResolved.length === 0;
+
+  const dataGridStyle = useMemo(
+    () => ({
       ...DEFAULT_RDG_VARS,
       maxHeight: "90vh",
       ...style,
-    };
-  }, [style]);
-
-  const renderers: Renderers<R, SR> = useMemo(
-    () => ({
-      noRowsFallback: (
-        <div style={{ gridColumn: "1/-1", placeSelf: "center" }}>
-          {noValuesOverlay}
-        </div>
-      ),
     }),
-    [],
+    [style],
   );
 
+  const footerNode = useCompatibleGridWidth(footer, gridWidth);
+  const toolbarNode = useCompatibleGridWidth(toolbar, gridWidth);
+
   return (
-    <Box sx={[DEFAULT_RDG_VARS, { width: "auto" }]}>
-      <DataGrid
-        {...props}
-        defaultColumnOptions={{
-          resizable: true,
-          sortable: true,
-          ...props?.defaultColumnOptions,
-        }}
-        style={dataGridStyle}
-        rows={rowsResolved}
-        columns={columnsResolved}
-        rowHeight={rowHeight} // use row height because it allows dynamic row height
-        headerRowHeight={headerHeight}
-        renderers={renderers}
-        summaryRowHeight={footerHeight}
-      />
-      {!loading && <div style={{ gridColumn: "1/-1" }}>{footerNode}</div>}
+    <Box sx={DEFAULT_RDG_VARS}>
+      {toolbarNode}
+
+      <Box sx={{ position: "relative" }}>
+        <DataGrid
+          {...props}
+          defaultColumnOptions={{
+            resizable: true,
+            sortable: true,
+            ...defaultColumnOptions,
+          }}
+          ref={gridRef}
+          style={dataGridStyle}
+          rows={rowsResolved}
+          columns={columnsResolved}
+          rowHeight={rowHeight}
+          headerRowHeight={headerHeight}
+        />
+        {!loading && isEmpty && (
+          <Box
+            sx={{
+              position: "absolute",
+              width: gridWidth,
+
+              top: headerHeight,
+              left: 0,
+              right: 0,
+              bottom: 0,
+
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+
+              pointerEvents: "none",
+            }}
+          >
+            {noValuesOverlay}
+          </Box>
+        )}
+      </Box>
+
+      {footerNode}
     </Box>
   );
 }
