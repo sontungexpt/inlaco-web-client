@@ -3,28 +3,39 @@ import BaseDataGrid, {
   BaseDataGridColumn,
   BaseDataGridColumnOrColumnGroup,
   BaseDataGridColumnGroup,
+  BaseDataGridErrors,
 } from "./BaseDataGrid";
-import { Box, Button } from "@mui/material";
+import { Box, Button, ButtonProps } from "@mui/material";
 import { RenderEditCellProps } from "react-data-grid";
 import { InfoTextField } from "../fields";
-import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useMemo,
+} from "react";
+import BaseEditableDataGridToolbar from "./components/BaseEditableDataGridToolbar";
 
-export type BaseEditableDataGridColumnOrColumnGroup<R, SR> =
+export type BaseEditableDataGridColumnOrColumnGroup<R, SR = unknown> =
   | BaseEditableDataGridColumn<R, SR>
   | BaseEditableDataGridColumnGroup<R, SR>;
 
-export type BaseEditableDataGridColumnGroup<R, SR> = BaseDataGridColumnGroup<
-  R,
-  SR
+export type BaseEditableDataGridColumnGroup<R, SR = unknown> = Omit<
+  BaseDataGridColumnGroup<R, SR>,
+  "children"
 > & {
   children: BaseDataGridColumnOrColumnGroup<R, SR>[];
 };
 
-export type BaseEditableDataGridColumn<R, SR> = BaseDataGridColumn<R, SR> & {
+export type BaseEditableDataGridColumn<R, SR = unknown> = BaseDataGridColumn<
+  R,
+  SR
+> & {
   searchable?: boolean;
 };
 
-export type useEditableDataGridProps<R, SR> = {
+export type useEditableDataGridProps<R, SR = unknown> = {
   rows: R[];
   setRows: Dispatch<SetStateAction<R[]>>;
   defaultNewRowValue?: (prevRows: R[]) => R;
@@ -52,11 +63,21 @@ export function useEditableDataGrid<R, SR>({
   };
 }
 
-export type BaseEditableDataGridProps<R, SR> = BaseDataGridProps<R, SR> & {
-  initialRows?: R[];
-  onAddRow?: () => void;
-  errors: Record<string, string>;
+type WithToolbar<R, SR> = {
+  toolbar: BaseDataGridProps<R, SR>["toolbar"];
+  onNewRowClick?: never;
 };
+
+type WithoutToolbar = {
+  toolbar?: never;
+  onNewRowClick: ButtonProps["onClick"];
+};
+
+export type BaseEditableDataGridProps<R, SR> = Omit<
+  BaseDataGridProps<R, SR>,
+  "toolbar"
+> &
+  (WithToolbar<R, SR> | WithoutToolbar) & {};
 
 export function renderEditCell<R, SR>({
   row,
@@ -67,21 +88,16 @@ export function renderEditCell<R, SR>({
   error?: string;
 }) {
   const key = column.key as keyof R;
-  console.log("errror", error);
   return (
     <InfoTextField
       value={(row[key] ?? "") as string}
-      error={!!error}
+      type={column.type}
       onChange={(e) =>
-        onRowChange(
-          {
-            ...row,
-            [key]: e.target.value,
-          },
-          false,
-        )
+        onRowChange({
+          ...row,
+          [key]: e.target.value,
+        })
       }
-      fullWidth
       sx={{
         height: "100%",
         width: "100%",
@@ -92,7 +108,7 @@ export function renderEditCell<R, SR>({
 
 function useCustomColumns<R, SR>(
   columns: readonly BaseEditableDataGridColumnOrColumnGroup<R, SR>[],
-  errors: Record<string, string>,
+  errors?: BaseDataGridErrors,
 ): BaseEditableDataGridColumnOrColumnGroup<R, SR>[] {
   return useMemo(() => {
     function transform(
@@ -111,6 +127,7 @@ function useCustomColumns<R, SR>(
           renderEditCell: (props: RenderEditCellProps<R, SR>) => {
             const { rowIdx, column } = props;
             const error = (errors as any)[rowIdx][column.key];
+
             return renderEditCell({
               ...props,
               error,
@@ -126,9 +143,10 @@ function useCustomColumns<R, SR>(
 export default function BaseEditableDataGrid<R, SR = unknown>({
   rows,
   columns,
-  onAddRow,
+  onNewRowClick,
   onRowsChange,
   errors,
+  toolbar,
   ...props
 }: BaseEditableDataGridProps<R, SR>) {
   const resolvedColumns = useCustomColumns<R, SR>(columns, errors);
@@ -137,18 +155,11 @@ export default function BaseEditableDataGrid<R, SR = unknown>({
     <BaseDataGrid
       {...props}
       rows={rows}
+      errors={errors}
       columns={resolvedColumns}
       onRowsChange={onRowsChange}
       toolbar={
-        <Box
-          sx={{
-            display: "flex",
-          }}
-        >
-          <Button variant="outlined" size="small" onClick={() => onAddRow?.()}>
-            + Add row
-          </Button>
-        </Box>
+        toolbar ?? <BaseEditableDataGridToolbar onNewRowClick={onNewRowClick} />
       }
     />
   );

@@ -1,5 +1,5 @@
 import { Box, BoxProps } from "@mui/material";
-import { DEFAULT_RDG_ROW_HEIGHT } from "./constants";
+import { DEFAULT_RDG_ROW_HEIGHT } from "../shared/constants";
 import { cloneElement, isValidElement, ReactNode } from "react";
 
 const BASE_DATA_GRID_BAR_TYPE = Symbol("BaseDataGridBar");

@@ -40,8 +40,6 @@ export default function InfoTextField({
       type={type}
       sx={[
         {
-          backgroundColor: Color.PrimaryWhite,
-
           // root input
           "& .MuiInputBase-root": {
             height: "100%",
@@ -52,11 +50,19 @@ export default function InfoTextField({
           "& .MuiInputBase-input.Mui-disabled": {
             WebkitTextFillColor: Color.PrimaryBlack,
           },
+
           "& .MuiOutlinedInput-root.Mui-disabled": {
             WebkitTextFillColor: Color.PrimaryBlack,
           },
+
           "& .MuiInputLabel-root.Mui-disabled": {
             WebkitTextFillColor: Color.PrimaryBlack,
+          },
+
+          "& input::-webkit-calendar-picker-indicator": {
+            display: "block",
+            cursor: "pointer",
+            filter: "brightness(0) saturate(100%)",
           },
         },
         ...(Array.isArray(sx) ? sx : [sx]),

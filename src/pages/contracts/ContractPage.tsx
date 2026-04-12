@@ -7,14 +7,12 @@ import {
 } from "@components/common";
 import { Box, MenuItem } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router";
-import { dateToLocaleString } from "@utils/converter";
 import { useContracts } from "@/queries/contract.query";
 
 import BaseDataGrid, {
   BaseDataGridColumn,
 } from "@/components/common/datagrid/BaseDataGrid";
-import BaseDataGridFooter from "@/components/common/datagrid/BaseDataGridFooter";
-import { Column } from "react-data-grid";
+import { BaseDataGridFooter } from "@/components/common/datagrid/components";
 import { ContractType } from "@/types/api/contract.api";
 
 const useContractPageParams = (): {
@@ -68,7 +66,7 @@ export default function ContractPage({ pageSize = 20 }) {
     navigate(`/contracts/${id}`);
   };
 
-  const columns: readonly Column<ContractRow>[] = useMemo(
+  const columns: readonly BaseDataGridColumn<ContractRow>[] = useMemo(
     () =>
       [
         {
@@ -84,12 +82,12 @@ export default function ContractPage({ pageSize = 20 }) {
         {
           key: "activationDate",
           name: "Ngày có hiệu lực",
-          renderCell: ({ row }) => dateToLocaleString(row.activationDate),
+          type: "datetime",
         },
         {
           key: "expiredDate",
           name: "Ngày hết hạn",
-          renderCell: ({ row }) => dateToLocaleString(row.expiredDate),
+          type: "datetime",
         },
         {
           key: "actions",

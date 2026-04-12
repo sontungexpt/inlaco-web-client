@@ -83,7 +83,7 @@ export function dateToLocaleString(
   locale: string = "vi-VN",
 ): string {
   const dateObj = date instanceof Date ? date : new Date(date);
-  if (Number.isNaN(dateObj.getTime())) return "";
+  if (Number.isNaN(dateObj.getTime())) return "Invalid date";
 
   if (type === "date") return dateObj.toLocaleDateString(locale);
   else if (type === "time") return dateObj.toLocaleTimeString(locale);
@@ -94,7 +94,7 @@ export function dateToLocaleString(
     return method.call(dateObj, locale);
   }
 
-  return "";
+  return "Invalid date";
 }
 
 /**

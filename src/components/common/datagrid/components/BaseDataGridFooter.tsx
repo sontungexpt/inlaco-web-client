@@ -10,7 +10,7 @@ export type BaseTableFooterProps = BaseDataGridBarProps & {
   leftCompoent?: ReactNode;
 };
 
-export default function BaseDataGridFooter({
+export function BaseDataGridFooter({
   pagination,
   leftCompoent,
   ...props
@@ -67,3 +67,5 @@ export default function BaseDataGridFooter({
     </BaseDataGridBar>
   );
 }
+
+export default BaseDataGridFooter;

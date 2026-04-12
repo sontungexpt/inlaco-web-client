@@ -20,7 +20,10 @@ import toast from "react-hot-toast";
 import { fetchCrewMembers } from "@/services/crew.service";
 import { BASE_FORM_VALUES } from "./initial";
 import { Column } from "react-data-grid";
-import { useEditableDataGrid } from "@/components/common/datagrid/BaseEditableDataGrid";
+import {
+  BaseEditableDataGridColumn,
+  useEditableDataGrid,
+} from "@/components/common/datagrid/BaseEditableDataGrid";
 
 // const CrewOptionItem = ({ cardId, fullName, active }) => (
 //   <Box
@@ -114,7 +117,7 @@ const MobiliaztionForm = () => {
     }
   };
 
-  const columns: Column<any>[] = useMemo(
+  const columns: BaseEditableDataGridColumn<FormValuesCrew>[] = useMemo(
     () =>
       [
         {
@@ -132,16 +135,18 @@ const MobiliaztionForm = () => {
         {
           key: "startDate",
           name: "Ngày bắt đầu",
+          type: "date",
         },
         {
           key: "endDate",
           name: "Ngày kết thúc",
+          type: "date",
         },
         {
           key: "remark",
           name: "Ghi chú",
         },
-      ] as Column<any>[],
+      ] as BaseEditableDataGridColumn<FormValuesCrew>[],
     [],
   );
 
@@ -157,12 +162,11 @@ const MobiliaztionForm = () => {
         values,
         errors,
         handleSubmit,
-        isValid,
         dirty,
         isSubmitting,
         setFieldValue,
       }) => {
-        console.log("errors", errors);
+        console.debug("errors", errors);
         return (
           <Box component="form" onSubmit={handleSubmit} m={2}>
             {/* ================= HEADER ================= */}
@@ -292,8 +296,9 @@ const MobiliaztionForm = () => {
             {/* ================= CREW ================= */}
             <SectionWrapper>
               <BaseEditableDataGrid<FormValuesCrew>
+                columns={columns}
                 rows={values.crews}
-                onAddRow={() => {
+                onNewRowClick={() => {
                   const newRow = {
                     id: crypto.randomUUID(),
                     employeeCardId: "",
@@ -307,7 +312,6 @@ const MobiliaztionForm = () => {
                 onRowsChange={(newRows: any[]) => {
                   setFieldValue("crews", newRows, true);
                 }}
-                columns={columns}
               />
             </SectionWrapper>
           </Box>

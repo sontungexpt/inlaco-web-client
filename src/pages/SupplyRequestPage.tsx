@@ -16,7 +16,7 @@ import {
 import { Column } from "react-data-grid";
 import { SupplyRequest } from "@/types/api/supply-request.api";
 import CountryCodes from "@/constants/CountryCodes";
-import BaseDataGridFooter from "@/components/common/datagrid/BaseDataGridFooter";
+import { BaseDataGridFooter } from "@/components/common/datagrid/components";
 
 export default function SupplyRequestPage({ pageSize = 6 }) {
   const navigate = useNavigate();

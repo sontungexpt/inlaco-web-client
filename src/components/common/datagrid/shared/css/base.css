@@ -1,0 +1,5 @@
+.rdg-base-data-grid-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
