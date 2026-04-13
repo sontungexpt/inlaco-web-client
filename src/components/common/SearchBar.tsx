@@ -12,7 +12,15 @@ import {
 } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { useDebounced } from "@/hooks/useDebounced";
 
 const SOURCE = {
@@ -25,7 +33,7 @@ export type SearchBarProps = Omit<
   "slotProps" | "onChange" | "value"
 > & {
   value?: string;
-  showSearchIcon: boolean;
+  showSearchIcon?: boolean;
   debounceMs?: number;
   minLength?: number;
 
@@ -51,7 +59,7 @@ export type SearchBarProps = Omit<
     e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent,
     value: string,
   ) => void;
-  onSearch?: (value: string) => void;
+  onSearch?: (value: string) => Promise<void> | void;
 
   slotProps?: TextFieldProps["slotProps"] & {
     popper?: PopperProps;
@@ -66,14 +74,14 @@ const SearchBar = ({
   fullWidth = true,
   disabled = false,
   size = "small",
-  minLength = 1,
+  minLength = 2,
 
   autoSearch = true,
   searchOnMount = false,
   searchAfterClear = false,
   suppressSearchOnValueChange = false,
 
-  loading,
+  loading: externalLoading,
   dropdown = false,
   options = [],
   renderOption = (opt) => opt?.label ?? String(opt),
@@ -104,10 +112,17 @@ const SearchBar = ({
   const [dropdownOpened, setDropdownOpened] = useState(false);
   const [activeOptionIndex, setActiveOptionIndex] = useState(-1);
   const [innerLoading, setInnerLoading] = useState(false);
+  const loading = externalLoading ?? innerLoading;
+  const setLoading = useCallback(
+    (v: SetStateAction<boolean>) => {
+      if (externalLoading === undefined) setInnerLoading(v);
+    },
+    [externalLoading],
+  );
+
   const [isCollapsed, setIsCollapsedState] = useState<boolean>(
     collapsible && collapsed,
   );
-
   const setIsCollapsed = useCallback(
     (v: boolean) => {
       if (collapsible) setIsCollapsedState(v);
@@ -116,7 +131,6 @@ const SearchBar = ({
   );
 
   const debouncedValue = useDebounced(inputValue, debounceMs);
-  const finalLoading = typeof loading === "boolean" ? loading : innerLoading;
 
   const listRef = useRef<
     Array<React.ComponentRef<typeof ListItemButton> | null>
@@ -145,15 +159,13 @@ const SearchBar = ({
       }
 
       try {
-        if (typeof loading !== "boolean") {
-          setInnerLoading(true);
-        }
+        setLoading(true);
         const res = onSearch?.(keyword) as any;
         if (res instanceof Promise) {
           await res;
         }
       } finally {
-        setInnerLoading(false);
+        setLoading(false);
         if (dropdown) setDropdownOpened(true);
       }
     },
@@ -360,6 +372,11 @@ const SearchBar = ({
     () => [
       ...(Array.isArray(sx) ? sx : [sx]),
       {
+        "& .MuiInputBase-root": {
+          height: "100%",
+          fontSize: "inherit",
+        },
+
         overflow: "hidden",
         maxWidth: isCollapsed ? collapseWidth : undefined,
         minWidth: isCollapsed
@@ -381,18 +398,18 @@ const SearchBar = ({
   const startAdornment = useMemo(
     () => (
       <InputAdornment position="start" sx={{ cursor: "pointer" }}>
-        {finalLoading ? (
+        {loading ? (
           <CircularProgress size={18} />
         ) : (
           showSearchIcon && <SearchRoundedIcon fontSize="small" />
         )}
       </InputAdornment>
     ),
-    [finalLoading, showSearchIcon],
+    [loading, showSearchIcon],
   );
 
   const endAdornment = useMemo(() => {
-    if (isCollapsed || !inputValue || finalLoading || disabled) return null;
+    if (isCollapsed || !inputValue || loading || disabled) return null;
 
     return (
       <InputAdornment position="end">
@@ -401,7 +418,7 @@ const SearchBar = ({
         </IconButton>
       </InputAdornment>
     );
-  }, [isCollapsed, inputValue, finalLoading, disabled, handleClear]);
+  }, [isCollapsed, inputValue, loading, disabled, handleClear]);
 
   /* =========================
    * Render

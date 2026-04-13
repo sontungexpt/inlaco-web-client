@@ -43,21 +43,20 @@ export default function InfoTextField({
           // root input
           "& .MuiInputBase-root": {
             height: "100%",
-            padding: 0,
             fontSize: "inherit",
           },
 
-          "& .MuiInputBase-input.Mui-disabled": {
-            WebkitTextFillColor: Color.PrimaryBlack,
-          },
+          // "& .MuiInputBase-input.Mui-disabled": {
+          //   WebkitTextFillColor: Color.PrimaryBlack,
+          // },
 
-          "& .MuiOutlinedInput-root.Mui-disabled": {
-            WebkitTextFillColor: Color.PrimaryBlack,
-          },
+          // "& .MuiOutlinedInput-root.Mui-disabled": {
+          //   WebkitTextFillColor: Color.PrimaryBlack,
+          // },
 
-          "& .MuiInputLabel-root.Mui-disabled": {
-            WebkitTextFillColor: Color.PrimaryBlack,
-          },
+          // "& .MuiInputLabel-root.Mui-disabled": {
+          //   WebkitTextFillColor: Color.PrimaryBlack,
+          // },
 
           "& input::-webkit-calendar-picker-indicator": {
             display: "block",

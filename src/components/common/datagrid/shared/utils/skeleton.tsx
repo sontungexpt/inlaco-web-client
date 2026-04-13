@@ -1,5 +1,5 @@
 import Skeleton from "@mui/material/Skeleton";
-import { RenderCellProps } from "react-data-grid";
+import { Cell, CellRendererProps, RenderCellProps } from "react-data-grid";
 
 export function createSkeletonRows(count = 5): { ____loading: boolean }[] {
   const rows = [];
@@ -49,6 +49,19 @@ export function renderSkeletonCell<R, SR>(p: RenderCellProps<R, SR>) {
           from: { width: "0%" },
           to: { width: "100%" },
         },
+      }}
+    />
+  );
+}
+
+export function SkeletonCell<R, SR>(props: CellRendererProps<R, SR>) {
+  const { column } = props;
+  return (
+    <Cell
+      {...props}
+      column={{
+        ...column,
+        renderCell: renderSkeletonCell,
       }}
     />
   );

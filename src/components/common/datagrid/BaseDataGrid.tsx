@@ -2,33 +2,48 @@ import "react-data-grid/lib/styles.css";
 import "./shared/css/base.css";
 
 import {
+  CalculatedColumn,
+  Cell,
+  CellRendererProps,
   Column,
   ColumnGroup,
   DataGrid,
   DataGridHandle,
   DataGridProps,
   RenderCellProps,
+  Renderers,
 } from "react-data-grid";
-import { ReactNode, useMemo, useRef, useState, useLayoutEffect } from "react";
+import {
+  ReactNode,
+  useMemo,
+  useRef,
+  useState,
+  useLayoutEffect,
+  useEffect,
+  useSyncExternalStore,
+} from "react";
 import NoValuesOverlay from "./components/NoValuesOverlay";
-import { Box } from "@mui/material";
+import { Box, css } from "@mui/material";
 import {
   DEFAULT_RDG_ROW_HEIGHT,
   DEFAULT_RDG_VARS,
   RDGStyle,
 } from "./shared/constants";
 
-import { enhanceBar } from "./components/BaseDataGridBar";
 import { renderValue, resolveTooltip } from "./shared/utils";
 import {
   createSkeletonRows,
   renderSkeletonCell,
+  SkeletonCell,
 } from "./shared/utils/skeleton";
 
 import { LocaleType } from "@/utils/converter";
 import BaseDataGridCell from "./components/BaseDataGridCell";
+import Color from "@/constants/Color";
+import { DataGridContextProvider } from "./shared/context";
+import { GetCellError } from "./shared/error-store";
 
-export type BaseDataGridRowPrivateFields = {
+export type BaseDataGridLoadingRow = {
   ____loading: boolean;
 };
 
@@ -57,14 +72,35 @@ export type BaseDataGridColumnGroup<R, SR = unknown> = Omit<
   children: BaseDataGridColumnOrColumnGroup<R, SR>[];
 };
 
+export type BaseDataGridCalculatedColumn<R, SR = unknown> = Omit<
+  CalculatedColumn<R, SR> & BaseDataGridColumn<R, SR>,
+  "renderCell"
+> & {
+  readonly renderCell?: (
+    props: BaseDataGridRenderCellProps<R, SR>,
+  ) => ReactNode;
+};
+
 export type BaseDataGridColumnOrColumnGroup<R, SR = unknown> =
   | BaseDataGridColumn<R, SR>
   | BaseDataGridColumnGroup<R, SR>;
 
+export type BaseDataGridCellRendererProps<R, SR = unknown> = Omit<
+  CellRendererProps<R, SR>,
+  "column"
+> & {
+  column: BaseDataGridColumn<R, SR>;
+};
+
+export type BaseDataGridRenderCellProps<R, SR = unknown> = Omit<
+  RenderCellProps<R, SR>,
+  "column"
+> & {
+  column: BaseDataGridCalculatedColumn<R, SR>;
+};
+
 function useCustomColumns<R, SR>(
   columns: readonly BaseDataGridColumnOrColumnGroup<R, SR>[],
-  globalTooltip?: any,
-  errors?: BaseDataGridErrors,
 ) {
   return useMemo(() => {
     function transform(
@@ -81,35 +117,25 @@ function useCustomColumns<R, SR>(
         return {
           ...col,
           renderCell: (
-            props: RenderCellProps<R & BaseDataGridRowPrivateFields, SR>,
+            props: RenderCellProps<R & BaseDataGridLoadingRow, SR>,
           ) => {
-            const { row, rowIdx } = props;
+            const { row } = props;
             if (row.____loading) {
-              return renderSkeletonCell(props as any);
+              return renderSkeletonCell(props);
             }
 
-            const value = col.renderCell?.(props as any) ?? renderValue(props);
-            const error = errors?.[rowIdx]?.[col.key as string];
+            const value =
+              col.renderCell?.(props as RenderCellProps<R, SR>) ??
+              renderValue(props);
 
-            // fast path
-            const toolTipProps = error
-              ? undefined
-              : resolveTooltip(col.toolTip || globalTooltip, props, value);
-
-            return (
-              <BaseDataGridCell
-                error={error}
-                toolTipProps={toolTipProps}
-                children={value}
-              />
-            );
+            return <BaseDataGridCell {...props} children={value} />;
           },
         } as BaseDataGridColumn<R, SR>;
       });
     }
 
     return transform(columns);
-  }, [columns, globalTooltip, errors]);
+  }, [columns]);
 }
 
 function useCustomRows<R>(
@@ -169,7 +195,7 @@ export type BaseDataGridProps<R, SR> = Omit<
   DataGridProps<R, SR>,
   "style" | "columns"
 > & {
-  columns: BaseDataGridColumnOrColumnGroup<R, SR>[];
+  columns: readonly BaseDataGridColumnOrColumnGroup<R, SR>[];
   style?: RDGStyle;
   loading?: boolean;
   noValuesOverlay?: ReactNode;
@@ -178,7 +204,7 @@ export type BaseDataGridProps<R, SR> = Omit<
   skeletonCount?: number;
   showSkeletonTail?: boolean;
   globalTooltip?: ((props: RenderCellProps<R, SR>) => ReactNode) | ReactNode;
-  errors?: BaseDataGridErrors;
+  getCellError?: GetCellError<R, SR>;
 };
 
 export default function BaseDataGrid<R, SR = unknown>({
@@ -186,6 +212,7 @@ export default function BaseDataGrid<R, SR = unknown>({
   columns,
 
   loading,
+  rowKeyGetter,
 
   rowHeight = DEFAULT_RDG_ROW_HEIGHT,
   headerRowHeight = DEFAULT_RDG_ROW_HEIGHT,
@@ -202,14 +229,14 @@ export default function BaseDataGrid<R, SR = unknown>({
   defaultColumnOptions,
 
   style,
-  errors,
+  getCellError,
 
   ...props
 }: BaseDataGridProps<R, SR>) {
   const gridRef = useRef<DataGridHandle>(null);
   const { width: gridWidth } = useDataGridSize(gridRef);
 
-  const columnsResolved = useCustomColumns(columns, globalTooltip, errors);
+  const columnsResolved = useCustomColumns(columns);
   const rowsResolved = useCustomRows(
     rows,
     loading,
@@ -231,29 +258,37 @@ export default function BaseDataGrid<R, SR = unknown>({
   return (
     <Box sx={DEFAULT_RDG_VARS}>
       <div style={{ width: gridWidth }}>{toolbar}</div>
+
       <Box sx={{ position: "relative" }}>
-        <DataGrid
-          {...props}
-          defaultColumnOptions={{
-            resizable: true,
-            sortable: true,
-            ...defaultColumnOptions,
-          }}
-          ref={gridRef}
-          style={dataGridStyle}
-          rows={rowsResolved}
-          columns={columnsResolved}
-          rowHeight={rowHeight}
-          headerRowHeight={headerRowHeight}
-        />
+        <DataGridContextProvider
+          globalTooltip={globalTooltip}
+          getCellError={getCellError}
+          rowKeyGetter={rowKeyGetter}
+        >
+          <DataGrid
+            {...props}
+            defaultColumnOptions={{
+              resizable: true,
+              sortable: true,
+              ...defaultColumnOptions,
+            }}
+            ref={gridRef}
+            style={dataGridStyle}
+            rows={rowsResolved}
+            columns={columnsResolved}
+            rowHeight={rowHeight}
+            rowKeyGetter={rowKeyGetter}
+            headerRowHeight={headerRowHeight}
+          />
+        </DataGridContextProvider>
 
         {!loading && isEmpty && (
-          <Box
-            sx={{
+          <div
+            style={{
               position: "absolute",
               width: gridWidth,
 
-              top: headerRowHeight,
+              top: `${headerRowHeight}px`,
               left: 0,
               right: 0,
               bottom: 0,
@@ -266,7 +301,7 @@ export default function BaseDataGrid<R, SR = unknown>({
             }}
           >
             {noValuesOverlay}
-          </Box>
+          </div>
         )}
       </Box>
 

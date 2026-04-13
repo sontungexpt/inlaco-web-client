@@ -1,19 +1,18 @@
 import CrewProfileEndpoint from "@/endpoints/crew-profile.endpoint";
-import { CrewProfileResponse } from "@/types/api/crew-profile";
-import { PageableResponse, PageParams } from "@/types/api/shared/base.api";
+import {
+  CrewProfileFetchParams,
+  CrewProfileResponse,
+} from "@/types/api/crew-profile";
+import { PageableResponse } from "@/types/api/shared/base.api";
 
 import { flattenFilter } from "@/utils/filter";
 import { privateRequest } from "@/utils/request";
 
-export const fetchCrewMembers = async ({
+export const fetchCrewProfiles = async ({
   page,
   pageSize,
   filter,
-}: PageParams & {
-  filter: {
-    workStatus: string;
-  };
-}): Promise<PageableResponse<CrewProfileResponse>> => {
+}: CrewProfileFetchParams): Promise<PageableResponse<CrewProfileResponse>> => {
   const response = await privateRequest.get(CrewProfileEndpoint.GET_ALL_CREWS, {
     params: {
       page,

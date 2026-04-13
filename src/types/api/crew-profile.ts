@@ -1,17 +1,30 @@
 import { Asset } from "./shared/asset.api";
+import { PageParams } from "./shared/base.api";
 
-export enum CrewStatus {
-  DRAFT = "DRAFT",
-  READY_FOR_ASSIGNMENT = "READY_FOR_ASSIGNMENT",
-  ENGAGED = "ENGAGED",
-  ON_LEAVE = "ON_LEAVE",
-  INACTIVE = "INACTIVE",
+export type CrewStatus =
+  | "DRAFT"
+  | "READY_FOR_ASSIGNMENT"
+  | "ENGAGED"
+  | "ON_LEAVE"
+  | "INACTIVE";
+
+export interface CrewProfileFilterCriteria {
+  keyword?: string;
+  workStatus?: CrewStatus;
+  professionalPosition?: string;
+  official?: boolean;
 }
 
-export interface CrewProfileResponse {
+export interface CrewProfileFetchParams
+  extends PageParams<CrewProfileFilterCriteria> {
+  page: number;
+  pageSize: number;
+}
+
+export interface CrewProfile {
   status: CrewStatus;
 
-  cardId: string;
+  employeeCardId: string;
 
   fullName: string;
   avatarUrl?: string;

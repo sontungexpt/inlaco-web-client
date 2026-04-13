@@ -16,7 +16,7 @@ export { default as DialogButton } from "./DialogButton";
 export { default as ConfirmButton } from "./ConfirmButton";
 
 export { default as BaseTabBar } from "./BaseTabBar";
-export { default as ErrorTooltip } from "./ErrorTooltip";
+export { default as ErrorTooltip } from "./Tooltip";
 
 export { default as SectionWrapper } from "./SectionWrapper";
 export { default as SectionDivider } from "./SectionDivider";

@@ -3,9 +3,9 @@ import BaseDataGrid, {
   BaseDataGridColumn,
   BaseDataGridColumnOrColumnGroup,
   BaseDataGridColumnGroup,
-  BaseDataGridErrors,
+  BaseDataGridRenderCellProps,
+  BaseDataGridCalculatedColumn,
 } from "./BaseDataGrid";
-import { Box, Button, ButtonProps } from "@mui/material";
 import { RenderEditCellProps } from "react-data-grid";
 import { InfoTextField } from "../fields";
 import {
@@ -15,7 +15,6 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import BaseEditableDataGridToolbar from "./components/BaseEditableDataGridToolbar";
 
 export type BaseEditableDataGridColumnOrColumnGroup<R, SR = unknown> =
   | BaseEditableDataGridColumn<R, SR>
@@ -25,14 +24,39 @@ export type BaseEditableDataGridColumnGroup<R, SR = unknown> = Omit<
   BaseDataGridColumnGroup<R, SR>,
   "children"
 > & {
-  children: BaseDataGridColumnOrColumnGroup<R, SR>[];
+  children: BaseEditableDataGridColumnOrColumnGroup<R, SR>[];
 };
 
-export type BaseEditableDataGridColumn<R, SR = unknown> = BaseDataGridColumn<
-  R,
-  SR
+export type BaseEditableDataGridRenderCellProps<R, SR = unknown> = Omit<
+  BaseDataGridRenderCellProps<R, SR>,
+  "column"
 > & {
-  searchable?: boolean;
+  column: BaseEditableDataGridColumn<R, SR>;
+};
+
+export type BaseEditableDataGridCalculatedColumn<
+  R,
+  SR = unknown,
+> = BaseDataGridCalculatedColumn<R, SR> & {
+  readonly renderCell: (
+    props: BaseEditableDataGridRenderCellProps<R, SR>,
+  ) => ReactNode;
+};
+
+export type BaseEditableDataGridRenderEditCellProps<R, SR = unknown> = Omit<
+  RenderEditCellProps<R, SR>,
+  "column"
+> & {
+  column: BaseEditableDataGridCalculatedColumn<R, SR>;
+};
+
+export type BaseEditableDataGridColumn<R, SR = unknown> = Omit<
+  BaseDataGridColumn<R, SR>,
+  "renderEditCell"
+> & {
+  readonly renderEditCell?: (
+    props: BaseEditableDataGridRenderEditCellProps<R, SR>,
+  ) => ReactNode;
 };
 
 export type useEditableDataGridProps<R, SR = unknown> = {
@@ -63,31 +87,20 @@ export function useEditableDataGrid<R, SR>({
   };
 }
 
-type WithToolbar<R, SR> = {
-  toolbar: BaseDataGridProps<R, SR>["toolbar"];
-  onNewRowClick?: never;
-};
-
-type WithoutToolbar = {
-  toolbar?: never;
-  onNewRowClick: ButtonProps["onClick"];
-};
-
 export type BaseEditableDataGridProps<R, SR> = Omit<
   BaseDataGridProps<R, SR>,
-  "toolbar"
-> &
-  (WithToolbar<R, SR> | WithoutToolbar) & {};
+  "columns"
+> & {
+  columns: BaseEditableDataGridColumnOrColumnGroup<R, SR>[];
+};
 
 export function renderEditCell<R, SR>({
   row,
   column,
   onRowChange,
-  error,
-}: RenderEditCellProps<R, SR> & {
-  error?: string;
-}) {
+}: BaseEditableDataGridRenderEditCellProps<R, SR>) {
   const key = column.key as keyof R;
+
   return (
     <InfoTextField
       value={(row[key] ?? "") as string}
@@ -108,59 +121,43 @@ export function renderEditCell<R, SR>({
 
 function useCustomColumns<R, SR>(
   columns: readonly BaseEditableDataGridColumnOrColumnGroup<R, SR>[],
-  errors?: BaseDataGridErrors,
 ): BaseEditableDataGridColumnOrColumnGroup<R, SR>[] {
   return useMemo(() => {
     function transform(
-      cols: readonly BaseDataGridColumnOrColumnGroup<R, SR>[],
-    ): BaseDataGridColumnOrColumnGroup<R, SR>[] {
+      cols: readonly BaseEditableDataGridColumnOrColumnGroup<R, SR>[],
+    ): BaseEditableDataGridColumnOrColumnGroup<R, SR>[] {
       return cols.map((col) => {
         if ("children" in col) {
           return {
             ...col,
             children: transform(col.children),
-          };
+          } as BaseEditableDataGridColumnGroup<R, SR>;
         }
-
+        if (col.renderEditCell) return col;
         return {
           ...col,
-          renderEditCell: (props: RenderEditCellProps<R, SR>) => {
-            const { rowIdx, column } = props;
-            const error = (errors as any)[rowIdx][column.key];
-
-            return renderEditCell({
-              ...props,
-              error,
-            });
-          },
-        };
+          renderEditCell,
+        } as BaseEditableDataGridColumn<R, SR>;
       });
     }
     return transform(columns);
-  }, [columns, errors]);
+  }, [columns]);
 }
 
 export default function BaseEditableDataGrid<R, SR = unknown>({
   rows,
   columns,
-  onNewRowClick,
   onRowsChange,
-  errors,
-  toolbar,
   ...props
 }: BaseEditableDataGridProps<R, SR>) {
-  const resolvedColumns = useCustomColumns<R, SR>(columns, errors);
+  const resolvedColumns = useCustomColumns<R, SR>(columns);
 
   return (
     <BaseDataGrid
       {...props}
       rows={rows}
-      errors={errors}
-      columns={resolvedColumns}
+      columns={resolvedColumns as BaseDataGridColumnOrColumnGroup<R, SR>[]}
       onRowsChange={onRowsChange}
-      toolbar={
-        toolbar ?? <BaseEditableDataGridToolbar onNewRowClick={onNewRowClick} />
-      }
     />
   );
 }

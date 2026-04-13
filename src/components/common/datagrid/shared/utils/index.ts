@@ -1,9 +1,12 @@
 import { dateToLocaleString, LocaleType } from "@/utils/converter";
 import Regex from "@/utils/validation/Regex";
-import { TooltipProps } from "@mui/material";
 import { ReactNode } from "react";
 import { Column, RenderCellProps } from "react-data-grid";
-import { BaseDataGridColumnTooltip } from "../../BaseDataGrid";
+import {
+  BaseDataGridColumnTooltip,
+  BaseDataGridRenderCellProps,
+} from "../../BaseDataGrid";
+import { TooltipProps } from "@/components/common/Tooltip";
 
 export function renderValue<R, SR>(props: {
   row: R;
@@ -33,8 +36,8 @@ export function renderValue<R, SR>(props: {
 
 export function resolveTooltip<R, SR>(
   toolTip?: BaseDataGridColumnTooltip,
-  props?: RenderCellProps<R, SR>,
-  defaultValue?: unknown,
+  props?: BaseDataGridRenderCellProps<R, SR>,
+  defaultValue?: ReactNode,
 ): Omit<TooltipProps, "children"> | undefined {
   if (typeof toolTip === "function") {
     toolTip = toolTip(props as any);
@@ -65,7 +68,7 @@ export function resolveTooltip<R, SR>(
 
   // object → assume already valid tooltip props
   if (typeof toolTip === "object") {
-    return toolTip;
+    return toolTip as TooltipProps;
   }
 
   return undefined;

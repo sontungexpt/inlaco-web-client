@@ -23,6 +23,9 @@ export const DEFAULT_RDG_VARS: RDGStyle = {
   "--rdg-border-color": Color.PrimaryBlack,
   "--rdg-border-width": "1px",
 
+  "--rdg-error-border-color": Color.Error,
+  "--rdg-error-border-width": "2px",
+
   "--rdg-checkbox-focus-color": Color.PrimaryBlue,
 } as const;
 

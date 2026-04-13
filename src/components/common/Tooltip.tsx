@@ -1,24 +1,29 @@
-import React, { ReactNode } from "react";
-import Tooltip, { TooltipProps } from "@mui/material/Tooltip";
+import React, { HtmlHTMLAttributes, ReactNode } from "react";
+import {
+  Tooltip as MuiTooltip,
+  TooltipProps as MuiTooltipProps,
+} from "@mui/material";
+
 import Color from "@/constants/Color";
 
-export type ErrorTooltipProps = Omit<TooltipProps, "children"> & {
-  error?: ReactNode;
-  wrapperProps?: React.HTMLAttributes<HTMLDivElement>;
+export type TooltipProps = Omit<MuiTooltipProps, "children" | "slotProps"> & {
+  error?: boolean;
   children: React.ReactNode;
+  slotProps?: MuiTooltipProps["slotProps"] & {
+    container: HtmlHTMLAttributes<HTMLDivElement>;
+  };
 };
 
-export default function ErrorTooltip({
+export default function Tooltip({
   error,
-  wrapperProps,
+  title,
+  slotProps,
   children,
   arrow = true,
   ...props
-}: ErrorTooltipProps) {
-  const title = error || props.title || "";
-
+}: TooltipProps) {
   return (
-    <Tooltip
+    <MuiTooltip
       placement="auto"
       {...props}
       title={title}
@@ -27,17 +32,17 @@ export default function ErrorTooltip({
         error
           ? {
               tooltip: {
-                ...props.slotProps?.tooltip,
+                ...slotProps?.tooltip,
                 sx: {
-                  ...props.slotProps?.tooltip?.sx,
+                  ...slotProps?.tooltip?.sx,
                   color: Color.PrimaryWhite,
                   backgroundColor: Color.Error,
                 },
               },
               arrow: {
-                ...props.slotProps?.arrow,
+                ...slotProps?.arrow,
                 sx: {
-                  ...props.slotProps?.arrow?.sx,
+                  ...slotProps?.arrow?.sx,
                   color: Color.Error,
                 },
               },
@@ -46,16 +51,16 @@ export default function ErrorTooltip({
       }
     >
       <div
-        {...wrapperProps}
+        {...slotProps?.container}
         style={{
-          ...wrapperProps?.style,
           display: "flex",
           alignItems: "center",
           pointerEvents: "auto",
+          ...slotProps?.container?.style,
         }}
       >
         {children}
       </div>
-    </Tooltip>
+    </MuiTooltip>
   );
 }

@@ -1,44 +1,65 @@
 import "react-data-grid/lib/styles.css";
 import { ReactNode } from "react";
-import ErrorTooltip, { ErrorTooltipProps } from "../../ErrorTooltip";
-import Color from "@/constants/Color";
+import Tooltip, { TooltipProps } from "@/components/common/Tooltip";
+import { useCellError } from "../shared/use-cell-error";
+import { useDataGridContext } from "../shared/context";
+import { resolveTooltip } from "../shared/utils";
+import { BaseDataGridRenderCellProps } from "../BaseDataGrid";
 
-export type BaseDataGridCellProps = {
+export type BaseDataGridCellProps<R, SR> = BaseDataGridRenderCellProps<
+  R,
+  SR
+> & {
   error?: string;
-  toolTipProps?: Omit<ErrorTooltipProps, "children">;
+  toolTipProps?: Omit<TooltipProps, "children">;
   children: ReactNode;
 };
 
-export default function BaseDataGridCell({
-  error,
-  toolTipProps,
+export default function BaseDataGridCell<R, SR>({
   children,
-}: BaseDataGridCellProps) {
-  const toolTipTitle = error || toolTipProps?.title;
+  ...props
+}: BaseDataGridCellProps<R, SR>) {
+  const { row, rowIdx, column } = props;
+  const { errorStore, globalTooltip, rowKeyGetter } = useDataGridContext();
 
-  if (!toolTipTitle) {
-    return children;
-  }
+  const error = useCellError<R, SR>({
+    row,
+    rowIdx,
+    column,
+    store: errorStore,
+    rowKeyGetter,
+  });
+
+  // resolve tooltip only when no error
+  const toolTipProps = !error
+    ? resolveTooltip(column.toolTip || globalTooltip, props, children)
+    : undefined;
+
+  const title = error || toolTipProps?.title;
+
+  if (!title) return children;
 
   return (
-    <ErrorTooltip
+    <Tooltip
       {...toolTipProps}
-      error={error}
-      title={toolTipTitle}
-      disableHoverListener={!toolTipTitle}
-      wrapperProps={{
-        ...toolTipProps?.wrapperProps,
-        style: {
-          ...toolTipProps?.wrapperProps?.style,
-          position: "absolute",
-          inset: 0,
-          paddingInlineStart: "8px",
-          paddingInlineEnd: "8px",
-          borderInline: `var(--rdg-border-width) solid ${error ? Color.Error : "var(--rdg-border-color)"}`,
+      error={!!error}
+      title={title}
+      slotProps={{
+        container: {
+          style: {
+            position: "absolute",
+            inset: 0,
+            paddingInline: "8px",
+            border: `var(--rdg-border-width) solid ${
+              error
+                ? "var(--rdg-error-border-color)"
+                : "var(--rdg-border-color)"
+            }`,
+          },
         },
       }}
     >
       {children}
-    </ErrorTooltip>
+    </Tooltip>
   );
 }

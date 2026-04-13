@@ -1,5 +1,4 @@
-.rdg-base-data-grid-cell {
-  position: relative;
-  display: flex;
-  align-items: center;
+.rdg-cell--error {
+  border-color: var(--rdg-error-border-color) !important;
+  border-width: var(--rdg-error-border-width) !important;
 }

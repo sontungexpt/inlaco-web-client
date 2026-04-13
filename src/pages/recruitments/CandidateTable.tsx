@@ -1,19 +1,11 @@
-import {
-  Box,
-  Button,
-  Select,
-  MenuItem,
-  PaginationProps,
-  IconButton,
-} from "@mui/material";
+import { Select, MenuItem, PaginationProps, IconButton } from "@mui/material";
 import Color from "@constants/Color";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import CandidateStatus from "@/constants/CandidateStatus";
 import { BaseDataGrid } from "@/components/common";
 import { Column } from "react-data-grid";
 import { useMemo } from "react";
-import BaseDataGridFooter from "@/components/common/datagrid/BaseDataGridFooter";
-import { BaseDataGridColumn } from "@/components/common/datagrid/BaseDataGrid";
+import { BaseDataGridFooter } from "@/components/common/datagrid/components";
 
 const STATUS_FILTERS = [
   { label: "Đã nộp hồ sơ", value: CandidateStatus.APPLIED },

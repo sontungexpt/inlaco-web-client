@@ -154,6 +154,7 @@ export default function ContractPage({ pageSize = 20 }) {
         columns={columns}
         globalTooltip="Click hai lần để xem chi tiết hợp đồng"
         onCellDoubleClick={({ row }) => onContractDetailClick(row.id)}
+        rowKeyGetter={({ id }) => id}
         rows={contracts as ContractRow[]}
         footer={
           <BaseDataGridFooter
