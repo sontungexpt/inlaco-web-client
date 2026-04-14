@@ -1,12 +1,14 @@
-import React from "react";
-import { TextField } from "@mui/material";
+import { TextField, TextFieldProps } from "@mui/material";
 import Color from "@constants/Color";
+
+export type ViewTextFieldProps = TextFieldProps & {};
+
 export default function ViewTextField({
   fullWidth = true,
   sx,
   slotProps,
   ...props
-}) {
+}: ViewTextFieldProps) {
   return (
     <TextField
       {...props}
@@ -27,8 +29,11 @@ export default function ViewTextField({
         },
       ]} // Merging styles with spread operator
       slotProps={{
+        ...slotProps,
         formHelperText: {
+          ...slotProps?.formHelperText,
           sx: {
+            ...slotProps?.formHelperText?.sx,
             margin: 0,
             paddingRight: 1,
             paddingLeft: 1,
@@ -38,7 +43,6 @@ export default function ViewTextField({
         input: {
           readOnly: true,
         },
-        ...slotProps,
       }}
     />
   );

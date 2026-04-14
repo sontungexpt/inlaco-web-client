@@ -12,53 +12,41 @@ import {
 } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-  useMemo,
-  Dispatch,
-  SetStateAction,
-} from "react";
-import { useDebounced } from "@/hooks/useDebounced";
-
-const SOURCE = {
-  USER: "user",
-  INTERNAL: "internal",
-};
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 
 export type SearchBarProps = Omit<
   TextFieldProps,
   "slotProps" | "onChange" | "value"
 > & {
   value?: string;
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent,
+    value: string,
+  ) => void;
   showSearchIcon?: boolean;
-  debounceMs?: number;
-  minLength?: number;
-
-  autoSearch?: boolean;
-  searchOnMount?: boolean;
-  searchAfterClear?: boolean;
-  suppressSearchOnValueChange?: boolean;
 
   loading?: boolean;
-  dropdown?: boolean;
-  options?: any[];
-  renderOption?: (opt: any, selected: boolean, idx: number) => React.ReactNode;
-  mapOptionToValue?: (opt: any) => string;
-  matchAnchorWidth?: boolean;
-  onOptionSelected?: (opt: any) => void;
+  debounceMs?: number;
+  minQueryLength?: number;
+
+  dropdownEnabled?: boolean;
+  dropdownItems?: any[];
+  renderDropdownItem?: (
+    opt: any,
+    selected: boolean,
+    idx: number,
+  ) => React.ReactNode;
+  mapDropdownItemToValue?: (opt: any) => string;
+  onDropdownItemSeletected?: (opt: any) => void;
+  dropdownMatchAnchorWidth?: boolean;
 
   collapsible?: boolean;
   collapsed?: boolean;
   collapseWidth?: number;
   autoCollapseOnBlur?: boolean;
 
-  onChange?: (
-    e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent,
-    value: string,
-  ) => void;
+  searchOnMount?: boolean;
+  searchAfterClear?: boolean;
   onSearch?: (value: string) => Promise<void> | void;
 
   slotProps?: TextFieldProps["slotProps"] & {
@@ -66,28 +54,33 @@ export type SearchBarProps = Omit<
   };
 };
 
-const SearchBar = ({
+function clampIndex(idx: number, length: number) {
+  if (idx < 0) return length - 1;
+  if (idx >= length) return 0;
+  return idx;
+}
+
+export default function SearchBar<T = any>({
   value,
   placeholder = "Tìm kiếm...",
   showSearchIcon = true,
-  debounceMs = 300,
-  fullWidth = true,
-  disabled = false,
-  size = "small",
-  minLength = 2,
 
-  autoSearch = true,
+  size = "small",
+  disabled = false,
+  fullWidth = true,
+  dropdownMatchAnchorWidth = false,
+
+  debounceMs = 300,
+  minQueryLength = 1,
   searchOnMount = false,
   searchAfterClear = false,
-  suppressSearchOnValueChange = false,
 
-  loading: externalLoading,
-  dropdown = false,
-  options = [],
-  renderOption = (opt) => opt?.label ?? String(opt),
-  mapOptionToValue,
-  matchAnchorWidth = false,
-  onOptionSelected: onSelectOption,
+  loading: controlledLoading,
+  dropdownEnabled = false,
+  dropdownItems = [],
+  renderDropdownItem = (opt) => opt?.label ?? String(opt),
+  mapDropdownItemToValue,
+  onDropdownItemSeletected,
 
   collapsible = false,
   collapsed = true,
@@ -100,102 +93,143 @@ const SearchBar = ({
 
   onBlur,
   onSearch,
+
   slotProps,
   sx,
   ...props
-}: SearchBarProps) => {
-  /* =========================
-   * State & Refs
-   * ========================= */
-  const isControlled = value !== undefined;
+}: SearchBarProps) {
   const [inputValue, setInputValue] = useState<string>(value ?? "");
-  const [dropdownOpened, setDropdownOpened] = useState(false);
+
+  const [dropdownOpened, setDropdownOpenedState] = useState(false);
   const [activeOptionIndex, setActiveOptionIndex] = useState(-1);
-  const [innerLoading, setInnerLoading] = useState(false);
-  const loading = externalLoading ?? innerLoading;
-  const setLoading = useCallback(
-    (v: SetStateAction<boolean>) => {
-      if (externalLoading === undefined) setInnerLoading(v);
-    },
-    [externalLoading],
+
+  const setDropdownOpened = useMemo(
+    () => (dropdownEnabled ? setDropdownOpenedState : () => {}),
+    [dropdownEnabled],
   );
+
+  const [innerLoading, setInnerLoading] = useState(false);
+  const loading = controlledLoading ?? innerLoading;
 
   const [isCollapsed, setIsCollapsedState] = useState<boolean>(
     collapsible && collapsed,
   );
-  const setIsCollapsed = useCallback(
-    (v: boolean) => {
-      if (collapsible) setIsCollapsedState(v);
-    },
+  const setIsCollapsed = useMemo(
+    () => (collapsible ? setIsCollapsedState : () => {}),
     [collapsible],
   );
-
-  const debouncedValue = useDebounced(inputValue, debounceMs);
 
   const listRef = useRef<
     Array<React.ComponentRef<typeof ListItemButton> | null>
   >([]);
-  const changeSourceRef = useRef(SOURCE.INTERNAL);
+
   const inputRef = useRef<HTMLInputElement | null>(null);
   const anchorRef = useRef<HTMLDivElement | null>(null);
-  const mountedRef = useRef<boolean>(false);
   const popperRef = useRef<HTMLDivElement | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  /* =========================
-   * Helpers
-   * ========================= */
+  const inFlightKeywordRef = useRef<string | null>(null);
+  const requestIdRef = useRef(0);
 
-  const clampIndex = (idx: number) => {
-    if (idx < 0) return options.length - 1;
-    if (idx >= options.length) return 0;
-    return idx;
-  };
+  const triggerSearch = useCallback(
+    (value: string, immediate = false) => {
+      if (!onSearch) return;
 
-  const runSearch = useCallback(
-    async (keyword: string) => {
-      if (!onSearch || keyword.length < minLength) {
+      clearTimeout(debounceRef.current);
+
+      if (value.length < minQueryLength) {
         setDropdownOpened(false);
         return;
       }
 
-      try {
-        setLoading(true);
-        const res = onSearch?.(keyword) as any;
-        if (res instanceof Promise) {
-          await res;
+      // skip nếu đang search keyword này
+      if (inFlightKeywordRef.current === value) {
+        return;
+      }
+
+      const exec = async () => {
+        const requestId = ++requestIdRef.current;
+
+        inFlightKeywordRef.current = value;
+
+        try {
+          if (controlledLoading === undefined) {
+            setInnerLoading(true);
+          }
+
+          await onSearch(value);
+        } finally {
+          if (requestId === requestIdRef.current) {
+            setInnerLoading(false);
+            setDropdownOpened(true);
+          }
+
+          // clear in-flight if still the same request
+          if (inFlightKeywordRef.current === value) {
+            inFlightKeywordRef.current = null;
+          }
         }
-      } finally {
-        setLoading(false);
-        if (dropdown) setDropdownOpened(true);
+      };
+
+      if (immediate) {
+        exec();
+      } else {
+        debounceRef.current = setTimeout(exec, debounceMs);
       }
     },
-    [onSearch, minLength, dropdown, loading],
+    [debounceMs, onSearch, minQueryLength, controlledLoading],
   );
 
-  // useEffect(() => {
-  //   const handleFocusChange = () => {
-  //     const activeEl = document.activeElement;
+  // Cleanup
+  useEffect(() => {
+    return () => {
+      clearTimeout(debounceRef.current);
+    };
+  }, []);
 
-  //     const isInside =
-  //       anchorRef.current?.contains(activeEl) ||
-  //       popperRef.current?.contains(activeEl);
+  // Auto search on mount
+  useEffect(() => {
+    if (!searchOnMount || !onSearch) return;
+    triggerSearch(inputValue);
+  }, []);
 
-  //     if (!isInside) {
-  //       setDropdownOpened(false);
+  // Auto focus input when expand search bar
+  useEffect(() => {
+    if (!isCollapsed && !disabled) {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }
+  }, [isCollapsed, disabled]);
 
-  //       if (autoCollapseOnBlur && !inputValue) {
-  //         setIsCollapsed(true);
-  //       }
+  // Scroll to active option
+  useEffect(() => {
+    if (activeOptionIndex >= 0) {
+      listRef.current[activeOptionIndex]?.scrollIntoView({
+        block: "nearest",
+      });
+    }
+  }, [activeOptionIndex]);
 
-  //       onBlur?.();
-  //     }
-  //   };
-  //   document.addEventListener("focusin", handleFocusChange);
-  //   return () => {
-  //     document.removeEventListener("focusin", handleFocusChange);
-  //   };
-  // }, [inputValue, autoCollapseOnBlur, onBlur]);
-  //
+  // Auto focus option when dropdown open
+  useEffect(() => {
+    if (!dropdownOpened) {
+      setActiveOptionIndex(-1);
+    } else {
+      setActiveOptionIndex(0); // auto focus option đầu tiên
+    }
+  }, [dropdownOpened]);
+
+  // Sync collapsed
+  useEffect(() => {
+    setIsCollapsed(collapsed);
+  }, [collapsed, setIsCollapsed]);
+
+  useEffect(() => {
+    if (value === undefined) return;
+
+    setInputValue(value);
+  }, [value]);
+
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const next = e.relatedTarget as Node | null;
 
@@ -213,159 +247,101 @@ const SearchBar = ({
     onBlur?.(e);
   };
 
-  useEffect(() => {
-    if (!isCollapsed && !disabled) {
-      inputRef.current?.focus();
-    }
-  }, [isCollapsed, disabled]);
-
-  useEffect(() => {
-    if (activeOptionIndex >= 0) {
-      listRef.current[activeOptionIndex]?.scrollIntoView({
-        block: "nearest",
-      });
-    }
-  }, [activeOptionIndex]);
-
-  useEffect(() => {
-    if (!dropdownOpened || options.length === 0) {
-      setActiveOptionIndex(-1);
-    } else {
-      setActiveOptionIndex(0); // auto focus option đầu tiên
-    }
-  }, [dropdownOpened, options]);
-
-  /* =========================
-   * Sync controlled value
-   * ========================= */
-  useEffect(() => {
-    setIsCollapsed(collapsed);
-  }, [collapsed, setIsCollapsed]);
-
-  useEffect(() => {
-    if (!isControlled) return;
-    else if (value === inputValue) return;
-
-    changeSourceRef.current = suppressSearchOnValueChange
-      ? SOURCE.INTERNAL
-      : SOURCE.USER;
-
-    setInputValue(value ?? "");
-  }, [value, isControlled, suppressSearchOnValueChange]); // eslint-disable-line
-
-  /* ==================
-   * Auto search (debounce)
-   * ========================= */
-  useEffect(() => {
-    if (!autoSearch || !onSearch) return;
-    if (!mountedRef.current) {
-      mountedRef.current = true;
-      if (!searchOnMount) return;
-    }
-
-    if (changeSourceRef.current !== SOURCE.USER) {
-      return;
-    }
-
-    runSearch(debouncedValue);
-
-    changeSourceRef.current = SOURCE.INTERNAL;
-  }, [debouncedValue, autoSearch, searchOnMount, onSearch, runSearch]);
-
-  /* =========================
-   * Handlers
-   * ========================= */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
-    changeSourceRef.current = SOURCE.USER;
+
     setInputValue(v);
     onChange?.(e, v);
 
-    if (!autoSearch) {
-      // no debounce
-      runSearch(v);
-    }
+    triggerSearch(v);
   };
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isCollapsed) {
-      setIsCollapsed(false);
-    }
+    setIsCollapsed(false);
     onClick?.(e);
   };
 
   const handleClear = (e: React.MouseEvent) => {
-    changeSourceRef.current = SOURCE.INTERNAL;
     setInputValue("");
     setDropdownOpened(false);
     onChange?.(e, "");
 
     if (searchAfterClear) {
-      runSearch("");
+      triggerSearch("");
     }
+  };
+
+  const handleSeletectDropdownItem = (item: T) => {
+    const value =
+      typeof item === "string"
+        ? item
+        : (mapDropdownItemToValue?.(item) ?? String(item));
+
+    setInputValue(value);
+    setDropdownOpened(false);
+    onDropdownItemSeletected?.(item);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (
-      e.key === "ArrowDown" &&
-      dropdown &&
-      !dropdownOpened &&
-      options.length
-    ) {
-      e.preventDefault();
-      setDropdownOpened(true);
-      setActiveOptionIndex(0);
-      return;
-    }
+    onKeyDown?.(e);
 
-    if (!dropdown || !dropdownOpened) {
-      if (e.key === "Enter") {
-        changeSourceRef.current = SOURCE.USER;
-        runSearch(inputValue);
-      }
-      return;
-    }
+    const isOpen = dropdownEnabled && dropdownOpened;
+    const dropdownItemsLength = dropdownItems.length;
+    const hasItems = dropdownItemsLength > 0;
+    const currentItem = dropdownItems[activeOptionIndex];
 
     switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        setActiveOptionIndex((i) => clampIndex(i + 1));
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        setActiveOptionIndex((i) => clampIndex(i - 1));
-        break;
-      case "Tab":
-        if (options[activeOptionIndex]) {
-          handleSelectOption(options[activeOptionIndex]);
+      case "ArrowDown": {
+        if (!isOpen && hasItems) {
+          e.preventDefault();
+          setDropdownOpened(true);
+          setActiveOptionIndex(0);
+          return;
+        }
+
+        if (isOpen) {
+          e.preventDefault();
+          setActiveOptionIndex((i) => clampIndex(i + 1, dropdownItemsLength));
         }
         break;
-      case "Enter":
-        e.preventDefault();
-        if (options[activeOptionIndex]) {
-          handleSelectOption(options[activeOptionIndex]);
+      }
+
+      case "ArrowUp": {
+        if (isOpen) {
+          e.preventDefault();
+          setActiveOptionIndex((i) => clampIndex(i - 1, dropdownItemsLength));
+        }
+        break;
+      }
+
+      case "Enter": {
+        if (isOpen && currentItem) {
+          e.preventDefault();
+          handleSeletectDropdownItem(currentItem);
         } else {
-          runSearch(inputValue);
+          triggerSearch(inputValue, true); // immediate
         }
         break;
-      case "Escape":
-        setDropdownOpened(false);
+      }
+
+      case "Tab": {
+        if (isOpen && currentItem) {
+          handleSeletectDropdownItem(currentItem);
+        }
         break;
+      }
+
+      case "Escape": {
+        if (isOpen) {
+          e.preventDefault();
+          setDropdownOpened(false);
+        }
+        break;
+      }
+
       default:
         break;
     }
-
-    onKeyDown?.(e);
-  };
-
-  const handleSelectOption = (option: any) => {
-    const value =
-      typeof option === "string" ? option : (mapOptionToValue?.(option) ?? "");
-
-    changeSourceRef.current = SOURCE.INTERNAL;
-    setInputValue(value);
-    setDropdownOpened(false);
-    onSelectOption?.(option);
   };
 
   const mergedSx = useMemo(
@@ -393,19 +369,6 @@ const SearchBar = ({
       },
     ],
     [sx, isCollapsed, collapseWidth],
-  );
-
-  const startAdornment = useMemo(
-    () => (
-      <InputAdornment position="start" sx={{ cursor: "pointer" }}>
-        {loading ? (
-          <CircularProgress size={18} />
-        ) : (
-          showSearchIcon && <SearchRoundedIcon fontSize="small" />
-        )}
-      </InputAdornment>
-    ),
-    [loading, showSearchIcon],
   );
 
   const endAdornment = useMemo(() => {
@@ -443,30 +406,38 @@ const SearchBar = ({
           ...slotProps,
           input: {
             ...slotProps?.input,
-            startAdornment,
+            startAdornment: (
+              <InputAdornment position="start" sx={{ cursor: "pointer" }}>
+                {loading ? (
+                  <CircularProgress size={18} />
+                ) : (
+                  showSearchIcon && <SearchRoundedIcon fontSize="small" />
+                )}
+              </InputAdornment>
+            ),
             endAdornment,
           },
         }}
       />
 
-      {dropdown && (
+      {dropdownEnabled && (
         <Popper
           ref={popperRef}
           placement="bottom-start"
           {...slotProps?.popper}
-          open={dropdownOpened && options.length > 0}
+          open={dropdownOpened && dropdownItems.length > 0}
           anchorEl={anchorRef.current}
           style={{
             zIndex: 1300,
             ...slotProps?.popper?.style,
-            width: matchAnchorWidth
+            width: dropdownMatchAnchorWidth
               ? anchorRef.current?.getBoundingClientRect().width
               : undefined,
           }}
         >
           <Paper sx={{ mt: 0.5, overflow: "auto" }}>
             <List dense>
-              {options.map((opt, idx) => (
+              {dropdownItems.map((opt, idx) => (
                 <ListItemButton
                   ref={(el: any) => (listRef.current[idx] = el)}
                   key={opt.key ?? `opt-${idx}`}
@@ -474,10 +445,10 @@ const SearchBar = ({
                   onMouseEnter={() => setActiveOptionIndex(idx)}
                   onMouseDown={(e) => {
                     e.preventDefault();
-                    handleSelectOption(opt);
+                    handleSeletectDropdownItem(opt);
                   }}
                 >
-                  {renderOption(opt, idx === activeOptionIndex, idx)}
+                  {renderDropdownItem(opt, idx === activeOptionIndex, idx)}
                 </ListItemButton>
               ))}
             </List>
@@ -486,6 +457,4 @@ const SearchBar = ({
       )}
     </>
   );
-};
-
-export default SearchBar;
+}

@@ -127,7 +127,7 @@ export default function ContractPage({ pageSize = 20 }) {
         <SearchBar
           onSearch={(q: string) => setSearchText(q)}
           loading={isLoading}
-          minLength={0}
+          minQueryLength={0}
           size="small"
           placeholder="Nhập tên hoặc mã thuyền viên cần tìm kiếm"
         />

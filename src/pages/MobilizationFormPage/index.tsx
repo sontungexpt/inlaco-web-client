@@ -29,23 +29,175 @@ import { useCrewProfiles } from "@/queries/crew-profile.query";
 import { CrewProfile } from "@/types/api/crew-profile";
 import { GetCellError } from "@/components/common/datagrid/shared/error-store";
 
-// const CrewOptionItem = ({ cardId, fullName, active }) => (
-//   <Box
-//     px={1.5}
-//     py={0.75}
-//     sx={{
-//       borderRadius: 0.75,
-//       bgcolor: active ? "action.hover" : "transparent",
-//     }}
-//   >
-//     <Typography fontWeight={600} noWrap>
-//       {fullName}
-//     </Typography>
-//     <Typography variant="caption" color="text.secondary">
-//       {cardId}
-//     </Typography>
-//   </Box>
-// );
+const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
+  const initials = opt.fullName?.charAt(0)?.toUpperCase() ?? "?";
+
+  const birth = opt.birthDate ? new Date(opt.birthDate) : null;
+  const age = birth ? new Date().getFullYear() - birth.getFullYear() : null;
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1.5,
+        px: 1.5,
+        py: 1,
+        borderRadius: 2,
+        cursor: "pointer",
+        transition: "all 0.18s ease",
+
+        bgcolor: selected ? "primary.50" : "transparent",
+
+        "&:hover": {
+          bgcolor: selected ? "primary.50" : "action.hover",
+        },
+      }}
+    >
+      {/* Avatar */}
+      <Box
+        sx={{
+          width: 36,
+          height: 36,
+          borderRadius: "50%",
+          background: "linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)",
+          color: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontWeight: 600,
+          fontSize: 13,
+          flexShrink: 0,
+        }}
+      >
+        {initials}
+      </Box>
+
+      {/* Content */}
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        {/* Row 1 */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            minWidth: 0,
+          }}
+        >
+          {/* Name */}
+          <Box
+            sx={{
+              fontWeight: 600,
+              fontSize: 13.5,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {opt.fullName}
+          </Box>
+
+          {/* ID badge */}
+          <Box
+            sx={{
+              fontSize: 10.5,
+              px: 0.7,
+              py: 0.2,
+              borderRadius: 1,
+              bgcolor: "grey.100",
+              color: "text.secondary",
+              fontWeight: 500,
+              flexShrink: 0,
+            }}
+          >
+            {opt.employeeCardId}
+          </Box>
+        </Box>
+
+        {/* Row 2 */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 0.8,
+            fontSize: 12,
+            color: "text.secondary",
+            mt: 0.2,
+            flexWrap: "wrap",
+          }}
+        >
+          {/* Role */}
+          {opt.professionalPosition && (
+            <Box sx={{ whiteSpace: "nowrap" }}>{opt.professionalPosition}</Box>
+          )}
+
+          {/* Divider dot */}
+          {(opt.professionalPosition || age) && (
+            <Box sx={{ opacity: 0.4 }}>•</Box>
+          )}
+
+          {/* Age */}
+          {age && <Box>{age} tuổi</Box>}
+
+          {/* Insurance badges */}
+          {(opt.socialInsuranceCode || opt.accidentInsuranceCode) && (
+            <>
+              <Box sx={{ opacity: 0.4 }}>•</Box>
+
+              <Box sx={{ display: "flex", gap: 0.5 }}>
+                {opt.socialInsuranceCode && (
+                  <Box
+                    sx={{
+                      px: 0.6,
+                      py: 0.1,
+                      borderRadius: 1,
+                      bgcolor: "success.lighter",
+                      color: "success.dark",
+                      fontSize: 9,
+                      fontWeight: 600,
+                    }}
+                  >
+                    BHXH
+                  </Box>
+                )}
+
+                {opt.accidentInsuranceCode && (
+                  <Box
+                    sx={{
+                      px: 0.6,
+                      py: 0.1,
+                      borderRadius: 1,
+                      bgcolor: "warning.lighter",
+                      color: "warning.dark",
+                      fontSize: 9,
+                      fontWeight: 600,
+                    }}
+                  >
+                    BHTN
+                  </Box>
+                )}
+              </Box>
+            </>
+          )}
+        </Box>
+      </Box>
+
+      {/* Selected indicator */}
+      {selected && (
+        <Box
+          sx={{
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            bgcolor: "primary.main",
+            flexShrink: 0,
+            boxShadow: "0 0 0 2px rgba(25,118,210,0.2)",
+          }}
+        />
+      )}
+    </Box>
+  );
+};
 
 export default function MobiliaztionForm() {
   const navigate = useNavigate();
@@ -62,6 +214,7 @@ export default function MobiliaztionForm() {
       workStatus: "READY_FOR_ASSIGNMENT",
     },
   });
+  console.log("crewProfiles", crewProfiles);
 
   const handleFormSubmission = async (
     values: FormValues,
@@ -78,55 +231,51 @@ export default function MobiliaztionForm() {
     }
   };
 
-  const renderSearchEditCell = useCallback(
-    ({
-      row,
-      column,
-      onRowChange,
-    }: BaseEditableDataGridRenderEditCellProps<FormValuesCrew>) => {
-      const key = column.key as keyof FormValuesCrew;
+  const renderSearchEditCell = ({
+    row,
+    column,
+    onRowChange,
+  }: BaseEditableDataGridRenderEditCellProps<FormValuesCrew>) => {
+    const key = column.key as keyof FormValuesCrew;
 
-      const handleSelect = useCallback(
-        (opt: CrewProfile) => {
-          // const nextRow = mapOptionToRow(opt, row);
-          onRowChange(
-            {
-              ...row,
-              employeeCardId: opt.employeeCardId,
-              fullName: opt.fullName,
-              // rankOnBoard: opt.healthInsHospital,
-            },
-            true,
-          );
+    const handleSelect = (opt: CrewProfile) => {
+      onRowChange(
+        {
+          ...row,
+          employeeCardId: opt.employeeCardId,
+          fullName: opt.fullName,
+          // rankOnBoard: opt.healthInsHospital,
         },
-        [onRowChange, row],
+        true,
       );
+    };
 
-      const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent,
-        value: string,
-      ) => {
-        onRowChange({ ...row, [key]: value });
-      };
+    const handleChange = (
+      e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent,
+      value: string,
+    ) => {
+      onRowChange({ ...row, [key]: value });
+    };
 
-      return (
-        <SearchBar
-          onSearch={setSearchKeyword}
-          options={crewProfiles}
-          loading={isCrewProfilesLoading}
-          autoFocus
-          dropdown
-          onChange={handleChange}
-          onOptionSelected={handleSelect}
-          sx={{
-            height: "100%",
-            width: "100%",
-          }}
-        />
-      );
-    },
-    [crewProfiles, isCrewProfilesLoading],
-  );
+    return (
+      <SearchBar
+        onSearch={(value) => {
+          setSearchKeyword(value);
+        }}
+        dropdownItems={crewProfiles}
+        loading={isCrewProfilesLoading}
+        autoFocus
+        dropdownEnabled
+        renderDropdownItem={renderCrewOption}
+        onChange={handleChange}
+        onDropdownItemSeletected={handleSelect}
+        sx={{
+          height: "100%",
+          width: "100%",
+        }}
+      />
+    );
+  };
 
   const columns: BaseEditableDataGridColumn<FormValuesCrew>[] = useMemo(
     () =>
