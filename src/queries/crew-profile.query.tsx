@@ -4,10 +4,7 @@ import {
   fetchMyCrewProfile,
   fetchSpecificCrewProfile,
 } from "@/services/crew.service";
-import {
-  CrewProfileFetchParams,
-  CrewProfileFilterCriteria,
-} from "@/types/api/crew-profile";
+import { CrewProfileFetchParams } from "@/types/api/crew-profile";
 
 export const CrewQueryKey = {
   ALL: ["crews"],

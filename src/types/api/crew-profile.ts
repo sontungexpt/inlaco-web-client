@@ -22,6 +22,8 @@ export interface CrewProfileFetchParams
 }
 
 export interface CrewProfile {
+  id: string;
+
   status: CrewStatus;
 
   employeeCardId: string;

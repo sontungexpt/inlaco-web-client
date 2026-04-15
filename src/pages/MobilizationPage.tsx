@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { PageTitle, SectionWrapper } from "@components/common";
 
 import { type Column } from "react-data-grid";
@@ -11,12 +11,13 @@ import { useNavigate } from "react-router";
 import { useMobilizations } from "@/queries/mobilization.query";
 import BaseDataGrid from "@/components/common/datagrid/BaseDataGrid";
 import { MobilizationSchedule } from "@/types/api/mobilization.api";
+import { BaseDataGridFooter } from "@/components/common/datagrid/components";
 
 const MobilizationPage = ({ pageSize = 10 }) => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
 
-  const { data: { content: mobilizations = [] } = {}, isLoading } =
+  const { data: { content: mobilizations = [], totalPages } = {}, isLoading } =
     useMobilizations({
       page: page,
       pageSize: pageSize,
@@ -87,7 +88,7 @@ const MobilizationPage = ({ pageSize = 10 }) => {
       <SectionWrapper>
         <PageTitle
           title="LỊCH ĐIỀU ĐỘNG"
-          subtitle={"Thông tin các điều động đã tạo"}
+          subtitle="Thông tin các điều động đã tạo"
         />
         <Box
           sx={{
@@ -118,9 +119,25 @@ const MobilizationPage = ({ pageSize = 10 }) => {
         </Box>
       </SectionWrapper>
       <BaseDataGrid<MobilizationSchedule>
+        rowKeyGetter={(row) => row.id}
         loading={isLoading}
         rows={mobilizations}
+        globalTooltip="Click hai lần để xem chi tiết"
+        onCellDoubleClick={({ row }) => {
+          navigate(`/mobilizations/${row.id}`);
+        }}
         columns={columns}
+        footer={
+          <BaseDataGridFooter
+            pagination={{
+              page: page + 1,
+              count: totalPages,
+              onChange(_, page) {
+                setPage(page - 1);
+              },
+            }}
+          />
+        }
       />
     </Box>
   );

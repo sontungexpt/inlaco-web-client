@@ -3,15 +3,18 @@ import { resolveComponent } from "@/utils/component";
 import { dateToLocaleString, LocaleType } from "@/utils/converter";
 import { ReactNode } from "react";
 
-const formatDisplayValue = (value: unknown, type: string | undefined) => {
-  if (!value) return "-";
+const formatDisplayValue = (value: unknown, type?: string | LocaleType) => {
+  if (!value) return "--";
   if (!type) return value;
   else if (["date", "datetime-local", "time"].includes(type)) {
     return (
-      dateToLocaleString(value as Date | string, type as LocaleType) || "-"
+      dateToLocaleString(
+        value as Date | string,
+        type === "datetime-local" ? "datetime" : (type as LocaleType),
+      ) || "--"
     );
   }
-  return value;
+  return value ?? "--";
 };
 
 export type InfoItemProps = StackProps & {

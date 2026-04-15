@@ -12,21 +12,21 @@ import { useCrewProfile } from "@/queries/crew-profile.query";
 import { useParams } from "react-router";
 
 export default function CrewProfile() {
-  const { crewId = "me" } = useParams();
-  const { data: profile, isLoading, isError } = useCrewProfile(crewId);
+  const { id = "me" } = useParams();
+  const { data: profile, isLoading } = useCrewProfile(id);
 
   if (isLoading) return <CenterCircularProgress />;
 
   return (
     <Box m={2}>
       {/* Header */}
-      <PageTitle
-        mb={3}
-        title="Hồ Sơ Thuyền Viên"
-        subtitle={`Mã thuyền viên: ${profile?.cardId || "-"}`}
-      />
+      <SectionWrapper>
+        <PageTitle
+          title="Hồ Sơ Thuyền Viên"
+          subtitle={`Mã nhân viên: ${profile?.employeeCardId || "-"}`}
+        />
+      </SectionWrapper>
 
-      {/* PERSONAL INFO */}
       <SectionWrapper title="Thông tin cá nhân">
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 3 }}>
