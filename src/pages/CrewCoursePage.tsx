@@ -27,6 +27,19 @@ import Color from "@constants/Color";
 import UserRole from "@/constants/UserRole";
 import useAllowedRole from "@/hooks/useAllowedRole";
 
+type CourseCardProps = {
+  name: string;
+  courseImagePublicId?: string;
+  courseImageUrl?: string;
+  trainingPartner?: string;
+  trainingPartnerLogo?: string;
+  trainingPartnerLogoPublicId?: string;
+  limitStudent?: number;
+  certificated?: boolean;
+  onClick: () => void;
+  sx?: any;
+};
+
 const CourseCard = ({
   name,
   courseImagePublicId,
@@ -41,7 +54,7 @@ const CourseCard = ({
   sx = [],
   certificated,
   onClick,
-}) => {
+}: CourseCardProps) => {
   return (
     <Card
       onClick={onClick}
@@ -170,7 +183,7 @@ export default function CrewCoursePage() {
   const {
     data: {
       content: courses = [],
-      totalElements: totalCourses,
+      totalElements: totalCourses = 0,
       totalPages,
     } = {},
     isLoading,
@@ -223,16 +236,15 @@ export default function CrewCoursePage() {
             <CourseCard
               key={course.id}
               name={course?.name}
-              description={course?.description}
               courseImagePublicId={course?.wallpaper?.publicId}
               courseImageUrl={course?.wallpaper?.url}
               trainingPartner={course?.trainingProviderName}
               trainingPartnerLogoPublicId={
                 course?.trainingProviderLogo?.publicId
               }
-              trainingPartnerLogo={course?.trainingProviderLogo}
+              trainingPartnerLogo={course?.trainingProviderLogo?.url}
               limitStudent={course?.limitStudent}
-              certified={course?.certified}
+              certificated={course?.certified}
               onClick={() =>
                 navigate(`/courses/${course?.id}`, {
                   state: { isAdmin: isAdmin },

@@ -1,4 +1,5 @@
 import { Asset } from "./shared/asset.api";
+import { PageParams } from "./shared/base.api";
 
 /* ===================== Course ===================== */
 
@@ -50,6 +51,10 @@ export type CourseResponse = {
   updatedDate?: string;
 };
 
+export interface FetchCoursesParams extends PageParams {
+  nonExpired?: boolean;
+}
+
 export enum CourseStatus {
   PENDING = "PENDING",
   IN_PROGRESS = "IN_PROGRESS",
@@ -59,7 +64,7 @@ export enum CourseStatus {
   UNKNOWN = "UNKNOWN",
 }
 
-export type CourseDetailResponse = {
+export type CourseDetail = {
   id: string;
   name: string;
   slug: string;
@@ -105,7 +110,7 @@ export type CourseDetailResponse = {
   updatedAt: string;
 };
 
-export type NewCourseRequest = {
+export type NewCourse = {
   name: string;
   trainingProviderName?: string;
   trainingProviderLogo?: string;
