@@ -20,7 +20,10 @@ export type SearchBarProps = Omit<
 > & {
   value?: string;
   onChange?: (
-    e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent,
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.MouseEvent
+      | React.KeyboardEvent<HTMLDivElement>,
     value: string,
   ) => void;
   showSearchIcon?: boolean;
@@ -36,8 +39,14 @@ export type SearchBarProps = Omit<
     selected: boolean,
     idx: number,
   ) => React.ReactNode;
-  mapDropdownItemToValue?: (opt: any) => string;
-  onDropdownItemSeletected?: (opt: any) => void;
+  onDropdownItemSeletected?: (
+    opt: any,
+  ) =>
+    | Promise<string | null | undefined | void>
+    | string
+    | null
+    | undefined
+    | void;
   dropdownMatchAnchorWidth?: boolean;
 
   collapsible?: boolean;
@@ -79,7 +88,6 @@ export default function SearchBar<T = any>({
   dropdownEnabled = false,
   dropdownItems = [],
   renderDropdownItem = (opt) => opt?.label ?? String(opt),
-  mapDropdownItemToValue,
   onDropdownItemSeletected,
 
   collapsible = false,
@@ -142,7 +150,7 @@ export default function SearchBar<T = any>({
         return;
       }
 
-      // skip nếu đang search keyword này
+      // skip if search is processing with the same query
       if (inFlightKeywordRef.current === value) {
         return;
       }
@@ -271,15 +279,17 @@ export default function SearchBar<T = any>({
     }
   };
 
-  const handleSeletectDropdownItem = (item: T) => {
-    const value =
-      typeof item === "string"
-        ? item
-        : (mapDropdownItemToValue?.(item) ?? String(item));
+  const handleSeletectDropdownItem = async (
+    e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>,
+    item: T,
+  ) => {
+    const newValue = await onDropdownItemSeletected?.(item);
+    if (newValue != null) {
+      setInputValue(newValue);
+      onChange?.(e, String(value));
+    }
 
-    setInputValue(value);
     setDropdownOpened(false);
-    onDropdownItemSeletected?.(item);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -317,7 +327,7 @@ export default function SearchBar<T = any>({
       case "Enter": {
         if (isOpen && currentItem) {
           e.preventDefault();
-          handleSeletectDropdownItem(currentItem);
+          handleSeletectDropdownItem(e, currentItem);
         } else {
           triggerSearch(inputValue, true); // immediate
         }
@@ -326,7 +336,7 @@ export default function SearchBar<T = any>({
 
       case "Tab": {
         if (isOpen && currentItem) {
-          handleSeletectDropdownItem(currentItem);
+          handleSeletectDropdownItem(e, currentItem);
         }
         break;
       }
@@ -445,7 +455,7 @@ export default function SearchBar<T = any>({
                   onMouseEnter={() => setActiveOptionIndex(idx)}
                   onMouseDown={(e) => {
                     e.preventDefault();
-                    handleSeletectDropdownItem(opt);
+                    handleSeletectDropdownItem(e, opt);
                   }}
                 >
                   {renderDropdownItem(opt, idx === activeOptionIndex, idx)}

@@ -27,26 +27,18 @@ export interface CrewProfile {
   employeeCardId: string;
 
   fullName: string;
-  avatarUrl?: string;
-
-  gender?: string;
-  birthDate?: string;
-
   phoneNumber?: string;
   email?: string;
   address?: string;
 
-  professionalPosition?: string;
+  gender?: string;
+  birthDate?: string;
 
-  experience?: number[];
-  expertiseLevels?: string[];
+  professionalPosition: string;
+  // avatarUrl?: string;
 
   socialInsuranceCode?: string;
-  accidentInsuranceCode?: string;
-  healthInsuranceCode?: string;
-
-  healthInsHospital?: string;
-
   socialInsuranceImages?: Asset[];
+  accidentInsuranceCode?: string;
   accidentInsuranceImages?: Asset[];
 }

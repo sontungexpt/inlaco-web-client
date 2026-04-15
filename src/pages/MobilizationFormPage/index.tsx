@@ -21,7 +21,6 @@ import toast from "react-hot-toast";
 import { BASE_FORM_VALUES } from "./initial";
 import {
   BaseEditableDataGridColumn,
-  BaseEditableDataGridRenderCellProps,
   BaseEditableDataGridRenderEditCellProps,
 } from "@/components/common/datagrid/BaseEditableDataGrid";
 import BaseEditableDataGridToolbar from "@/components/common/datagrid/components/BaseEditableDataGridToolbar";
@@ -199,22 +198,67 @@ const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
   );
 };
 
+function CrewSearchEditCell({
+  row,
+  column,
+  onRowChange,
+}: BaseEditableDataGridRenderEditCellProps<FormValuesCrew>) {
+  const key = column.key as keyof FormValuesCrew;
+
+  const [keyword, setKeyword] = useState("");
+
+  const { data: { content: crewProfiles = [] } = {}, isLoading: isSearching } =
+    useCrewProfiles({
+      page: 0,
+      pageSize: 10,
+      filter: {
+        keyword,
+        workStatus: "READY_FOR_ASSIGNMENT",
+      },
+    });
+
+  const handleSelect = (opt: CrewProfile) => {
+    onRowChange(
+      {
+        ...row,
+        employeeCardId: opt.employeeCardId,
+        fullName: opt.fullName,
+        rankOnBoard: opt.professionalPosition,
+      },
+      true,
+    );
+  };
+
+  return (
+    <SearchBar
+      onSearch={(value) => {
+        setKeyword(value);
+      }}
+      dropdownItems={crewProfiles}
+      loading={isSearching}
+      autoFocus
+      dropdownEnabled
+      renderDropdownItem={renderCrewOption}
+      onChange={(_, value: string) => {
+        onRowChange({ ...row, [key]: value });
+      }}
+      onDropdownItemSeletected={handleSelect}
+      sx={{
+        height: "100%",
+        width: "100%",
+      }}
+    />
+  );
+}
+
+function renderSearchEditCell(
+  props: BaseEditableDataGridRenderEditCellProps<FormValuesCrew>,
+) {
+  return <CrewSearchEditCell {...props} />;
+}
+
 export default function MobiliaztionForm() {
   const navigate = useNavigate();
-  const [searchKeyword, setSearchKeyword] = useState("");
-
-  const {
-    data: { content: crewProfiles = [] } = {},
-    isLoading: isCrewProfilesLoading,
-  } = useCrewProfiles({
-    page: 0,
-    pageSize: 10,
-    filter: {
-      keyword: searchKeyword,
-      workStatus: "READY_FOR_ASSIGNMENT",
-    },
-  });
-  console.log("crewProfiles", crewProfiles);
 
   const handleFormSubmission = async (
     values: FormValues,
@@ -229,52 +273,6 @@ export default function MobiliaztionForm() {
     } catch (err) {
       toast.error("Tạo điều động thất bại, thử lại sau");
     }
-  };
-
-  const renderSearchEditCell = ({
-    row,
-    column,
-    onRowChange,
-  }: BaseEditableDataGridRenderEditCellProps<FormValuesCrew>) => {
-    const key = column.key as keyof FormValuesCrew;
-
-    const handleSelect = (opt: CrewProfile) => {
-      onRowChange(
-        {
-          ...row,
-          employeeCardId: opt.employeeCardId,
-          fullName: opt.fullName,
-          // rankOnBoard: opt.healthInsHospital,
-        },
-        true,
-      );
-    };
-
-    const handleChange = (
-      e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent,
-      value: string,
-    ) => {
-      onRowChange({ ...row, [key]: value });
-    };
-
-    return (
-      <SearchBar
-        onSearch={(value) => {
-          setSearchKeyword(value);
-        }}
-        dropdownItems={crewProfiles}
-        loading={isCrewProfilesLoading}
-        autoFocus
-        dropdownEnabled
-        renderDropdownItem={renderCrewOption}
-        onChange={handleChange}
-        onDropdownItemSeletected={handleSelect}
-        sx={{
-          height: "100%",
-          width: "100%",
-        }}
-      />
-    );
   };
 
   const columns: BaseEditableDataGridColumn<FormValuesCrew>[] = useMemo(
