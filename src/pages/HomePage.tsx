@@ -1,5 +1,10 @@
-import React, { useState } from "react";
-import { CloudinaryImage, PageTitle, SectionWrapper } from "@components/common";
+import { useState } from "react";
+import {
+  CloudinaryImage,
+  LoadErrorState,
+  PageTitle,
+  SectionWrapper,
+} from "@components/common";
 import {
   Box,
   Typography,
@@ -8,7 +13,7 @@ import {
   CardContent,
   Button,
   Pagination,
-  Alert,
+  CardProps,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { usePosts } from "@/queries/post.query";
@@ -16,6 +21,17 @@ import { useNavigate } from "react-router";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";
 import CenterCircularProgress from "@/components/common/CenterCircularProgress";
+import { dateToLocaleString } from "@/utils/converter";
+
+type NewssCardProps = CardProps & {
+  title: string;
+  description?: string;
+  imagePublicId?: string;
+  imageSrc?: string;
+  date?: string | Date;
+  onClick?: () => void;
+  onDetailClick?: (e: React.MouseEvent) => void;
+};
 
 const NewsCard = ({
   title,
@@ -26,7 +42,7 @@ const NewsCard = ({
   onClick,
   onDetailClick,
   ...props
-}) => {
+}: NewssCardProps) => {
   return (
     <Card
       {...props}
@@ -71,8 +87,8 @@ const NewsCard = ({
         {/* Gradient + blur */}
         <Box
           position="absolute"
-          inset={0}
           sx={{
+            inset: 0,
             background:
               "linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0))",
             backdropFilter: "blur(1px)",
@@ -92,7 +108,7 @@ const NewsCard = ({
           }}
         >
           <Typography variant="caption" sx={{ color: "#fff", fontWeight: 500 }}>
-            {date}
+            {dateToLocaleString(date || "", "date")}
           </Typography>
         </Box>
       </Box>
@@ -184,25 +200,15 @@ export default function HomePage({ pageSize = 12 }) {
 
   if (isError) {
     return (
-      <Box
-        sx={{
-          mt: 10,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Alert severity="error" sx={{ mb: 2 }}>
-          Không thể tải dữ liệu bài viết. Vui lòng thử lại!
-        </Alert>
-        <Button variant="contained" onClick={() => refetchNews()}>
-          Thử lại
-        </Button>
-      </Box>
+      <LoadErrorState
+        title="Không thể tải dữ liệu bài viết"
+        subtitle="Vui lòng thử lặp"
+        onRetry={() => refetchNews()}
+      />
     );
   }
 
-  const navigateToDetail = (id, type) => {
+  const navigateToDetail = (id: string) => {
     navigate(`/posts/${id}`);
   };
 
@@ -240,11 +246,11 @@ export default function HomePage({ pageSize = 12 }) {
               id={post.id}
               title={post.title}
               description={post.description}
-              imageSrc={post.image.url}
-              imagePublicId={post.image.publicId}
-              date={post.date}
-              onClick={() => navigateToDetail(post.id, post.type)}
-              onDetailClick={() => navigateToDetail(post.id, post.type)}
+              imageSrc={post?.image?.url}
+              imagePublicId={post?.image?.publicId}
+              date={post.updatedAt}
+              onClick={() => navigateToDetail(post.id)}
+              onDetailClick={() => navigateToDetail(post.id)}
             />
           </Grid>
         ))}

@@ -1,3 +1,5 @@
+import { FetchPostsParams, NewPost, Post } from "@/types/api/post.api";
+import { PageableResponse } from "@/types/api/shared/base.api";
 import { flattenFilter } from "@/utils/filter";
 import PostEndpoint from "@endpoints/post.endpoint";
 import { privateRequest, publicRequest } from "@utils/request";
@@ -5,40 +7,43 @@ import { privateRequest, publicRequest } from "@utils/request";
 export const fetchPosts = async ({
   page = 0,
   pageSize = 20,
-  sort = null,
-  filter = {
-    type: "NEWS",
-  },
-}) => {
-  const response = await publicRequest.get(PostEndpoint.GET_POSTS, {
-    params: {
-      page,
-      size: pageSize,
-      sort,
-      ...flattenFilter(filter),
+  sort,
+  filter,
+}: FetchPostsParams) => {
+  const response = await publicRequest.get<PageableResponse<Post>>(
+    PostEndpoint.GET_POSTS,
+    {
+      params: {
+        page,
+        size: pageSize,
+        sort,
+        ...flattenFilter(filter),
+      },
     },
-  });
+  );
   return response.data;
 };
 
-export const createPost = async (postInfo) => {
-  const response = await privateRequest.post(
+export const createPost = async (postInfo: NewPost) => {
+  const response = await privateRequest.post<Post>(
     PostEndpoint.CREATE_POST,
     postInfo,
   );
   return response.data;
 };
 
-export const updatePost = async (id, update_data) => {
-  const response = await privateRequest.patch(
+export const updatePost = async (id: string, update_data: Post) => {
+  const response = await privateRequest.patch<Post>(
     PostEndpoint.UPDATE_POST(id),
     update_data,
   );
   return response.data;
 };
 
-export const fetchUniquePost = async (postID) => {
-  const response = await publicRequest.get(PostEndpoint.GET_POST_BY_ID(postID));
+export const fetchUniquePost = async (postID: string) => {
+  const response = await publicRequest.get<Post>(
+    PostEndpoint.GET_POST_BY_ID(postID),
+  );
   return response.data;
 };
 

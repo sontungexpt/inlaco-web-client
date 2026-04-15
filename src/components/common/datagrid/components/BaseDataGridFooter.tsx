@@ -13,13 +13,22 @@ export type BaseTableFooterProps = BaseDataGridBarProps & {
 export function BaseDataGridFooter({
   pagination,
   leftCompoent,
+  sx,
   ...props
 }: BaseTableFooterProps) {
   return (
-    <BaseDataGridBar {...props}>
+    <BaseDataGridBar
+      {...props}
+      sx={[
+        {
+          backgroundColor: "var(--rdg-header-background-color)",
+        },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
+    >
       {leftCompoent}
 
-      {pagination?.count && (
+      {!!pagination?.count && (
         <Pagination
           size="small"
           {...pagination}

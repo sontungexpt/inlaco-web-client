@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { Button, Snackbar, Alert } from "@mui/material";
 
+export type SnackbarButtonProps = {
+  buttonText?: string;
+  message?: string;
+  severity?: "success" | "info" | "warning" | "error";
+  autoHideDuration?: number;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  snackbarProps?: any;
+};
+
 export default function SnackbarButton({
   buttonText = "Show Snackbar",
   message = "Action completed",
@@ -9,15 +18,15 @@ export default function SnackbarButton({
   onClick,
   snackbarProps,
   ...buttonProps
-}) {
+}: SnackbarButtonProps) {
   const [open, setOpen] = useState(false);
 
-  const handleClick = (e) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     onClick?.(e);
     setOpen(true);
   };
 
-  const handleClose = (_, reason) => {
+  const handleClose = (_: React.SyntheticEvent, reason?: string) => {
     if (reason === "clickaway") return;
     setOpen(false);
   };

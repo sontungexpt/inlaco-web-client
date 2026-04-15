@@ -23,8 +23,6 @@ export function BaseDataGridBar({
           width: "100%",
           height: DEFAULT_RDG_ROW_HEIGHT,
 
-          backgroundColor: "var(--rdg-header-background-color)",
-
           borderWidth: "var(--rdg-border-width)",
           borderColor: "var(--rdg-border-color)",
 

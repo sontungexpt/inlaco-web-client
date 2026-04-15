@@ -1,4 +1,3 @@
-import React from "react";
 import { Formik } from "formik";
 import { Avatar, Box, Button, Grid, Typography } from "@mui/material";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";

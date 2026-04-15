@@ -12,7 +12,10 @@ import { useContracts } from "@/queries/contract.query";
 import BaseDataGrid, {
   BaseDataGridColumn,
 } from "@/components/common/datagrid/BaseDataGrid";
-import { BaseDataGridFooter } from "@/components/common/datagrid/components";
+import {
+  BaseDataGridBar,
+  BaseDataGridFooter,
+} from "@/components/common/datagrid/components";
 import { ContractType } from "@/types/api/contract.api";
 
 const useContractPageParams = (): {
@@ -115,39 +118,6 @@ export default function ContractPage({ pageSize = 20 }) {
             : "Danh sách các hợp đồng cung ứng thuyền viên"
         }
       />
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          gap: 2,
-          my: 1,
-        }}
-      >
-        <SearchBar
-          onSearch={setQuery}
-          loading={isLoading}
-          minQueryLength={0}
-          size="small"
-          placeholder="Nhập tên hoặc mã thuyền viên cần tìm kiếm"
-        />
-
-        <InfoTextField
-          select
-          size="small"
-          margin="none"
-          required
-          label="Trạng thái"
-          value={status}
-          onChange={(e) => setStatus(e.target.value as ContractStatus)}
-        >
-          {STATUS_FILTERS.map((status, idx) => (
-            <MenuItem key={idx} value={status.value}>
-              {status.label}
-            </MenuItem>
-          ))}
-        </InfoTextField>
-      </Box>
 
       <BaseDataGrid<ContractRow>
         loading={isLoading}
@@ -156,6 +126,41 @@ export default function ContractPage({ pageSize = 20 }) {
         onCellDoubleClick={({ row }) => onContractDetailClick(row.id)}
         rowKeyGetter={({ id }) => id}
         rows={contracts as ContractRow[]}
+        toolbar={
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              gap: 2,
+              my: 1,
+            }}
+          >
+            <SearchBar
+              onSearch={setQuery}
+              loading={isLoading}
+              minQueryLength={0}
+              size="small"
+              placeholder="Nhập tên hoặc mã thuyền viên cần tìm kiếm"
+            />
+
+            <InfoTextField
+              select
+              size="small"
+              margin="none"
+              required
+              label="Trạng thái"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as ContractStatus)}
+            >
+              {STATUS_FILTERS.map((status, idx) => (
+                <MenuItem key={idx} value={status.value}>
+                  {status.label}
+                </MenuItem>
+              ))}
+            </InfoTextField>
+          </Box>
+        }
         footer={
           <BaseDataGridFooter
             pagination={{

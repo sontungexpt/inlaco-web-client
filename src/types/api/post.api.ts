@@ -1,10 +1,7 @@
 import { Asset } from "./shared/asset.api";
+import { PageParams } from "./shared/base.api";
 
-export enum PostType {
-  NEWS = "NEWS",
-  RECRUITMENT = "RECRUITMENT",
-  COURSE = "COURSE",
-}
+export type PostType = "NEWS" | "RECRUITMENT" | "COURSE";
 
 export interface Post {
   id: string;
@@ -19,6 +16,12 @@ export interface Post {
   authorId?: string;
 }
 
+export interface PostFilterCriteria {
+  type?: PostType;
+}
+
+export interface FetchPostsParams extends PageParams<PostFilterCriteria> {}
+
 export interface RecruitmentPost extends Post {
   position: string;
   expectedSalary: string;
@@ -26,7 +29,7 @@ export interface RecruitmentPost extends Post {
   workLocation: string;
   recruitmentStartDate: string; //iso
   recruitmentEndDate: string; //iso
-  type: PostType.RECRUITMENT;
+  type: "RECRUITMENT";
 }
 
 export interface NewPost {
@@ -45,5 +48,5 @@ export interface NewRecruitmentPost extends NewPost {
   workLocation: string;
   recruitmentStartDate: string; //iso
   recruitmentEndDate: string; //iso
-  type: PostType.RECRUITMENT;
+  type: "RECRUITMENT";
 }

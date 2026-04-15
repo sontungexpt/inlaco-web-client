@@ -1,8 +1,5 @@
 import CrewProfileEndpoint from "@/endpoints/crew-profile.endpoint";
-import {
-  CrewProfileFetchParams,
-  CrewProfileResponse,
-} from "@/types/api/crew-profile";
+import { CrewProfile, CrewProfileFetchParams } from "@/types/api/crew-profile";
 import { PageableResponse } from "@/types/api/shared/base.api";
 
 import { flattenFilter } from "@/utils/filter";
@@ -12,7 +9,7 @@ export const fetchCrewProfiles = async ({
   page,
   pageSize,
   filter,
-}: CrewProfileFetchParams): Promise<PageableResponse<CrewProfileResponse>> => {
+}: CrewProfileFetchParams): Promise<PageableResponse<CrewProfile>> => {
   const response = await privateRequest.get(CrewProfileEndpoint.GET_ALL_CREWS, {
     params: {
       page,
@@ -24,14 +21,14 @@ export const fetchCrewProfiles = async ({
 };
 
 export const fetchMyCrewProfile = async () => {
-  const response = await privateRequest.get<CrewProfileResponse>(
+  const response = await privateRequest.get<CrewProfile>(
     CrewProfileEndpoint.CURRENT_PROFILE,
   );
   return response.data;
 };
 
 export const fetchSpecificCrewProfile = async (profileId: String) => {
-  const response = await privateRequest.get<CrewProfileResponse>(
+  const response = await privateRequest.get<CrewProfile>(
     CrewProfileEndpoint.GET_BY_ID(profileId),
   );
   return response.data;

@@ -8,7 +8,7 @@ import {
   fetchUniquePost,
   reviewCandidateApplication,
 } from "@/services/post.service";
-import { Post, PostType } from "@/types/api/post.api";
+import { FetchPostsParams, Post, PostType } from "@/types/api/post.api";
 import { ApplyRecruitmentRequest } from "@/types/api/recruitment.api";
 import { PageParams } from "@/types/api/shared/base.api";
 import {
@@ -22,8 +22,7 @@ import { ErrorResponse } from "react-router";
 
 export const PostQueryKey = {
   ALL: ["posts"],
-
-  LIST: ({ page, pageSize, filter, sort }) => [
+  LIST: ({ page, pageSize, filter, sort }: FetchPostsParams) => [
     ...PostQueryKey.ALL,
     "list",
     page,
@@ -50,14 +49,18 @@ export const PostQueryKey = {
 
 export const usePost = (id?: string) => {
   return useQuery<Post, AxiosError<ErrorResponse>>({
-    queryKey: PostQueryKey.DETAIL(id as string),
-    queryFn: () => fetchUniquePost(id),
     enabled: !!id,
-    retry: 1,
+    queryKey: PostQueryKey.DETAIL(id as string),
+    queryFn: () => fetchUniquePost(id as string),
   });
 };
 
-export const usePosts = ({ page, pageSize = 20, sort, filter }) => {
+export const usePosts = ({
+  page,
+  pageSize = 20,
+  sort,
+  filter,
+}: FetchPostsParams) => {
   return useQuery({
     queryKey: PostQueryKey.LIST({ page, pageSize, filter, sort }),
     queryFn: () => fetchPosts({ page, pageSize, filter, sort }),
@@ -70,13 +73,13 @@ export const useRecruitmentPosts = ({
   pageSize = 10,
   sort,
   filter,
-}: PageParams) => {
+}: FetchPostsParams) => {
   return usePosts({
     page,
     pageSize,
     filter: {
       ...filter,
-      type: PostType.RECRUITMENT,
+      type: "RECRUITMENT",
     },
     sort,
   });

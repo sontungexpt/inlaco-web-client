@@ -27,52 +27,6 @@ const STATUS_FILTERS = [
   { label: "Ứng viên rút hồ sơ", value: CandidateStatus.WITHDRAWN },
 ];
 
-const CandidateTableFooter = ({
-  pagination,
-  filterStatus,
-  onFilterStatusChange,
-  ...props
-}: {
-  pagination?: PaginationProps;
-  filterStatus?: CandidateStatus;
-  onFilterStatusChange?: (status: CandidateStatus) => void;
-}) => {
-  return (
-    <BaseDataGridFooter
-      {...props}
-      leftCompoent={
-        <Select<CandidateStatus>
-          size="small"
-          value={filterStatus}
-          onChange={(e) => onFilterStatusChange?.(e.target.value)}
-          sx={{
-            color: Color.PrimaryWhite,
-
-            // Remove border
-            "& .MuiOutlinedInput-notchedOutline": {
-              border: "none",
-            },
-
-            "&:hover .MuiOutlinedInput-notchedOutline": {
-              border: "none",
-            },
-
-            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              border: "none",
-            },
-          }}
-        >
-          {STATUS_FILTERS.map((s) => (
-            <MenuItem key={s.value} value={s.value}>
-              {s.label}
-            </MenuItem>
-          ))}
-        </Select>
-      }
-    />
-  );
-};
-
 export type CandidateTableProps = {
   candidates: any[];
   loading?: boolean;
@@ -166,15 +120,43 @@ export default function CandidateTable({
       loading={loading}
       rows={candidates}
       columns={columns}
-      defaultColumnOptions={{}}
-      skeletonCount={5}
       globalTooltip="Click hai lần để xem chi tiết ứng viên"
       onCellDoubleClick={({ row }) => onDetailClick?.(row?.id)}
       footer={
-        <CandidateTableFooter
+        <BaseDataGridFooter
+          sx={{
+            flexDirection: "row-reverse",
+          }}
           pagination={pagination}
-          filterStatus={filterStatus}
-          onFilterStatusChange={onFilterStatusChange}
+          leftCompoent={
+            <Select<CandidateStatus>
+              size="small"
+              value={filterStatus}
+              onChange={(e) => onFilterStatusChange?.(e.target.value)}
+              sx={{
+                color: Color.PrimaryWhite,
+
+                // Remove border
+                "& .MuiOutlinedInput-notchedOutline": {
+                  border: "none",
+                },
+
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  border: "none",
+                },
+
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  border: "none",
+                },
+              }}
+            >
+              {STATUS_FILTERS.map((s) => (
+                <MenuItem key={s.value} value={s.value}>
+                  {s.label}
+                </MenuItem>
+              ))}
+            </Select>
+          }
         />
       }
     />
