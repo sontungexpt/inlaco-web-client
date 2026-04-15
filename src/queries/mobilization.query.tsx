@@ -7,8 +7,7 @@ import {
   FetchMobilizationSchedulesParams,
   MobilizationSchedule,
 } from "@/types/api/mobilization.api";
-import { ErrorResponse, PageableResponse } from "@/types/api/shared/base.api";
-import { AxiosError } from "axios";
+import { PageableResponse } from "@/types/api/shared/base.api";
 
 export const MobilizationQueryKey = {
   ALL: ["mobilizations"],
@@ -38,8 +37,12 @@ export const useMobilizations = (
   });
 };
 
-export const useMobilization = (mobilizationId?: string) => {
+export const useMobilization = (
+  mobilizationId?: string,
+  options?: UseQueryOptions<MobilizationSchedule>,
+) => {
   return useQuery({
+    ...options,
     enabled: !!mobilizationId,
     queryKey: MobilizationQueryKey.DETAIL(mobilizationId as string),
     queryFn: () => fetchSpecificMobilization(mobilizationId as string),

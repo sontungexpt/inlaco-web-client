@@ -1,10 +1,10 @@
 import { datetimeToISO } from "@utils/converter";
 import { FormValues } from "./schema";
-import { MobilizationRequest } from "@/types/api/mobilization.api";
+import { NewMobilizationSchedule } from "@/types/api/mobilization.api";
 
 export const mapValuesToRequestBody = (
   values: FormValues,
-): MobilizationRequest => {
+): NewMobilizationSchedule => {
   return {
     partnerName: values.partnerName,
     partnerPhone: values.partnerPhone,
@@ -19,17 +19,14 @@ export const mapValuesToRequestBody = (
       type: values.shipInfo.shipType,
     },
 
-    // status: values.s;
     startDate: datetimeToISO(values.startDate) as string,
     endDate: datetimeToISO(values.endDate) as string,
-    crews:
-      values.crews?.map((crew) => ({
-        id: crew.id as string,
-        fullName: crew.fullName,
-        employeeCardId: crew.employeeCardId,
-        rankOnBoard: crew.rankOnBoard,
-        startDate: datetimeToISO(crew.startDate) as string,
-        endDate: datetimeToISO(crew.endDate) as string,
-      })) || [],
+    crews: values.crews.map((crew) => ({
+      fullName: crew.fullName,
+      employeeCardId: crew.employeeCardId,
+      rankOnBoard: crew.rankOnBoard,
+      startDate: datetimeToISO(crew.startDate) as string,
+      endDate: datetimeToISO(crew.endDate) as string,
+    })),
   };
 };

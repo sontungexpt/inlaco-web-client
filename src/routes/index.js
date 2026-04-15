@@ -29,7 +29,7 @@ export const AppRoutes = [
     children: [
       {
         index: true,
-        element: lazy(() => import("@/pages/crews/CrewInfos")),
+        element: lazy(() => import("@/pages/CrewListPage")),
       },
       {
         path: "add/:candidateID",
@@ -41,7 +41,7 @@ export const AppRoutes = [
       // },
       {
         path: ":id/profile",
-        element: lazy(() => import("@/pages/crews/CrewProfile")),
+        element: lazy(() => import("@/pages/CrewProfileDetailPage")),
       },
     ],
   },

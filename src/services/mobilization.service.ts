@@ -33,16 +33,16 @@ export const fetchSpecificMobilization = async (mobilizationId: string) => {
   return response.data;
 };
 
-export const getMyMobilizationAPI = async (cardID) => {
-  try {
-    const response = await privateRequest.get(
-      `${MobilizationEndpoint.CURRENT_MOBILIZATION}/${cardID}`,
-    );
-    return response;
-  } catch (err) {
-    return err.response;
-  }
-};
+// export const getMyMobilizationAPI = async (cardID) => {
+//   try {
+//     const response = await privateRequest.get(
+//       `${MobilizationEndpoint.CURRENT_MOBILIZATION}/${cardID}`,
+//     );
+//     return response;
+//   } catch (err) {
+//     return err.response;
+//   }
+// };
 
 export const createMobilization = async (
   mobilizationInfo: NewMobilizationSchedule,

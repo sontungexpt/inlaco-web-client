@@ -48,7 +48,7 @@ export default function ContractPage({ pageSize = 20 }) {
   const [status, setStatus] = useState<ContractStatus>("SIGNED");
   const officialContract = status === "SIGNED";
 
-  const [searchText, setSearchText] = useState("");
+  const [query, setQuery] = useState("");
   const [page, setPage] = useState(initialPage);
 
   const { data: { content: contracts = [], totalPages = 0 } = {}, isLoading } =
@@ -57,7 +57,7 @@ export default function ContractPage({ pageSize = 20 }) {
       pageSize: pageSize,
       filter: {
         signed: officialContract,
-        keyword: searchText,
+        keyword: query,
         type: contractType,
       },
     });
@@ -125,9 +125,9 @@ export default function ContractPage({ pageSize = 20 }) {
         }}
       >
         <SearchBar
-          onSearch={(q: string) => setSearchText(q)}
+          onSearch={setQuery}
           loading={isLoading}
-          minLength={0}
+          minQueryLength={0}
           size="small"
           placeholder="Nhập tên hoặc mã thuyền viên cần tìm kiếm"
         />

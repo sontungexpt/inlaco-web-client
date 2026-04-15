@@ -9,7 +9,6 @@ export type MobilizationScheduleStatus =
   | "CANCELLED";
 
 export type NewAssignedCrew = {
-  id: string;
   fullName: string;
   employeeCardId: string;
   rankOnBoard: string;

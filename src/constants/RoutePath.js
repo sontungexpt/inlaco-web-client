@@ -1,5 +1,3 @@
-import Index from "@/pages/PostDetailPage";
-
 const RoutePath = {
   Home: "/",
   E403: "/403",

@@ -1,12 +1,11 @@
-import { useParams } from "react-router";
-import { useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { useMemo } from "react";
 
 import { Box, Button, Grid, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 
 import Color from "@/constants/Color";
-import { dateToLocaleString } from "@/utils/converter";
 import { useMobilization } from "@/queries/mobilization.query";
 
 import UserRole from "@/constants/UserRole";
@@ -15,84 +14,57 @@ import {
   SectionWrapper,
   PageTitle,
   CloudinaryImage,
-  BaseDataGridOld,
   InfoItem,
-  CenterCircularProgress,
+  BaseDataGrid,
 } from "@/components/common";
 import { useAllowedRole } from "@/contexts/auth.context";
 
 export default function MobilizationDetail() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  });
-
-  const { data: mobilization = {}, isLoading } = useMobilization(id);
-  const shipInfo = mobilization.shipInfo || {};
+  const { data: mobilization, isLoading } = useMobilization(id);
+  const shipInfo = mobilization?.shipInfo;
 
   const columns = useMemo(
     () => [
+      // {
+      //   key: "id",
+      //   name: "ID",
+      // },
       {
-        field: "fullName",
-        headerName: "Họ và tên",
-        flex: 2,
-        align: "left",
+        key: "employeeCardId",
+        name: "Mã nhân viên",
       },
       {
-        field: "cardId",
-        headerName: "Mã thẻ",
-        flex: 1.2,
-        align: "center",
+        key: "fullName",
+        name: "Họ và tên",
       },
       {
-        field: "phoneNumber",
-        headerName: "SĐT",
-        flex: 1.3,
-        align: "center",
+        key: "rankOnBoard",
+        name: "Chức danh",
       },
       {
-        field: "email",
-        headerName: "Email",
-        flex: 2,
-        renderCell: (params) => params?.value ?? "—",
+        key: "phoneNumber",
+        name: "SĐT",
       },
       {
-        field: "gender",
-        headerName: "Giới tính",
-        flex: 1,
-        align: "center",
-        renderCell: (params) => {
-          if (!params?.value) return "—";
-          return params.value === "MALE" ? "Nam" : "Nữ";
-        },
+        key: "email",
+        name: "Email",
       },
       {
-        field: "professionalPosition",
-        headerName: "Chức danh",
-        flex: 1.5,
-        renderCell: (params) => params?.value ?? "—",
+        key: "gender",
+        name: "Giới tính",
       },
     ],
     [],
   );
 
-  if (isLoading) {
-    return <CenterCircularProgress />;
-  }
   return (
     <Box m={3}>
       {/* ================= HEADER ================= */}
-      <SectionWrapper
-        display="flex"
-        justifyContent="space-between"
-        alignItems={{ xs: "flex-start", md: "center" }}
-        flexDirection={{ xs: "column", md: "row" }}
-        gap={2}
-        mb={2}
-      >
+      <SectionWrapper>
         <PageTitle
           title="CHI TIẾT ĐIỀU ĐỘNG"
           subtitle="Thông tin chi tiết của điều động"
@@ -107,11 +79,20 @@ export default function MobilizationDetail() {
                 backgroundColor: Color.PrimaryGold,
                 color: Color.PrimaryBlack,
               }}
+              onClick={() => {
+                console.warn("Not implemented yet");
+              }}
             >
               Chỉnh sửa
             </Button>
 
-            <Button startIcon={<FileDownloadRoundedIcon />} variant="outlined">
+            <Button
+              onClick={() => {
+                console.warn("Not implemented yet");
+              }}
+              startIcon={<FileDownloadRoundedIcon />}
+              variant="outlined"
+            >
               Excel
             </Button>
           </Stack>
@@ -124,16 +105,19 @@ export default function MobilizationDetail() {
           <Grid size={{ xs: 12, md: 5 }}>
             <InfoItem
               label="Công ty điều động đến"
-              value={mobilization.partnerName}
+              value={mobilization?.partnerName}
             />
           </Grid>
 
           <Grid size={{ xs: 12, md: 4 }}>
-            <InfoItem label="Email công ty" value={mobilization.partnerEmail} />
+            <InfoItem
+              label="Email công ty"
+              value={mobilization?.partnerEmail}
+            />
           </Grid>
 
           <Grid size={{ xs: 12, md: 3 }}>
-            <InfoItem label="SĐT công ty" value={mobilization.partnerPhone} />
+            <InfoItem label="SĐT công ty" value={mobilization?.partnerPhone} />
           </Grid>
         </Grid>
       </SectionWrapper>
@@ -144,14 +128,16 @@ export default function MobilizationDetail() {
           <Grid size={{ xs: 12, md: 6 }}>
             <InfoItem
               label="Thời gian bắt đầu"
-              value={dateToLocaleString(mobilization.startDate)}
+              type="datetime-local"
+              value={mobilization?.startDate}
             />
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
             <InfoItem
               label="Thời gian kết thúc"
-              value={dateToLocaleString(mobilization.estimatedEndDate)}
+              type="datetime-local"
+              value={mobilization?.endDate}
             />
           </Grid>
         </Grid>
@@ -177,31 +163,33 @@ export default function MobilizationDetail() {
           </Grid>
 
           <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-            <InfoItem label="IMO" value={shipInfo.imoNumber} />
+            <InfoItem label="IMO" value={shipInfo?.imoNumber} />
           </Grid>
 
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-            <InfoItem label="Tên tàu" value={shipInfo.name} />
+            <InfoItem label="Tên tàu" value={shipInfo?.name} />
           </Grid>
 
           <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-            <InfoItem label="Quốc tịch" value={shipInfo.countryISO} />
+            <InfoItem label="Quốc tịch" value={shipInfo?.countryISO} />
           </Grid>
 
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-            <InfoItem label="Loại tàu" value={shipInfo.type} />
+            <InfoItem label="Loại tàu" value={shipInfo?.type} />
           </Grid>
         </Grid>
       </SectionWrapper>
 
       {/* ================= CREW LIST ================= */}
       <SectionWrapper title="Danh sách thuyền viên được điều động">
-        <BaseDataGridOld
-          rows={mobilization.crewMembers || []}
+        <BaseDataGrid
+          loading={isLoading}
+          rows={mobilization?.crews || []}
           columns={columns}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          autoHeight
+          globalTooltip="Click hai lần để xem chi tiết"
+          onCellDoubleClick={({ row }) => {
+            navigate(`/crews/${row.id}/profile`);
+          }}
         />
       </SectionWrapper>
     </Box>

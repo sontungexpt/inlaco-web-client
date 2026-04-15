@@ -54,14 +54,14 @@ const SearchEditCell = ({
     <ErrorTooltip error={error}>
       <SearchBar
         autoSearch
-        dropdown
+        dropdownEnabled
         showSearchIcon={false}
         suppressSearchOnValueChange={!hasFocus}
         {...props}
         value={value}
-        options={normalizeOptions}
-        mapOptionToValue={(opt) => opt.value}
-        onOptionSelected={handleSelect}
+        dropdownItems={normalizeOptions}
+        mapDropdownItemToValue={(opt) => opt.value}
+        onDropdownItemSeletected={handleSelect}
         error={!!error}
         onChange={(e, v) => {
           api.setEditCellValue({ id, field, value: v }, { debounceMs: 120 });
