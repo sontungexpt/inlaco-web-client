@@ -1,0 +1,1 @@
+import{J as e,n as t,t as n}from"./Button-EBOkAu6g.js";var r=e();function i({onNewRowClick:e}){return(0,r.jsx)(t,{sx:{display:`flex`,mb:1},children:(0,r.jsx)(n,{variant:`outlined`,size:`small`,onClick:e,children:`+ Thêm hàng mới`})})}export{i as t};
