@@ -12,10 +12,7 @@ import { useContracts } from "@/queries/contract.query";
 import BaseDataGrid, {
   BaseDataGridColumn,
 } from "@/components/common/datagrid/BaseDataGrid";
-import {
-  BaseDataGridBar,
-  BaseDataGridFooter,
-} from "@/components/common/datagrid/components";
+import { BaseDataGridFooter } from "@/components/common/datagrid/components";
 import { ContractType } from "@/types/api/contract.api";
 
 const useContractPageParams = (): {
@@ -39,16 +36,16 @@ export type ContractRow = {
 
 type ContractStatus = "SIGNED" | "PENDING";
 
-const STATUS_FILTERS = [
-  { label: "Hợp đồng chính thức", value: "SIGNED" },
+const STATUS_FILTERS: { label: string; value: ContractStatus }[] = [
   { label: "Đang chờ ký kết", value: "PENDING" },
+  { label: "Hợp đồng chính thức", value: "SIGNED" },
 ];
 
 export default function ContractPage({ pageSize = 20 }) {
   const navigate = useNavigate();
   const { initialPage = 0, contractType } = useContractPageParams();
 
-  const [status, setStatus] = useState<ContractStatus>("SIGNED");
+  const [status, setStatus] = useState<ContractStatus>(STATUS_FILTERS[0].value);
   const officialContract = status === "SIGNED";
 
   const [query, setQuery] = useState("");
