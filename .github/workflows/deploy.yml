@@ -3,7 +3,7 @@ name: Deploy Vite to GitHub Pages
 on:
   push:
     branches:
-      - main # hoặc master tùy repo bạn
+      - master
 
 permissions:
   contents: read
