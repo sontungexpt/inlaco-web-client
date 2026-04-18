@@ -1,7 +1,6 @@
 import { CenterCircularProgress, LoadErrorState } from "@/components/common";
 
 import { usePost } from "@/queries/post.query";
-import { PostType } from "@/types/api/post.api";
 import { useParams } from "react-router";
 import RecruitmentPostDetailPage from "./RecruitmentPostDetailPage";
 import PostDetailPage from "./PostDetailPage";
@@ -31,7 +30,7 @@ export default function Index() {
   }
 
   switch (post?.type) {
-    case PostType.RECRUITMENT:
+    case "RECRUITMENT":
       return <RecruitmentPostDetailPage />;
     default:
       return <PostDetailPage />;

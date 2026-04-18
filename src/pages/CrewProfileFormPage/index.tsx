@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import {
   PageTitle,
   InfoTextFieldFormik,
@@ -20,12 +20,9 @@ import Color from "@constants/Color";
 
 import { Formik } from "formik";
 import { useNavigate, useParams } from "react-router";
-import { createCrMemberFrCandidateAPI } from "@/services/crewServices";
-import { datetimeToISO } from "@utils/converter";
-import { buildInitialValues } from "@/pages/mobilization/MobilizationForm/initial";
-import { HttpStatusCode } from "axios";
 import { FORM_SCHEMA } from "./schema";
-import { useCrewProfile } from "@/queries/crew-profile.query";
+import { buildInitialValues } from "./initial";
+import { GENDERS } from "./defaults";
 
 export default function CrewProfileForm() {
   const navigate = useNavigate();
@@ -33,38 +30,29 @@ export default function CrewProfileForm() {
 
   // const { data: profile, isLoading } = useCrewProfile(candidateID);
 
-  const GENDERS = useMemo(
-    () => [
-      { label: "Nam", value: "MALE" },
-      { label: "Nữ", value: "FEMALE" },
-      { label: "Khác", value: "OTHER" },
-    ],
-    [],
-  );
-
   const initialValues = useMemo(() => buildInitialValues({}), []);
 
   const handleFormSubmission = async (values, { resetForm }) => {
-    const response = await createCrMemberFrCandidateAPI(candidateID, {
-      birthDate: datetimeToISO(values.dob),
-      fullName: values.fullName,
-      email: values.email,
-      phoneNumber: values.phoneNumber,
-      address: values.address,
-      gender: values.gender,
-      socialInsuranceCode: values.insuranceInfo.socialInsID,
-      accidentInsuranceCode: values.insuranceInfo.accidentInsID,
-    });
-
-    if (response.status === HttpStatusCode.Created) {
-      resetForm();
-      navigate("/crews");
-    }
+    // const response = await createCrMemberFrCandidateAPI(candidateID, {
+    //   birthDate: datetimeToISO(values.dob),
+    //   fullName: values.fullName,
+    //   email: values.email,
+    //   phoneNumber: values.phoneNumber,
+    //   address: values.address,
+    //   gender: values.gender,
+    //   socialInsuranceCode: values.insuranceInfo.socialInsID,
+    //   accidentInsuranceCode: values.insuranceInfo.accidentInsID,
+    // });
+    // if (response.status === HttpStatusCode.Created) {
+    //   resetForm();
+    //   navigate("/crews");
+    // }
   };
 
   return (
     <Formik
       validateOnChange={false}
+      validateOnBlur
       initialValues={initialValues}
       validationSchema={FORM_SCHEMA}
       onSubmit={handleFormSubmission}

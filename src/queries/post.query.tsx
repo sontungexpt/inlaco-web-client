@@ -8,9 +8,8 @@ import {
   fetchUniquePost,
   reviewCandidateApplication,
 } from "@/services/post.service";
-import { FetchPostsParams, Post, PostType } from "@/types/api/post.api";
+import { FetchPostsParams, Post } from "@/types/api/post.api";
 import { ApplyRecruitmentRequest } from "@/types/api/recruitment.api";
-import { PageParams } from "@/types/api/shared/base.api";
 import {
   useMutation,
   useQueryClient,

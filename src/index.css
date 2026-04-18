@@ -11,38 +11,39 @@ body,
 }
 
 .login {
-  background-color: #3374C5;
+  background-color: #3374c5;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.app{
+.app {
   flex-direction: row;
-  background-color: #F5F9FC;
+  background-color: #f5f9fc;
   width: 100%;
   overflow: hidden;
 }
 
 main {
-  flex: 1; 
+  flex: 1;
   overflow-y: auto;
-  background-color: #F5F9FC;
+  background-color: #f5f9fc;
 }
 
-::-webkit-scrollbar{
+::-webkit-scrollbar {
   /* width: 4px; */
   display: none;
 }
 
-::-webkit-scrollbar-track{
+::-webkit-scrollbar-track {
   background: #e0e0e0;
 }
 
-::-webkit-scrollbar-thumb{
+::-webkit-scrollbar-thumb {
   background: #888;
 }
 
-::-webkit-scrollbar-track::hover{
+::-webkit-scrollbar-track:hover {
   background: #555;
 }
+

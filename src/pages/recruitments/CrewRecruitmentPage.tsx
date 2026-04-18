@@ -12,7 +12,7 @@ import RecruitmentList from "./RecruitmentList";
 import CandidateTable from "./CandidateTable";
 
 import { useAllowedRole } from "@/contexts/auth.context";
-import { Post, PostType } from "@/types/api/post.api";
+import { Post } from "@/types/api/post.api";
 
 const TABS = {
   POSTS: 0,
@@ -91,9 +91,7 @@ export default function CrewRecruitment(
               variant="contained"
               startIcon={<AddCircleRoundedIcon />}
               onClick={() =>
-                navigate(
-                  `/recruitments/create?postType=${PostType.RECRUITMENT}`,
-                )
+                navigate(`/recruitments/create?postType=${"RECRUITMENT"}`)
               }
               sx={{
                 backgroundColor: Color.PrimaryGold,

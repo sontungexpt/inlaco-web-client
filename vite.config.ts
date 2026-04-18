@@ -6,6 +6,7 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  base: "/inlaco-web-client/",
   // server: {
   //   open: true,
   // },
