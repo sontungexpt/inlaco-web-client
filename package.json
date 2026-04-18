@@ -1,6 +1,7 @@
 {
   "name": "inlaco-crewmgr-web-client",
   "version": "0.1.0",
+  "homepage": "https://sontungexpt.github.io/inlaco-web-client/",
   "private": true,
   "dependencies": {
     "@cloudinary/react": "^1.14.3",
@@ -46,9 +47,12 @@
     "start": "vite",
     "dev": "vite",
     "chrome-stable": "BROWSER=google-chrome-stable BROWSER_ARGS='--new-window' vite --open",
+    "test": "vitest",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest"
+
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
@@ -57,6 +61,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@vitejs/plugin-react": "^6.0.1",
+    "gh-pages": "^6.3.0",
     "typescript": "^6.0.2",
     "vite": "^8.0.2",
     "vitest": "^4.1.2"

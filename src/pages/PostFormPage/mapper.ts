@@ -2,7 +2,6 @@ import {
   NewPost,
   NewRecruitmentPost,
   Post,
-  PostType,
   RecruitmentPost,
 } from "@/types/api/post.api";
 import { datetimeToISO } from "@/utils/converter";
@@ -24,7 +23,7 @@ export const mapPostToFormValues = (
     attachments: post.attachments,
   };
 
-  if (post.type === PostType.RECRUITMENT) {
+  if (post.type === "RECRUITMENT") {
     return {
       ...base,
       position: (post as RecruitmentPost).position,
@@ -49,7 +48,7 @@ export const mapValuesToRequestBody = (
     image: imageAssetId,
     attachments: attachmentsAssetIds,
   };
-  if (values.type === PostType.RECRUITMENT) {
+  if (values.type === "RECRUITMENT") {
     return {
       ...base,
       position: values.position,

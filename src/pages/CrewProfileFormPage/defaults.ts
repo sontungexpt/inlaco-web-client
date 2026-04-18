@@ -1,4 +1,4 @@
-export const DEFAULT_INITIAL_VALUES = {
+export const BASE_FORM_VALUES = {
   cardPhoto: "",
   fullName: "",
   dob: "",
@@ -20,3 +20,9 @@ export const DEFAULT_INITIAL_VALUES = {
     healthInsHospital: "",
   },
 };
+
+export const GENDERS = [
+  { label: "Nam", value: "MALE" },
+  { label: "Nữ", value: "FEMALE" },
+  { label: "Khác", value: "OTHER" },
+];

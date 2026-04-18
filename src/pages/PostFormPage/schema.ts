@@ -7,7 +7,6 @@ import {
   requiredString,
   string,
 } from "@/utils/validation/yupHelpers";
-import { PostType } from "@/types/api/post.api";
 
 export const FORM_SCHEMA = Yup.object({
   type: Yup.string().required("Loại bài viết là bắt buộc"),
@@ -18,18 +17,18 @@ export const FORM_SCHEMA = Yup.object({
   image: requiredFile("Vui lòng tải lên hình ảnh bài viết"),
   attachments: optionalFiles(),
   position: string().when("type", {
-    is: PostType.RECRUITMENT,
+    is: "RECRUITMENT",
     then: (s) => s.required("Vị trí tuyển dụng là bắt buộc"),
     otherwise: (s) => s.notRequired(),
   }),
   workLocation: string().when("type", {
-    is: PostType.RECRUITMENT,
+    is: "RECRUITMENT",
     then: (s) => s.required("Vị trí làm việc không được để trống"),
     otherwise: (s) => s.notRequired(),
   }),
   expectedSalary: optionalString(),
   recruitmentStartDate: date().when("type", {
-    is: PostType.RECRUITMENT,
+    is: "RECRUITMENT",
     then: (schema) =>
       schema
         .required()
@@ -41,7 +40,7 @@ export const FORM_SCHEMA = Yup.object({
   }),
 
   recruitmentEndDate: date().when("type", {
-    is: PostType.RECRUITMENT,
+    is: "RECRUITMENT",
     then: (schema) =>
       schema
         .required()
