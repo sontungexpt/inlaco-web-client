@@ -99,7 +99,11 @@ const CandidateProfileDetailPage = () => {
   const { candidateID } = useParams();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
-  const { data: candidateInfo, isLoading } = useCandidate(candidateID);
+  const {
+    data: candidateInfo,
+    isLoading,
+    refetch: refetchCandidate,
+  } = useCandidate(candidateID);
 
   const resume = candidateInfo?.resume;
   const status = candidateInfo?.status as CandidateStatus;
@@ -107,7 +111,10 @@ const CandidateProfileDetailPage = () => {
   const { mutateAsync: reviewCandidate, isPending: isReviewing } =
     useReviewCandidate({
       candidateId: candidateID,
-      onSuccess: () => toast.success("Cập nhật trạng thái thành công!"),
+      onSuccess: () => {
+        refetchCandidate();
+        toast.success("Cập nhật trạng thái thành công!");
+      },
       onError: () => toast.error("Cập nhật thất bại!"),
     });
 

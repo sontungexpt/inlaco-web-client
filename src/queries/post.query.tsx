@@ -140,7 +140,7 @@ export const useReviewCandidate = ({
     mutationFn: fn,
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({
-        queryKey: PostQueryKey.CANDIDATE_DETAIL(variables.id),
+        queryKey: PostQueryKey.CANDIDATE_DETAIL(candidateId ?? variables.id),
       });
       onSuccess?.(data, variables, context);
     },
