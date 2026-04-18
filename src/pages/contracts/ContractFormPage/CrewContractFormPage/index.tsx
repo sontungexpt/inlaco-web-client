@@ -134,7 +134,7 @@ const CrewContractFormPage = () => {
       });
 
       helpers.resetForm();
-      navigate(`/crew-contracts/${contract.id}`);
+      navigate(`/contracts/${contract.id}`);
     } catch (err) {
       const msg = isEdit
         ? IS_FREEZED_CONTRACT
