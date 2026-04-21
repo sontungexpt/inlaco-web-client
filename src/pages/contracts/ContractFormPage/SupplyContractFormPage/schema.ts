@@ -39,6 +39,7 @@ export const FORM_SCHEMA = Yup.object({
 
   partyB: Yup.object({
     compName: requiredString("Tên công ty không được để trống"),
+    companyEmail: requiredString("Email không được để trống"),
     compAddress: requiredString("Địa chỉ không được để trống"),
     compPhoneNumber: requiredVnPhoneNumber(),
     representative: requiredString("Người đại diện không được để trống"),

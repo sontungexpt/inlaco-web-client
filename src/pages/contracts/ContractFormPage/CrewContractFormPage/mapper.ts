@@ -2,7 +2,6 @@ import {
   LaborContract,
   LaborParty,
   NewLaborContract,
-  PartyType,
 } from "@/types/api/contract.api";
 
 import { datetimeToISO } from "@utils/converter";
@@ -60,6 +59,7 @@ export const mapContractToFormValues = (
 
     employee: {
       fullName: v(employee?.name),
+      email: v(employee?.email),
       birthDate: v(employee?.birthDate),
       birthPlace: v(employee?.birthPlace),
       phoneNumber: v(employee?.phone),
@@ -134,6 +134,7 @@ export const mapValuesToRequestBody = (
 
         address: v(employee.permanentAddress),
         phone: v(employee.phoneNumber),
+        email: v(employee.email),
 
         birthPlace: v(employee.birthPlace),
         birthDate: datetimeToISO(employee.birthDate) as string,

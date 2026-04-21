@@ -1,11 +1,6 @@
-import { LaborContract } from "@/types/api/contract.api";
-import {
-  mapCandidateInfoToFormValues,
-  mapContractToFormValues,
-} from "./mapper";
 import { FormValues } from "./schema";
 
-export const BASE_FORM_VALUES = {
+export const BASE_FORM_VALUES: FormValues = {
   title: "",
   contractFile: null,
   attachmentFiles: [],
@@ -20,6 +15,7 @@ export const BASE_FORM_VALUES = {
 
   employee: {
     fullName: "",
+    email: "",
     birthDate: undefined,
     birthPlace: "",
 

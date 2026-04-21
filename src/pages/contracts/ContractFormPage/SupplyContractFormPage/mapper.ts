@@ -21,6 +21,7 @@ export const mapSupplyRequestToFormValues = (
     ...currentFormValues,
     partyB: {
       ...currentFormValues.partyB,
+      companyEmail: requestInfo?.companyEmail || "",
       compName: requestInfo?.companyName || "",
       compAddress: requestInfo?.companyAddress || "",
       compPhoneNumber: requestInfo?.companyPhone || "",
@@ -67,6 +68,7 @@ export const mapContractToFormValues = (
 
     partyB: {
       compName: v(partyB?.name),
+      companyEmail: v(partyB?.email),
       compAddress: v(partyB?.address),
       compPhoneNumber: v(partyB?.phone),
       representative: v(partyB?.representer),
@@ -118,6 +120,7 @@ export const mapValuesToNewSupplyContract = (
       name: values.partyB.compName,
       address: values.partyB.compAddress,
       phone: values.partyB.compPhoneNumber,
+      email: values.partyB.companyEmail,
       representer: values.partyB.representative,
       representerPosition: values.partyB.representativePos,
       type: "STATIC",
