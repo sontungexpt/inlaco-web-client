@@ -1,7 +1,5 @@
 import { TextField, TextFieldProps } from "@mui/material";
-import Regex from "@/utils/validation/Regex";
 import { dateToMUIDatetime, MUIType } from "@/utils/converter";
-import Color from "@/constants/Color";
 import { useMemo } from "react";
 
 const formatDisplayValue = (
@@ -9,11 +7,7 @@ const formatDisplayValue = (
   type: React.InputHTMLAttributes<unknown>["type"] | undefined,
 ) => {
   if (type === "date" || type === "datetime-local" || type === "time") {
-    if (typeof value === "string" && Regex.ISO_REGEX.test(value)) {
-      return dateToMUIDatetime(value, type as MUIType);
-    } else if (value instanceof Date) {
-      return dateToMUIDatetime(value, type as MUIType);
-    }
+    return dateToMUIDatetime(value, type as MUIType);
   }
   return value ?? "";
 };

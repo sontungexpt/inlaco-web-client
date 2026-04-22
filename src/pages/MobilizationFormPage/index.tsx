@@ -7,6 +7,7 @@ import {
   NationalityTextField,
   BaseEditableDataGrid,
   SearchBar,
+  InfoTextField,
 } from "@components/common";
 import { Grid, Box, Button, CircularProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
@@ -257,6 +258,32 @@ function renderSearchEditCell(
   return <CrewSearchEditCell {...props} />;
 }
 
+function renderDateCell<R, SR>({
+  row,
+  column,
+  onRowChange,
+}: BaseEditableDataGridRenderEditCellProps<R, SR>) {
+  const key = column.key as keyof R;
+
+  return (
+    <InfoTextField
+      value={(row[key] ?? "") as string}
+      type={column.type}
+      onChange={(e) => {
+        onRowChange({
+          ...row,
+          [key]: e.target.value,
+          [key === "startDate" ? "isStartManual" : "isEndManual"]: true,
+        });
+      }}
+      sx={{
+        height: "100%",
+        width: "100%",
+      }}
+    />
+  );
+}
+
 export default function MobiliaztionForm() {
   const navigate = useNavigate();
 
@@ -296,11 +323,13 @@ export default function MobiliaztionForm() {
           key: "startDate",
           name: "Ngày bắt đầu",
           type: "date",
+          renderEditCell: renderDateCell,
         },
         {
           key: "endDate",
           name: "Ngày kết thúc",
           type: "date",
+          renderEditCell: renderDateCell,
         },
         {
           key: "remark",
@@ -325,6 +354,7 @@ export default function MobiliaztionForm() {
         dirty,
         isSubmitting,
         setFieldValue,
+        setValues,
       }) => {
         console.debug("errors", errors);
         return (
@@ -405,6 +435,21 @@ export default function MobiliaztionForm() {
                     name="startDate"
                     type="datetime-local"
                     label="Thời gian bắt đầu công việc"
+                    onChange={(e) => {
+                      const val = e.target.value as any;
+                      setValues((prev) => {
+                        return {
+                          ...prev,
+                          startDate: val,
+                          crews: prev.crews.map((crew) => ({
+                            ...crew,
+                            startDate: crew.isStartManual
+                              ? crew.startDate
+                              : val,
+                          })),
+                        };
+                      });
+                    }}
                   />
                 </Grid>
                 <Grid size={6}>
@@ -412,6 +457,19 @@ export default function MobiliaztionForm() {
                     name="endDate"
                     type="datetime-local"
                     label="Thời gian kết thúc công việc"
+                    onChange={(e) => {
+                      const val = e.target.value as any;
+                      setValues((prev) => {
+                        return {
+                          ...prev,
+                          endDate: val,
+                          crews: prev.crews.map((crew) => ({
+                            ...crew,
+                            endDate: crew.isEndManual ? crew.endDate : val,
+                          })),
+                        };
+                      });
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -457,24 +515,27 @@ export default function MobiliaztionForm() {
             <SectionWrapper>
               <BaseEditableDataGrid<FormValuesCrew>
                 columns={columns}
-                // rowKeyGetter={({ id }) => id}
                 rows={values.crews}
-                toolbar={useMemo(
-                  () => (
-                    <BaseEditableDataGridToolbar
-                      onNewRowClick={() => {
-                        const updated = [
+                toolbar={
+                  <BaseEditableDataGridToolbar
+                    onNewRowClick={() => {
+                      setFieldValue(
+                        "crews",
+                        [
                           {
                             id: crypto.randomUUID(),
+                            startDate: values.startDate,
+                            endDate: values.endDate,
+                            startDateManual: false,
+                            endDateManual: false,
                           },
                           ...values.crews,
-                        ];
-                        setFieldValue("crews", updated, true);
-                      }}
-                    />
-                  ),
-                  [setFieldValue],
-                )}
+                        ],
+                        true,
+                      );
+                    }}
+                  />
+                }
                 getCellError={useCallback<GetCellError<FormValuesCrew>>(
                   ({ row, rowIdx, column }) => {
                     const colKey = column.key;

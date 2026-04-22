@@ -1,4 +1,4 @@
-type VNDFormatMode = "full" | "truncate";
+export type VNDFormatMode = "full" | "truncate";
 
 /**
  * Format a number into Vietnamese currency format.

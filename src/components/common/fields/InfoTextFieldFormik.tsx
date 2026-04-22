@@ -6,6 +6,7 @@ export type InfoTextFieldFormikProps = InfoTextFieldProps & {
 };
 
 const InfoTextFieldFormik = ({
+  onChange,
   required = true,
   name,
   ...props
@@ -15,6 +16,7 @@ const InfoTextFieldFormik = ({
     <InfoTextField
       {...props}
       {...field}
+      onChange={onChange ?? field.onChange}
       required={required}
       error={meta.touched && Boolean(meta.error)}
       helperText={meta.touched && meta.error}
