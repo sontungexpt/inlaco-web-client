@@ -17,6 +17,7 @@ export const BASE_FORM_VALUES: FormValues = {
   },
   partyB: {
     compName: "",
+    companyEmail: "",
     compAddress: "",
     compPhoneNumber: "",
     representative: "",

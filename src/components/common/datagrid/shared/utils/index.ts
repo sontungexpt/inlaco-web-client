@@ -1,7 +1,7 @@
 import { dateToLocaleString, LocaleType } from "@/utils/converter";
 import Regex from "@/utils/validation/Regex";
 import { ReactNode } from "react";
-import { Column, RenderCellProps } from "react-data-grid";
+import { Column } from "react-data-grid";
 import {
   BaseDataGridColumnTooltip,
   BaseDataGridRenderCellProps,
@@ -11,7 +11,7 @@ import { TooltipProps } from "@/components/common/Tooltip";
 export function renderValue<R, SR>(props: {
   row: R;
   column: Column<R, SR> & { type?: string | LocaleType };
-}) {
+}): ReactNode {
   const { row, column } = props;
   const parts = column.key.split(".");
 
@@ -24,11 +24,7 @@ export function renderValue<R, SR>(props: {
   const type = column.type;
 
   if (type === "date" || type === "datetime" || type === "time") {
-    if (typeof value === "string" && Regex.ISO_REGEX.test(value)) {
-      return dateToLocaleString(value, type as LocaleType) as ReactNode;
-    } else if (value instanceof Date) {
-      return dateToLocaleString(value, type as LocaleType) as ReactNode;
-    }
+    return dateToLocaleString(value, type as LocaleType) || value;
   }
 
   return value as ReactNode;

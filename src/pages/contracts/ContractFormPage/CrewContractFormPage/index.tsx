@@ -307,11 +307,15 @@ const CrewContractFormPage = () => {
                   />
                 </Grid>
 
-                <Grid size={4}>
+                <Grid size={3}>
                   <InfoTextFieldFormik
                     label="Quốc tịch"
                     name="employee.nationality"
                   />
+                </Grid>
+
+                <Grid size={5}>
+                  <InfoTextFieldFormik label="Email" name="employee.email" />
                 </Grid>
 
                 <Grid size={4}>

@@ -46,6 +46,8 @@ export const FORM_SCHEMA = Yup.object().shape({
           "startDate",
           "Ngày kết thúc phải sau ngày bắt đàu",
         ).required("Ngày kết thúc không được để trống"),
+        isStartManual: Yup.boolean(),
+        isEndManual: Yup.boolean(),
       }),
     )
     .min(1, "Phải có ít nhất một thuyền viên")

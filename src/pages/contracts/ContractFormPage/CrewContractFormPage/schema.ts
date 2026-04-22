@@ -29,6 +29,7 @@ export const SCHEMA = Yup.object({
 
   employee: Yup.object({
     fullName: requiredString("Họ và tên không được để trống"),
+    email: requiredString("Email không được để trống"),
 
     birthDate: dateMax(now(), "Ngày sinh không hợp lệ"),
     birthPlace: requiredString("Nơi sinh không được để trống"),
