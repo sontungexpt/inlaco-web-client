@@ -65,7 +65,7 @@ export default function LoginPage() {
           case HttpStatusCode.Forbidden:
             navigate("/verify-email-confirmation", {
               state: {
-                email: values.email,
+                username: values.email,
               },
             });
             return;
