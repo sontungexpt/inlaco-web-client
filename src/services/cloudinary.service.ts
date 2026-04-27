@@ -52,7 +52,6 @@ const cldUpload = async (
   }
 
   const formData = new FormData();
-  console.log(file);
 
   /**
    * Web: File | Blob

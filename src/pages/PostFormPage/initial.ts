@@ -17,3 +17,9 @@ export const BASE_FORM_VALUES: FormValues = {
   image: null,
   attachments: undefined,
 };
+
+export const POST_TYPES = [
+  { label: "Tin tức", value: "NEWS" },
+  { label: "Tuyển dụng", value: "RECRUITMENT" },
+  { label: "Sự kiện", value: "EVENT" },
+];
