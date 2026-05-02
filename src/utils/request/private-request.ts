@@ -62,9 +62,13 @@ async function refreshAccessToken() {
 
 async function ensureAccessToken(): Promise<string | null> {
   let token = tokenStore.getAccessToken();
+
+  // If access token is loss by some reason return null
   if (!token) {
     const refreshToken = tokenStore.getRefreshToken();
+    // If refresh token is loss by some reason return null
     if (!refreshToken) return null;
+
     try {
       token = await refreshAccessToken();
     } catch {
@@ -99,6 +103,10 @@ privateRequest.interceptors.response.use(
     original._retry = true;
 
     try {
+      // If refresh token is loss by some reason return auth errorr
+      const refreshToken = tokenStore.getRefreshToken();
+      if (!refreshToken) return Promise.reject(error);
+
       const newToken = await refreshAccessToken();
       original.headers.Authorization = `Bearer ${newToken}`;
       return privateRequest(original);

@@ -14,6 +14,6 @@ export interface ShipInfoRequest {
   countryISO: string;
   name: string;
   description?: string;
-  image?: String;
+  image?: string;
   type?: string;
 }
