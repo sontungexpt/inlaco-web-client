@@ -42,3 +42,14 @@ export const createMobilization = async (
   );
   return response.data;
 };
+
+export const exportMobilizationExcel = async (id: string) => {
+  const response = await privateRequest.get<Blob>(
+    MobilizationEndpoint.EXPORT_EXCEL(id),
+    {
+      responseType: "blob",
+    },
+  );
+
+  return response.data;
+};

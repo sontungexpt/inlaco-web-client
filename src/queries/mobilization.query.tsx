@@ -1,7 +1,8 @@
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
 import {
   fetchMobilizations,
   fetchSpecificMobilization,
+  exportMobilizationExcel,
 } from "@/services/mobilization.service";
 import {
   FetchMobilizationSchedulesParams,
@@ -46,5 +47,11 @@ export const useMobilization = (
     enabled: !!mobilizationId,
     queryKey: MobilizationQueryKey.DETAIL(mobilizationId as string),
     queryFn: () => fetchSpecificMobilization(mobilizationId as string),
+  });
+};
+
+export const useExportMobilizationExcel = () => {
+  return useMutation({
+    mutationFn: (id: string) => exportMobilizationExcel(id),
   });
 };

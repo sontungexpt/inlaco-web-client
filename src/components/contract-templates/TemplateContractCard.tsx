@@ -16,7 +16,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { useState } from "react";
 import Color from "@constants/Color";
 import toast from "react-hot-toast";
-import { downloadFile } from "@/utils/docDownload";
+import { downloadDocxFromTemplate } from "@/utils/download";
 import NoShipPhoto from "@assets/images/no-ship-photo.png";
 
 export type TemplateContractCardProps = {
@@ -42,7 +42,7 @@ const TemplateContractCard = ({
   url,
   gridSize = 4,
   initialData = {},
-  dowloadFileName = "template.docx",
+  dowloadFileName,
   color = Color.PrimaryBlack,
   sx = [],
   showDelete = false,
@@ -73,10 +73,10 @@ const TemplateContractCard = ({
     }
 
     try {
-      await downloadFile({
+      await downloadDocxFromTemplate({
         url: url as string,
-        initialData,
-        dowloadFileName,
+        data: initialData,
+        fileName: dowloadFileName || `template_${Date.now()}.docx`,
       });
     } catch (err) {
       console.debug(err);

@@ -6,7 +6,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 
 import Color from "@/constants/Color";
-import { useMobilization } from "@/queries/mobilization.query";
+import {
+  useExportMobilizationExcel,
+  useMobilization,
+} from "@/queries/mobilization.query";
 
 import UserRole from "@/constants/UserRole";
 
@@ -18,6 +21,7 @@ import {
   BaseDataGrid,
 } from "@/components/common";
 import { useAllowedRole } from "@/contexts/auth.context";
+import { downloadBlobFile } from "@/utils/download";
 
 export default function MobilizationDetail() {
   const navigate = useNavigate();
@@ -25,7 +29,18 @@ export default function MobilizationDetail() {
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
   const { data: mobilization, isLoading } = useMobilization(id);
+  const exportMutation = useExportMobilizationExcel();
   const shipInfo = mobilization?.shipInfo;
+
+  const handleExportExcel = () => {
+    if (!id) return;
+
+    exportMutation.mutate(id, {
+      onSuccess: (blob) => {
+        downloadBlobFile(blob, `mobilization-${id}.xlsx`);
+      },
+    });
+  };
 
   const columns = useMemo(
     () => [
@@ -87,13 +102,12 @@ export default function MobilizationDetail() {
             </Button>
 
             <Button
-              onClick={() => {
-                console.warn("Not implemented yet");
-              }}
+              onClick={handleExportExcel}
               startIcon={<FileDownloadRoundedIcon />}
               variant="outlined"
+              disabled={exportMutation.isPending}
             >
-              Excel
+              {exportMutation.isPending ? "Đang xuất..." : "Excel"}
             </Button>
           </Stack>
         )}
