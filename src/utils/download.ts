@@ -1,7 +1,17 @@
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 
-export const downloadBlobFile = (blob: Blob, fileName: string) => {
+export const downloadBlobFile = async (blob: Blob, fileName: string) => {
+  // try use file-saver if available
+  try {
+    const mod = await import("file-saver");
+    mod.saveAs(blob, fileName);
+    return;
+  } catch (e) {
+    // fallback
+  }
+
+  // fallback native browser
   const url = URL.createObjectURL(blob);
 
   const a = document.createElement("a");
@@ -14,6 +24,20 @@ export const downloadBlobFile = (blob: Blob, fileName: string) => {
 
   URL.revokeObjectURL(url);
 };
+
+// export const downloadBlobFile = (blob: Blob, fileName: string) => {
+//   const url = URL.createObjectURL(blob);
+
+//   const a = document.createElement("a");
+//   a.href = url;
+//   a.download = fileName;
+
+//   document.body.appendChild(a);
+//   a.click();
+//   a.remove();
+
+//   URL.revokeObjectURL(url);
+// };
 
 const getValueByPath = (obj: any, path: string) => {
   if (!obj || !path) return undefined;
