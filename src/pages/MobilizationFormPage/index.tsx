@@ -13,7 +13,7 @@ import { Grid, Box, Button, CircularProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
 import Color from "@constants/Color";
-import { Formik, FormikHelpers } from "formik";
+import { Formik, FormikHelpers, useFormikContext } from "formik";
 import { useNavigate } from "react-router";
 import { createMobilization } from "@/services/mobilization.service";
 import { FORM_SCHEMA, FormValues, FormValuesCrew } from "./schema";
@@ -137,7 +137,7 @@ const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
           )}
 
           {/* Age */}
-          {age && <Box>{age} tuổi</Box>}
+          {age && age > 0 && <Box>{age} tuổi</Box>}
 
           {/* Insurance badges */}
           {(opt.socialInsuranceCode || opt.accidentInsuranceCode) && (
@@ -322,18 +322,37 @@ export default function MobiliaztionForm() {
         {
           key: "startDate",
           name: "Ngày bắt đầu",
-          type: "date",
+          type: "datetime",
           renderEditCell: renderDateCell,
         },
         {
           key: "endDate",
           name: "Ngày kết thúc",
-          type: "date",
+          type: "datetime",
           renderEditCell: renderDateCell,
         },
         {
           key: "remark",
           name: "Ghi chú",
+        },
+        {
+          key: "__action__",
+          width: 80,
+          name: "",
+          renderCell: ({ row }) => {
+            const { values, setFieldValue } = useFormikContext<FormValues>();
+            return (
+              <Button
+                color="error"
+                onClick={() => {
+                  const newRows = values.crews.filter((r) => r.id !== row.id);
+                  setFieldValue("crews", newRows, true);
+                }}
+              >
+                Xoá
+              </Button>
+            );
+          },
         },
       ] as BaseEditableDataGridColumn<FormValuesCrew>[],
     [],
@@ -518,6 +537,7 @@ export default function MobiliaztionForm() {
                 rows={values.crews}
                 toolbar={
                   <BaseEditableDataGridToolbar
+                    newRowDisabled={isSubmitting}
                     onNewRowClick={() => {
                       setFieldValue(
                         "crews",

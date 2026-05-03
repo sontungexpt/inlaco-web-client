@@ -38,7 +38,7 @@ export const useMobilizations = (
   });
 };
 
-export const useMobilization = (
+export const useMobilizationDetail = (
   mobilizationId?: string,
   options?: UseQueryOptions<MobilizationSchedule>,
 ) => {

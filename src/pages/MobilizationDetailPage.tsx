@@ -8,7 +8,7 @@ import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import Color from "@/constants/Color";
 import {
   useExportMobilizationExcel,
-  useMobilization,
+  useMobilizationDetail,
 } from "@/queries/mobilization.query";
 
 import UserRole from "@/constants/UserRole";
@@ -28,7 +28,7 @@ export default function MobilizationDetail() {
   const { id } = useParams();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
-  const { data: mobilization, isLoading } = useMobilization(id);
+  const { data: mobilization, isLoading } = useMobilizationDetail(id);
   const exportMutation = useExportMobilizationExcel();
   const shipInfo = mobilization?.shipInfo;
 
@@ -44,10 +44,6 @@ export default function MobilizationDetail() {
 
   const columns = useMemo(
     () => [
-      // {
-      //   key: "id",
-      //   name: "ID",
-      // },
       {
         key: "employeeCardId",
         name: "Mã nhân viên",
@@ -59,6 +55,16 @@ export default function MobilizationDetail() {
       {
         key: "rankOnBoard",
         name: "Chức danh",
+      },
+      {
+        key: "startDate",
+        name: "Ngày bắt đầu",
+        type: "datetime",
+      },
+      {
+        key: "endDate",
+        name: "Ngày kết thúc",
+        type: "datetime",
       },
       {
         key: "phoneNumber",
