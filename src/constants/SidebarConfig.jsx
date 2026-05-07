@@ -47,6 +47,12 @@ export const SidebarConfig = [
         roles: [UserRole.ADMIN],
       },
       {
+        title: "Lịch Tàu",
+        to: "/shipschedule",
+        icon: <HowToRegOutlinedIcon />,
+        roles: [UserRole.ADMIN],
+      },
+      {
         title: "Lịch điều động",
         to: "/mobilizations",
         icon: <DirectionsBoatOutlinedIcon />,
