@@ -8,6 +8,7 @@ import {
   BaseEditableDataGrid,
   SearchBar,
   InfoTextField,
+  ViewTextField,
 } from "@components/common";
 import { Grid, Box, Button, CircularProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
@@ -30,6 +31,10 @@ import BaseEditableDataGridToolbar from "@/components/common/datagrid/components
 import { useCrewProfiles } from "@/queries/crew-profile.query";
 import { CrewProfile } from "@/types/api/crew-profile";
 import { GetCellError } from "@/components/common/datagrid/shared/error-store";
+import { useContract } from "@/queries/contract.query";
+import { CrewSupplyContract } from "@/types/api/contract.api";
+import UploadStrategy from "@/constants/UploadStrategy";
+import cloudinaryUpload from "@/services/cloudinary.service";
 
 const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
   const initials = opt.fullName?.charAt(0)?.toUpperCase() ?? "?";
@@ -297,14 +302,26 @@ export default function MobiliaztionFormPage() {
   const navigate = useNavigate();
   const { contractId } = useMobilizationFormPageParams();
 
+  const { data: contract } = useContract<CrewSupplyContract>(contractId!);
+
   const handleFormSubmission = async (
     values: FormValues,
     { resetForm }: FormikHelpers<FormValues>,
   ) => {
     try {
+      let shipImageAssetId = null;
+      if (values.shipInfo.image) {
+        const shipImage = await cloudinaryUpload(
+          values.shipInfo.image,
+          UploadStrategy.SHIP_IMAGE,
+        );
+        shipImageAssetId = shipImage.assetId;
+      }
+
       const newMobilization = await createMobilization(
-        mapValuesToRequestBody(values, contractId!),
+        mapValuesToRequestBody(values, contractId!, shipImageAssetId),
       );
+
       resetForm();
       navigate(`/mobilizations/${newMobilization.id}`);
     } catch (err) {
@@ -528,7 +545,7 @@ export default function MobiliaztionFormPage() {
             </SectionWrapper>
 
             {/* ================= LỊCH TRÌNH ================= */}
-            <SectionWrapper title="Lịch trình dự kiến">
+            <SectionWrapper title="Thời gian điều động">
               <Grid container spacing={2}>
                 <Grid size={6}>
                   <InfoTextFieldFormik
@@ -574,12 +591,11 @@ export default function MobiliaztionFormPage() {
                 </Grid>
               </Grid>
             </SectionWrapper>
-
             {/* ================= THÔNG TIN TÀU ================= */}
             <SectionWrapper title="Thông tin tàu">
               <Box display="flex" justifyContent="center" mb={2}>
                 <ImageUploadFieldFormik
-                  name="shipInfo.imageUrl"
+                  name="shipInfo.image"
                   width={300}
                   height={180}
                 />
@@ -587,7 +603,10 @@ export default function MobiliaztionFormPage() {
 
               <Grid container spacing={2}>
                 <Grid size={2}>
-                  <InfoTextFieldFormik name="shipInfo.imonumber" label="IMO" />
+                  <ViewTextField
+                    value={contract?.shipInfo?.imoNumber}
+                    label="IMO"
+                  />
                 </Grid>
 
                 <Grid size={4}>

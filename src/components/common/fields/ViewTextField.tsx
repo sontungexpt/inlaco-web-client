@@ -30,6 +30,10 @@ export default function ViewTextField({
       ]} // Merging styles with spread operator
       slotProps={{
         ...slotProps,
+        inputLabel: {
+          shrink: true,
+          ...slotProps?.inputLabel,
+        },
         formHelperText: {
           ...slotProps?.formHelperText,
           sx: {

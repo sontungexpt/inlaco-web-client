@@ -59,12 +59,16 @@ export function useContracts({
   });
 }
 
-export function useContract(id?: string, version?: number, options = {}) {
-  return useQuery<BaseContract, AxiosError<ErrorResponse>>({
+export function useContract<T extends BaseContract = BaseContract>(
+  id?: string,
+  version?: number,
+  options = {},
+) {
+  return useQuery<T, AxiosError<ErrorResponse>>({
     ...options,
     enabled: !!id,
     queryKey: ContractQueryKey.DETAIL(id as string),
-    queryFn: () => fetchUniqueContract(id as string, version),
+    queryFn: () => fetchUniqueContract<T>(id as string, version),
     staleTime: 1000 * 60 * 4,
   });
 }

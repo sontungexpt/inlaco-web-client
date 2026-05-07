@@ -37,11 +37,13 @@ export const fetchContracts = async ({
   return response.data;
 };
 
-export const fetchUniqueContract = async (
+export const fetchUniqueContract = async <
+  T extends BaseContract = BaseContract,
+>(
   contractId: string,
   version?: number,
 ) => {
-  const response = await privateRequest.get<BaseContract>(
+  const response = await privateRequest.get<T>(
     ContractEndpoint.GET_CONTRACT_BY_ID(contractId),
     {
       params: {
