@@ -17,6 +17,8 @@ export type NewAssignedCrew = {
 };
 
 export type NewMobilizationSchedule = {
+  contractId: string;
+
   partnerName: string;
   partnerPhone: string;
   partnerEmail: string;

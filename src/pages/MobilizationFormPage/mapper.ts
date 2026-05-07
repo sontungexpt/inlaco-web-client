@@ -4,8 +4,11 @@ import { NewMobilizationSchedule } from "@/types/api/mobilization.api";
 
 export const mapValuesToRequestBody = (
   values: FormValues,
+  contractId: string,
 ): NewMobilizationSchedule => {
   return {
+    contractId: contractId,
+
     partnerName: values.partnerName,
     partnerPhone: values.partnerPhone,
     partnerEmail: values.partnerEmail,

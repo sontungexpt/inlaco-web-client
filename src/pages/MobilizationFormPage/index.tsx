@@ -11,10 +11,12 @@ import {
 } from "@components/common";
 import { Grid, Box, Button, CircularProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 
 import Color from "@constants/Color";
 import { Formik, FormikHelpers, useFormikContext } from "formik";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { createMobilization } from "@/services/mobilization.service";
 import { FORM_SCHEMA, FormValues, FormValuesCrew } from "./schema";
 import { mapValuesToRequestBody } from "./mapper";
@@ -284,8 +286,16 @@ function renderDateCell<R, SR>({
   );
 }
 
-export default function MobiliaztionForm() {
+function useMobilizationFormPageParams(): { contractId?: string } {
+  const [searchParams] = useSearchParams();
+  const contractId = searchParams.get("contractId") || undefined;
+
+  return { contractId };
+}
+
+export default function MobiliaztionFormPage() {
   const navigate = useNavigate();
+  const { contractId } = useMobilizationFormPageParams();
 
   const handleFormSubmission = async (
     values: FormValues,
@@ -293,7 +303,7 @@ export default function MobiliaztionForm() {
   ) => {
     try {
       const newMobilization = await createMobilization(
-        mapValuesToRequestBody(values),
+        mapValuesToRequestBody(values, contractId!),
       );
       resetForm();
       navigate(`/mobilizations/${newMobilization.id}`);
@@ -337,7 +347,7 @@ export default function MobiliaztionForm() {
         },
         {
           key: "__action__",
-          width: 80,
+          width: 70,
           name: "",
           renderCell: ({ row }) => {
             const { values, setFieldValue } = useFormikContext<FormValues>();
@@ -390,10 +400,81 @@ export default function MobiliaztionForm() {
                 mb: 2,
               }}
             >
-              <PageTitle
-                title="TẠO ĐIỀU ĐỘNG"
-                subtitle="Tạo và lên kế hoạch cho các điều động mới"
-              />
+              <PageTitle title="TẠO ĐIỀU ĐỘNG" subtitle="Tạo điều động mới" />
+
+              {contractId && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                    px: 2,
+                    py: 1.2,
+                    borderRadius: 3,
+                    bgcolor: "rgba(255, 215, 0, 0.08)",
+                    border: "1px solid rgba(255, 215, 0, 0.25)",
+                    backdropFilter: "blur(8px)",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 2,
+                      bgcolor: Color.PrimaryGold,
+                      color: Color.PrimaryBlack,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      boxShadow: 2,
+                    }}
+                  >
+                    <DescriptionOutlinedIcon fontSize="small" />
+                  </Box>
+
+                  <Box>
+                    <Box
+                      sx={{
+                        fontSize: 11,
+                        color: "text.secondary",
+                        fontWeight: 600,
+                        textTransform: "uppercase",
+                        letterSpacing: 0.5,
+                      }}
+                    >
+                      Hợp đồng liên kết
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.8,
+                        fontWeight: 700,
+                        fontSize: 14,
+                      }}
+                    >
+                      #{contractId ?? "Không có"}
+                    </Box>
+                  </Box>
+
+                  <Button
+                    size="small"
+                    endIcon={
+                      <ArrowForwardIosRoundedIcon sx={{ fontSize: 12 }} />
+                    }
+                    sx={{
+                      ml: "auto",
+                      textTransform: "none",
+                      fontWeight: 600,
+                      borderRadius: 2,
+                    }}
+                    onClick={() => navigate(`/contracts/${contractId}`)}
+                  >
+                    Xem hợp đồng
+                  </Button>
+                </Box>
+              )}
 
               <Button
                 type="submit"
