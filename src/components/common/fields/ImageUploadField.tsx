@@ -1,4 +1,4 @@
-import { Card, IconButton, Box, Typography } from "@mui/material";
+import { Card, IconButton, Box, Typography, BoxProps } from "@mui/material";
 import { styled } from "@mui/system";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
@@ -23,7 +23,21 @@ const Overlay = styled(Box)({
   transition: "opacity 0.25s ease",
 });
 
-const normalizeImage = (item) => {
+export type NormalizedImage = {
+  file?: File;
+  name?: string;
+  size?: number;
+  type?: string;
+  url?: string;
+  publicId?: string;
+  id?: string;
+};
+
+export type ImageUploadFieldChangeMeta = {
+  error?: string;
+};
+
+const normalizeImage = (item: any): NormalizedImage => {
   if (item instanceof File) {
     return {
       file: item,
@@ -49,6 +63,39 @@ const normalizeImage = (item) => {
 };
 
 /* ================= component ================= */
+export type ImageUploadFieldProps = {
+  value?: unknown;
+  onChange?: (
+    value: File | File[] | NormalizedImage[] | null,
+    meta: ImageUploadFieldChangeMeta,
+  ) => void;
+
+  label?: string;
+  required?: boolean;
+  disabled?: boolean;
+
+  multiple?: boolean;
+  maxFileSize?: number;
+  accept?: string;
+
+  error?: boolean;
+  helperText?: string;
+
+  invalidFormatText?: string;
+  invalidSizeText?: string;
+
+  variant?: "rect" | "circle";
+
+  size?: number | string;
+  width?: number | string;
+  height?: number | string;
+
+  borderRadius?: number | string;
+
+  placeholderImage?: string;
+
+  sx?: BoxProps["sx"];
+};
 
 const ImageUploadField = ({
   value,
@@ -70,13 +117,13 @@ const ImageUploadField = ({
   borderRadius = 2,
   placeholderImage,
   sx = [],
-}) => {
+}: ImageUploadFieldProps) => {
   const isCircle = variant === "circle";
   const resolvedWidth = isCircle ? size : width;
   const resolvedHeight = isCircle ? size : height;
   const resolvedRadius = isCircle ? "50%" : borderRadius;
 
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const images = useMemo(() => normalize(value).map(normalizeImage), [value]);
 
   const openDialog = () => {
@@ -96,7 +143,7 @@ const ImageUploadField = ({
     };
   }, [images]);
 
-  const handleChange = (fileList) => {
+  const handleChange = (fileList: FileList | null) => {
     if (disabled || !fileList) return;
     const files = Array.from(fileList);
     if (!files.length) return;
@@ -122,7 +169,7 @@ const ImageUploadField = ({
     onChange?.(nextValue, {});
   };
 
-  const handleRemove = (index) => {
+  const handleRemove = (index: number) => {
     if (!multiple) {
       onChange?.(null, {});
       return;
@@ -142,7 +189,7 @@ const ImageUploadField = ({
           width: resolvedWidth,
           gap: 0.5,
         },
-        ...[].concat(sx),
+        ...(Array.isArray(sx) ? sx : [sx]),
       ]}
     >
       {label && (

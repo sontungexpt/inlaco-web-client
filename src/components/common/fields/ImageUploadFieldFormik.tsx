@@ -1,7 +1,18 @@
 import { useField, useFormikContext } from "formik";
-import ImageUploadField from "./ImageUploadField";
+import ImageUploadField, { ImageUploadFieldProps } from "./ImageUploadField";
 
-const ImageUploadFieldFormik = ({ name, disabled, ...props }) => {
+export type ImageUploadFieldFormikProps = Omit<
+  ImageUploadFieldProps,
+  "value" | "onChange" | "error" | "helperText"
+> & {
+  name: string;
+};
+
+const ImageUploadFieldFormik = ({
+  name,
+  disabled,
+  ...props
+}: ImageUploadFieldFormikProps) => {
   const { setFieldValue, isSubmitting, setFieldTouched, setFieldError } =
     useFormikContext();
   const [field, meta] = useField(name);
@@ -12,7 +23,7 @@ const ImageUploadFieldFormik = ({ name, disabled, ...props }) => {
       disabled={disabled || isSubmitting}
       value={field.value}
       error={meta.touched && Boolean(meta.error)}
-      helperText={meta.touched && meta.error}
+      helperText={meta.touched ? meta.error : undefined}
       onChange={(val, { error }) => {
         setFieldTouched(name, true, false);
         setFieldError(name, error);
