@@ -2,7 +2,12 @@ const RoutePath = {
   Home: "/",
   E403: "/403",
   Account: "/account",
-  ShipSchedule: "/shipschedule",
+  ShipSchedule: {
+    Root: "/shipschedule",
+    Index: "/shipschedule",
+    Form: "/shipschedule/form",
+    Detail: (id = ":id") => `/shipschedule/${id}`,
+  },
 
   Login: "/login",
   SignUp: "/sign-up",

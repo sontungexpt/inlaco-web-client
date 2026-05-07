@@ -47,8 +47,21 @@ export const AppRoutes = [
   },
 
   {
-    path: RoutePath.ShipSchedule,
-    element: lazy(() => import("@/pages/ShipSchedulePage")),
+    path: RoutePath.ShipSchedule.Root,
+    children: [
+      {
+        index: true,
+        element: lazy(() => import("@/pages/ShipSchedulePage")),
+      },
+      {
+        path: "form",
+        element: lazy(() => import("@/pages/ShipScheduleFormPage")),
+      },
+      {
+        path: ":id",
+        element: lazy(() => import("@/pages/ShipSchedulePage")),
+      },
+    ],
   },
 
   {
