@@ -43,6 +43,10 @@ export const AppRoutes = [
         path: ":id/profile",
         element: lazy(() => import("@/pages/CrewProfileDetailPage")),
       },
+      {
+        path: "my-profile",
+        element: lazy(() => import("@/pages/CrewMyProfilePage")),
+      },
     ],
   },
 

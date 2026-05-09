@@ -15,8 +15,6 @@ import SearchBar from "@/components/common/SearchBar";
 import PageTitle from "@/components/common/PageTitle";
 import BaseDataGridOld from "@/components/common/datagrid/mui/BaseDataGridOld";
 
-const QRCode = require("qrcode.react").default;
-
 interface UserRow {
   id: number;
   name: string;
@@ -234,13 +232,13 @@ const UserKioskPage = () => {
         <DialogContent>
           <Box sx={{ textAlign: "center", py: 2 }}>
             <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-              <QRCode
-                value={qrValue}
-                size={280}
-                level="H"
-                includeMargin
-                fgColor="#000000"
-                bgColor="#ffffff"
+              <Box
+                component="img"
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(
+                  qrValue,
+                )}`}
+                alt="QR code"
+                sx={{ width: 280, height: 280, maxWidth: "100%" }}
               />
             </Box>
             <Typography variant="body2" color="textSecondary">

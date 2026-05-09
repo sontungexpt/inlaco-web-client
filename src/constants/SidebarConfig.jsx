@@ -36,7 +36,7 @@ export const SidebarConfig = [
     items: [
       {
         title: "Hồ sơ cá nhân",
-        to: "/crews/me/profile",
+        to: "/crews/my-profile",
         icon: <AccountBoxRoundedIcon />,
         roles: [UserRole.SAILOR],
       },
