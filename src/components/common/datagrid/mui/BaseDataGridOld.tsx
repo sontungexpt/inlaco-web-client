@@ -1,7 +1,24 @@
 import { useMemo, useRef } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridPaginationModel, GridSlots } from "@mui/x-data-grid";
 import { NoValuesOverlay } from "@components/common";
 import Color from "@constants/Color";
+import { SxProps } from "@mui/material";
+
+interface BaseDataGridProps {
+  rows: any[];
+  columns: GridColDef[];
+  rowCount?: number;
+  slots?: Partial<GridSlots>;
+  paginationModel?: GridPaginationModel;
+  header?: string;
+  pageSizeOptions?: number[];
+  onPaginationModelChange?: (model: GridPaginationModel) => void;
+  headerAlign?: "left" | "center" | "right";
+  loading?: boolean;
+  sx?: SxProps;
+  autoHeight?: boolean;
+  [key: string]: any;
+}
 
 const BaseDataGrid = ({
   rows,
@@ -16,7 +33,7 @@ const BaseDataGrid = ({
   loading,
   sx = {},
   ...props
-}) => {
+}: BaseDataGridProps) => {
   const pageSize = paginationModel?.pageSize ?? 10;
   const paginationMode = paginationModel ? "server" : "client";
 

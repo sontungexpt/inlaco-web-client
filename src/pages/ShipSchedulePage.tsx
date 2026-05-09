@@ -10,9 +10,12 @@ import {
 } from "@mui/material";
 import FullscreenRoundedIcon from "@mui/icons-material/FullscreenRounded";
 import FullscreenExitRoundedIcon from "@mui/icons-material/FullscreenExitRounded";
+import { GridColDef } from "@mui/x-data-grid";
 import SearchBar from "@/components/common/SearchBar";
 import PageTitle from "@/components/common/PageTitle";
 import BaseDataGridOld from "@/components/common/datagrid/mui/BaseDataGridOld";
+
+const QRCode = require("qrcode.react").default;
 
 interface UserRow {
   id: number;
@@ -217,8 +220,8 @@ const UserKioskPage = () => {
       <Box mt={3} sx={{ width: "100%", minHeight: 520 }}>
         <BaseDataGridOld
           rows={filteredUsers}
-          columns={columns}
-          pageSizeOptions={[5, 10, 20]}
+          columns={columns as GridColDef[]}
+          pageSizeOptions={[5, 10, 20] as const}
           loading={false}
           autoHeight
         />
@@ -230,14 +233,16 @@ const UserKioskPage = () => {
         </DialogTitle>
         <DialogContent>
           <Box sx={{ textAlign: "center", py: 2 }}>
-            <Box
-              component="img"
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(
-                qrValue,
-              )}`}
-              alt="QR code"
-              sx={{ width: 280, height: 280, maxWidth: "100%", mb: 2 }}
-            />
+            <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+              <QRCode
+                value={qrValue}
+                size={280}
+                level="H"
+                includeMargin
+                fgColor="#000000"
+                bgColor="#ffffff"
+              />
+            </Box>
             <Typography variant="body2" color="textSecondary">
               Quét mã QR để hoàn tất {selectedAction === "checkin" ? "check in" : "check out"}.
             </Typography>
