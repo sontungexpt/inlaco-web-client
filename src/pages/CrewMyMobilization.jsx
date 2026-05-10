@@ -25,7 +25,7 @@ const CrewMyMobilization = () => {
           setCardID(response.data.cardId);
         }
       } catch (err) {
-        console.log("Error when fetching crew member profile data: ", err);
+        console.error("Error when fetching crew member profile data: ", err);
       }
     };
 
@@ -68,7 +68,7 @@ const CrewMyMobilization = () => {
           setMobilizations(formattedMobilizations);
         }
       } catch (err) {
-        console.log("Error when fetching my mobilization data: ", err);
+        console.error("Error when fetching my mobilization data: ", err);
       } finally {
         setLoading(false);
       }
