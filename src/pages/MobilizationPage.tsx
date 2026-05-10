@@ -108,7 +108,7 @@ const MobilizationPage = ({ pageSize = 10 }) => {
             startIcon={<AddCircleRoundedIcon />}
             onClick={() =>
               navigate(
-                `/contracts?type=SUPPLY_CONTRACT&status=SIGNED&lockedStatus=true`,
+                `/contracts?type=SUPPLY_CONTRACT&status=SIGNED_OR_ACTIVE&lockedStatus=true`,
               )
             }
           >

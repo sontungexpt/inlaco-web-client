@@ -37,7 +37,7 @@ export const FORM_SCHEMA = Yup.object().shape({
         employeeCardId: requiredString(
           "Số thẻ thuyền viên không được để trống",
         ),
-        fullName: requiredString("Hoten thuyền viên không được sé trống"),
+        // fullName: requiredString("Hoten thuyền viên không được sé trống"),
         rankOnBoard: requiredString("Chức danh chuyên môn không được để trống"),
         startDate: dateBefore(
           "endDate",

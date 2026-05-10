@@ -221,7 +221,7 @@ function CrewSearchEditCell({
       pageSize: 10,
       filter: {
         keyword,
-        workStatus: "READY_FOR_ASSIGNMENT",
+        workStatus: "AVAILABLE",
       },
     });
 
@@ -340,7 +340,7 @@ export default function MobiliaztionFormPage() {
         {
           key: "fullName",
           name: "Họ tên",
-          renderEditCell: renderSearchEditCell,
+          editable: false,
         },
         {
           key: "rankOnBoard",

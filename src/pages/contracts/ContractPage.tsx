@@ -13,14 +13,35 @@ import BaseDataGrid, {
   BaseDataGridColumn,
 } from "@/components/common/datagrid/BaseDataGrid";
 import { BaseDataGridFooter } from "@/components/common/datagrid/components";
-import { BaseContract, ContractType } from "@/types/api/contract.api";
+import {
+  BaseContract,
+  ContractType,
+  FilterOptions,
+} from "@/types/api/contract.api";
 
-type ContractStatus = "SIGNED" | "PENDING";
+type ContractStatus = "SIGNED" | "PENDING" | "ACTIVE" | "SIGNED_OR_ACTIVE";
 
 const STATUS_FILTERS: { label: string; value: ContractStatus }[] = [
   { label: "Đang chờ ký kết", value: "PENDING" },
-  { label: "Hợp đồng chính thức", value: "SIGNED" },
+  { label: "Hợp đồng chính thức (Đã kí)", value: "SIGNED" },
+  { label: "Hợp đồng có hiệu lực", value: "ACTIVE" },
+  {
+    label: "Hợp đồng đã kí hoặc có hiệu lực",
+    value: "SIGNED_OR_ACTIVE",
+  },
 ];
+
+const STATUS_FILTER_MAP = {
+  PENDING: { signed: false },
+  SIGNED: { signed: true },
+  ACTIVE: { active: true },
+  SIGNED_OR_ACTIVE: { includedStatuses: ["SIGNED", "ACTIVE"] },
+} as Record<ContractStatus, Partial<FilterOptions>>;
+
+const buildStatusFilter = (status?: ContractStatus): Partial<FilterOptions> => {
+  if (!status) return {};
+  return STATUS_FILTER_MAP[status] ?? {};
+};
 
 const useContractPageParams = (): {
   initialPage: number;
@@ -36,14 +57,6 @@ const useContractPageParams = (): {
   const status = (searchParams.get("status") ||
     STATUS_FILTERS[0].value) as ContractStatus;
   const lockedStatus = !!searchParams.get("lockedStatus");
-
-  console.log(
-    "useContractPageParams",
-    initialPage,
-    contractType,
-    status,
-    lockedStatus,
-  );
 
   return {
     initialPage: Number(initialPage),
@@ -63,7 +76,6 @@ export default function ContractPage({ pageSize = 20 }) {
   } = useContractPageParams();
 
   const [status, setStatus] = useState<ContractStatus>(initialStatus);
-  const officialContract = status === "SIGNED";
 
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(initialPage);
@@ -73,7 +85,7 @@ export default function ContractPage({ pageSize = 20 }) {
       page: page,
       pageSize: pageSize,
       filter: {
-        signed: officialContract,
+        ...buildStatusFilter(status),
         keyword: query,
         type: contractType,
       },
@@ -113,9 +125,11 @@ export default function ContractPage({ pageSize = 20 }) {
         name: "Thao tác",
         width: 100,
         toolTip: "Click để tạo điều động",
-        renderCell: ({ row }) => (
+        renderCell: ({ row: contract }) => (
           <Button
-            disabled={!row.signed}
+            disabled={
+              contract.status !== "SIGNED" && contract.status !== "ACTIVE"
+            }
             size="small"
             variant="contained"
             sx={{
@@ -125,7 +139,9 @@ export default function ContractPage({ pageSize = 20 }) {
                 opacity: 1,
               },
             }}
-            onClick={() => navigate(`/mobilizations/form?contractId=${row.id}`)}
+            onClick={() =>
+              navigate(`/mobilizations/form?contractId=${contract.id}`)
+            }
           >
             Điều động
           </Button>

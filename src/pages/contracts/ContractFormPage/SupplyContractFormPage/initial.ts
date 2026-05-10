@@ -4,8 +4,8 @@ export const BASE_FORM_VALUES: FormValues = {
   contractFile: undefined,
   attachmentFiles: undefined,
   title: "",
-  activationDate: undefined,
-  expiryDate: undefined,
+  activationDate: "",
+  expiryDate: "",
   numOfCrewMember: 1,
 
   partyA: {
@@ -24,7 +24,7 @@ export const BASE_FORM_VALUES: FormValues = {
     representativePos: "",
   },
   shipInfo: {
-    image: null,
+    image: undefined,
     IMONumber: "",
     name: "",
     countryISO: "",

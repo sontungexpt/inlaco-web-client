@@ -3,7 +3,7 @@ import { PageParams } from "./shared/base.api";
 
 export type CrewStatus =
   | "DRAFT"
-  | "READY_FOR_ASSIGNMENT"
+  | "AVAILABLE"
   | "ENGAGED"
   | "ON_LEAVE"
   | "INACTIVE";

@@ -60,7 +60,11 @@ export const requiredNumber = ({
 const isValidFile = (value: unknown) => {
   if (!value) return false;
   if (value instanceof File) return true;
-  if (typeof value === "object" && (value as any)?.file) return true;
+  if (
+    (typeof value === "object" && (value as any)?.file != null) ||
+    typeof (value as any)?.publicId === "string"
+  )
+    return true;
   return false;
 };
 

@@ -99,6 +99,10 @@ export const AppRoutes = [
           },
         ],
       },
+      {
+        path: ":id/old-versions",
+        element: lazy(() => import("@/pages/contracts/ContractOldVersionPage")),
+      },
     ],
   },
   {

@@ -19,6 +19,7 @@ import {
   ContractType,
   FetchContractParams,
   LaborContract,
+  NewContractBase,
   NewCrewSupplyContract,
   NewLaborContract,
 } from "@/types/api/contract.api";
@@ -73,11 +74,14 @@ export function useContract<T extends BaseContract = BaseContract>(
   });
 }
 
-export const useContractOldVersions = (contractId: string, options = {}) => {
-  return useQuery<BaseContract[], AxiosError<ErrorResponse>>({
+export const useContractOldVersions = <T extends BaseContract = BaseContract>(
+  contractId: string,
+  options = {},
+) => {
+  return useQuery<T[], AxiosError<ErrorResponse>>({
     ...options,
     queryKey: ContractQueryKey.OLD_VERSIONS(contractId),
-    queryFn: () => getContractVersions(contractId),
+    queryFn: () => getContractVersions<T>(contractId),
     enabled: !!contractId, // Only fetch if contractID is provided
   });
 };
@@ -170,22 +174,26 @@ export const useCreateSupplyContract = ({
   });
 };
 
-export const useEditContract = ({
+export const useEditContract = <
+  T extends NewContractBase = NewContractBase,
+  R extends BaseContract = BaseContract,
+>({
   onSuccess,
   ...options
 }: UseMutationOptions<
-  unknown,
+  R,
   AxiosError<ErrorResponse>,
   {
     id: string;
-    newDatas: any;
+    newDatas: T;
     type: ContractType;
   }
->) => {
+> = {}) => {
   const queryClient = useQueryClient();
   return useMutation({
     ...options,
-    mutationFn: ({ id, newDatas, type }) => editContract(id, newDatas, type),
+    mutationFn: ({ id, newDatas, type }) =>
+      editContract<T, R>(id, newDatas, type),
     onSuccess: (...args) => {
       queryClient.invalidateQueries({
         queryKey: ContractQueryKey.ALL,

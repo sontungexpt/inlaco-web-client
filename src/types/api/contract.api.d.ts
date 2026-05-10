@@ -46,7 +46,12 @@ export type FilterOptions = {
   keyword?: string;
 
   type?: ContractType;
+
   signed?: boolean;
+  active?: boolean;
+
+  includedStatuses?: ContractStatus[];
+  excludedStatuses?: ContractStatus[];
 
   activationDateStart?: string;
   activationDateEnd?: string;

@@ -9,6 +9,7 @@ import {
   requiredVnPhoneNumber,
   optionalFile,
   optionalFiles,
+  requiredEmail,
 } from "@/utils/validation/yupHelpers";
 
 export const FORM_SCHEMA = Yup.object({
@@ -23,11 +24,11 @@ export const FORM_SCHEMA = Yup.object({
     "activationDate",
     "Ngày kết thúc phải sau ngày bắt đầu",
   ),
-  numOfCrewMember: requiredNumber({
-    requiredMsg: "Số thuyền viên không được để trống",
-    min: 1,
-    minMsg: "Phải có ít nhất 1 thuyền viên",
-  }),
+  // numOfCrewMember: requiredNumber({
+  //   requiredMsg: "Số thuyền viên không được để trống",
+  //   min: 1,
+  //   minMsg: "Phải có ít nhất 1 thuyền viên",
+  // }),
 
   partyA: Yup.object({
     compName: requiredString("Tên công ty không được để trống"),
@@ -39,7 +40,7 @@ export const FORM_SCHEMA = Yup.object({
 
   partyB: Yup.object({
     compName: requiredString("Tên công ty không được để trống"),
-    companyEmail: requiredString("Email không được để trống"),
+    companyEmail: requiredEmail("Email không được để trống"),
     compAddress: requiredString("Địa chỉ không được để trống"),
     compPhoneNumber: requiredVnPhoneNumber(),
     representative: requiredString("Người đại diện không được để trống"),
