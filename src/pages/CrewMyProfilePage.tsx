@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import {
   Box,
   Button,
@@ -6,13 +6,12 @@ import {
   Typography,
   MenuItem,
   CircularProgress,
-  Alert,
-  Avatar,
 } from "@mui/material";
 import { Formik } from "formik";
 import SaveIcon from "@mui/icons-material/Save";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import * as Yup from "yup";
+import toast from "react-hot-toast";
 import {
   PageTitle,
   InfoTextFieldFormik,
@@ -23,6 +22,7 @@ import {
 } from "@/components/common";
 import Color from "@/constants/Color";
 import { useCrewProfile } from "@/queries/crew-profile.query";
+import { updateCrewProfile } from "@/services/crew.service";
 import {
   requiredString,
   dateMax,
@@ -64,7 +64,18 @@ export default function CrewMyProfilePage() {
 
   const handleFormSubmission = async (values, { setSubmitting }) => {
     try {
-      // TODO: wire up PATCH /v1/crew-profiles/{id} for sailor self-update
+      await updateCrewProfile(profile!.id, {
+        fullName: values.fullName,
+        birthDate: values.dob,
+        gender: values.gender,
+        address: values.address,
+        phoneNumber: values.phoneNumber,
+        email: values.email,
+        languageSkills: values.languageSkills ? [values.languageSkills] : [],
+      });
+      toast.success("Cập nhật hồ sơ thành công!");
+    } catch {
+      toast.error("Cập nhật hồ sơ thất bại, vui lòng thử lại.");
     } finally {
       setSubmitting(false);
     }

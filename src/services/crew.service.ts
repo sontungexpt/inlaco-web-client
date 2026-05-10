@@ -33,3 +33,24 @@ export const fetchSpecificCrewProfile = async (profileId: String) => {
   );
   return response.data;
 };
+
+export interface UpdateCrewProfileBody {
+  fullName?: string;
+  birthDate?: string;
+  gender?: string;
+  address?: string;
+  phoneNumber?: string;
+  email?: string;
+  languageSkills?: string[];
+}
+
+export const updateCrewProfile = async (
+  profileId: string,
+  body: UpdateCrewProfileBody,
+): Promise<CrewProfile> => {
+  const response = await privateRequest.patch<CrewProfile>(
+    CrewProfileEndpoint.UPDATE_BY_ID(profileId),
+    body,
+  );
+  return response.data;
+};
