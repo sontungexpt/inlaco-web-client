@@ -402,7 +402,6 @@ export default function MobiliaztionFormPage() {
         setFieldValue,
         setValues,
       }) => {
-        console.debug("errors", errors);
         return (
           <Box component="form" onSubmit={handleSubmit} m={2}>
             {/* ================= HEADER ================= */}

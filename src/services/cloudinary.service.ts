@@ -103,7 +103,6 @@ export const cloudinaryUpload = async (
       assetId: response.asset_id,
     };
   } catch (err: any) {
-    console.log(JSON.stringify(err));
     throw err;
   }
 };

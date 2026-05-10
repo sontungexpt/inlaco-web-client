@@ -43,6 +43,13 @@ export const createMobilization = async (
   return response.data;
 };
 
+export const fetchMyMobilizations = async () => {
+  const response = await privateRequest.get(
+    MobilizationEndpoint.CURRENT_MOBILIZATION,
+  );
+  return response.data as MobilizationSchedule[];
+};
+
 export const exportMobilizationExcel = async (id: string) => {
   const response = await privateRequest.get<Blob>(
     MobilizationEndpoint.EXPORT_EXCEL(id),

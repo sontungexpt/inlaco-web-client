@@ -2,86 +2,57 @@ import { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import { ShipInfoCell, ScheduleCell } from "../components/mobilization";
 import { useNavigate } from "react-router";
-import { fetchMyCrewProfile } from "../services/crew.service";
+import { fetchMyMobilizations } from "../services/mobilization.service";
 import { formatDateTime } from "@utils/converter";
-import { HttpStatusCode } from "axios";
 import { PageTitle, DetailActionCell } from "@/components/common";
+import BaseDataGridOld from "@/components/common/datagrid/mui/BaseDataGridOld";
 
 const CrewMyMobilization = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [mobilizations, setMobilizations] = useState([]);
-  const [cardID, setCardID] = useState("");
 
   useEffect(() => {
-    const getProfile = async () => {
+    const load = async () => {
       setLoading(true);
       try {
-        const response = await fetchMyCrewProfile();
-        await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
-
-        if (response.status === HttpStatusCode.Ok) {
-          setCardID(response.data.cardId);
-        }
+        const data = await fetchMyMobilizations();
+        const formatted = data.map((mobilization) => ({
+          id: mobilization.detail.id,
+          partnerInfo: {
+            partnerName: mobilization.detail.partnerName,
+            email: mobilization.detail.partnerEmail,
+            phoneNumber: mobilization.detail.partnerPhone,
+          },
+          shipInfo: {
+            IMONumber: mobilization.detail.shipInfo.imonumber,
+            name: mobilization.detail.shipInfo.name,
+            countryCode: mobilization.detail.shipInfo.countryISO,
+            type: mobilization.detail.shipInfo.shipType,
+          },
+          scheduleInfo: {
+            position: mobilization.professionalPosition,
+            startLocation: mobilization.detail.departurePoint,
+            startDate: mobilization.detail.startDate,
+            endLocation: mobilization.detail.arrivalPoint,
+            estimatedEndTime: mobilization.detail.estimatedEndDate,
+          },
+        }));
+        setMobilizations(formatted);
       } catch (err) {
-        console.log("Error when fetching crew member profile data: ", err);
-      }
-    };
-
-    getProfile();
-  }, []);
-
-  useEffect(() => {
-    const getMyMobilization = async (cardID) => {
-      setLoading(true);
-      try {
-        const response = await getMyMobilizationAPI(cardID);
-        await new Promise((resolve) => setTimeout(resolve, 200)); // delay UI for 200ms
-
-        if (response.status === HttpStatusCode.OK) {
-          const mobilizations = response.data;
-
-          const formattedMobilizations = mobilizations.map((mobilization) => ({
-            id: mobilization.detail.id,
-            partnerInfo: {
-              partnerName: mobilization.detail.partnerName,
-              email: mobilization.detail.partnerEmail,
-              phoneNumber: mobilization.detail.partnerPhone,
-            },
-            shipInfo: {
-              IMONumber: mobilization.detail.shipInfo.imonumber,
-              name: mobilization.detail.shipInfo.name,
-              countryCode: mobilization.detail.shipInfo.countryISO,
-              type: mobilization.detail.shipInfo.shipType,
-              // imageUrl: mobilization.detail?.shipInfo?.imageUrl?.url,
-            },
-            scheduleInfo: {
-              position: mobilization.professionalPosition,
-              startLocation: mobilization.detail.departurePoint,
-              startDate: mobilization.detail.startDate,
-              endLocation: mobilization.detail.arrivalPoint,
-              estimatedEndTime: mobilization.detail.estimatedEndDate,
-            },
-          }));
-
-          setMobilizations(formattedMobilizations);
-        }
-      } catch (err) {
-        console.log("Error when fetching my mobilization data: ", err);
+        console.error("Error when fetching my mobilization data: ", err);
       } finally {
         setLoading(false);
       }
     };
 
-    if (cardID !== "") {
-      getMyMobilization(cardID);
-    }
-  }, [cardID]);
+    load();
+  }, []);
 
   const onMobilizationDetailClick = (id, position) => {
     navigate(`/mobilizations/${id}`, {
-      state: { isAdmin: false, position: position },
+      state: { isAdmin: false, position },
     });
   };
 
@@ -124,17 +95,15 @@ const CrewMyMobilization = () => {
       sortable: false,
       flex: 3,
       headerAlign: "center",
-      renderCell: (params) => {
-        return (
-          <ShipInfoCell
-            IMONumber={params?.value?.IMONumber}
-            name={params?.value?.name}
-            countryCode={params?.value?.countryCode}
-            type={params?.value?.type}
-            imageUrl={params?.value?.imageUrl}
-          />
-        );
-      },
+      renderCell: (params) => (
+        <ShipInfoCell
+          IMONumber={params?.value?.IMONumber}
+          name={params?.value?.name}
+          countryCode={params?.value?.countryCode}
+          type={params?.value?.type}
+          imageUrl={params?.value?.imageUrl}
+        />
+      ),
     },
     {
       field: "scheduleInfo",
@@ -143,16 +112,14 @@ const CrewMyMobilization = () => {
       flex: 2.5,
       align: "center",
       headerAlign: "center",
-      renderCell: (params) => {
-        return (
-          <ScheduleCell
-            startLocation={params?.value?.startLocation}
-            startDate={formatDateTime(params?.value?.startDate)}
-            endLocation={params?.value?.endLocation}
-            estimatedEndTime={formatDateTime(params?.value?.estimatedEndTime)}
-          />
-        );
-      },
+      renderCell: (params) => (
+        <ScheduleCell
+          startLocation={params?.value?.startLocation}
+          startDate={formatDateTime(params?.value?.startDate)}
+          endLocation={params?.value?.endLocation}
+          estimatedEndTime={formatDateTime(params?.value?.estimatedEndTime)}
+        />
+      ),
     },
     {
       field: "detail",
@@ -161,18 +128,16 @@ const CrewMyMobilization = () => {
       flex: 0.75,
       align: "center",
       headerAlign: "center",
-      renderCell: (params) => {
-        return (
-          <DetailActionCell
-            onClick={() =>
-              onMobilizationDetailClick(
-                params?.id,
-                params?.row?.scheduleInfo?.position,
-              )
-            }
-          />
-        );
-      },
+      renderCell: (params) => (
+        <DetailActionCell
+          onClick={() =>
+            onMobilizationDetailClick(
+              params?.id,
+              params?.row?.scheduleInfo?.position,
+            )
+          }
+        />
+      ),
     },
   ];
 
@@ -181,104 +146,10 @@ const CrewMyMobilization = () => {
       <Box>
         <PageTitle
           title="LỊCH ĐIỀU ĐỘNG"
-          subtitle={"Thông tin các điều động của cá nhân"}
+          subtitle="Thông tin các điều động của cá nhân"
         />
       </Box>
-      {/* Switch bar component only for Crew Member role */}
-      {/* <SwitchBar
-          tabLabel1={"Danh Sách"}
-          tabLabel2={"Thời Gian Biểu"}
-          variant={"fullWidth"}
-          onChange={(newValue) => handleTabChange(newValue)}
-          color={COLOR.secondary_blue}
-          sx={{
-            backgroundColor: COLOR.secondary_white,
-          }}
-        />
-        {tabValue === 0 ? (
-          <Box
-            m="40px 0 0 0"
-            height="62vh"
-            maxHeight={550}
-            maxWidth={1600}
-            sx={{
-              "& .MuiDataGrid-columnHeader": {
-                backgroundColor: COLOR.secondary_blue,
-                color: COLOR.primary_white,
-              },
-              "& .MuiTablePagination-root": {
-                backgroundColor: COLOR.secondary_blue,
-                color: COLOR.primary_white,
-              },
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                width: "100%",
-                paddingBottom: 2,
-                justifyContent: "end",
-              }}
-            >
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: COLOR.primary_gold,
-                  color: COLOR.primary_black,
-                  borderRadius: 2,
-                }}
-                onClick={() => navigate("/createMobilization")}
-              >
-                <AddCircleRoundedIcon />
-                <Typography
-                  sx={{
-                    fontWeight: 700,
-                    marginLeft: "4px",
-                    textTransform: "capitalize",
-                  }}
-                >
-                  Tạo điều động
-                </Typography>
-              </Button>
-            </Box>
-            <DataGrid
-              disableRowSelectionOnClick
-              disableColumnMenu
-              disableColumnResize
-              getRowHeight={() => "auto"}
-              rows={masterAssignmentSchedule}
-              columns={columns}
-              slots={{ noRowsOverlay: NoValuesOverlay }}
-              pageSizeOptions={[5, 10, { value: -1, label: "All" }]}
-              initialState={{
-                pagination: {
-                  paginationModel: { pageSize: 5, page: 0 },
-                },
-              }}
-              sx={{
-                backgroundColor: "#FFF",
-                headerAlign: "center",
-                "& .MuiDataGrid-columnHeaderTitle": {
-                  fontSize: 16,
-                  fontWeight: 700,
-                },
-              }}
-            />
-          </Box>
-        ) : (
-          <Box m="40px 0 0 0" height="62vh" maxHeight={550} maxWidth={1600}>
-            <Typography>THỜI GIAN BIỂU</Typography>
-          </Box>
-        )} */}
-      <BaseDataGridOld
-        loading={loading}
-        // disableRowSelectionOnClick
-        // disableColumnMenu
-        // disableColumnResize
-        rows={mobilizations}
-        columns={columns}
-      />
+      <BaseDataGridOld loading={loading} rows={mobilizations} columns={columns} />
     </Box>
   );
 };
