@@ -1,0 +1,1 @@
+import{et as e,n as t,t as n}from"./Button-DgNwXfp-.js";var r=e();function i({onNewRowClick:e,newRowDisabled:i=!1,...a}){return(0,r.jsx)(t,{...a,sx:[{display:`flex`,mb:1},...Array.isArray(a.sx)?a.sx:[a.sx]],children:(0,r.jsx)(n,{variant:`outlined`,size:`small`,onClick:e,disabled:i,children:`+ Thêm hàng mới`})})}export{i as t};

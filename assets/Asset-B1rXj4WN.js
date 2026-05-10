@@ -1,0 +1,1 @@
+var e=`/inlaco-web-client/assets/inlaco-logo-GEecvage.png`,t=`/inlaco-web-client/assets/profile-logo-placeholder-CFxm3OyV.jpg`,n=`/inlaco-web-client/assets/no-image-photo-C6l5eRrS.png`,r=`/inlaco-web-client/assets/404-Dr8yzO2v.gif`,i={InlacoLogo:e,ProfilePlaceHolder:t,NoImage:n},a={E404:r};export{i as n,n as r,a as t};
