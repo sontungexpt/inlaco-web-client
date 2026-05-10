@@ -50,3 +50,8 @@ export const enrollCourse = async (courseId: string) => {
   const res = await privateRequest.post(CourseEndpoint.ENROLL_COURSE(courseId));
   return res.data;
 };
+
+export const cancelCourse = async (courseId: string) => {
+  const res = await privateRequest.post(CourseEndpoint.CANCLE_COURSE(courseId));
+  return res.data;
+};

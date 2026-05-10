@@ -107,11 +107,9 @@ const MobilizationPage = ({ pageSize = 10 }) => {
             }}
             startIcon={<AddCircleRoundedIcon />}
             onClick={() =>
-              navigate("/mobilizations/form", {
-                state: {
-                  type: "create",
-                },
-              })
+              navigate(
+                `/contracts?type=SUPPLY_CONTRACT&status=SIGNED_OR_ACTIVE&lockedStatus=true`,
+              )
             }
           >
             Tạo điều động

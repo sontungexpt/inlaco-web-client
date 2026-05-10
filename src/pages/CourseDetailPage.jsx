@@ -35,7 +35,7 @@ import { useCourse } from "@/queries/course.query";
 import useAllowedRole from "@/hooks/useAllowedRole";
 import UserRole from "@/constants/UserRole";
 import { dateToLocaleString } from "@/utils/converter";
-import { enrollCourse } from "@/services/course.service";
+import { enrollCourse, cancelCourse } from "@/services/course.service";
 import toast from "react-hot-toast";
 
 /* ================= Utils ================= */
@@ -80,12 +80,17 @@ export default function CourseDetailPage() {
   const [enrollLoading, setEnrollLoading] = useState(false);
   const [toggleLoading, setToggleLoading] = useState(false);
 
-  // TODO: Toggle course registration
   const handleToggleRegistration = async () => {
-    setToggleLoading(true);
-    // await toggleCourseRegister(course.id);
-    await new Promise((r) => setTimeout(r, 1000));
-    setToggleLoading(false);
+    try {
+      setToggleLoading(true);
+      await cancelCourse(course.id);
+      await refetch();
+      toast.success(course.canceled ? "Đã mở đăng ký khoá học" : "Đã đóng đăng ký khoá học");
+    } catch {
+      toast.error("Thao tác thất bại, vui lòng thử lại.");
+    } finally {
+      setToggleLoading(false);
+    }
   };
 
   const handleEnroll = async () => {

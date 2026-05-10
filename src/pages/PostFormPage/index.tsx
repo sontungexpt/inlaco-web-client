@@ -11,7 +11,7 @@ import {
   LoadErrorState,
 } from "@/components/common";
 import { FORM_SCHEMA, FormValues } from "./schema";
-import { BASE_FORM_VALUES } from "./initial";
+import { BASE_FORM_VALUES, POST_TYPES } from "./initial";
 import { mapPostToFormValues, mapValuesToRequestBody } from "./mapper";
 
 import { createPost, updatePost } from "@/services/post.service";
@@ -58,16 +58,6 @@ export default function PostFormPage() {
     refetch: refetchPost,
   } = usePost(postId);
 
-  const initialValues = useMemo(() => {
-    if (formType === FormType.EDIT) {
-      return mapPostToFormValues(BASE_FORM_VALUES, post as Post);
-    }
-    return {
-      ...BASE_FORM_VALUES,
-      type: fixedPostType,
-    };
-  }, [fixedPostType, formType, post]);
-
   const viewPostDetail = ({ id, type }: { id: string; type: string }) => {
     navigate(`/posts/${id}`);
   };
@@ -104,12 +94,6 @@ export default function PostFormPage() {
     }
   };
 
-  const POST_TYPES = [
-    { label: "Tin tức", value: "NEWS" },
-    { label: "Tuyển dụng", value: "RECRUITMENT" },
-    { label: "Sự kiện", value: "EVENT" },
-  ];
-
   if (formType === FormType.EDIT && isPostLoadError) {
     return (
       <LoadErrorState
@@ -121,11 +105,22 @@ export default function PostFormPage() {
     );
   }
 
+  const initialValues = useMemo(() => {
+    if (formType === FormType.EDIT) {
+      return mapPostToFormValues(BASE_FORM_VALUES, post as Post);
+    }
+    return {
+      ...BASE_FORM_VALUES,
+      type: fixedPostType,
+    } as FormValues;
+  }, [fixedPostType, formType, post]);
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={FORM_SCHEMA}
-      validateOnChange
+      validateOnChange={false}
+      validateOnBlur
       enableReinitialize
       onSubmit={handleFormSubmission}
     >
@@ -144,7 +139,7 @@ export default function PostFormPage() {
             <Button
               type="submit"
               variant="contained"
-              disabled={!isValid || !dirty || isSubmitting || isPostLoading}
+              disabled={!dirty || isSubmitting || isPostLoading}
               startIcon={isSubmitting && <CircularProgress size={20} />}
             >
               {isSubmitting
@@ -164,7 +159,7 @@ export default function PostFormPage() {
                   select
                   label="Chọn loại bài viết"
                   name="type"
-                  disabled={formType === FormType.EDIT || fixedPostType}
+                  disabled={formType === FormType.EDIT || !!fixedPostType}
                 >
                   {POST_TYPES.map((t) => (
                     <MenuItem key={t.value} value={t.value}>

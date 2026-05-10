@@ -9,9 +9,31 @@ export interface PageableResponse<T> {
   last: boolean;
   first: boolean;
   empty: boolean;
+  pageable?: {
+    pageNumber: number;
+    pageSize: number;
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+    sort: {
+      sorted: boolean;
+      unsorted: boolean;
+      empty: boolean;
+    };
+  };
+  sort?: {
+    sorted: boolean;
+    unsorted: boolean;
+    empty: boolean;
+  };
 }
 
-export interface PageParams<T = Record<string, any>> {
+export type Filterable = {} & Record<
+  string,
+  string | number | object | boolean
+>;
+
+export interface PageParams<T = Filterable> {
   page?: number;
   pageSize?: number;
   sort?: string;

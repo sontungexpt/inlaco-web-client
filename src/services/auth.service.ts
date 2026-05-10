@@ -2,7 +2,12 @@ import { AuthEndpoint } from "@/endpoints/auth.endpoint";
 import { tokenStore } from "@/shared/auth/token-store";
 import { publicRequest } from "@/utils/request";
 
-import type { LoginResponse, LoginPayload, SignupPayload } from "@/types/auth";
+import type {
+  LoginResponse,
+  LoginPayload,
+  SignupPayload,
+  ResendTwoStepVerificationRequest,
+} from "@/types/auth";
 
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
   const response = await publicRequest.post<LoginResponse>(AuthEndpoint.LOGIN, {
@@ -46,4 +51,18 @@ export const logout = async (): Promise<void> => {
   }
 
   await Promise.all(tasks);
+};
+
+export const resendTwoStepVerification = async (
+  payload: ResendTwoStepVerificationRequest,
+): Promise<void> => {
+  await publicRequest.post<void>(
+    AuthEndpoint.RESEND_TWO_STEP_VERIFICATION,
+    null,
+    {
+      params: {
+        username: payload.username,
+      },
+    },
+  );
 };

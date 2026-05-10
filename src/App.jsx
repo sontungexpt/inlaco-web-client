@@ -6,20 +6,17 @@ import { AppRoutes, AuthRoutes, ErrorRoutes } from "./routes";
 import MainLayout from "./layout/MainLayout";
 
 function AuthGuard({ children = <Outlet /> }) {
-  const { isBooting, isAuthenticated } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
 
-  console.log("render AuthGuard", isAuthenticated);
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  console.log("render AuthGuard child");
   return children;
 }
 
 function RoleGuard({ allowedRoles, children = <Outlet /> }) {
   const { includesRole, roles: userRoles, includesAllRoles } = useAuthContext();
   if (!allowedRoles) return children;
-  console.log("render RoleGuard");
 
   const allowed =
     typeof allowedRoles === "function"
@@ -95,7 +92,6 @@ export const buildRoutes = (routes, pub = false) => {
 };
 
 export default function App() {
-  console.log("render App");
   return (
     <Suspense fallback={<PageCircularProgress />}>
       <Routes>

@@ -52,7 +52,6 @@ const cldUpload = async (
   }
 
   const formData = new FormData();
-  console.log(file);
 
   /**
    * Web: File | Blob
@@ -104,7 +103,6 @@ export const cloudinaryUpload = async (
       assetId: response.asset_id,
     };
   } catch (err: any) {
-    console.log(JSON.stringify(err));
     throw err;
   }
 };

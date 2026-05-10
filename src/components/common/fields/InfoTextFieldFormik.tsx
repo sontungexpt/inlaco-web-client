@@ -1,4 +1,4 @@
-import { FieldHookConfig, useField } from "formik";
+import { FieldHookConfig, useField, useFormikContext } from "formik";
 import InfoTextField, { InfoTextFieldProps } from "./InfoTextField";
 
 export type InfoTextFieldFormikProps = InfoTextFieldProps & {
@@ -8,14 +8,17 @@ export type InfoTextFieldFormikProps = InfoTextFieldProps & {
 const InfoTextFieldFormik = ({
   onChange,
   required = true,
+  disabled,
   name,
   ...props
 }: InfoTextFieldFormikProps) => {
   const [field, meta] = useField(name);
+  const { isSubmitting } = useFormikContext();
   return (
     <InfoTextField
       {...props}
       {...field}
+      disabled={disabled || isSubmitting}
       onChange={onChange ?? field.onChange}
       required={required}
       error={meta.touched && Boolean(meta.error)}

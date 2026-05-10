@@ -6,21 +6,12 @@ import {
   NationalityTextField,
   ImageUploadFieldFormik,
 } from "@components/common";
-import {
-  Box,
-  Button,
-  Grid,
-  CircularProgress,
-  InputAdornment,
-} from "@mui/material";
+import { Box, Button, Grid, CircularProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import Color from "@constants/Color";
 import { Formik, FormikHelpers } from "formik";
 import { useNavigate, useSearchParams } from "react-router";
-import {
-  createSupplyContract,
-  editContract,
-} from "@/services/contract.service";
+import { createSupplyContract } from "@/services/contract.service";
 import TemplateDialog from "@/components/contract-templates/TemplateDialog";
 import cloudinaryUpload, { FileRequest } from "@/services/cloudinary.service";
 import UploadStrategy from "@/constants/UploadStrategy";
@@ -34,7 +25,7 @@ import { FORM_SCHEMA, FormValues } from "./schema";
 import { BASE_FORM_VALUES } from "./initial";
 
 import { useSupplyRequest } from "@/queries/supply-request.query";
-import { useContract } from "@/queries/contract.query";
+import { useContract, useEditContract } from "@/queries/contract.query";
 import { keepChangedFields } from "@/utils/object";
 import InfoTextFieldFormik from "@/components/common/fields/InfoTextFieldFormik";
 import {
@@ -65,8 +56,25 @@ const SupplyContractFormPage = () => {
   const { data: contractInfo, isLoading: contractInfoLoading } =
     useContract(contractId);
 
+  const { mutateAsync: editContract } = useEditContract<
+    NewCrewSupplyContract,
+    CrewSupplyContract
+  >();
+
   const freezedContract = contractInfo?.freezed;
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
+
+  const initialValues = useMemo(
+    () =>
+      isEdit
+        ? mapContractToFormValues(
+            BASE_FORM_VALUES,
+            contractInfo as CrewSupplyContract,
+          )
+        : mapSupplyRequestToFormValues(BASE_FORM_VALUES, supplyRequestInfo),
+    [isEdit, supplyRequestInfo, contractInfo],
+  );
+
   const createContract = async (values: FormValues) => {
     const [shipImageResult, contractFileResult, ...attachmentResults] =
       await Promise.all([
@@ -97,7 +105,9 @@ const SupplyContractFormPage = () => {
   const updateContract = async (values: FormValues) => {
     const [shipImageResult, contractFile, ...attachmentFiles] =
       await Promise.all([
-        cloudinaryUpload(values.shipInfo.image, UploadStrategy.SHIP_IMAGE),
+        values.shipInfo?.image instanceof File
+          ? cloudinaryUpload(values.shipInfo.image, UploadStrategy.SHIP_IMAGE)
+          : null,
         // keep the order
         values.contractFile &&
           cloudinaryUpload(values.contractFile, UploadStrategy.CONTRACT_FILE),
@@ -117,11 +127,11 @@ const SupplyContractFormPage = () => {
       keepPaths: ["initiator"],
     }) as NewCrewSupplyContract;
 
-    const contract = await editContract<NewCrewSupplyContract>(
-      (contractInfo as CrewSupplyContract).id as string,
-      patchRequest,
-      "SUPPLY_CONTRACT",
-    );
+    const contract = await editContract({
+      id: contractInfo!.id,
+      newDatas: patchRequest,
+      type: "SUPPLY_CONTRACT",
+    });
 
     return contract;
   };
@@ -147,259 +157,260 @@ const SupplyContractFormPage = () => {
     }
   };
 
-  const initialValues = useMemo(
-    () =>
-      isEdit
-        ? mapContractToFormValues(
-            BASE_FORM_VALUES,
-            contractInfo as CrewSupplyContract,
-          )
-        : mapSupplyRequestToFormValues(BASE_FORM_VALUES, supplyRequestInfo),
-    [isEdit, supplyRequestInfo, contractInfo],
-  );
-
   return (
     <Formik
       initialValues={initialValues}
       enableReinitialize
-      validateOnChange={false}
       validateOnBlur
+      validateOnChange={false}
       validationSchema={FORM_SCHEMA}
       onSubmit={handleFormSubmission}
     >
-      {({ values, errors, touched, dirty, isSubmitting, handleSubmit }) => (
-        <Box component="form" onSubmit={handleSubmit} p={2}>
-          {/* ===== Sticky Header ===== */}
-          <SectionWrapper
-            sx={{
-              position: "sticky",
-              top: 0,
-              zIndex: 10,
-              backgroundColor: "background.paper",
-              borderBottom: "1px solid #e0e0e0",
-            }}
-          >
-            <PageTitle
-              title={
-                isEdit
-                  ? "CÂP NHẤT HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN"
-                  : "TẠO HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN"
-              }
-              subtitle={isEdit ? "Lưu hợp đồng mới" : "Tạo hợp đồng"}
-            />
-
-            <Box display="flex" gap={2} mt={2}>
-              <Button
-                variant="contained"
-                onClick={() => setOpenTemplateDialog(true)}
-                sx={{
-                  backgroundColor: Color.PrimaryBlue,
-                  color: Color.PrimaryWhite,
-                }}
-              >
-                Tải template
-              </Button>
-
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={
-                  !dirty ||
-                  isSubmitting ||
-                  requestInfoLoading ||
-                  contractInfoLoading
+      {({ values, errors, touched, dirty, isSubmitting, handleSubmit }) => {
+        console.log(errors);
+        return (
+          <Box component="form" onSubmit={handleSubmit} p={2}>
+            {/* ===== Sticky Header ===== */}
+            <SectionWrapper
+              sx={{
+                position: "sticky",
+                top: 0,
+                zIndex: 10,
+                backgroundColor: "background.paper",
+                borderBottom: "1px solid #e0e0e0",
+              }}
+            >
+              <PageTitle
+                title={
+                  isEdit
+                    ? "CÂP NHẤT HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN"
+                    : "TẠO HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN"
                 }
-                startIcon={
-                  isSubmitting ? (
-                    <CircularProgress
-                      size={22}
-                      sx={{
-                        mr: 2,
-                        color: Color.PrimaryBlack,
-                      }}
-                    />
-                  ) : (
-                    <SaveIcon />
-                  )
-                }
-                sx={{
-                  minWidth: 150,
-                  px: 3,
-                  fontWeight: 700,
-                  backgroundColor: Color.PrimaryGold,
-                  color: Color.PrimaryBlack,
-                }}
-              >
-                {isEdit
-                  ? freezedContract
-                    ? "Thêm phụ lục"
-                    : "Sửa hợp đồng"
-                  : "Tạo hợp đồng"}
-              </Button>
-            </Box>
-          </SectionWrapper>
-          <SectionWrapper>
-            <Grid container spacing={2}>
-              <Grid size={6}>
-                <InfoTextFieldFormik label="Tiêu đề hợp đồng" name="title" />
-              </Grid>
-            </Grid>
-          </SectionWrapper>
+                subtitle={isEdit ? "Lưu hợp đồng mới" : "Tạo hợp đồng"}
+              />
 
-          <SectionWrapper title="Công ty Cung ứng lao động (Bên A)*: ">
-            <Grid container spacing={2}>
-              <Grid size={4}>
-                <InfoTextFieldFormik
-                  label="Tên công ty"
-                  name="partyA.compName"
-                />
-              </Grid>
-              <Grid size={5}>
-                <InfoTextFieldFormik
-                  label="Địa chỉ"
-                  name="partyA.compAddress"
-                />
-              </Grid>
-              <Grid size={3}>
-                <InfoTextFieldFormik
-                  label="Số điện thoại"
-                  name="partyA.compPhoneNumber"
-                />
-              </Grid>
-              <Grid size={4}>
-                <InfoTextFieldFormik
-                  label="Người đại diện"
-                  name="partyA.representative"
-                />
-              </Grid>
-              <Grid size={5}>
-                <InfoTextFieldFormik
-                  label="Chức vụ"
-                  name="partyA.representativePos"
-                />
-              </Grid>
-            </Grid>
-          </SectionWrapper>
-          <SectionWrapper title="Công ty yêu cầu Cung ứng lao động (Bên B)*: ">
-            <Grid container spacing={2}>
-              <Grid size={4}>
-                <InfoTextFieldFormik
-                  label="Tên công ty"
-                  name="partyB.compName"
-                />
-              </Grid>
-              <Grid size={5}>
-                <InfoTextFieldFormik
-                  label="Địa chỉ"
-                  name="partyB.compAddress"
-                />
-              </Grid>
-              <Grid size={3}>
-                <InfoTextFieldFormik
-                  label="Số điện thoại"
-                  name="partyB.compPhoneNumber"
-                />
-              </Grid>
-              <Grid size={4}>
-                <InfoTextFieldFormik
-                  label="Người đại diện"
-                  name="partyB.representative"
-                />
-              </Grid>
-              <Grid size={5}>
-                <InfoTextFieldFormik
-                  label="Chức vụ"
-                  name="partyB.representativePos"
-                />
-              </Grid>
-            </Grid>
-          </SectionWrapper>
-          <SectionWrapper title="Thông tin hợp đồng*: ">
-            <Grid container spacing={2}>
-              <Grid size={6}>
-                <InfoTextFieldFormik
-                  type="datetime-local"
-                  label="Ngày bắt đầu hợp đồng"
-                  name="activationDate"
-                />
-              </Grid>
-              <Grid size={6}>
-                <InfoTextFieldFormik
-                  type="datetime-local"
-                  label="Ngày kết thúc hợp đồng"
-                  name="expiryDate"
-                />
-              </Grid>
-              <Grid size={6}>
-                <InfoTextFieldFormik
-                  type="number"
-                  label="Tổng số nhân lực cần cung ứng"
-                  name="numOfCrewMember"
-                  slotProps={{
-                    input: {
-                      endAdornment: (
-                        <InputAdornment position="end">người</InputAdornment>
-                      ),
-                    },
-                  }}
+              <Box display="flex" gap={2} mt={2}>
+                <Button
+                  variant="contained"
+                  onClick={() => setOpenTemplateDialog(true)}
                   sx={{
-                    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                      {
-                        display: "none",
-                      },
-                    "& input[type=number]": {
-                      MozAppearance: "textfield",
-                    },
+                    backgroundColor: Color.PrimaryBlue,
+                    color: Color.PrimaryWhite,
                   }}
-                />
-              </Grid>
-            </Grid>
-          </SectionWrapper>
-          {/* ===== SECTION: SHIP INFO ===== */}
-          <SectionWrapper title="Thông tin tàu">
-            <Grid container spacing={3}>
-              <Grid size={6}>
-                <ImageUploadFieldFormik
-                  required
-                  helperText={touched.shipInfo?.image && errors.shipInfo?.image}
-                  name="shipInfo.image"
-                />
-              </Grid>
+                >
+                  Tải template
+                </Button>
 
-              <Grid size={6} container direction="column" rowSpacing={3}>
-                <InfoTextFieldFormik label="IMO" name="shipInfo.IMONumber" />
-                <InfoTextFieldFormik label="Tên tàu" name="shipInfo.name" />
-                <NationalityTextField
-                  component={InfoTextFieldFormik}
-                  label="Quốc tịch"
-                  name="shipInfo.countryISO"
-                />
-                <InfoTextFieldFormik label="Loại tàu" name="shipInfo.type" />
-                <InfoTextFieldFormik
-                  label="Mô tả"
-                  name="shipInfo.description"
-                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={
+                    !dirty ||
+                    isSubmitting ||
+                    requestInfoLoading ||
+                    contractInfoLoading
+                  }
+                  startIcon={
+                    isSubmitting ? (
+                      <CircularProgress
+                        size={22}
+                        sx={{
+                          mr: 2,
+                          color: Color.PrimaryBlack,
+                        }}
+                      />
+                    ) : (
+                      <SaveIcon />
+                    )
+                  }
+                  sx={{
+                    minWidth: 150,
+                    px: 3,
+                    fontWeight: 700,
+                    backgroundColor: Color.PrimaryGold,
+                    color: Color.PrimaryBlack,
+                  }}
+                >
+                  {isEdit
+                    ? freezedContract
+                      ? "Thêm phụ lục"
+                      : "Sửa hợp đồng"
+                    : "Tạo hợp đồng"}
+                </Button>
+              </Box>
+            </SectionWrapper>
+            <SectionWrapper>
+              <Grid container spacing={2}>
+                <Grid size={6}>
+                  <InfoTextFieldFormik label="Tiêu đề hợp đồng" name="title" />
+                </Grid>
               </Grid>
-            </Grid>
-          </SectionWrapper>
+            </SectionWrapper>
 
-          <SectionWrapper title="Hợp đồng bản giấy (Có thể tải lên sau nhưng sẽ yêu cầu khi kí)">
-            <FileUploadFieldFormik
-              name="contractFile"
-              helperText={touched.contractFile && errors.contractFile}
+            <SectionWrapper title="Công ty Cung ứng lao động (Bên A)*: ">
+              <Grid container spacing={2}>
+                <Grid size={4}>
+                  <InfoTextFieldFormik
+                    label="Tên công ty"
+                    name="partyA.compName"
+                  />
+                </Grid>
+                <Grid size={5}>
+                  <InfoTextFieldFormik
+                    label="Địa chỉ"
+                    name="partyA.compAddress"
+                  />
+                </Grid>
+                <Grid size={3}>
+                  <InfoTextFieldFormik
+                    label="Số điện thoại"
+                    name="partyA.compPhoneNumber"
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <InfoTextFieldFormik
+                    label="Người đại diện"
+                    name="partyA.representative"
+                  />
+                </Grid>
+                <Grid size={5}>
+                  <InfoTextFieldFormik
+                    label="Chức vụ"
+                    name="partyA.representativePos"
+                  />
+                </Grid>
+              </Grid>
+            </SectionWrapper>
+            <SectionWrapper title="Công ty yêu cầu Cung ứng lao động (Bên B)*: ">
+              <Grid container spacing={2}>
+                <Grid size={4}>
+                  <InfoTextFieldFormik
+                    label="Tên công ty"
+                    name="partyB.compName"
+                  />
+                </Grid>
+                <Grid size={5}>
+                  <InfoTextFieldFormik
+                    label="Địa chỉ"
+                    name="partyB.compAddress"
+                  />
+                </Grid>
+                <Grid size={3}>
+                  <InfoTextFieldFormik
+                    label="Số điện thoại"
+                    name="partyB.compPhoneNumber"
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <InfoTextFieldFormik
+                    label="Email công ty"
+                    name="partyB.companyEmail"
+                  />
+                </Grid>
+                <Grid size={5}>
+                  <InfoTextFieldFormik
+                    label="Người đại diện"
+                    name="partyB.representative"
+                  />
+                </Grid>
+                <Grid size={3}>
+                  <InfoTextFieldFormik
+                    label="Chức vụ"
+                    name="partyB.representativePos"
+                  />
+                </Grid>
+              </Grid>
+            </SectionWrapper>
+            <SectionWrapper title="Thông tin hợp đồng*: ">
+              <Grid container spacing={2}>
+                <Grid size={6}>
+                  <InfoTextFieldFormik
+                    type="datetime-local"
+                    label="Ngày bắt đầu hợp đồng"
+                    name="activationDate"
+                  />
+                </Grid>
+                <Grid size={6}>
+                  <InfoTextFieldFormik
+                    type="datetime-local"
+                    label="Ngày kết thúc hợp đồng"
+                    name="expiryDate"
+                  />
+                </Grid>
+                {/* <Grid size={6}> */}
+                {/*   <InfoTextFieldFormik */}
+                {/*     type="number" */}
+                {/*     label="Tổng số nhân lực cần cung ứng" */}
+                {/*     name="numOfCrewMember" */}
+                {/*     slotProps={{ */}
+                {/*       input: { */}
+                {/*         endAdornment: ( */}
+                {/*           <InputAdornment position="end">người</InputAdornment> */}
+                {/*         ), */}
+                {/*       }, */}
+                {/*     }} */}
+                {/*     sx={{ */}
+                {/*       "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": */}
+                {/*         { */}
+                {/*           display: "none", */}
+                {/*         }, */}
+                {/*       "& input[type=number]": { */}
+                {/*         MozAppearance: "textfield", */}
+                {/*       }, */}
+                {/*     }} */}
+                {/*   /> */}
+                {/* </Grid> */}
+              </Grid>
+            </SectionWrapper>
+            {/* ===== SECTION: SHIP INFO ===== */}
+            <SectionWrapper title="Thông tin tàu">
+              <Grid container spacing={3}>
+                <Grid size={6}>
+                  <ImageUploadFieldFormik
+                    required
+                    helperText={
+                      touched.shipInfo?.image && errors.shipInfo?.image
+                    }
+                    name="shipInfo.image"
+                  />
+                </Grid>
+
+                <Grid size={6} container direction="column" rowSpacing={3}>
+                  <InfoTextFieldFormik label="IMO" name="shipInfo.IMONumber" />
+                  <InfoTextFieldFormik label="Tên tàu" name="shipInfo.name" />
+                  <NationalityTextField
+                    component={InfoTextFieldFormik}
+                    label="Quốc tịch"
+                    name="shipInfo.countryISO"
+                  />
+                  <InfoTextFieldFormik label="Loại tàu" name="shipInfo.type" />
+                  <InfoTextFieldFormik
+                    label="Mô tả"
+                    name="shipInfo.description"
+                  />
+                </Grid>
+              </Grid>
+            </SectionWrapper>
+
+            <SectionWrapper title="Hợp đồng bản giấy (Có thể tải lên sau nhưng sẽ yêu cầu khi kí)">
+              <FileUploadFieldFormik
+                name="contractFile"
+                helperText={touched.contractFile && errors.contractFile}
+                disabled={false}
+              />
+            </SectionWrapper>
+
+            <TemplateDialog
+              open={openTemplateDialog}
+              onClose={() => setOpenTemplateDialog(false)}
+              title="Chọn template hợp đồng"
+              initialData={() => values}
+              fullWidth
+              maxWidth="lg"
             />
-          </SectionWrapper>
-
-          <TemplateDialog
-            open={openTemplateDialog}
-            onClose={() => setOpenTemplateDialog(false)}
-            title="Chọn template hợp đồng"
-            initialData={() => values}
-            fullWidth
-            maxWidth="lg"
-          />
-        </Box>
-      )}
+          </Box>
+        );
+      }}
     </Formik>
   );
 };

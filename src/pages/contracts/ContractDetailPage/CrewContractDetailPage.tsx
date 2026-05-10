@@ -151,7 +151,6 @@ const CrewContractDetailPage = () => {
             <Box
               sx={{
                 mt: 4,
-                backgroundColor: Color.PrimaryBlue,
                 textAlign: "center",
               }}
             >

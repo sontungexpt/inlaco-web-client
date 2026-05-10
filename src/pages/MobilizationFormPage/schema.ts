@@ -5,6 +5,8 @@ import {
   dateAfter,
   requiredVnPhoneNumber,
   requiredEmail,
+  requiredFile,
+  optionalFile,
 } from "@/utils/validation/yupHelpers";
 
 export const FORM_SCHEMA = Yup.object().shape({
@@ -22,11 +24,10 @@ export const FORM_SCHEMA = Yup.object().shape({
   ).required("Thời gian đến nơi dự kiến không được để trống"),
 
   shipInfo: Yup.object().shape({
-    imonumber: requiredString("Số IMO tàu không được để trống"),
     name: requiredString("Tên tàu không được để trống"),
     countryISO: requiredString("Quốc tịch tàu không được để trống"),
     shipType: requiredString("Loại tàu không được để trống"),
-    image: Yup.string().nullable(),
+    image: optionalFile(),
   }),
 
   crews: Yup.array()
@@ -36,7 +37,7 @@ export const FORM_SCHEMA = Yup.object().shape({
         employeeCardId: requiredString(
           "Số thẻ thuyền viên không được để trống",
         ),
-        fullName: requiredString("Hoten thuyền viên không được sé trống"),
+        // fullName: requiredString("Hoten thuyền viên không được sé trống"),
         rankOnBoard: requiredString("Chức danh chuyên môn không được để trống"),
         startDate: dateBefore(
           "endDate",

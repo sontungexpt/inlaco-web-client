@@ -6,7 +6,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 
 import Color from "@/constants/Color";
-import { useMobilization } from "@/queries/mobilization.query";
+import {
+  useExportMobilizationExcel,
+  useMobilizationDetail,
+} from "@/queries/mobilization.query";
 
 import UserRole from "@/constants/UserRole";
 
@@ -18,21 +21,29 @@ import {
   BaseDataGrid,
 } from "@/components/common";
 import { useAllowedRole } from "@/contexts/auth.context";
+import { downloadBlobFile } from "@/utils/download";
 
 export default function MobilizationDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isAdmin = useAllowedRole(UserRole.ADMIN);
 
-  const { data: mobilization, isLoading } = useMobilization(id);
+  const { data: mobilization, isLoading } = useMobilizationDetail(id);
+  const exportMutation = useExportMobilizationExcel();
   const shipInfo = mobilization?.shipInfo;
+
+  const handleExportExcel = () => {
+    if (!id) return;
+
+    exportMutation.mutate(id, {
+      onSuccess: (blob) => {
+        downloadBlobFile(blob, `mobilization-${id}.xlsx`);
+      },
+    });
+  };
 
   const columns = useMemo(
     () => [
-      // {
-      //   key: "id",
-      //   name: "ID",
-      // },
       {
         key: "employeeCardId",
         name: "Mã nhân viên",
@@ -44,6 +55,16 @@ export default function MobilizationDetail() {
       {
         key: "rankOnBoard",
         name: "Chức danh",
+      },
+      {
+        key: "startDate",
+        name: "Ngày bắt đầu",
+        type: "datetime",
+      },
+      {
+        key: "endDate",
+        name: "Ngày kết thúc",
+        type: "datetime",
       },
       {
         key: "phoneNumber",
@@ -79,21 +100,18 @@ export default function MobilizationDetail() {
                 backgroundColor: Color.PrimaryGold,
                 color: Color.PrimaryBlack,
               }}
-              onClick={() => {
-                console.warn("Not implemented yet");
-              }}
+              onClick={() => navigate(`/mobilizations/form?id=${id}`)}
             >
               Chỉnh sửa
             </Button>
 
             <Button
-              onClick={() => {
-                console.warn("Not implemented yet");
-              }}
+              onClick={handleExportExcel}
               startIcon={<FileDownloadRoundedIcon />}
               variant="outlined"
+              disabled={exportMutation.isPending}
             >
-              Excel
+              {exportMutation.isPending ? "Đang xuất..." : "Excel"}
             </Button>
           </Stack>
         )}

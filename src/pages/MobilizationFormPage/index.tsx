@@ -8,13 +8,16 @@ import {
   BaseEditableDataGrid,
   SearchBar,
   InfoTextField,
+  ViewTextField,
 } from "@components/common";
 import { Grid, Box, Button, CircularProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 
 import Color from "@constants/Color";
-import { Formik, FormikHelpers } from "formik";
-import { useNavigate } from "react-router";
+import { Formik, FormikHelpers, useFormikContext } from "formik";
+import { useNavigate, useSearchParams } from "react-router";
 import { createMobilization } from "@/services/mobilization.service";
 import { FORM_SCHEMA, FormValues, FormValuesCrew } from "./schema";
 import { mapValuesToRequestBody } from "./mapper";
@@ -28,6 +31,10 @@ import BaseEditableDataGridToolbar from "@/components/common/datagrid/components
 import { useCrewProfiles } from "@/queries/crew-profile.query";
 import { CrewProfile } from "@/types/api/crew-profile";
 import { GetCellError } from "@/components/common/datagrid/shared/error-store";
+import { useContract } from "@/queries/contract.query";
+import { CrewSupplyContract } from "@/types/api/contract.api";
+import UploadStrategy from "@/constants/UploadStrategy";
+import cloudinaryUpload from "@/services/cloudinary.service";
 
 const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
   const initials = opt.fullName?.charAt(0)?.toUpperCase() ?? "?";
@@ -137,7 +144,7 @@ const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
           )}
 
           {/* Age */}
-          {age && <Box>{age} tuổi</Box>}
+          {age && age > 0 && <Box>{age} tuổi</Box>}
 
           {/* Insurance badges */}
           {(opt.socialInsuranceCode || opt.accidentInsuranceCode) && (
@@ -214,7 +221,7 @@ function CrewSearchEditCell({
       pageSize: 10,
       filter: {
         keyword,
-        workStatus: "READY_FOR_ASSIGNMENT",
+        workStatus: "AVAILABLE",
       },
     });
 
@@ -284,17 +291,37 @@ function renderDateCell<R, SR>({
   );
 }
 
-export default function MobiliaztionForm() {
+function useMobilizationFormPageParams(): { contractId?: string } {
+  const [searchParams] = useSearchParams();
+  const contractId = searchParams.get("contractId") || undefined;
+
+  return { contractId };
+}
+
+export default function MobiliaztionFormPage() {
   const navigate = useNavigate();
+  const { contractId } = useMobilizationFormPageParams();
+
+  const { data: contract } = useContract<CrewSupplyContract>(contractId!);
 
   const handleFormSubmission = async (
     values: FormValues,
     { resetForm }: FormikHelpers<FormValues>,
   ) => {
     try {
+      let shipImageAssetId = null;
+      if (values.shipInfo.image) {
+        const shipImage = await cloudinaryUpload(
+          values.shipInfo.image,
+          UploadStrategy.SHIP_IMAGE,
+        );
+        shipImageAssetId = shipImage.assetId;
+      }
+
       const newMobilization = await createMobilization(
-        mapValuesToRequestBody(values),
+        mapValuesToRequestBody(values, contractId!, shipImageAssetId),
       );
+
       resetForm();
       navigate(`/mobilizations/${newMobilization.id}`);
     } catch (err) {
@@ -313,7 +340,7 @@ export default function MobiliaztionForm() {
         {
           key: "fullName",
           name: "Họ tên",
-          renderEditCell: renderSearchEditCell,
+          editable: false,
         },
         {
           key: "rankOnBoard",
@@ -322,18 +349,37 @@ export default function MobiliaztionForm() {
         {
           key: "startDate",
           name: "Ngày bắt đầu",
-          type: "date",
+          type: "datetime",
           renderEditCell: renderDateCell,
         },
         {
           key: "endDate",
           name: "Ngày kết thúc",
-          type: "date",
+          type: "datetime",
           renderEditCell: renderDateCell,
         },
         {
           key: "remark",
           name: "Ghi chú",
+        },
+        {
+          key: "__action__",
+          width: 70,
+          name: "",
+          renderCell: ({ row }) => {
+            const { values, setFieldValue } = useFormikContext<FormValues>();
+            return (
+              <Button
+                color="error"
+                onClick={() => {
+                  const newRows = values.crews.filter((r) => r.id !== row.id);
+                  setFieldValue("crews", newRows, true);
+                }}
+              >
+                Xoá
+              </Button>
+            );
+          },
         },
       ] as BaseEditableDataGridColumn<FormValuesCrew>[],
     [],
@@ -356,7 +402,6 @@ export default function MobiliaztionForm() {
         setFieldValue,
         setValues,
       }) => {
-        console.debug("errors", errors);
         return (
           <Box component="form" onSubmit={handleSubmit} m={2}>
             {/* ================= HEADER ================= */}
@@ -371,10 +416,81 @@ export default function MobiliaztionForm() {
                 mb: 2,
               }}
             >
-              <PageTitle
-                title="TẠO ĐIỀU ĐỘNG"
-                subtitle="Tạo và lên kế hoạch cho các điều động mới"
-              />
+              <PageTitle title="TẠO ĐIỀU ĐỘNG" subtitle="Tạo điều động mới" />
+
+              {contractId && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                    px: 2,
+                    py: 1.2,
+                    borderRadius: 3,
+                    bgcolor: "rgba(255, 215, 0, 0.08)",
+                    border: "1px solid rgba(255, 215, 0, 0.25)",
+                    backdropFilter: "blur(8px)",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 2,
+                      bgcolor: Color.PrimaryGold,
+                      color: Color.PrimaryBlack,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      boxShadow: 2,
+                    }}
+                  >
+                    <DescriptionOutlinedIcon fontSize="small" />
+                  </Box>
+
+                  <Box>
+                    <Box
+                      sx={{
+                        fontSize: 11,
+                        color: "text.secondary",
+                        fontWeight: 600,
+                        textTransform: "uppercase",
+                        letterSpacing: 0.5,
+                      }}
+                    >
+                      Hợp đồng liên kết
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.8,
+                        fontWeight: 700,
+                        fontSize: 14,
+                      }}
+                    >
+                      #{contractId ?? "Không có"}
+                    </Box>
+                  </Box>
+
+                  <Button
+                    size="small"
+                    endIcon={
+                      <ArrowForwardIosRoundedIcon sx={{ fontSize: 12 }} />
+                    }
+                    sx={{
+                      ml: "auto",
+                      textTransform: "none",
+                      fontWeight: 600,
+                      borderRadius: 2,
+                    }}
+                    onClick={() => navigate(`/contracts/${contractId}`)}
+                  >
+                    Xem hợp đồng
+                  </Button>
+                </Box>
+              )}
 
               <Button
                 type="submit"
@@ -428,7 +544,7 @@ export default function MobiliaztionForm() {
             </SectionWrapper>
 
             {/* ================= LỊCH TRÌNH ================= */}
-            <SectionWrapper title="Lịch trình dự kiến">
+            <SectionWrapper title="Thời gian điều động">
               <Grid container spacing={2}>
                 <Grid size={6}>
                   <InfoTextFieldFormik
@@ -474,12 +590,11 @@ export default function MobiliaztionForm() {
                 </Grid>
               </Grid>
             </SectionWrapper>
-
             {/* ================= THÔNG TIN TÀU ================= */}
             <SectionWrapper title="Thông tin tàu">
               <Box display="flex" justifyContent="center" mb={2}>
                 <ImageUploadFieldFormik
-                  name="shipInfo.imageUrl"
+                  name="shipInfo.image"
                   width={300}
                   height={180}
                 />
@@ -487,7 +602,10 @@ export default function MobiliaztionForm() {
 
               <Grid container spacing={2}>
                 <Grid size={2}>
-                  <InfoTextFieldFormik name="shipInfo.imonumber" label="IMO" />
+                  <ViewTextField
+                    value={contract?.shipInfo?.imoNumber}
+                    label="IMO"
+                  />
                 </Grid>
 
                 <Grid size={4}>
@@ -518,6 +636,7 @@ export default function MobiliaztionForm() {
                 rows={values.crews}
                 toolbar={
                   <BaseEditableDataGridToolbar
+                    newRowDisabled={isSubmitting}
                     onNewRowClick={() => {
                       setFieldValue(
                         "crews",

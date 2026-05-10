@@ -1,23 +1,27 @@
 import { datetimeToISO } from "@utils/converter";
 import { FormValues } from "./schema";
 import { NewMobilizationSchedule } from "@/types/api/mobilization.api";
+import { ShipInfoRequest } from "@/types/api/shared/ship-info.api";
 
 export const mapValuesToRequestBody = (
   values: FormValues,
+  contractId: string,
+  shipImageAssetId?: string,
 ): NewMobilizationSchedule => {
   return {
+    contractId: contractId,
+
     partnerName: values.partnerName,
     partnerPhone: values.partnerPhone,
     partnerEmail: values.partnerEmail,
     partnerAddress: values.partnerAddress,
 
     shipInfo: {
-      image: values.shipInfo.image as string,
-      imoNumber: values.shipInfo.imonumber,
+      image: shipImageAssetId,
       name: values.shipInfo.name,
       countryISO: values.shipInfo.countryISO,
       type: values.shipInfo.shipType,
-    },
+    } as ShipInfoRequest,
 
     startDate: datetimeToISO(values.startDate) as string,
     endDate: datetimeToISO(values.endDate) as string,

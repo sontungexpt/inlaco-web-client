@@ -37,11 +37,13 @@ export const fetchContracts = async ({
   return response.data;
 };
 
-export const fetchUniqueContract = async (
+export const fetchUniqueContract = async <
+  T extends BaseContract = BaseContract,
+>(
   contractId: string,
   version?: number,
 ) => {
-  const response = await privateRequest.get<BaseContract>(
+  const response = await privateRequest.get<T>(
     ContractEndpoint.GET_CONTRACT_BY_ID(contractId),
     {
       params: {
@@ -94,12 +96,15 @@ export const createSupplyContract = async (
   return response.data;
 };
 
-export const editContract = async <T extends NewContractBase>(
+export const editContract = async <
+  T extends NewContractBase = NewContractBase,
+  R extends BaseContract = BaseContract,
+>(
   contractId: string,
   newDatas: T,
   type: ContractType = "LABOR_CONTRACT",
 ) => {
-  const response = await privateRequest.patch<BaseContract>(
+  const response = await privateRequest.patch<R>(
     ContractEndpoint.UPDATE_CONTRACT(contractId),
     {
       ...newDatas,
@@ -109,8 +114,12 @@ export const editContract = async <T extends NewContractBase>(
   return response.data;
 };
 
-export const getContractVersions = async (contractId: string) => {
-  const response = await privateRequest.get<BaseContract[]>(
+export const getContractVersions = async <
+  T extends BaseContract = BaseContract,
+>(
+  contractId: string,
+) => {
+  const response = await privateRequest.get<T[]>(
     ContractEndpoint.GET_CONTRACT_OLD_VERSIONS(contractId),
   );
   return response.data;

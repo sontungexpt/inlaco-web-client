@@ -11,13 +11,7 @@ export const BASE_FORM_VALUES: FormValues = {
   startDate: undefined,
   endDate: undefined,
 
-  shipInfo: {
-    image: "",
-    imonumber: "",
-    name: "",
-    countryISO: "",
-    shipType: "",
-  },
+  shipInfo: { image: "", name: "", countryISO: "", shipType: "" },
 
   crews: [],
 };

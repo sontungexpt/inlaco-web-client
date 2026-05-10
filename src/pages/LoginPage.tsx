@@ -65,7 +65,7 @@ export default function LoginPage() {
           case HttpStatusCode.Forbidden:
             navigate("/verify-email-confirmation", {
               state: {
-                email: values.email,
+                username: values.email,
               },
             });
             return;
@@ -78,7 +78,6 @@ export default function LoginPage() {
         }
       }
       toast.error("Đã có lỗi xảy ra, vui lòng thử lại sau");
-      console.debug(err);
     }
   };
 

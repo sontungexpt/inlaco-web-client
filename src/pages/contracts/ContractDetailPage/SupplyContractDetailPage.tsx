@@ -17,7 +17,6 @@ import Color from "@/constants/Color";
 import { useContractDetail } from "./hooks/use-contract-detail";
 import { useAllowedRole } from "@/contexts/auth.context";
 import { useSignContract } from "./hooks/use-sign-contract";
-import { FormMode } from "../ContractFormPage/SupplyContractFormPage";
 
 const SupplyContractDetailPage = () => {
   const navigate = useNavigate();
@@ -101,9 +100,8 @@ const SupplyContractDetailPage = () => {
           <PartySection title="BÊN B" party={contract.partners?.[0]} />
 
           <Typography fontWeight={700}>ĐIỀU 1. NỘI DUNG</Typography>
-          <Typography>
-            Cung ứng <b>{contract.numOfCrews}</b> thuyền viên theo yêu cầu.
-          </Typography>
+
+          <Typography>Cung ứng thuyền viên theo yêu cầu.</Typography>
 
           <Typography fontWeight={700} mt={2}>
             ĐIỀU 2. THỜI HẠN
@@ -133,7 +131,6 @@ const SupplyContractDetailPage = () => {
             <Box
               sx={{
                 mt: 4,
-                backgroundColor: Color.PrimaryBlue,
                 textAlign: "center",
               }}
             >

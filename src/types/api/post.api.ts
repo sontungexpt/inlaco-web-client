@@ -17,6 +17,7 @@ export interface Post {
 }
 
 export interface PostFilterCriteria {
+  keyword?: string;
   type?: PostType;
 }
 

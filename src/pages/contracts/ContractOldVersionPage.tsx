@@ -21,6 +21,7 @@ const ContractOldVersionPage = () => {
     data: contracts = [],
     isLoading,
     isError,
+    error,
     refetch,
   } = useContractOldVersions(id as string);
 
@@ -30,7 +31,7 @@ const ContractOldVersionPage = () => {
     return (
       <LoadErrorState
         title="Không thể tải hợp đồng"
-        subtitle="Hợp đồng không tồn tại hoặc đã bị xoa"
+        subtitle={`${error?.response?.data?.message}`}
         onRetry={() => refetch()}
       />
     );
@@ -101,9 +102,7 @@ const ContractOldVersionPage = () => {
                       fullWidth
                       variant="contained"
                       onClick={() =>
-                        navigate(
-                          `/crew-contracts/${v.id}?version=${v.version.num}`,
-                        )
+                        navigate(`/contracts/${v.id}?version=${v.version.num}`)
                       }
                       sx={{
                         borderRadius: 2,

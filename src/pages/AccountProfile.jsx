@@ -17,9 +17,8 @@ export default function AccountProfile() {
     avatar: null,
   };
 
-  const handleFormSubmission = async (values) => {
-    console.log("Submit profile:", values);
-    // call update profile API here
+  const handleFormSubmission = async (_values) => {
+    // TODO: wire up account profile update API when available
   };
 
   return (

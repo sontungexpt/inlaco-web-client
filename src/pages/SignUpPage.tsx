@@ -65,10 +65,12 @@ export default function SignUpPage() {
         confirmPassword: values.confirmPassword,
       });
 
-      navigate("/verify-email-confirmation");
+      navigate("/verify-email-confirmation", {
+        state: {
+          username: values.email,
+        },
+      });
     } catch (error: any) {
-      console.debug(error);
-
       const res = error.response;
 
       if (res.status === HttpStatusCode.Conflict) {

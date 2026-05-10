@@ -2,6 +2,7 @@ const RoutePath = {
   Home: "/",
   E403: "/403",
   Account: "/account",
+  ShipSchedule: "/shipschedule",
 
   Login: "/login",
   SignUp: "/sign-up",
