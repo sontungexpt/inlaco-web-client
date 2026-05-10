@@ -78,7 +78,6 @@ export default function LoginPage() {
         }
       }
       toast.error("Đã có lỗi xảy ra, vui lòng thử lại sau");
-      console.debug(err);
     }
   };
 

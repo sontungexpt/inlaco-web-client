@@ -56,7 +56,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(profile);
       return profile;
     } catch (err) {
-      console.debug(err);
       setUser(null);
       return null;
     }
@@ -70,8 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const ok = await tokenStore.init();
         if (ok) await fetchProfile();
       } catch (err) {
-        console.debug(err);
-      } finally {
+        } finally {
         setIsBooting(false);
         setStatus("Idle");
       }

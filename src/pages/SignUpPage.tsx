@@ -71,8 +71,6 @@ export default function SignUpPage() {
         },
       });
     } catch (error: any) {
-      console.debug(error);
-
       const res = error.response;
 
       if (res.status === HttpStatusCode.Conflict) {

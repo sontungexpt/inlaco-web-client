@@ -78,8 +78,7 @@ const TemplateContractCard = ({
         data: initialData,
         fileName: dowloadFileName || `template_${Date.now()}.docx`,
       });
-    } catch (err) {
-      console.debug(err);
+    } catch {
       toast.error("Download file thất bại");
     }
   };

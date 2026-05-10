@@ -100,9 +100,7 @@ export default function MobilizationDetail() {
                 backgroundColor: Color.PrimaryGold,
                 color: Color.PrimaryBlack,
               }}
-              onClick={() => {
-                console.warn("Not implemented yet");
-              }}
+              onClick={() => navigate(`/mobilizations/form?id=${id}`)}
             >
               Chỉnh sửa
             </Button>
