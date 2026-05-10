@@ -1,12 +1,5 @@
 import { useMemo } from "react";
-import {
-  Box,
-  Button,
-  Grid,
-  Typography,
-  MenuItem,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Button, Grid, Typography, MenuItem } from "@mui/material";
 import { Formik } from "formik";
 import SaveIcon from "@mui/icons-material/Save";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";

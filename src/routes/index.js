@@ -5,7 +5,6 @@ import HomePage from "@pages/HomePage";
 
 import UserRole from "@/constants/UserRole";
 import RoutePath from "@/constants/RoutePath";
-import path from "node:path";
 
 const ADMIN_SAILOR = [UserRole.ADMIN, UserRole.SAILOR];
 
@@ -35,10 +34,6 @@ export const AppRoutes = [
         path: "add/:candidateID",
         element: lazy(() => import("@pages/CrewProfileFormPage")),
       },
-      // {
-      //   path: ":id",
-      //   element: lazy(() => import("@pages/CrewMemberDetail")),
-      // },
       {
         path: ":id/profile",
         element: lazy(() => import("@/pages/CrewProfileDetailPage")),
@@ -129,7 +124,6 @@ export const AppRoutes = [
         path: ":id/old-versions",
         element: lazy(() => import("@/pages/contracts/ContractOldVersionPage")),
       },
-      // { path: ":id/create-addendum", element: CrewContractAddendum },
     ],
   },
 
@@ -151,7 +145,6 @@ export const AppRoutes = [
             import("@/pages/contracts/ContractFormPage/SupplyContractFormPage"),
         ),
       },
-      // { path: ":id/create-addendum", element: SupplyContractAddendum },
     ],
   },
 
