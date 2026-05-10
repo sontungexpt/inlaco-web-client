@@ -20,7 +20,7 @@ export const AppRoutes = [
 
   {
     path: RoutePath.Account,
-    element: lazy(() => import("@/pages/AccoountProfile")),
+    element: lazy(() => import("@/pages/AccountProfile")),
   },
 
   {

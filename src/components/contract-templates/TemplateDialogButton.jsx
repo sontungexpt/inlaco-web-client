@@ -1,7 +1,7 @@
 import TemplateDialog from "./TemplateDialog";
 import { DialogButton } from "@/components/common";
 
-const TemplateDiaglogButton = ({
+const TemplateDialogButton = ({
   title,
   type,
   initialData,
@@ -27,4 +27,4 @@ const TemplateDiaglogButton = ({
   );
 };
 
-export default TemplateDiaglogButton;
+export default TemplateDialogButton;
