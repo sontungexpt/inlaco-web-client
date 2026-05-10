@@ -1,10 +1,5 @@
 import { useMemo, useState } from "react";
-import {
-  PageTitle,
-  SearchBar,
-  InfoTextField,
-  DetailActionCell,
-} from "@components/common";
+import { PageTitle, SearchBar, InfoTextField } from "@components/common";
 import { Box, Button, MenuItem } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router";
 import { useContracts } from "@/queries/contract.query";
