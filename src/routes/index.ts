@@ -52,7 +52,17 @@ export const AppRoutes = [
         path: "form",
         element: lazy(() => import("@/pages/ShipScheduleForm")),
       },
+      {
+        path: ":id",
+        element: lazy(() => import("@/pages/ShipScheduleDetailPage")),
+      },
     ],
+  },
+
+  {
+    path: "/ship-schedules/:id/attendance/qr",
+    element: lazy(() => import("@/pages/ShipScheduleAttendanceKioskPage")),
+    layout: false,
   },
 
   {

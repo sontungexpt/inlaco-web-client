@@ -1,260 +1,435 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useNavigate, useParams } from "react-router";
+
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
+  Grid,
+  Stack,
   Typography,
+  Chip,
+  Paper,
+  Divider,
 } from "@mui/material";
-import SearchBar from "@/components/common/SearchBar";
-import PageTitle from "@/components/common/PageTitle";
-import BaseDataGridOld from "@/components/common/datagrid/mui/BaseDataGridOld";
-import { useNavigate } from "react-router";
 
-interface UserRow {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-}
+import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import OpenInFullRoundedIcon from "@mui/icons-material/OpenInFullRounded";
+import DirectionsBoatRoundedIcon from "@mui/icons-material/DirectionsBoatRounded";
+import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
+import RouteRoundedIcon from "@mui/icons-material/RouteRounded";
+import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 
-const USERS: UserRow[] = [
-  {
-    id: 1,
-    name: "Trần Văn A",
-    email: "trv.a@inlaco.vn",
-    phone: "0901 234 567",
-    role: "Thuyền viên",
-  },
-  {
-    id: 2,
-    name: "Nguyễn Thị B",
-    email: "nt.b@inlaco.vn",
-    phone: "0912 345 678",
-    role: "Nhân viên",
-  },
-  {
-    id: 3,
-    name: "Lê Văn C",
-    email: "lvc@inlaco.vn",
-    phone: "0923 456 789",
-    role: "Quản lý",
-  },
-  {
-    id: 4,
-    name: "Phạm Thị D",
-    email: "pt.d@inlaco.vn",
-    phone: "0934 567 890",
-    role: "Thuyền viên",
-  },
-  {
-    id: 5,
-    name: "Hoàng Văn E",
-    email: "hve@inlaco.vn",
-    phone: "0945 678 901",
-    role: "Kỹ thuật",
-  },
-];
+import {
+  SectionWrapper,
+  PageTitle,
+  InfoItem,
+  BaseDataGrid,
+} from "@/components/common";
 
-const UserKioskPage = () => {
+import { useShipScheduleDetail } from "@/queries/ship-schedule.query";
+
+export default function ShipScheduleDetailPage() {
+  const { id } = useParams();
+
   const navigate = useNavigate();
-  const [searchValue, setSearchValue] = useState("");
-  const [fullScreen, setFullScreen] = useState(false);
-  const [qrOpen, setQrOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
-  const [selectedAction, setSelectedAction] = useState<"checkin" | "checkout">(
-    "checkin",
+
+  const { data: shipSchedule, isLoading } = useShipScheduleDetail(id);
+
+  // ================= CREW TABLE =================
+  const columns = useMemo(
+    () => [
+      {
+        key: "employeeCardId",
+        name: "Mã thẻ",
+      },
+      {
+        key: "fullName",
+        name: "Họ tên",
+      },
+      {
+        key: "rankOnBoard",
+        name: "Chức danh",
+      },
+      {
+        key: "phoneNumber",
+        name: "SĐT",
+      },
+      {
+        key: "gender",
+        name: "Giới tính",
+      },
+    ],
+    [],
   );
 
-  const filteredUsers = useMemo(() => {
-    if (!searchValue.trim()) {
-      return USERS;
-    }
-
-    const term = searchValue.trim().toLowerCase();
-    return USERS.filter((user) =>
-      [user.name, user.email, user.phone, user.role]
-        .join(" ")
-        .toLowerCase()
-        .includes(term),
-    );
-  }, [searchValue]);
-
-  useEffect(() => {
-    const handleFullScreenChange = () => {
-      setFullScreen(Boolean(document.fullscreenElement));
-    };
-
-    document.addEventListener("fullscreenchange", handleFullScreenChange);
-
-    return () => {
-      document.removeEventListener("fullscreenchange", handleFullScreenChange);
-    };
-  }, []);
-
-  const handleToggleFullscreen = async () => {
-    if (document.fullscreenElement) {
-      await document.exitFullscreen?.();
-      return;
-    }
-
-    await document.documentElement.requestFullscreen?.();
+  // ================= OPEN KIOSK =================
+  const openKiosk = (type: "IN" | "OUT") => {
+    // const url =
+    //   window.location.origin +
+    //   `/ship-schedules/${id}/attendance/qr?type=${type}`;
+    // window.open(url, "_blank", "noopener,noreferrer");
+    navigate(`/ship-schedules/${id}/attendance/qr?type=${type}`);
   };
-
-  const handleOpenQr = (user: UserRow, action: "checkin" | "checkout") => {
-    setSelectedUser(user);
-    setSelectedAction(action);
-    setQrOpen(true);
-  };
-
-  const handleCloseQr = () => {
-    setQrOpen(false);
-    setSelectedUser(null);
-  };
-
-  const qrValue = selectedUser
-    ? `user:${selectedUser.id}|action:${selectedAction}|name:${selectedUser.name}`
-    : "";
-
-  const columns = [
-    {
-      field: "name",
-      headerName: "Họ tên",
-      flex: 1.3,
-      minWidth: 200,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1.6,
-      minWidth: 220,
-    },
-    {
-      field: "phone",
-      headerName: "Số điện thoại",
-      flex: 1,
-      minWidth: 160,
-    },
-    {
-      field: "role",
-      headerName: "Vai trò",
-      flex: 1,
-      minWidth: 140,
-    },
-    {
-      field: "actions",
-      headerName: "Hành động",
-      sortable: false,
-      align: "center",
-      headerAlign: "center",
-      flex: 1.4,
-      minWidth: 240,
-      renderCell: ({ row }: any) => (
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 1,
-            justifyContent: "center",
-            width: "100%",
-          }}
-        >
-          <Button
-            size="small"
-            variant="contained"
-            color="success"
-            onClick={() => handleOpenQr(row, "checkin")}
-          >
-            Check in
-          </Button>
-          <Button
-            size="small"
-            variant="outlined"
-            color="primary"
-            onClick={() => handleOpenQr(row, "checkout")}
-          >
-            Check out
-          </Button>
-        </Box>
-      ),
-    },
-  ];
 
   return (
-    <Box m="20px">
-      <PageTitle title="Danh sách người dùng" />
-
-      <Box
+    <Box p={3}>
+      {/* ================= HERO ================= */}
+      <Paper
+        elevation={0}
         sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 2,
-          alignItems: "center",
-          justifyContent: "space-between",
-          mt: 3,
+          position: "relative",
+          overflow: "hidden",
+          borderRadius: 6,
+          mb: 4,
+
+          background:
+            "linear-gradient(135deg, #020617 0%, #0f172a 45%, #111827 100%)",
+
+          color: "#fff",
         }}
       >
+        {/* background glow */}
         <Box
           sx={{
-            width: { xs: "100%", sm: "auto" },
-            minWidth: 260,
-            flex: 1,
+            position: "absolute",
+            top: -120,
+            right: -120,
+            width: 360,
+            height: 360,
+            borderRadius: "50%",
+            bgcolor: "rgba(255,255,255,0.05)",
           }}
-        >
-          <SearchBar
-            value={searchValue}
-            onChange={(_, value) => setSearchValue(value)}
-            placeholder="Tìm kiếm người dùng..."
-            size="small"
-          />
-        </Box>
-      </Box>
-
-      <Box mt={3} sx={{ width: "100%", minHeight: 520 }}>
-        <BaseDataGridOld
-          rows={filteredUsers}
-          columns={columns}
-          pageSizeOptions={[5, 10, 20]}
-          loading={false}
-          autoHeight
         />
-      </Box>
 
-      <Dialog open={qrOpen} onClose={handleCloseQr} fullWidth maxWidth="xs">
-        <DialogTitle>
-          {selectedAction === "checkin" ? "Check in" : "Check out"} -{" "}
-          {selectedUser?.name}
-        </DialogTitle>
-        <DialogContent>
-          <Box sx={{ textAlign: "center", py: 2 }}>
-            <Box
-              component="img"
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(
-                qrValue,
-              )}`}
-              alt="QR code"
-              sx={{ width: 280, height: 280, maxWidth: "100%", mb: 2 }}
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: -80,
+            left: -80,
+            width: 240,
+            height: 240,
+            borderRadius: "50%",
+            bgcolor: "rgba(255,255,255,0.04)",
+          }}
+        />
+
+        <Box p={{ xs: 3, md: 5 }}>
+          <Stack
+            direction={{ xs: "column", lg: "row" }}
+            justifyContent="space-between"
+            spacing={5}
+          >
+            {/* ================= LEFT ================= */}
+            <Box flex={1}>
+              <Stack direction="row" spacing={2} alignItems="center" mb={3}>
+                <Box
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: 4,
+                    bgcolor: "rgba(255,255,255,0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backdropFilter: "blur(10px)",
+                  }}
+                >
+                  <DirectionsBoatRoundedIcon sx={{ fontSize: 36 }} />
+                </Box>
+
+                <Box>
+                  <Typography variant="h4" fontWeight={900} letterSpacing={1}>
+                    SHIP ATTENDANCE
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      color: "rgba(255,255,255,0.7)",
+                    }}
+                  >
+                    QR Kiosk Management System
+                  </Typography>
+                </Box>
+              </Stack>
+
+              <Typography
+                sx={{
+                  color: "rgba(255,255,255,0.75)",
+                  fontSize: 16,
+                  lineHeight: 1.9,
+                  maxWidth: 760,
+                }}
+              >
+                Quản lý check-in/check-out thuyền viên bằng QR realtime.
+                Attendance QR sẽ tự động rotate định kỳ để tăng bảo mật và chống
+                reuse token.
+              </Typography>
+
+              {/* ship chips */}
+              <Stack
+                direction="row"
+                spacing={1.5}
+                mt={4}
+                flexWrap="wrap"
+                useFlexGap
+              >
+                <Chip
+                  label={shipSchedule?.shipInfo?.name || "Unknown Ship"}
+                  sx={chipStyle}
+                />
+
+                <Chip
+                  label={`IMO ${shipSchedule?.shipInfo?.imoNumber || "--"}`}
+                  sx={chipStyle}
+                />
+
+                <Chip
+                  label={`${shipSchedule?.departurePort || "--"} → ${
+                    shipSchedule?.arrivalPort || "--"
+                  }`}
+                  sx={chipStyle}
+                />
+              </Stack>
+            </Box>
+
+            {/* ================= RIGHT ================= */}
+            <Stack
+              spacing={2}
+              width={{ xs: "100%", lg: 340 }}
+              justifyContent="center"
+            >
+              <Button
+                fullWidth
+                size="large"
+                variant="contained"
+                startIcon={<LoginRoundedIcon />}
+                onClick={() => openKiosk("IN")}
+                sx={{
+                  py: 1.8,
+                  borderRadius: 4,
+                  fontWeight: 800,
+                  fontSize: 16,
+
+                  background:
+                    "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)",
+
+                  boxShadow: "0 12px 30px rgba(34,197,94,0.25)",
+
+                  "&:hover": {
+                    background:
+                      "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
+                  },
+                }}
+              >
+                OPEN CHECK-IN KIOSK
+              </Button>
+
+              <Button
+                fullWidth
+                size="large"
+                variant="contained"
+                startIcon={<LogoutRoundedIcon />}
+                onClick={() => openKiosk("OUT")}
+                sx={{
+                  py: 1.8,
+                  borderRadius: 4,
+                  fontWeight: 800,
+                  fontSize: 16,
+
+                  background:
+                    "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+
+                  boxShadow: "0 12px 30px rgba(239,68,68,0.25)",
+
+                  "&:hover": {
+                    background:
+                      "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)",
+                  },
+                }}
+              >
+                OPEN CHECK-OUT KIOSK
+              </Button>
+
+              <Button
+                fullWidth
+                size="large"
+                variant="outlined"
+                startIcon={<OpenInFullRoundedIcon />}
+                onClick={() =>
+                  window.open(
+                    `/ship-schedules/${id}/attendance/qr?type=IN`,
+                    "_blank",
+                  )
+                }
+                sx={{
+                  py: 1.6,
+                  borderRadius: 4,
+                  color: "#fff",
+                  borderColor: "rgba(255,255,255,0.18)",
+
+                  "&:hover": {
+                    borderColor: "#fff",
+                    bgcolor: "rgba(255,255,255,0.05)",
+                  },
+                }}
+              >
+                OPEN FULLSCREEN MODE
+              </Button>
+            </Stack>
+          </Stack>
+        </Box>
+      </Paper>
+
+      {/* ================= PAGE TITLE ================= */}
+      <SectionWrapper>
+        <PageTitle
+          title="CHI TIẾT LỊCH TÀU"
+          subtitle="Thông tin hành trình và danh sách thuyền viên"
+        />
+      </SectionWrapper>
+
+      {/* ================= QUICK STATS ================= */}
+      <Grid container spacing={3} mb={3}>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <QuickCard
+            icon={<GroupsRoundedIcon />}
+            title="Tổng thuyền viên"
+            value={shipSchedule?.crews?.length || 0}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 4 }}>
+          <QuickCard
+            icon={<RouteRoundedIcon />}
+            title="Tuyến hành trình"
+            value={shipSchedule?.route || "--"}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 4 }}>
+          <QuickCard
+            icon={<AccessTimeRoundedIcon />}
+            title="QR Rotation"
+            value="20s"
+          />
+        </Grid>
+      </Grid>
+
+      {/* ================= SHIP INFO ================= */}
+      <SectionWrapper title="Thông tin tàu">
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <InfoItem label="Tên tàu" value={shipSchedule?.shipInfo?.name} />
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 2 }}>
+            <InfoItem label="IMO" value={shipSchedule?.shipInfo?.imoNumber} />
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 3 }}>
+            <InfoItem label="Cảng đi" value={shipSchedule?.departurePort} />
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 3 }}>
+            <InfoItem label="Cảng đến" value={shipSchedule?.arrivalPort} />
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 4 }}>
+            <InfoItem label="Tuyến" value={shipSchedule?.route} />
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 4 }}>
+            <InfoItem
+              label="Khởi hành"
+              value={shipSchedule?.departureTime}
+              type="datetime-local"
             />
-            <Typography variant="body2" color="textSecondary">
-              Quét mã QR để hoàn tất{" "}
-              {selectedAction === "checkin" ? "check in" : "check out"}.
-            </Typography>
-            <Typography variant="caption" sx={{ mt: 1, display: "block" }}>
-              {selectedUser?.email} • {selectedUser?.phone}
-            </Typography>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseQr} variant="outlined">
-            Đóng
-          </Button>
-        </DialogActions>
-      </Dialog>
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 4 }}>
+            <InfoItem
+              label="Cập cảng"
+              value={shipSchedule?.arrivalTime}
+              type="datetime-local"
+            />
+          </Grid>
+        </Grid>
+      </SectionWrapper>
+
+      <Divider sx={{ my: 3 }} />
+
+      {/* ================= CREW ================= */}
+      <SectionWrapper title="Danh sách thuyền viên">
+        <BaseDataGrid
+          loading={isLoading}
+          rows={shipSchedule?.crews || []}
+          columns={columns}
+          globalTooltip="Double click để xem hồ sơ"
+          onCellDoubleClick={({ row }) => {
+            navigate(`/crews/${row.profileId}`);
+          }}
+        />
+      </SectionWrapper>
     </Box>
   );
+}
+
+// ================= SHARED =================
+
+const chipStyle = {
+  bgcolor: "rgba(255,255,255,0.1)",
+  color: "#fff",
+  borderRadius: 999,
+  backdropFilter: "blur(12px)",
 };
 
-export default UserKioskPage;
+function QuickCard({
+  icon,
+  title,
+  value,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  value: string | number;
+}) {
+  return (
+    <Paper
+      elevation={0}
+      sx={{
+        p: 3,
+        borderRadius: 5,
+        border: "1px solid",
+        borderColor: "divider",
+        height: "100%",
+      }}
+    >
+      <Stack direction="row" spacing={2} alignItems="center">
+        <Box
+          sx={{
+            width: 56,
+            height: 56,
+            borderRadius: 3,
+            bgcolor: "rgba(59,130,246,0.08)",
+            color: "#3b82f6",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {icon}
+        </Box>
+
+        <Box>
+          <Typography variant="body2" color="text.secondary">
+            {title}
+          </Typography>
+
+          <Typography variant="h5" fontWeight={800}>
+            {value}
+          </Typography>
+        </Box>
+      </Stack>
+    </Paper>
+  );
+}

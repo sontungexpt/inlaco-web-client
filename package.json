@@ -27,6 +27,7 @@
     "formik": "^2.4.9",
     "jszip-utils": "^0.1.0",
     "pizzip": "^3.2.0",
+    "qrcode.react": "^4.2.0",
     "react": "19.2.0",
     "react-data-grid": "^7.0.0-beta.59",
     "react-dom": "19.2.0",
@@ -49,7 +50,6 @@
     "test": "vitest",
     "build": "vite build",
     "preview": "vite preview",
-
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },

@@ -64,3 +64,44 @@ export interface ShipScheduleResponse {
 
   updatedAt?: string;
 }
+
+export interface ShipScheduleAssignedCrewDetail {
+  profileId: string;
+
+  employeeCardId: string;
+  fullName: string;
+
+  rankOnBoard: string;
+
+  email?: string;
+  phoneNumber?: string;
+
+  gender?: "MALE" | "FEMALE" | "OTHER";
+
+  address?: string;
+  note?: string;
+}
+
+export interface ShipScheduleDetail {
+  id: string;
+  clientId: string;
+
+  shipInfo: ShipInfo;
+
+  route: string;
+
+  departureTime: string;
+  arrivalTime: string;
+
+  departurePort: string;
+  arrivalPort: string;
+
+  status: ScheduleStatus;
+
+  crews: ShipScheduleAssignedCrewDetail[];
+
+  createdBy?: string;
+  createdAt?: string;
+  updatedBy?: string;
+  updatedAt?: string;
+}
