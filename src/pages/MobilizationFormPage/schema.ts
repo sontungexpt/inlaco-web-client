@@ -7,6 +7,7 @@ import {
   requiredEmail,
   requiredFile,
   optionalFile,
+  optionalString,
 } from "@/utils/validation/yupHelpers";
 
 export const FORM_SCHEMA = Yup.object().shape({
@@ -37,7 +38,7 @@ export const FORM_SCHEMA = Yup.object().shape({
         employeeCardId: requiredString(
           "Số thẻ thuyền viên không được để trống",
         ),
-        // fullName: requiredString("Hoten thuyền viên không được sé trống"),
+        fullName: optionalString(),
         rankOnBoard: requiredString("Chức danh chuyên môn không được để trống"),
         startDate: dateBefore(
           "endDate",

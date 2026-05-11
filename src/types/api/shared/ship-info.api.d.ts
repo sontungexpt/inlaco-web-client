@@ -7,6 +7,7 @@ export interface ShipInfo {
   description?: string;
   image?: Asset;
   type?: string;
+  url?: string;
 }
 
 export interface ShipInfoRequest {
