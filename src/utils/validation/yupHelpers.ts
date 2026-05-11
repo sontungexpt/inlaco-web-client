@@ -7,7 +7,7 @@ export const string = () =>
 export const requiredString = (msg = "Không được để trống") =>
   string().required(msg);
 
-export const optionalString = () => string().notRequired();
+export const optionalString = () => string();
 
 export const requiredVnPhoneNumber = (
   msg = "Vui lòng nhập số điện thoại Việt Nam hợp lệ",

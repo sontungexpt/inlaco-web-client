@@ -48,9 +48,9 @@ export const SidebarConfig = [
       },
       {
         title: "Lịch Tàu",
-        to: "/shipschedule",
+        to: "/ship-schedules",
         icon: <HowToRegOutlinedIcon />,
-        roles: [UserRole.ADMIN],
+        roles: [UserRole.USER],
       },
       {
         title: "Lịch điều động",

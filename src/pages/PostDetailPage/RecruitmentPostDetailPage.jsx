@@ -247,7 +247,7 @@ const RecruitmentPostDetailPage = () => {
                           tab: "CANDIDATE",
                           candidate: {
                             recruitmentPostId: id,
-                            status: CandidateStatus.SCREENING,
+                            status: CandidateStatus.APPLIED,
                           },
                         },
                       })
