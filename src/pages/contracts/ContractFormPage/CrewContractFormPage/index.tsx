@@ -22,6 +22,7 @@ import cloudinaryUpload, { FileRequest } from "@/services/cloudinary.service";
 import UploadStrategy from "@/constants/UploadStrategy";
 import toast from "react-hot-toast";
 import { keepChangedFields } from "@/utils/object";
+import { isoToDatetime } from "@/utils/converter/datetime";
 import { ContractQueryKey, useContract } from "@/queries/contract.query";
 import { useCandidate } from "@/queries/post.query";
 import { BASE_FORM_VALUES, RECEIVE_METHOD } from "./initial";
@@ -503,7 +504,37 @@ const CrewContractFormPage = () => {
               open={openTemplateDialog}
               onClose={() => setOpenTemplateDialog(false)}
               title="Chọn template hợp đồng"
-              initialData={() => values}
+              initialData={() => ({
+                title: values.title,
+                // Bên B - thuyền viên
+                fullName: values.employee?.fullName,
+                dob: isoToDatetime(values.employee?.birthDate, "dd/mm/yyyy"),
+                birthplace: values.employee?.birthPlace,
+                nationality: values.employee?.nationality,
+                permanentAddr: values.employee?.permanentAddress,
+                temporaryAddr: values.employee?.temporaryAddress,
+                ciNumber: values.employee?.idCardNumber,
+                ciIssueDate: isoToDatetime(values.employee?.idCardIssueDate, "dd/mm/yyyy"),
+                ciIssuePlace: values.employee?.idCardIssuePlace,
+                // Bên A - công ty
+                compName: values.employer?.companyName,
+                compAddress: values.employer?.companyAddress,
+                compPhoneNumber: values.employer?.companyPhone,
+                representative: values.employer?.representativeName,
+                representativePos: values.employer?.representativePosition,
+                // Công việc
+                position: values.jobInfo?.position,
+                jobDescription: values.jobInfo?.jobDescription,
+                startDate: isoToDatetime(values.jobInfo?.startDate, "dd/mm/yyyy"),
+                endDate: isoToDatetime(values.jobInfo?.endDate, "dd/mm/yyyy"),
+                workingLocation: values.jobInfo?.workLocation,
+                // Lương
+                basicSalary: values.salaryInfo?.baseSalary,
+                allowance: values.salaryInfo?.allowance,
+                receiveMethod: values.salaryInfo?.paymentMethod,
+                payday: values.salaryInfo?.payday,
+                salaryReviewPeriod: values.salaryInfo?.salaryReviewCycle,
+              })}
               fullWidth
               maxWidth="lg"
             />
