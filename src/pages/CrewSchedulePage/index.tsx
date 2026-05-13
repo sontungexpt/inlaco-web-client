@@ -60,8 +60,8 @@ export default function CrewSchedulePage() {
     const load = async () => {
       setLoading(true);
       try {
-        const data = await fetchMyMobilizations();
-        setEvents(data.map(toCalendarEvent));
+        const res = await fetchMyMobilizations();
+        setEvents((res.content ?? []).map(toCalendarEvent));
       } finally {
         setLoading(false);
       }

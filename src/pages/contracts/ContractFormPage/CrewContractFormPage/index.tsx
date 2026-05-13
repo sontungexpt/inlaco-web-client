@@ -23,6 +23,7 @@ import UploadStrategy from "@/constants/UploadStrategy";
 import toast from "react-hot-toast";
 import { keepChangedFields } from "@/utils/object";
 import { isoToDatetime } from "@/utils/converter/datetime";
+import { formatVND } from "@/utils/converter/currency";
 import { ContractQueryKey, useContract } from "@/queries/contract.query";
 import { useCandidate } from "@/queries/post.query";
 import { BASE_FORM_VALUES, RECEIVE_METHOD } from "./initial";
@@ -529,8 +530,8 @@ const CrewContractFormPage = () => {
                 endDate: isoToDatetime(values.jobInfo?.endDate, "dd/mm/yyyy"),
                 workingLocation: values.jobInfo?.workLocation,
                 // Lương
-                basicSalary: values.salaryInfo?.baseSalary,
-                allowance: values.salaryInfo?.allowance,
+                basicSalary: formatVND(values.salaryInfo?.baseSalary) ?? values.salaryInfo?.baseSalary,
+                allowance: formatVND(values.salaryInfo?.allowance) ?? values.salaryInfo?.allowance,
                 receiveMethod: values.salaryInfo?.paymentMethod,
                 payday: values.salaryInfo?.payday,
                 salaryReviewPeriod: values.salaryInfo?.salaryReviewCycle,

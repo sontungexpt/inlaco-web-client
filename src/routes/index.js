@@ -48,7 +48,7 @@ export const AppRoutes = [
 
   {
     path: RoutePath.CrewSchedule,
-    roles: ADMIN_SAILOR,
+    roles: [UserRole.SAILOR],
     element: lazy(() => import("@/pages/CrewSchedulePage")),
   },
 

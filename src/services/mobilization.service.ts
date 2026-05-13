@@ -43,9 +43,10 @@ export const createMobilization = async (
   return response.data;
 };
 
-export const fetchMyMobilizations = async (): Promise<MobilizationSchedule[]> => {
-  const response = await privateRequest.get<MobilizationSchedule[]>(
+export const fetchMyMobilizations = async (): Promise<PageableResponse<MobilizationSchedule>> => {
+  const response = await privateRequest.get<PageableResponse<MobilizationSchedule>>(
     MobilizationEndpoint.CURRENT_MOBILIZATION,
+    { params: { size: 500 } },
   );
   return response.data;
 };
