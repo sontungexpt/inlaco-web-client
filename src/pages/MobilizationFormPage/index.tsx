@@ -20,7 +20,10 @@ import { Formik, FormikHelpers, useFormikContext } from "formik";
 import { useNavigate, useSearchParams } from "react-router";
 import { createMobilization } from "@/services/mobilization.service";
 import { FORM_SCHEMA, FormValues, FormValuesCrew } from "./schema";
-import { mapValuesToRequestBody } from "./mapper";
+import {
+  mapToFormValues as mapContractToFormValues,
+  mapValuesToRequestBody,
+} from "./mapper";
 import toast from "react-hot-toast";
 import { BASE_FORM_VALUES } from "./initial";
 import {
@@ -300,8 +303,8 @@ function useMobilizationFormPageParams(): { contractId?: string } {
 
 export default function MobiliaztionFormPage() {
   const navigate = useNavigate();
-  const { contractId } = useMobilizationFormPageParams();
 
+  const { contractId } = useMobilizationFormPageParams();
   const { data: contract } = useContract<CrewSupplyContract>(contractId!);
 
   const handleFormSubmission = async (
@@ -385,9 +388,17 @@ export default function MobiliaztionFormPage() {
     [],
   );
 
+  const initialValues = useMemo(() => {
+    if (contract) {
+      return mapContractToFormValues(BASE_FORM_VALUES, contract);
+    }
+    return BASE_FORM_VALUES;
+  }, [contract]);
+
   return (
     <Formik
-      initialValues={BASE_FORM_VALUES}
+      initialValues={initialValues}
+      enableReinitialize
       validationSchema={FORM_SCHEMA}
       validateOnChange={false}
       validateOnBlur
@@ -470,7 +481,7 @@ export default function MobiliaztionFormPage() {
                         fontSize: 14,
                       }}
                     >
-                      #{contractId ?? "Không có"}
+                      {contractId ?? "Không có"}
                     </Box>
                   </Box>
 
@@ -656,13 +667,13 @@ export default function MobiliaztionFormPage() {
                   />
                 }
                 getCellError={useCallback<GetCellError<FormValuesCrew>>(
-                  ({ row, rowIdx, column }) => {
+                  ({ rowIdx, column }) => {
                     const colKey = column.key;
                     return (errors.crews as any)?.[rowIdx]?.[colKey];
                   },
                   [errors.crews],
                 )}
-                onRowsChange={(newRows: any[]) => {
+                onRowsChange={(newRows) => {
                   setFieldValue("crews", newRows, true);
                 }}
               />
