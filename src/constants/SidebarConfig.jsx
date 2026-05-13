@@ -58,6 +58,12 @@ export const SidebarConfig = [
         icon: <DirectionsBoatOutlinedIcon />,
         roles: [UserRole.ADMIN, UserRole.SAILOR],
       },
+      {
+        title: "Lịch tàu cá nhân",
+        to: "/crew-schedule",
+        icon: <DirectionsBoatOutlinedIcon />,
+        roles: [UserRole.SAILOR],
+      },
     ],
   },
 

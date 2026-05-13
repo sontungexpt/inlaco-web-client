@@ -47,6 +47,12 @@ export const AppRoutes = [
   },
 
   {
+    path: RoutePath.CrewSchedule,
+    roles: ADMIN_SAILOR,
+    element: lazy(() => import("@/pages/CrewSchedulePage")),
+  },
+
+  {
     path: "/mobilizations",
     roles: ADMIN_SAILOR,
     children: [

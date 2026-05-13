@@ -43,11 +43,11 @@ export const createMobilization = async (
   return response.data;
 };
 
-export const fetchMyMobilizations = async () => {
-  const response = await privateRequest.get(
+export const fetchMyMobilizations = async (): Promise<MobilizationSchedule[]> => {
+  const response = await privateRequest.get<MobilizationSchedule[]>(
     MobilizationEndpoint.CURRENT_MOBILIZATION,
   );
-  return response.data as MobilizationSchedule[];
+  return response.data;
 };
 
 export const exportMobilizationExcel = async (id: string) => {
