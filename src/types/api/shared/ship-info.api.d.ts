@@ -4,9 +4,9 @@ export interface ShipInfo {
   imoNumber: string;
   countryISO: string;
   name: string;
+  type: string;
   description?: string;
   image?: Asset;
-  type?: string;
 }
 
 export interface ShipInfoRequest {

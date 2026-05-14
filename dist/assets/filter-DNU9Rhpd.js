@@ -1,1 +1,0 @@
-var e=(e,t=`filter`)=>{if(!e||typeof e!=`object`)return{};let n={},r=(e,t)=>{Object.entries(e).forEach(([e,i])=>{if(i==null||i===``)return;let a=t?`${t}.${e}`:e;if(Array.isArray(i)){n[a]=i;return}if(typeof i==`object`){r(i,a);return}n[a]=i})};return r(e,t),n};export{e as t};

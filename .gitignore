@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+
+/dist/index.html
+/dist
 /.pnp
 .pnp.js
 

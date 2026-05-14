@@ -2,12 +2,17 @@ const RoutePath = {
   Home: "/",
   E403: "/403",
   Account: "/account",
-  ShipSchedule: "/shipschedule",
+
   CrewSchedule: "/crew-schedule",
 
   Login: "/login",
   SignUp: "/sign-up",
   VerifyEmailConfirmation: "/verify-email-confirmation",
+
+  ShipSchedule: {
+    Index: "/ship-schedules",
+    FORM: "/ship-schedules/form",
+  },
 
   Crew: {
     Root: "/crews",

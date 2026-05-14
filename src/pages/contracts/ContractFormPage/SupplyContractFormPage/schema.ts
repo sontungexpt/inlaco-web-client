@@ -2,7 +2,6 @@ import * as Yup from "yup";
 import {
   requiredString,
   optionalString,
-  requiredNumber,
   requiredFile,
   dateBefore,
   dateAfter,
