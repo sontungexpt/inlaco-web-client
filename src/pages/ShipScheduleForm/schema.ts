@@ -47,4 +47,4 @@ export const FORM_SCHEMA = yup.object({
 });
 
 export type FormValues = yup.InferType<typeof FORM_SCHEMA>;
-export type FormValuesCrews = FormValues["crews"][number];
+export type FormValuesCrew = FormValues["crews"][number];

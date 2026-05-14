@@ -3,6 +3,8 @@ const RoutePath = {
   E403: "/403",
   Account: "/account",
 
+  CrewSchedule: "/crew-schedule",
+
   Login: "/login",
   SignUp: "/sign-up",
   VerifyEmailConfirmation: "/verify-email-confirmation",

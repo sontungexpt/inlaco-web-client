@@ -27,6 +27,7 @@ import { BASE_FORM_VALUES } from "./initial";
 import { useSupplyRequest } from "@/queries/supply-request.query";
 import { useContract, useEditContract } from "@/queries/contract.query";
 import { keepChangedFields } from "@/utils/object";
+import { isoToDatetime } from "@/utils/converter/datetime";
 import InfoTextFieldFormik from "@/components/common/fields/InfoTextFieldFormik";
 import {
   CrewSupplyContract,
@@ -404,7 +405,31 @@ const SupplyContractFormPage = () => {
               open={openTemplateDialog}
               onClose={() => setOpenTemplateDialog(false)}
               title="Chọn template hợp đồng"
-              initialData={() => values}
+              initialData={() => ({
+                title: values.title,
+                startDate: isoToDatetime(values.activationDate, "dd/mm/yyyy"),
+                endDate: isoToDatetime(values.expiryDate, "dd/mm/yyyy"),
+                // partyA - INLACO (nested dot notation cho docxtemplater)
+                partyA: {
+                  compName: values.partyA?.compName,
+                  compAddress: values.partyA?.compAddress,
+                  compPhoneNumber: values.partyA?.compPhoneNumber,
+                  representative: values.partyA?.representative,
+                  representativePos: values.partyA?.representativePos,
+                },
+                // partyB - đối tác (cả dot và underscore notation trong template)
+                partyB: {
+                  compName: values.partyB?.compName,
+                  fullName: values.partyB?.representative,
+                  compAddress: values.partyB?.compAddress,
+                  compPhoneNumber: values.partyB?.compPhoneNumber,
+                  representativePos: values.partyB?.representativePos,
+                },
+                // flat fallback cho các tag dùng underscore
+                partyB_compAddress: values.partyB?.compAddress,
+                partyB_phoneNumber: values.partyB?.compPhoneNumber,
+                partyB_representativePos: values.partyB?.representativePos,
+              })}
               fullWidth
               maxWidth="lg"
             />

@@ -17,8 +17,8 @@ const CrewMyMobilization = () => {
     const load = async () => {
       setLoading(true);
       try {
-        const data = await fetchMyMobilizations();
-        const formatted = data.map((mobilization) => ({
+        const res = await fetchMyMobilizations();
+        const formatted = (res.content ?? []).map((mobilization) => ({
           id: mobilization.detail.id,
           partnerInfo: {
             partnerName: mobilization.detail.partnerName,

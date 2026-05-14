@@ -43,11 +43,12 @@ export const createMobilization = async (
   return response.data;
 };
 
-export const fetchMyMobilizations = async () => {
-  const response = await privateRequest.get(
+export const fetchMyMobilizations = async (): Promise<PageableResponse<MobilizationSchedule>> => {
+  const response = await privateRequest.get<PageableResponse<MobilizationSchedule>>(
     MobilizationEndpoint.CURRENT_MOBILIZATION,
+    { params: { size: 500 } },
   );
-  return response.data as MobilizationSchedule[];
+  return response.data;
 };
 
 export const exportMobilizationExcel = async (id: string) => {
