@@ -1,5 +1,4 @@
 import { dateToLocaleString, LocaleType } from "@/utils/converter";
-import Regex from "@/utils/validation/Regex";
 import { ReactNode } from "react";
 import { Column } from "react-data-grid";
 import {

@@ -50,7 +50,7 @@ export const AppRoutes = [
       },
       {
         path: "form",
-        element: lazy(() => import("@/pages/ShipScheduleForm")),
+        element: lazy(() => import("@/pages/ShipScheduleFormPage")),
       },
       {
         path: ":id",

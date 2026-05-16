@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState } from "react";
 
 import {
   PageTitle,
@@ -63,15 +63,22 @@ function CrewSearchEditCell({
       },
     });
 
+  const { values } = useFormikContext<FormValues>();
+
   const handleSelect = (opt: CrewProfile) => {
     onRowChange(
       {
         ...row,
 
-        profileId: opt.id,
         employeeCardId: opt.employeeCardId,
         fullName: opt.fullName,
         rankOnBoard: opt.professionalPosition,
+
+        boardingTime: row.boardingTime || values.departureTime,
+        disembarkTime: row.disembarkTime || values.arrivalTime,
+
+        boardingPort: row.boardingPort || values.departurePort,
+        disembarkPort: row.disembarkPort || values.arrivalPort,
       },
       true,
     );
@@ -101,7 +108,47 @@ function renderSearchEditCell(
   return <CrewSearchEditCell {...props} />;
 }
 
-export default function ShipScheduleCreatePage() {
+function renderEditableCell<R, SR>({
+  row,
+  column,
+  onRowChange,
+}: BaseEditableDataGridRenderEditCellProps<R, SR>) {
+  const key = column.key as keyof R;
+
+  return (
+    <InfoTextField
+      value={row[key] as string}
+      type={column.type || undefined}
+      onChange={(e) => {
+        const manualKeyMap: Record<string, string> = {
+          boardingTime: "isBoardingTimeManual",
+          disembarkTime: "isDisembarkTimeManual",
+          boardingPort: "isBoardingPortManual",
+          disembarkPort: "isDisembarkPortManual",
+        };
+
+        const manualKey = manualKeyMap[key as string];
+
+        onRowChange({
+          ...row,
+          [key]: e.target.value,
+
+          ...(manualKey
+            ? {
+                [manualKey]: true,
+              }
+            : {}),
+        });
+      }}
+      sx={{
+        height: "100%",
+        width: "100%",
+      }}
+    />
+  );
+}
+
+export default function ShipScheduleFormPage() {
   const navigate = useNavigate();
 
   const handleSubmitForm = async (
@@ -148,6 +195,32 @@ export default function ShipScheduleCreatePage() {
       },
 
       {
+        key: "boardingTime",
+        name: "Ngày bắt đầu",
+        type: "datetime",
+        renderEditCell: renderEditableCell,
+      },
+
+      {
+        key: "disembarkTime",
+        name: "Ngày kết thúc",
+        type: "datetime",
+        renderEditCell: renderEditableCell,
+      },
+
+      {
+        key: "boardingPort",
+        name: "Địa điểm lên tàu",
+        renderEditCell: renderEditableCell,
+      },
+
+      {
+        key: "disembarkPort",
+        name: "Địa điểm xuống tàu",
+        renderEditCell: renderEditableCell,
+      },
+
+      {
         key: "remark",
         name: "Ghi chú",
       },
@@ -158,11 +231,13 @@ export default function ShipScheduleCreatePage() {
         name: "",
         renderCell: ({ row }) => {
           const { values, setFieldValue } = useFormikContext<FormValues>();
+
           return (
             <Button
               color="error"
               onClick={() => {
                 const newRows = values.crews.filter((r) => r.id !== row.id);
+
                 setFieldValue("crews", newRows, true);
               }}
             >
@@ -190,6 +265,7 @@ export default function ShipScheduleCreatePage() {
         isSubmitting,
       }) => {
         console.log(errors);
+
         return (
           <Box component="form" onSubmit={handleSubmit} m={2}>
             {/* HEADER */}
@@ -259,11 +335,51 @@ export default function ShipScheduleCreatePage() {
                 </Grid>
 
                 <Grid size={6}>
-                  <InfoTextFieldFormik name="departurePort" label="Cảng đi" />
+                  <InfoTextFieldFormik
+                    name="departurePort"
+                    label="Cảng đi"
+                    onChange={(e) => {
+                      const val = e.target.value as string;
+
+                      setFieldValue("departurePort", val);
+
+                      setFieldValue(
+                        "crews",
+                        values.crews.map((crew) => ({
+                          ...crew,
+
+                          boardingPort: crew.isBoardingPortManual
+                            ? crew.boardingPort
+                            : val,
+                        })),
+                        false,
+                      );
+                    }}
+                  />
                 </Grid>
 
                 <Grid size={6}>
-                  <InfoTextFieldFormik name="arrivalPort" label="Cảng đến" />
+                  <InfoTextFieldFormik
+                    name="arrivalPort"
+                    label="Cảng đến"
+                    onChange={(e) => {
+                      const val = e.target.value as string;
+
+                      setFieldValue("arrivalPort", val);
+
+                      setFieldValue(
+                        "crews",
+                        values.crews.map((crew) => ({
+                          ...crew,
+
+                          disembarkPort: crew.isDisembarkPortManual
+                            ? crew.disembarkPort
+                            : val,
+                        })),
+                        false,
+                      );
+                    }}
+                  />
                 </Grid>
 
                 <Grid size={6}>
@@ -271,6 +387,23 @@ export default function ShipScheduleCreatePage() {
                     type="datetime-local"
                     name="departureTime"
                     label="Thời gian khởi hành"
+                    onChange={(e) => {
+                      const val = e.target.value as string;
+
+                      setFieldValue("departureTime", val);
+
+                      setFieldValue(
+                        "crews",
+                        values.crews.map((crew) => ({
+                          ...crew,
+
+                          boardingTime: crew.isBoardingTimeManual
+                            ? crew.boardingTime
+                            : val,
+                        })),
+                        false,
+                      );
+                    }}
                   />
                 </Grid>
 
@@ -279,6 +412,23 @@ export default function ShipScheduleCreatePage() {
                     type="datetime-local"
                     name="arrivalTime"
                     label="Thời gian cập cảng"
+                    onChange={(e) => {
+                      const val = e.target.value as string;
+
+                      setFieldValue("arrivalTime", val);
+
+                      setFieldValue(
+                        "crews",
+                        values.crews.map((crew) => ({
+                          ...crew,
+
+                          disembarkTime: crew.isDisembarkTimeManual
+                            ? crew.disembarkTime
+                            : val,
+                        })),
+                        false,
+                      );
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -298,9 +448,20 @@ export default function ShipScheduleCreatePage() {
                           {
                             id: crypto.randomUUID(),
                             employeeCardId: "",
+
+                            boardingTime: values.departureTime,
+                            disembarkTime: values.arrivalTime,
+                            isBoardingTimeManual: false,
+                            isDisembarkTimeManual: false,
+
+                            boardingPort: values.departurePort,
+                            disembarkPort: values.arrivalPort,
+                            isBoardingPortManual: false,
+                            isDisembarkPortManual: false,
                           },
+
                           ...values.crews,
-                        ],
+                        ] as FormValuesCrew[],
                         true,
                       );
                     }}

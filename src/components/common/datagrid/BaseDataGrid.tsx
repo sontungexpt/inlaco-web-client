@@ -247,7 +247,15 @@ export default function BaseDataGrid<R, SR = unknown>({
     <Box sx={DEFAULT_RDG_VARS}>
       <div style={{ width: gridWidth }}>{toolbar}</div>
 
-      <Box sx={{ position: "relative" }}>
+      <Box
+        sx={{
+          position: "relative",
+
+          "& input::-webkit-calendar-picker-indicator": {
+            filter: "brightness(0) saturate(100%)",
+          },
+        }}
+      >
         <DataGridContextProvider
           globalTooltip={globalTooltip}
           getCellError={getCellError}

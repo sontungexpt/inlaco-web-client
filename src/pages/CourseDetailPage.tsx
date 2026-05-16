@@ -85,7 +85,9 @@ export default function CourseDetailPage() {
       setToggleLoading(true);
       await cancelCourse(course.id);
       await refetch();
-      toast.success(course.canceled ? "Đã mở đăng ký khoá học" : "Đã đóng đăng ký khoá học");
+      toast.success(
+        course.canceled ? "Đã mở đăng ký khoá học" : "Đã đóng đăng ký khoá học",
+      );
     } catch {
       toast.error("Thao tác thất bại, vui lòng thử lại.");
     } finally {

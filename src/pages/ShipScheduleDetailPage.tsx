@@ -65,11 +65,13 @@ export default function ShipScheduleDetailPage() {
 
   // ================= OPEN KIOSK =================
   const openKiosk = (type: "IN" | "OUT") => {
-    // const url =
-    //   window.location.origin +
-    //   `/ship-schedules/${id}/attendance/qr?type=${type}`;
-    // window.open(url, "_blank", "noopener,noreferrer");
-    navigate(`/ship-schedules/${id}/attendance/qr?type=${type}`);
+    const base = window.location.href.split("#")[0];
+
+    const url = `${base}#/ship-schedules/${id}/attendance/qr?type=${type}`;
+    // Open kiosk in the new tab
+    window.open(url, "_blank", "noopener,noreferrer");
+
+    // navigate(`/ship-schedules/${id}/attendance/qr?type=${type}`);
   };
 
   return (

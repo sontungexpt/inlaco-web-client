@@ -21,8 +21,10 @@ export default function InfoTextField({
   fullWidth = true,
   ...props
 }: InfoTextFieldProps) {
+  const convertedType = type === "datetime" ? "datetime-local" : type;
+
   const displayValue = useMemo(
-    () => formatDisplayValue(value, type),
+    () => formatDisplayValue(value, convertedType),
     [value, type],
   );
 
@@ -31,7 +33,7 @@ export default function InfoTextField({
       {...props}
       value={displayValue}
       fullWidth={fullWidth}
-      type={type}
+      type={convertedType}
       sx={[
         {
           // root input
@@ -51,12 +53,6 @@ export default function InfoTextField({
           // "& .MuiInputLabel-root.Mui-disabled": {
           //   WebkitTextFillColor: Color.PrimaryBlack,
           // },
-
-          "& input::-webkit-calendar-picker-indicator": {
-            display: "block",
-            cursor: "pointer",
-            filter: "brightness(0) saturate(100%)",
-          },
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
