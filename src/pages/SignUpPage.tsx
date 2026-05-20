@@ -89,13 +89,16 @@ export default function SignUpPage() {
         justifyContent: "center",
         alignItems: "center",
         background: "linear-gradient(135deg, #e3f2fd, #ffffff)",
+        minHeight: "100%",
+        width: "100%",
+        p: { xs: 2, sm: 3 },
         m: "auto",
       }}
     >
       <Box
         sx={{
           width: "100%",
-          minWidth: 450,
+          maxWidth: 450,
           borderRadius: 4,
           overflow: "hidden",
           boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
@@ -126,7 +129,7 @@ export default function SignUpPage() {
               component="form"
               onSubmit={handleSubmit}
               sx={{
-                p: 4,
+                p: { xs: 2.5, sm: 4 },
                 display: "flex",
                 flexDirection: "column",
               }}
@@ -134,7 +137,7 @@ export default function SignUpPage() {
               <Typography
                 mb={3}
                 textAlign="center"
-                fontSize={26}
+                fontSize={{ xs: 23, sm: 26 }}
                 fontWeight={700}
                 color={Color.PrimaryBlue}
               >
@@ -229,6 +232,7 @@ export default function SignUpPage() {
             fontSize={11}
             fontWeight={600}
             textAlign="center"
+            px={2}
           >
             CÔNG TY CỔ PHẦN HỢP TÁC LAO ĐỘNG VỚI NƯỚC NGOÀI
           </Typography>
@@ -236,6 +240,7 @@ export default function SignUpPage() {
             color={Color.PrimaryWhite}
             fontSize={9}
             textAlign="center"
+            px={2}
           >
             INTERNATIONAL LABOUR AND SERVICES STOCK COMPANY (INLACO - HP)
           </Typography>

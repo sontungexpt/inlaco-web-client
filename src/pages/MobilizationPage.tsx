@@ -84,7 +84,7 @@ const MobilizationPage = ({ pageSize = 10 }) => {
   );
 
   return (
-    <Box m="20px">
+    <Box sx={{ m: { xs: 2, md: "20px" } }}>
       <SectionWrapper>
         <PageTitle
           title="LỊCH ĐIỀU ĐỘNG"
@@ -93,7 +93,8 @@ const MobilizationPage = ({ pageSize = 10 }) => {
         <Box
           sx={{
             display: "flex",
-            flexDirection: "row",
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { xs: "stretch", sm: "center" },
             mt: 2,
             width: "100%",
           }}
@@ -104,6 +105,7 @@ const MobilizationPage = ({ pageSize = 10 }) => {
               backgroundColor: Color.PrimaryGold,
               color: Color.PrimaryBlack,
               borderRadius: 2,
+              alignSelf: { xs: "stretch", sm: "flex-start" },
             }}
             startIcon={<AddCircleRoundedIcon />}
             onClick={() =>

@@ -68,13 +68,21 @@ export default function SupplyRequestFormPage() {
       onSubmit={handleFormSubmission}
     >
       {({ dirty, isSubmitting, handleSubmit }) => (
-        <Box component="form" onSubmit={handleSubmit} m={3}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ m: { xs: 2, md: 3 } }}
+        >
           {/* ===== HEADER ===== */}
           <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="flex-end"
-            mb={4}
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "space-between",
+              alignItems: { xs: "stretch", sm: "flex-end" },
+              gap: 2,
+              mb: 4,
+            }}
           >
             <PageTitle
               title="GỬI YÊU CẦU CUNG ỨNG"
@@ -87,6 +95,7 @@ export default function SupplyRequestFormPage() {
               sx={{
                 height: 44,
                 px: 3,
+                alignSelf: { xs: "stretch", sm: "auto" },
                 borderRadius: 2,
                 fontWeight: 700,
                 textTransform: "none",
@@ -125,33 +134,33 @@ export default function SupplyRequestFormPage() {
           {/* ===== SECTION: COMPANY INFO ===== */}
           <SectionWrapper title="Thông tin công ty">
             <Grid container spacing={2} rowSpacing={3}>
-              <Grid size={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <InfoTextFieldFormik label="Tên công ty" name="companyName" />
               </Grid>
 
-              <Grid size={5}>
+              <Grid size={{ xs: 12, md: 5 }}>
                 <InfoTextFieldFormik label="Địa chỉ" name="companyAddress" />
               </Grid>
 
-              <Grid size={3}>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                 <InfoTextFieldFormik
                   label="Số điện thoại"
                   name="companyPhone"
                 />
               </Grid>
 
-              <Grid size={4}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <InfoTextFieldFormik label="Email" name="companyEmail" />
               </Grid>
 
-              <Grid size={5}>
+              <Grid size={{ xs: 12, md: 5 }}>
                 <InfoTextFieldFormik
                   label="Người đại diện"
                   name="companyRepresentor"
                 />
               </Grid>
 
-              <Grid size={3}>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                 <InfoTextFieldFormik
                   label="Chức vụ"
                   name="companyRepresentorPosition"
@@ -163,7 +172,7 @@ export default function SupplyRequestFormPage() {
           {/* ===== SECTION: SCHEDULE ===== */}
           <SectionWrapper title="Thông tin yêu cầu">
             <Grid container spacing={2} rowSpacing={3}>
-              <Grid size={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <InfoTextFieldFormik
                   type="datetime-local"
                   label="Thời gian bắt đầu thuê"
@@ -171,7 +180,7 @@ export default function SupplyRequestFormPage() {
                 />
               </Grid>
 
-              <Grid size={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <InfoTextFieldFormik
                   type="datetime-local"
                   label="Thời gian kết thúc thuê"
@@ -193,11 +202,22 @@ export default function SupplyRequestFormPage() {
           {/* ===== SECTION: SHIP INFO ===== */}
           <SectionWrapper title="Thông tin tàu">
             <Grid container spacing={3}>
-              <Grid size={6}>
-                <ImageUploadFieldFormik required name="shipInfo.image" />
+              <Grid size={{ xs: 12, md: 6 }}>
+                <ImageUploadFieldFormik
+                  required
+                  name="shipInfo.image"
+                  width="100%"
+                  height={220}
+                  sx={{ maxWidth: 420, mx: "auto" }}
+                />
               </Grid>
 
-              <Grid size={6} container direction="column" rowSpacing={3}>
+              <Grid
+                size={{ xs: 12, md: 6 }}
+                container
+                direction="column"
+                rowSpacing={3}
+              >
                 <InfoTextFieldFormik label="IMO" name="shipInfo.IMONumber" />
 
                 <InfoTextFieldFormik label="Tên tàu" name="shipInfo.name" />
