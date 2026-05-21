@@ -24,6 +24,7 @@ import {
   PageTitle,
   InfoItem,
   QuickCard,
+  BaseDataGrid,
 } from "@/components/common";
 
 import { useShipScheduleDetail } from "@/queries/ship-schedule.query";
