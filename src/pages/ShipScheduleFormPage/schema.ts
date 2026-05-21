@@ -2,14 +2,13 @@ import {
   dateAfter,
   dateBefore,
   optionalString,
-  requiredDate,
   requiredFile,
   requiredString,
 } from "@/utils/validation/yupHelpers";
-import * as yup from "yup";
+import * as Yup from "yup";
 
-export const FORM_SCHEMA = yup.object({
-  shipInfo: yup.object({
+export const FORM_SCHEMA = Yup.object({
+  shipInfo: Yup.object({
     name: requiredString("Tên tàu là bắt buộc"),
     imoNumber: requiredString("Vui lồng nhập số IMO"),
     countryISO: requiredString("Vui lồng điền quốc tịch"),
@@ -31,20 +30,35 @@ export const FORM_SCHEMA = yup.object({
     "Thời gian đến nơi dự kiến phải sau thời gian khởi hành",
   ).required("Thời gian đến nơi dự kiến không được để trống"),
 
-  crews: yup
-    .array()
+  crews: Yup.array()
     .of(
-      yup
-        .object({
-          employeeCardId: requiredString("Chọn thuyền viên"),
-          rankOnBoard: requiredString("Chức danh là bắt buộc"),
-          note: yup.string(),
-        })
-        .required(),
+      Yup.object({
+        id: Yup.string(),
+        employeeCardId: requiredString("Chọn thuyền viên"),
+        note: Yup.string(),
+        fullName: optionalString(),
+        rankOnBoard: requiredString("Chức danh chuyên môn không được để trống"),
+
+        boardingTime: dateBefore(
+          "disembarkTime",
+          "Ngày bắt đầu phải trước ngày kết thúc",
+        ).required("Ngày bắt đầu không được để trống"),
+        disembarkTime: dateAfter(
+          "boardingTime",
+          "Ngày kết thúc phải sau ngày bắt đàu",
+        ).required("Ngày kết thúc không được để trống"),
+        isBoardingTimeManual: Yup.boolean(),
+        isDisembarkTimeManual: Yup.boolean(),
+
+        boardingPort: requiredString("Cảng bắt đầu là bắt buộc"),
+        disembarkPort: requiredString("Cảng kết thúc là bắt buộc"),
+        isBoardingPortManual: Yup.boolean(),
+        isDisembarkPortManual: Yup.boolean(),
+      }).required(),
     )
     .min(1, "Phải có ít nhất một thuyền viên")
     .required(),
 });
 
-export type FormValues = yup.InferType<typeof FORM_SCHEMA>;
+export type FormValues = Yup.InferType<typeof FORM_SCHEMA>;
 export type FormValuesCrew = FormValues["crews"][number];

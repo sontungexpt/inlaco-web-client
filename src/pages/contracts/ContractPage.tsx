@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import { PageTitle, SearchBar } from "@components/common";
-import { Box, Button, Chip } from "@mui/material";
+import { PageTitle, SearchBar, InfoTextField } from "@components/common";
+import { Box, Button, MenuItem } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router";
 import { useContracts } from "@/queries/contract.query";
 
@@ -175,62 +175,36 @@ export default function ContractPage({ pageSize = 20 }) {
             sx={{
               display: "flex",
               flexDirection: { xs: "column", md: "row" },
-              justifyContent: "space-between",
               alignItems: { xs: "stretch", md: "center" },
+              justifyContent: "space-between",
               gap: 2,
               my: 1,
-              minWidth: 0,
             }}
           >
-            <Box sx={{ flex: "1 1 320px", minWidth: 0 }}>
-              <SearchBar
-                onSearch={setQuery}
-                loading={isLoading}
-                minQueryLength={0}
-                size="small"
-                placeholder="Nhập tên hoặc mã thuyền viên cần tìm kiếm"
-              />
-            </Box>
+            <SearchBar
+              onSearch={setQuery}
+              loading={isLoading}
+              minQueryLength={0}
+              size="small"
+              placeholder="Nhập tên hoặc mã thuyền viên cần tìm kiếm"
+            />
 
-            <Box
-              role="group"
-              aria-label="Lọc trạng thái hợp đồng"
-              sx={{
-                display: "flex",
-                gap: 1,
-                maxWidth: { xs: "100%", md: 560 },
-                overflowX: "auto",
-                overflowY: "hidden",
-                pb: 0.5,
-                scrollbarWidth: "thin",
-                "&::-webkit-scrollbar": {
-                  height: 6,
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  borderRadius: 999,
-                  backgroundColor: "rgba(0,0,0,0.22)",
-                },
-              }}
+            <InfoTextField
+              select
+              size="small"
+              margin="none"
+              required
+              disabled={lockedStatus}
+              label="Trạng thái"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as ContractStatus)}
             >
-              {STATUS_FILTERS.map((item) => {
-                const selected = status === item.value;
-
-                return (
-                  <Chip
-                    key={item.value}
-                    label={item.label}
-                    color={selected ? "primary" : "default"}
-                    variant={selected ? "filled" : "outlined"}
-                    disabled={lockedStatus}
-                    onClick={() => setStatus(item.value)}
-                    sx={{
-                      flexShrink: 0,
-                      fontWeight: selected ? 700 : 500,
-                    }}
-                  />
-                );
-              })}
-            </Box>
+              {STATUS_FILTERS.map((status, idx) => (
+                <MenuItem key={idx} value={status.value}>
+                  {status.label}
+                </MenuItem>
+              ))}
+            </InfoTextField>
           </Box>
         }
         footer={

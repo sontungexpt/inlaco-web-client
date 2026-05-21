@@ -107,11 +107,19 @@ const ShipSchedulePage = ({ pageSize = 10 }) => {
           key: "status",
           name: "Trạng thái",
           renderCell: ({ row }) => (
-            <Chip
-              size="small"
-              label={statusLabelMap[row.status] ?? row.status}
-              color={statusColorMap[row.status] ?? "default"}
-            />
+            <Box
+              component="span"
+              sx={{
+                color: statusColorMap[row.status],
+                fontWeight: 600,
+                fontSize: 13,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {statusLabelMap[row.status] ?? row.status}
+            </Box>
           ),
         },
 

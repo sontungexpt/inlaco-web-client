@@ -11,6 +11,13 @@ export type ScheduleStatus =
 export interface CreateShipScheduleAssignedCrewRequest {
   employeeCardId: string;
   rankOnBoard: string;
+
+  boardingTime: string;
+  disembarkTime: string;
+
+  boardingPort: string;
+  disembarkPort: string;
+
   note?: string;
 }
 

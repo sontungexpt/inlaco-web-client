@@ -26,6 +26,13 @@ export function mapValuesToRequestBody(
     crews: values.crews?.map((crew) => ({
       employeeCardId: crew.employeeCardId,
       rankOnBoard: crew.rankOnBoard,
+
+      boardingTime: datetimeToISO(crew.boardingTime) as string,
+      disembarkTime: datetimeToISO(crew.disembarkTime) as string,
+
+      boardingPort: crew.boardingPort,
+      disembarkPort: crew.disembarkPort,
+
       note: crew.note,
     })),
   };
