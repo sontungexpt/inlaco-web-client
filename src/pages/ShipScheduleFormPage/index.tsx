@@ -267,13 +267,19 @@ export default function ShipScheduleFormPage() {
         console.log(errors);
 
         return (
-          <Box component="form" onSubmit={handleSubmit} m={2}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ m: { xs: 2, md: 3 } }}
+          >
             {/* HEADER */}
             <SectionWrapper
               sx={{
                 display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
                 justifyContent: "space-between",
-                alignItems: "center",
+                alignItems: { xs: "stretch", sm: "center" },
+                gap: 2,
                 mb: 2,
               }}
             >
@@ -286,6 +292,7 @@ export default function ShipScheduleFormPage() {
                 type="submit"
                 variant="contained"
                 disabled={!dirty || isSubmitting}
+                sx={{ alignSelf: { xs: "stretch", sm: "auto" } }}
                 startIcon={
                   isSubmitting ? <CircularProgress size={18} /> : <SaveIcon />
                 }
@@ -299,21 +306,22 @@ export default function ShipScheduleFormPage() {
               <Box display="flex" justifyContent="center" mb={2}>
                 <ImageUploadFieldFormik
                   name="shipInfo.image"
-                  width={300}
+                  width="100%"
                   height={180}
+                  sx={{ maxWidth: 300 }}
                 />
               </Box>
 
               <Grid container spacing={2}>
-                <Grid size={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <InfoTextFieldFormik name="shipInfo.imoNumber" label="IMO" />
                 </Grid>
 
-                <Grid size={4}>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                   <InfoTextFieldFormik name="shipInfo.name" label="Tên tàu" />
                 </Grid>
 
-                <Grid size={2}>
+                <Grid size={{ xs: 12, sm: 6, md: 2 }}>
                   <NationalityTextField
                     component={InfoTextFieldFormik}
                     name="shipInfo.countryISO"
@@ -321,7 +329,7 @@ export default function ShipScheduleFormPage() {
                   />
                 </Grid>
 
-                <Grid size={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <InfoTextFieldFormik name="shipInfo.type" label="Loại tàu" />
                 </Grid>
               </Grid>
@@ -382,7 +390,7 @@ export default function ShipScheduleFormPage() {
                   />
                 </Grid>
 
-                <Grid size={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <InfoTextFieldFormik
                     type="datetime-local"
                     name="departureTime"
@@ -407,7 +415,7 @@ export default function ShipScheduleFormPage() {
                   />
                 </Grid>
 
-                <Grid size={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <InfoTextFieldFormik
                     type="datetime-local"
                     name="arrivalTime"

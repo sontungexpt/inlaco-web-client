@@ -174,7 +174,8 @@ export default function ContractPage({ pageSize = 20 }) {
           <Box
             sx={{
               display: "flex",
-              flexDirection: "row",
+              flexDirection: { xs: "column", md: "row" },
+              alignItems: { xs: "stretch", md: "center" },
               justifyContent: "space-between",
               gap: 2,
               my: 1,

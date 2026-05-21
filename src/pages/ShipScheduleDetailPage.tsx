@@ -14,7 +14,6 @@ import {
 
 import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import OpenInFullRoundedIcon from "@mui/icons-material/OpenInFullRounded";
 import DirectionsBoatRoundedIcon from "@mui/icons-material/DirectionsBoatRounded";
 import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
 import RouteRoundedIcon from "@mui/icons-material/RouteRounded";
@@ -24,7 +23,7 @@ import {
   SectionWrapper,
   PageTitle,
   InfoItem,
-  BaseDataGrid,
+  QuickCard,
 } from "@/components/common";
 
 import { useShipScheduleDetail } from "@/queries/ship-schedule.query";
@@ -252,32 +251,6 @@ export default function ShipScheduleDetailPage() {
               >
                 OPEN CHECK-OUT KIOSK
               </Button>
-
-              <Button
-                fullWidth
-                size="large"
-                variant="outlined"
-                startIcon={<OpenInFullRoundedIcon />}
-                onClick={() =>
-                  window.open(
-                    `/ship-schedules/${id}/attendance/qr?type=IN`,
-                    "_blank",
-                  )
-                }
-                sx={{
-                  py: 1.6,
-                  borderRadius: 4,
-                  color: "#fff",
-                  borderColor: "rgba(255,255,255,0.18)",
-
-                  "&:hover": {
-                    borderColor: "#fff",
-                    bgcolor: "rgba(255,255,255,0.05)",
-                  },
-                }}
-              >
-                OPEN FULLSCREEN MODE
-              </Button>
             </Stack>
           </Stack>
         </Box>
@@ -385,53 +358,3 @@ const chipStyle = {
   borderRadius: 999,
   backdropFilter: "blur(12px)",
 };
-
-function QuickCard({
-  icon,
-  title,
-  value,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  value: string | number;
-}) {
-  return (
-    <Paper
-      elevation={0}
-      sx={{
-        p: 3,
-        borderRadius: 5,
-        border: "1px solid",
-        borderColor: "divider",
-        height: "100%",
-      }}
-    >
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Box
-          sx={{
-            width: 56,
-            height: 56,
-            borderRadius: 3,
-            bgcolor: "rgba(59,130,246,0.08)",
-            color: "#3b82f6",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {icon}
-        </Box>
-
-        <Box>
-          <Typography variant="body2" color="text.secondary">
-            {title}
-          </Typography>
-
-          <Typography variant="h5" fontWeight={800}>
-            {value}
-          </Typography>
-        </Box>
-      </Stack>
-    </Paper>
-  );
-}

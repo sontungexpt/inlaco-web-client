@@ -6,6 +6,7 @@ export * from "./markdown";
 export { default as PageTitle } from "./PageTitle";
 export { default as StatusLabel } from "./StatusLabel";
 export { default as InfoItem } from "./InfoItem";
+export { default as QuickCard } from "./QuickCard";
 
 export { default as SearchBar } from "./SearchBar";
 export { default as PageCircularProgress } from "./PageCircularProgress";
