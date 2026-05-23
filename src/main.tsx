@@ -13,13 +13,14 @@ const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
 );
+
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       {/* <BrowserRouter> */}
       {/* NOTE: Temporary use HashRouter for easier deploy to gh-pages */}
       <HashRouter>
-        {/* Reset CSS to default */}
+        {/* Reset CSS to default. CssBaseline must be the parent of auth provider */}
         <CssBaseline>
           <AuthProvider>
             <App />

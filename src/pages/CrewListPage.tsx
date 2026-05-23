@@ -20,7 +20,7 @@ import {
 export default function CrewListPage({ pageSize = 10 }) {
   const navigate = useNavigate();
   const [official, setOfficial] = useState(true);
-  const [query, setQuery] = useState("");
+  const [searchQuery, setQuery] = useState("");
   const [page, setPage] = useState(0);
   const OFFICIAL_TAB_INDEX = 0;
 
@@ -29,7 +29,7 @@ export default function CrewListPage({ pageSize = 10 }) {
       page: page,
       pageSize: pageSize,
       filter: {
-        keyword: query,
+        keyword: searchQuery,
         official,
       },
     });
@@ -118,7 +118,12 @@ export default function CrewListPage({ pageSize = 10 }) {
               my: 2,
             }}
           >
-            <SearchBar placeholder="Tìm thuyền viên..." onSearch={setQuery} />
+            <SearchBar
+              minQueryLength={0}
+              searchAfterClear
+              placeholder="Tìm thuyền viên..."
+              onSearch={setQuery}
+            />
             {/* <Button */}
             {/*   variant="contained" */}
             {/*   sx={{ */}
