@@ -172,7 +172,6 @@ const CrewContractFormPage = () => {
       {(formik) => {
         const { values, isValid, errors, dirty, isSubmitting, handleSubmit } =
           formik;
-        console.log("ContractFormPage: ", errors);
         // const handleSubmitClick = useFormikSubmitWithScroll(formik);
 
         return (

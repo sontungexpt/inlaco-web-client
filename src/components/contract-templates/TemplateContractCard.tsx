@@ -40,11 +40,9 @@ const TemplateContractCard = ({
   title,
   type,
   url,
-  gridSize = 4,
   initialData = {},
   dowloadFileName,
   color = Color.PrimaryBlack,
-  sx = [],
   showDelete = false,
   onDelete,
   isDeleting = false,
@@ -85,105 +83,103 @@ const TemplateContractCard = ({
 
   return (
     <>
-      <Grid size={gridSize} sx={sx}>
-        <Card
-          onClick={handleOpenPreview}
-          sx={{
-            borderRadius: 4,
-            overflow: "hidden",
-            height: "100%",
-            background: "#fff",
-            transition: "all 0.25s ease",
-            boxShadow: "0 8px 30px rgba(0,0,0,0.08)",
-            "&:hover": {
-              transform: "translateY(-6px)",
-              boxShadow: "0 16px 45px rgba(0,0,0,0.18)",
-              "& .action-overlay": {
-                opacity: 1,
-                transform: "translateY(0)",
-              },
+      <Card
+        onClick={handleOpenPreview}
+        sx={{
+          borderRadius: 4,
+          overflow: "hidden",
+          height: "100%",
+          background: "#fff",
+          transition: "all 0.25s ease",
+          boxShadow: "0 8px 30px rgba(0,0,0,0.08)",
+          "&:hover": {
+            transform: "translateY(-6px)",
+            boxShadow: "0 16px 45px rgba(0,0,0,0.18)",
+            "& .action-overlay": {
+              opacity: 1,
+              transform: "translateY(0)",
             },
-          }}
-        >
-          {/* ===== IMAGE + ACTIONS ===== */}
-          <Box p={2} sx={{ position: "relative" }}>
-            <CardMedia
-              height={180}
-              component="img"
-              image={imageError || !image ? NoShipPhoto : image}
-              alt={title}
-              onError={() => setImageError(true)}
-              sx={{ objectFit: "cover", filter: "brightness(0.95)" }}
-            />
+          },
+        }}
+      >
+        {/* ===== IMAGE + ACTIONS ===== */}
+        <Box p={2} sx={{ position: "relative" }}>
+          <CardMedia
+            height={180}
+            component="img"
+            image={imageError || !image ? NoShipPhoto : image}
+            alt={title}
+            onError={() => setImageError(true)}
+            sx={{ objectFit: "cover", filter: "brightness(0.95)" }}
+          />
 
-            {/* ACTION OVERLAY */}
-            <Box
-              className="action-overlay"
-              onClick={(e) => e.stopPropagation()}
+          {/* ACTION OVERLAY */}
+          <Box
+            className="action-overlay"
+            onClick={(e) => e.stopPropagation()}
+            sx={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 2,
+              background:
+                "linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0.15))",
+              opacity: 0,
+              transform: "translateY(10px)",
+              transition: "all 0.25s ease",
+            }}
+          >
+            <IconButton
+              onClick={handleDownload}
               sx={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 2,
-                background:
-                  "linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0.15))",
-                opacity: 0,
-                transform: "translateY(10px)",
-                transition: "all 0.25s ease",
+                backgroundColor: "#fff",
+                "&:hover": { backgroundColor: "#f5f5f5" },
               }}
             >
-              <IconButton
-                onClick={handleDownload}
-                sx={{
-                  backgroundColor: "#fff",
-                  "&:hover": { backgroundColor: "#f5f5f5" },
-                }}
-              >
-                <DownloadForOfflineRoundedIcon />
-              </IconButton>
+              <DownloadForOfflineRoundedIcon />
+            </IconButton>
 
-              {/* Delete */}
-              {showDelete &&
-                (isDeleting ? (
-                  <CircularProgress size={24} sx={{ color: "#fff" }} />
-                ) : (
-                  <IconButton
-                    onClick={() => onDelete?.()}
-                    sx={{
-                      backgroundColor: "#ff4d4f",
-                      color: "#fff",
-                      "&:hover": { backgroundColor: "#ff7875" },
-                    }}
-                  >
-                    <DeleteForeverRoundedIcon />
-                  </IconButton>
-                ))}
-            </Box>
+            {/* Delete */}
+            {showDelete &&
+              (isDeleting ? (
+                <CircularProgress size={24} sx={{ color: "#fff" }} />
+              ) : (
+                <IconButton
+                  onClick={() => onDelete?.()}
+                  sx={{
+                    backgroundColor: "#ff4d4f",
+                    color: "#fff",
+                    "&:hover": { backgroundColor: "#ff7875" },
+                  }}
+                >
+                  <DeleteForeverRoundedIcon />
+                </IconButton>
+              ))}
           </Box>
+        </Box>
 
-          <CardContent sx={{ p: 2 }}>
-            <Typography
-              variant="subtitle1"
-              sx={{
-                fontWeight: 700,
-                color,
-                mb: 0.5,
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {title}
-            </Typography>
+        <CardContent sx={{ p: 2 }}>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              fontWeight: 700,
+              color,
+              mb: 0.5,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {title}
+          </Typography>
 
-            <Typography variant="caption" sx={{ color: Color.SecondaryBlack }}>
-              {type}
-            </Typography>
-          </CardContent>
-        </Card>
-      </Grid>
+          <Typography variant="caption" sx={{ color: Color.SecondaryBlack }}>
+            {type}
+          </Typography>
+        </CardContent>
+      </Card>
 
       <Dialog
         open={openPreview}

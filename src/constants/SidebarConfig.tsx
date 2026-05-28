@@ -189,7 +189,7 @@ const SidebarConfig: SidebarSection[] = [
 
         icon: <DirectionsBoatOutlinedIcon />,
 
-        access: Permission.SAILOR_ONLY,
+        access: Permission.SAILOR_BUT_NOT_ADMIN,
       },
     ],
   },
