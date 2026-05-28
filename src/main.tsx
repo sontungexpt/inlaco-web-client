@@ -1,7 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+// Register network manager do not remove this import line
+import network from "./utils/network";
+
 import App from "./App";
+
 import { BrowserRouter, HashRouter } from "react-router";
 import { AuthProvider } from "@/contexts/auth.context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

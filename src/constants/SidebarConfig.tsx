@@ -312,6 +312,7 @@ const SidebarConfig: SidebarSection[] = [
 ];
 
 export default SidebarConfig;
+
 // import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 // import AccountBoxRoundedIcon from "@mui/icons-material/AccountBoxRounded";
 // import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";

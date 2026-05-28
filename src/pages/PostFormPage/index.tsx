@@ -15,12 +15,7 @@ import { BASE_FORM_VALUES, POST_TYPES } from "./initial";
 import { mapPostToFormValues, mapValuesToRequestBody } from "./mapper";
 
 import { createPost, updatePost } from "@/services/post.service";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 import { usePost } from "@/queries/post.query";
 
 import cloudinaryUpload from "@/services/cloudinary.service";
@@ -83,7 +78,7 @@ export default function PostFormPage() {
                 attachmentsAssetIds: [],
               }),
             )
-          : await updatePost(postId, mapValuesToRequestBody(values, {}));
+          : await updatePost(postId!!, mapValuesToRequestBody(values, {}));
       resetForm();
       viewPostDetail(newPost);
     } catch (error) {

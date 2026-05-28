@@ -82,13 +82,14 @@ const CrewContractFormPage = () => {
       ) || []),
     ]);
 
-    return await createLaborContract(
+    const newContract = await createLaborContract(
       candidateId as string,
       mapValuesToRequestBody(values, {
         contractFile: contractFileResult.assetId,
         attachments: attachmentResults.map((file) => file.assetId),
       }),
     );
+    return newContract;
   };
 
   const updateContract = async (values: FormValues) => {
@@ -168,7 +169,9 @@ const CrewContractFormPage = () => {
       onSubmit={handleFormSubmission}
     >
       {(formik) => {
-        const { values, isValid, dirty, isSubmitting, handleSubmit } = formik;
+        const { values, isValid, errors, dirty, isSubmitting, handleSubmit } =
+          formik;
+        console.log("ContractFormPage: ", errors);
         // const handleSubmitClick = useFormikSubmitWithScroll(formik);
 
         return (
@@ -515,7 +518,10 @@ const CrewContractFormPage = () => {
                 permanentAddr: values.employee?.permanentAddress,
                 temporaryAddr: values.employee?.temporaryAddress,
                 ciNumber: values.employee?.idCardNumber,
-                ciIssueDate: isoToDatetime(values.employee?.idCardIssueDate, "dd/mm/yyyy"),
+                ciIssueDate: isoToDatetime(
+                  values.employee?.idCardIssueDate,
+                  "dd/mm/yyyy",
+                ),
                 ciIssuePlace: values.employee?.idCardIssuePlace,
                 // Bên A - công ty
                 compName: values.employer?.companyName,
@@ -526,12 +532,19 @@ const CrewContractFormPage = () => {
                 // Công việc
                 position: values.jobInfo?.position,
                 jobDescription: values.jobInfo?.jobDescription,
-                startDate: isoToDatetime(values.jobInfo?.startDate, "dd/mm/yyyy"),
+                startDate: isoToDatetime(
+                  values.jobInfo?.startDate,
+                  "dd/mm/yyyy",
+                ),
                 endDate: isoToDatetime(values.jobInfo?.endDate, "dd/mm/yyyy"),
                 workingLocation: values.jobInfo?.workLocation,
                 // Lương
-                basicSalary: formatVND(values.salaryInfo?.baseSalary) ?? values.salaryInfo?.baseSalary,
-                allowance: formatVND(values.salaryInfo?.allowance) ?? values.salaryInfo?.allowance,
+                basicSalary:
+                  formatVND(values.salaryInfo?.baseSalary) ??
+                  values.salaryInfo?.baseSalary,
+                allowance:
+                  formatVND(values.salaryInfo?.allowance) ??
+                  values.salaryInfo?.allowance,
                 receiveMethod: values.salaryInfo?.paymentMethod,
                 payday: values.salaryInfo?.payday,
                 salaryReviewPeriod: values.salaryInfo?.salaryReviewCycle,
