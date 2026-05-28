@@ -15,6 +15,10 @@ export const useSignContract = () => {
         ) {
           if (response.data.data === "status") {
             toast.error("Hợp đồng đã kí");
+          } else if (response.data.data === "contract") {
+            toast.error(
+              "Hợp đồng chưa đầy đủ thông tin. Vui lòng bổ sung hợp đồng bản giấy",
+            );
           } else
             toast.error(
               "Hợp đồng chưa đầy đủ thông tin: " +
