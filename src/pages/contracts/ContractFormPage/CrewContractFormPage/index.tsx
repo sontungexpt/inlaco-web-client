@@ -85,7 +85,7 @@ const CrewContractFormPage = () => {
     const newContract = await createLaborContract(
       candidateId as string,
       mapValuesToRequestBody(values, {
-        contractFile: contractFileResult.assetId,
+        contractFile: contractFileResult?.assetId,
         attachments: attachmentResults.map((file) => file.assetId),
       }),
     );
@@ -139,6 +139,7 @@ const CrewContractFormPage = () => {
       helpers.resetForm();
       navigate(`/contracts/${contract.id}`);
     } catch (err) {
+      console.debug(err);
       const msg = isEdit
         ? IS_FREEZED_CONTRACT
           ? "Thêm phụ lục thất bại"
