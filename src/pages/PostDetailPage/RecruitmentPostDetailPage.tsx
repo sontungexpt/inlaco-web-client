@@ -260,7 +260,7 @@ const RecruitmentPostDetailPage = () => {
                     fullWidth
                     variant="outlined"
                     sx={{ py: 1.2, borderRadius: 2 }}
-                    onClick={() => navigate(`/posts/edit/${id}`)}
+                    onClick={() => navigate(`/posts/edit/${id}?formType=EDIT`)}
                   >
                     Chỉnh sửa bài tuyển dụng
                   </Button>

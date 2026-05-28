@@ -78,7 +78,7 @@ export default function PostFormPage() {
                 attachmentsAssetIds: [],
               }),
             )
-          : await updatePost(postId!!, mapValuesToRequestBody(values, {}));
+          : await updatePost(postId!, mapValuesToRequestBody(values, {}));
       resetForm();
       viewPostDetail(newPost);
     } catch (error) {
