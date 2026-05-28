@@ -36,7 +36,7 @@ export interface SupplyRequest {
 }
 
 export interface NewSupplyRequest {
-  detailFile: String;
+  detailFile: string;
 
   companyName: string;
   companyAddress: string;

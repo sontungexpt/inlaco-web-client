@@ -16,11 +16,14 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 
 import Color from "@constants/Color";
-import { Formik, FormikHelpers, useFormikContext } from "formik";
+import { Formik, FormikErrors, FormikHelpers, useFormikContext } from "formik";
 import { useNavigate, useSearchParams } from "react-router";
 import { createMobilization } from "@/services/mobilization.service";
 import { FORM_SCHEMA, FormValues, FormValuesCrew } from "./schema";
-import { mapValuesToRequestBody } from "./mapper";
+import {
+  mapToFormValues as mapContractToFormValues,
+  mapValuesToRequestBody,
+} from "./mapper";
 import toast from "react-hot-toast";
 import { BASE_FORM_VALUES } from "./initial";
 import {
@@ -35,6 +38,8 @@ import { useContract } from "@/queries/contract.query";
 import { CrewSupplyContract } from "@/types/api/contract.api";
 import UploadStrategy from "@/constants/UploadStrategy";
 import cloudinaryUpload from "@/services/cloudinary.service";
+import { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
+import { ErrorResponse } from "@/types/api/shared/base.api";
 
 const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
   const initials = opt.fullName?.charAt(0)?.toUpperCase() ?? "?";
@@ -300,13 +305,13 @@ function useMobilizationFormPageParams(): { contractId?: string } {
 
 export default function MobiliaztionFormPage() {
   const navigate = useNavigate();
-  const { contractId } = useMobilizationFormPageParams();
 
+  const { contractId } = useMobilizationFormPageParams();
   const { data: contract } = useContract<CrewSupplyContract>(contractId!);
 
   const handleFormSubmission = async (
     values: FormValues,
-    { resetForm }: FormikHelpers<FormValues>,
+    { resetForm, setFieldError, setErrors }: FormikHelpers<FormValues>,
   ) => {
     try {
       let shipImageAssetId = null;
@@ -325,6 +330,42 @@ export default function MobiliaztionFormPage() {
       resetForm();
       navigate(`/mobilizations/${newMobilization.id}`);
     } catch (err) {
+      if (
+        err instanceof AxiosError &&
+        err.status === HttpStatusCode.BadRequest
+      ) {
+        const response = err.response as AxiosResponse<ErrorResponse>;
+        if (response.data.errorCode === "CREW_MOBILIZATION_ERR_001") {
+          const conflicts = response.data.data as {
+            employeeCardId: string;
+          }[];
+
+          const conflictMap = new Map(
+            conflicts.map((c) => [c.employeeCardId, c]),
+          );
+
+          const crewErrors: FormikErrors<FormValuesCrew>[] = [];
+
+          values.crews.forEach((crew, index) => {
+            const conflict = conflictMap.get(crew.employeeCardId);
+
+            if (!conflict) {
+              return;
+            }
+
+            crewErrors[index] = {
+              employeeCardId: "Thuyền viên bận vào thời gian điều động",
+            };
+          });
+
+          setErrors({
+            crews: crewErrors,
+          });
+
+          toast.error("Có điều động bị trùng");
+          return;
+        }
+      }
       toast.error("Tạo điều động thất bại, thử lại sau");
     }
   };
@@ -385,9 +426,17 @@ export default function MobiliaztionFormPage() {
     [],
   );
 
+  const initialValues = useMemo(() => {
+    if (contract) {
+      return mapContractToFormValues(BASE_FORM_VALUES, contract);
+    }
+    return BASE_FORM_VALUES;
+  }, [contract]);
+
   return (
     <Formik
-      initialValues={BASE_FORM_VALUES}
+      initialValues={initialValues}
+      enableReinitialize
       validationSchema={FORM_SCHEMA}
       validateOnChange={false}
       validateOnBlur
@@ -470,7 +519,7 @@ export default function MobiliaztionFormPage() {
                         fontSize: 14,
                       }}
                     >
-                      #{contractId ?? "Không có"}
+                      {contractId ?? "Không có"}
                     </Box>
                   </Box>
 
@@ -656,13 +705,13 @@ export default function MobiliaztionFormPage() {
                   />
                 }
                 getCellError={useCallback<GetCellError<FormValuesCrew>>(
-                  ({ row, rowIdx, column }) => {
+                  ({ rowIdx, column }) => {
                     const colKey = column.key;
                     return (errors.crews as any)?.[rowIdx]?.[colKey];
                   },
                   [errors.crews],
                 )}
-                onRowsChange={(newRows: any[]) => {
+                onRowsChange={(newRows) => {
                   setFieldValue("crews", newRows, true);
                 }}
               />

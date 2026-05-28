@@ -1,17 +1,20 @@
 import { FormValues } from "./schema";
 
 export const BASE_FORM_VALUES: FormValues = {
-  status: "PENDING",
-
   partnerName: "",
   partnerPhone: "",
   partnerEmail: "",
   partnerAddress: "",
 
-  startDate: undefined,
+  startDate: new Date(),
   endDate: undefined,
 
-  shipInfo: { image: "", name: "", countryISO: "", shipType: "" },
+  shipInfo: {
+    image: "",
+    name: "",
+    countryISO: "",
+    shipType: "",
+  },
 
   crews: [],
 };

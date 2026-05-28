@@ -1,14 +1,22 @@
-import { CenterCircularProgress, SearchBar } from "@/components/common";
-import { useContractTemplates } from "@/queries/contract-template.query";
-import { ContractType } from "@/types/api/contract.api";
-import { Grid, Box, Pagination, Typography, BoxProps } from "@mui/material";
 import { useImperativeHandle, useState } from "react";
+import { Box, Grid, Pagination, Typography, BoxProps } from "@mui/material";
+
+import { CenterCircularProgress, SearchBar } from "@/components/common";
+
+import { useContractTemplates } from "@/queries/contract-template.query";
+
+import { ContractType } from "@/types/api/contract.api";
+import { ContractTemplate } from "@/types/api/contract-template.api";
 
 export type TemplateContractListProps = BoxProps & {
   type?: ContractType;
-  render: (template: any) => React.ReactNode;
+
+  render: (template: ContractTemplate, index: number) => React.ReactNode;
+
   pageSize?: number;
+
   emptyText?: string;
+
   ref?: any;
 };
 
@@ -22,14 +30,20 @@ const TemplateContractList = ({
 }: TemplateContractListProps) => {
   const [page, setPage] = useState(0);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const {
     data: { content: templates = [], totalPages = 0 } = {},
+
     isLoading,
+
     refetch: refetchTemplates,
   } = useContractTemplates({
     page,
-    pageSize: pageSize,
+    pageSize,
+
     filter: {
+      keyword: searchQuery,
       type,
     },
   });
@@ -38,43 +52,65 @@ const TemplateContractList = ({
     refetch: refetchTemplates,
   }));
 
-  if (isLoading) {
-    return <CenterCircularProgress />;
-  }
-
-  if (!templates.length) {
-    return (
-      <Typography textAlign="center" color="text.secondary">
-        {emptyText}
-      </Typography>
-    );
-  }
-
   return (
     <Box {...props}>
-      {/* ===== Search ===== */}
       <Box
         sx={{
           mx: "auto",
+
           mt: 3,
           mb: 4,
+
           display: "flex",
           justifyContent: "space-between",
         }}
       >
-        <SearchBar placeholder="Nhập thông tin template hợp đồng" />
+        <SearchBar
+          minQueryLength={0}
+          loading={isLoading}
+          searchAfterClear
+          onSearch={(value) => {
+            setPage(0);
+            setSearchQuery(value);
+          }}
+          placeholder="Nhập thông tin template hợp đồng"
+        />
       </Box>
 
-      <Grid container spacing={4}>
-        {templates.map((item, ...params) => render(item, ...params))}
-      </Grid>
+      {/* =========================================================================
+       * CONTENT
+       * ========================================================================= */}
 
-      {totalPages > 1 && (
+      <Box
+        sx={{
+          minHeight: 250,
+        }}
+      >
+        {isLoading ? (
+          <CenterCircularProgress />
+        ) : !templates.length ? (
+          <Typography textAlign="center" color="text.secondary">
+            {emptyText}
+          </Typography>
+        ) : (
+          <Grid container spacing={4}>
+            {templates.map((item, index) => render(item, index))}
+          </Grid>
+        )}
+      </Box>
+
+      {/* =========================================================================
+       * PAGINATION
+       * ========================================================================= */}
+
+      {!isLoading && totalPages > 1 && (
         <Box display="flex" justifyContent="center" mt={4}>
           <Pagination
             count={totalPages}
-            page={page}
-            onChange={(e, value) => setPage(value - 1)}
+            page={page + 1}
+            onChange={(_, value) => {
+              setPage(value - 1);
+            }}
             color="primary"
           />
         </Box>

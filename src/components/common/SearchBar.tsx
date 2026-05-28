@@ -261,6 +261,10 @@ export default function SearchBar<T = any>({
     setInputValue(v);
     onChange?.(e, v);
 
+    if (v === "") {
+      setDropdownOpened(false);
+    }
+
     triggerSearch(v);
   };
 

@@ -50,7 +50,7 @@ export const AppRoutes = [
       },
       {
         path: "form",
-        element: lazy(() => import("@/pages/ShipScheduleForm")),
+        element: lazy(() => import("@/pages/ShipScheduleFormPage")),
       },
       {
         path: ":id",
@@ -63,6 +63,12 @@ export const AppRoutes = [
     path: "/ship-schedules/:id/attendance/qr",
     element: lazy(() => import("@/pages/ShipScheduleAttendanceKioskPage")),
     layout: false,
+  },
+
+  {
+    path: RoutePath.CrewSchedule,
+    roles: [UserRole.SAILOR],
+    element: lazy(() => import("@/pages/CrewSchedulePage")),
   },
 
   {

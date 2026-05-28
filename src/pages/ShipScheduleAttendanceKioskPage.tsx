@@ -28,12 +28,7 @@ import { useShipScheduleDetail } from "@/queries/ship-schedule.query";
 import type { CheckType, AttendanceMethod } from "@/types/api/attendance.api";
 
 import { ImageAssets } from "@/constants/Asset";
-
-const QR_REFRESH_SECONDS = 60;
-
-const KIOSK_PASSWORD = "123456";
-
-const SECRET_TAP_COUNT = 5;
+import AppProperty from "@/config/app.config";
 
 export const useShipScheduleAttendanceKioskPageParams = (): {
   type: CheckType;
@@ -61,7 +56,7 @@ export default function ShipScheduleAttendanceKioskPage() {
 
   const [qrToken, setQrToken] = useState("");
 
-  const [countdown, setCountdown] = useState(QR_REFRESH_SECONDS);
+  const [countdown, setCountdown] = useState(AppProperty.QR_REFRESH_SECONDS);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -123,7 +118,7 @@ export default function ShipScheduleAttendanceKioskPage() {
 
     setQrToken(data.token);
 
-    setCountdown(QR_REFRESH_SECONDS);
+    setCountdown(AppProperty.QR_REFRESH_SECONDS);
   };
 
   useEffect(() => {
@@ -133,7 +128,7 @@ export default function ShipScheduleAttendanceKioskPage() {
   useEffect(() => {
     const interval = setInterval(() => {
       generateNewQr();
-    }, QR_REFRESH_SECONDS * 1000);
+    }, AppProperty.QR_REFRESH_SECONDS * 1000);
 
     return () => clearInterval(interval);
   }, [checkType]);
@@ -143,7 +138,7 @@ export default function ShipScheduleAttendanceKioskPage() {
     const interval = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
-          return QR_REFRESH_SECONDS;
+          return AppProperty.QR_REFRESH_SECONDS;
         }
 
         return prev - 1;
@@ -178,7 +173,7 @@ export default function ShipScheduleAttendanceKioskPage() {
 
   // ================= EXIT =================
   const handleVerifyExit = async () => {
-    if (password !== KIOSK_PASSWORD) {
+    if (password !== AppProperty.KIOSK_PASSWORD) {
       setPasswordError("Sai mật khẩu");
 
       return;
@@ -214,7 +209,7 @@ export default function ShipScheduleAttendanceKioskPage() {
       logoTapCountRef.current = 0;
     }, 1800);
 
-    if (logoTapCountRef.current < SECRET_TAP_COUNT) {
+    if (logoTapCountRef.current < AppProperty.SECRET_TAP_COUNT) {
       return;
     }
 
@@ -229,7 +224,7 @@ export default function ShipScheduleAttendanceKioskPage() {
     }, 1200);
   };
 
-  const progressValue = (countdown / QR_REFRESH_SECONDS) * 100;
+  const progressValue = (countdown / AppProperty.QR_REFRESH_SECONDS) * 100;
 
   const modeColor = checkType === "IN" ? "#22c55e" : "#ef4444";
 

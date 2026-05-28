@@ -15,6 +15,7 @@ export const mapCandidateInfoToFormValues = (
     fullName: string;
     phoneNumber: string;
     address: string;
+    email: string;
   },
 ): FormValues => {
   if (!candidateInfo) {
@@ -26,6 +27,7 @@ export const mapCandidateInfoToFormValues = (
     employee: {
       ...currentFormValues.employee,
       fullName: candidateInfo?.fullName,
+      email: candidateInfo?.email,
       phoneNumber: candidateInfo?.phoneNumber,
       permanentAddress: candidateInfo?.address,
       temporaryAddress: candidateInfo?.address,
