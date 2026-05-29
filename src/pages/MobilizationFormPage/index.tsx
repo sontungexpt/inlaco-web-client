@@ -315,7 +315,7 @@ export default function MobiliaztionFormPage() {
   ) => {
     try {
       let shipImageAssetId = null;
-      if (values.shipInfo.image) {
+      if (values.shipInfo.image instanceof File) {
         const shipImage = await cloudinaryUpload(
           values.shipInfo.image,
           UploadStrategy.SHIP_IMAGE,
