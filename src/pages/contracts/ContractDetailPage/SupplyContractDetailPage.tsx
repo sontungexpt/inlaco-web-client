@@ -40,6 +40,11 @@ const SupplyContractDetailPage = () => {
       />
     );
   }
+  // auto compat with old backend
+  const version =
+    typeof contract.version === "number"
+      ? contract.version
+      : contract.version?.num || 0;
 
   return (
     <ContractDetailLayout
@@ -127,7 +132,7 @@ const SupplyContractDetailPage = () => {
             files={contract.attachments || []}
           />
 
-          {contract.version > 1 && (
+          {version > 1 && (
             <Box
               sx={{
                 mt: 4,

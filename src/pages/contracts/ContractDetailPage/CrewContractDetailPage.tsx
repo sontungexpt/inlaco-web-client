@@ -47,6 +47,12 @@ const CrewContractDetailPage = () => {
     );
   }
 
+  // auto compat with old backend
+  const version =
+    typeof contract.version === "number"
+      ? contract.version
+      : contract.version?.num || 0;
+
   return (
     <ContractDetailLayout
       title="Chi tiết hợp đồng thuyền viên"
@@ -147,7 +153,7 @@ const CrewContractDetailPage = () => {
             files={contract.attachments || []}
           />
 
-          {(contract?.version?.num || 0) > 1 && (
+          {version > 1 && (
             <Box
               sx={{
                 mt: 4,
