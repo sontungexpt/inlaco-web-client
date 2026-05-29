@@ -63,7 +63,9 @@ export default function PostFormPage() {
   ) => {
     try {
       const [image] = await Promise.all([
-        cloudinaryUpload(values.image, UploadStrategy.POST_IMAGE),
+        !values.image?.publicId
+          ? cloudinaryUpload(values.image, UploadStrategy.POST_IMAGE)
+          : null,
         // cloudinaryUpload(
         //   values.instituteLogo,
         //   UploadStrategy.TRAINING_PROVIDER_LOGO,
@@ -83,9 +85,10 @@ export default function PostFormPage() {
       viewPostDetail(newPost);
     } catch (error) {
       const msg = FormType.CREATE
-        ? "Tạo bài đăng thất bại"
-        : "Cập nhật bài đăng thất bại";
+        ? "Cập nhật bài đăng thất bại"
+        : "Tạo bài đăng thất bại";
       toast.error(msg);
+      console.error(error);
     }
   };
 
