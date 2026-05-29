@@ -191,8 +191,12 @@ const CrewContractFormPage = () => {
             >
               <PageTitle
                 mb={2}
-                title="TẠO HỢP ĐỒNG THUYỀN VIÊN"
-                subtitle="Tạo và lưu hợp đồng mới vào hệ thống"
+                title={isEdit ? "CẬP NHẬT HỢP ĐỒNG" : "TẠO HỢP ĐỒNG"}
+                subtitle={
+                  isEdit
+                    ? "Cập nhật thông tin hợp đồng lao động thuyền viên"
+                    : "Tạo hợp đồng lao động thuyền viên"
+                }
               />
 
               <Box sx={{ display: "flex", gap: 1 }}>

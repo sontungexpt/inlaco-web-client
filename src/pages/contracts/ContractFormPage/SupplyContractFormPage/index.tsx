@@ -182,12 +182,12 @@ const SupplyContractFormPage = () => {
               }}
             >
               <PageTitle
-                title={
+                title={isEdit ? "CẬP NHẬT HỢP ĐỒNG" : "TẠO HỢP ĐỒNG"}
+                subtitle={
                   isEdit
-                    ? "CÂP NHẤT HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN"
-                    : "TẠO HỢP ĐỒNG CUNG ỨNG THUYỀN VIÊN"
+                    ? "Cập nhật hợp đồng cung ứng thuyền viên"
+                    : "Tạo hợp đồng cung ứng thuyền viên"
                 }
-                subtitle={isEdit ? "Lưu hợp đồng mới" : "Tạo hợp đồng"}
               />
 
               <Box display="flex" gap={2} mt={2}>
