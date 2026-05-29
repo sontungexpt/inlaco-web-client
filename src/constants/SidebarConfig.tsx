@@ -238,23 +238,17 @@ const SidebarConfig: SidebarSection[] = [
     short: "K",
 
     items: [
-      {
-        title: "Tạo yêu cầu Cung ứng",
-
-        to: "/supply-requests/form",
-
-        icon: <MarkEmailUnreadOutlinedIcon />,
-
-        access: Permission.USER_ONLY,
-      },
+      // {
+      //   title: "Tạo yêu cầu Cung ứng",
+      //   to: "/supply-requests/form",
+      //   icon: <MarkEmailUnreadOutlinedIcon />,
+      //   access: Permission.USER_ONLY,
+      // },
 
       {
         title: "Yêu cầu Cung ứng",
-
         to: "/supply-requests",
-
         icon: <MarkEmailUnreadOutlinedIcon />,
-
         access: Permission.ADMIN_ONLY,
       },
 

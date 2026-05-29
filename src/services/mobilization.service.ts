@@ -43,11 +43,22 @@ export const createMobilization = async (
   return response.data;
 };
 
-export const fetchMyMobilizations = async (): Promise<PageableResponse<MobilizationSchedule>> => {
-  const response = await privateRequest.get<PageableResponse<MobilizationSchedule>>(
-    MobilizationEndpoint.CURRENT_MOBILIZATION,
-    { params: { size: 500 } },
-  );
+export const fetchMyMobilizations = async ({
+  page = 0,
+  pageSize = 12,
+  sort,
+  filter,
+}: FetchMobilizationSchedulesParams) => {
+  const response = await privateRequest.get<
+    PageableResponse<MobilizationSchedule>
+  >(MobilizationEndpoint.GET_MY_MOBILIZATIONS, {
+    params: {
+      page,
+      size: pageSize,
+      sort,
+      ...flattenFilter(filter),
+    },
+  });
   return response.data;
 };
 

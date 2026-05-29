@@ -10,41 +10,61 @@ import {
   InfoTextField,
   ViewTextField,
 } from "@components/common";
+
 import { Grid, Box, Button, CircularProgress } from "@mui/material";
+
 import SaveIcon from "@mui/icons-material/Save";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 
 import Color from "@constants/Color";
 import { Formik, FormikErrors, FormikHelpers, useFormikContext } from "formik";
+
 import { useNavigate, useSearchParams } from "react-router";
+
 import { createMobilization } from "@/services/mobilization.service";
+
 import { FORM_SCHEMA, FormValues, FormValuesCrew } from "./schema";
+
 import {
   mapToFormValues as mapContractToFormValues,
   mapValuesToRequestBody,
 } from "./mapper";
+
 import toast from "react-hot-toast";
+
 import { BASE_FORM_VALUES } from "./initial";
+
 import {
   BaseEditableDataGridColumn,
   BaseEditableDataGridRenderEditCellProps,
 } from "@/components/common/datagrid/BaseEditableDataGrid";
+
 import BaseEditableDataGridToolbar from "@/components/common/datagrid/components/BaseEditableDataGridToolbar";
+
 import { useCrewProfiles } from "@/queries/crew-profile.query";
+
 import { CrewProfile } from "@/types/api/crew-profile";
+
 import { GetCellError } from "@/components/common/datagrid/shared/error-store";
+
 import { useContract } from "@/queries/contract.query";
+
 import { CrewSupplyContract } from "@/types/api/contract.api";
+
 import UploadStrategy from "@/constants/UploadStrategy";
+
 import cloudinaryUpload from "@/services/cloudinary.service";
+
 import { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
+
 import { ErrorResponse } from "@/types/api/shared/base.api";
 
 const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
   const initials = opt.fullName?.charAt(0)?.toUpperCase() ?? "?";
 
   const birth = opt.birthDate ? new Date(opt.birthDate) : null;
+
   const age = birth ? new Date().getFullYear() - birth.getFullYear() : null;
 
   return (
@@ -58,7 +78,6 @@ const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
         borderRadius: 2,
         cursor: "pointer",
         transition: "all 0.18s ease",
-
         bgcolor: selected ? "primary.50" : "transparent",
 
         "&:hover": {
@@ -66,7 +85,6 @@ const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
         },
       }}
     >
-      {/* Avatar */}
       <Box
         sx={{
           width: 36,
@@ -85,9 +103,7 @@ const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
         {initials}
       </Box>
 
-      {/* Content */}
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        {/* Row 1 */}
         <Box
           sx={{
             display: "flex",
@@ -96,7 +112,6 @@ const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
             minWidth: 0,
           }}
         >
-          {/* Name */}
           <Box
             sx={{
               fontWeight: 600,
@@ -109,7 +124,6 @@ const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
             {opt.fullName}
           </Box>
 
-          {/* ID badge */}
           <Box
             sx={{
               fontSize: 10.5,
@@ -126,7 +140,6 @@ const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
           </Box>
         </Box>
 
-        {/* Row 2 */}
         <Box
           sx={{
             display: "flex",
@@ -138,20 +151,16 @@ const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
             flexWrap: "wrap",
           }}
         >
-          {/* Role */}
           {opt.professionalPosition && (
             <Box sx={{ whiteSpace: "nowrap" }}>{opt.professionalPosition}</Box>
           )}
 
-          {/* Divider dot */}
           {(opt.professionalPosition || age) && (
             <Box sx={{ opacity: 0.4 }}>•</Box>
           )}
 
-          {/* Age */}
           {age && age > 0 && <Box>{age} tuổi</Box>}
 
-          {/* Insurance badges */}
           {(opt.socialInsuranceCode || opt.accidentInsuranceCode) && (
             <>
               <Box sx={{ opacity: 0.4 }}>•</Box>
@@ -194,7 +203,6 @@ const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
         </Box>
       </Box>
 
-      {/* Selected indicator */}
       {selected && (
         <Box
           sx={{
@@ -253,7 +261,10 @@ function CrewSearchEditCell({
       dropdownEnabled
       renderDropdownItem={renderCrewOption}
       onChange={(_, value: string) => {
-        onRowChange({ ...row, [key]: value });
+        onRowChange({
+          ...row,
+          [key]: value,
+        });
       }}
       onDropdownItemSeletected={handleSelect}
       sx={{
@@ -296,8 +307,11 @@ function renderDateCell<R, SR>({
   );
 }
 
-function useMobilizationFormPageParams(): { contractId?: string } {
+function useMobilizationFormPageParams(): {
+  contractId?: string;
+} {
   const [searchParams] = useSearchParams();
+
   const contractId = searchParams.get("contractId") || undefined;
 
   return { contractId };
@@ -307,19 +321,22 @@ export default function MobiliaztionFormPage() {
   const navigate = useNavigate();
 
   const { contractId } = useMobilizationFormPageParams();
+
   const { data: contract } = useContract<CrewSupplyContract>(contractId!);
 
   const handleFormSubmission = async (
     values: FormValues,
-    { resetForm, setFieldError, setErrors }: FormikHelpers<FormValues>,
+    { resetForm, setErrors, setFieldError }: FormikHelpers<FormValues>,
   ) => {
     try {
       let shipImageAssetId = null;
+
       if (values.shipInfo.image instanceof File) {
         const shipImage = await cloudinaryUpload(
           values.shipInfo.image,
           UploadStrategy.SHIP_IMAGE,
         );
+
         shipImageAssetId = shipImage.assetId;
       }
 
@@ -328,6 +345,7 @@ export default function MobiliaztionFormPage() {
       );
 
       resetForm();
+
       navigate(`/mobilizations/${newMobilization.id}`);
     } catch (err) {
       if (
@@ -335,7 +353,16 @@ export default function MobiliaztionFormPage() {
         err.status === HttpStatusCode.BadRequest
       ) {
         const response = err.response as AxiosResponse<ErrorResponse>;
-        if (response.data.errorCode === "CREW_MOBILIZATION_ERR_001") {
+
+        const errorCode = response.data.errorCode;
+
+        /**
+         * =========================================================
+         * CREW_MOBILIZATION_ERR_001
+         * =========================================================
+         * Logic cũ giữ nguyên
+         */
+        if (errorCode === "CREW_MOBILIZATION_ERR_001") {
           const conflicts = response.data.data as {
             employeeCardId: string;
           }[];
@@ -363,9 +390,147 @@ export default function MobiliaztionFormPage() {
           });
 
           toast.error("Có điều động bị trùng");
+
+          return;
+        }
+
+        /**
+         * =========================================================
+         * CREW_MOBILIZATION_ERR_002
+         * =========================================================
+         * Invalid assignments
+         */
+        if (errorCode === "CREW_MOBILIZATION_ERR_002") {
+          const crewErrors: FormikErrors<FormValuesCrew>[] = [];
+
+          values.crews.forEach((_, index) => {
+            crewErrors[index] = {
+              employeeCardId: "Thông tin thuyền viên không hợp lệ",
+            };
+          });
+
+          setErrors({
+            crews: crewErrors,
+          });
+
+          toast.error("Danh sách điều động không hợp lệ");
+
+          return;
+        }
+
+        /**
+         * =========================================================
+         * CREW_MOBILIZATION_ERR_003
+         * =========================================================
+         * Invalid assignment date
+         */
+        if (errorCode === "CREW_MOBILIZATION_ERR_003") {
+          const crewErrors: FormikErrors<FormValuesCrew>[] = [];
+
+          values.crews.forEach((crew, index) => {
+            crewErrors[index] = {
+              startDate: "Ngày điều động không hợp lệ",
+              endDate: "Ngày điều động không hợp lệ",
+            };
+
+            if (
+              crew.startDate &&
+              crew.endDate &&
+              new Date(crew.startDate) > new Date(crew.endDate)
+            ) {
+              crewErrors[index] = {
+                startDate: "Ngày bắt đầu phải nhỏ hơn ngày kết thúc",
+                endDate: "Ngày kết thúc phải lớn hơn ngày bắt đầu",
+              };
+            }
+          });
+
+          setErrors({
+            crews: crewErrors,
+          });
+
+          toast.error("Có thời gian điều động không hợp lệ");
+
+          return;
+        }
+
+        /**
+         * =========================================================
+         * CREW_MOBILIZATION_ERR_004
+         * =========================================================
+         * Crew not found
+         */
+        if (errorCode === "CREW_MOBILIZATION_ERR_004") {
+          const crewErrors: FormikErrors<FormValuesCrew>[] = [];
+
+          values.crews.forEach((_, index) => {
+            crewErrors[index] = {
+              employeeCardId: "Không tìm thấy thuyền viên",
+            };
+          });
+
+          setErrors({
+            crews: crewErrors,
+          });
+
+          toast.error("Có thuyền viên không tồn tại");
+
+          return;
+        }
+
+        /**
+         * =========================================================
+         * CREW_MOBILIZATION_ERR_005
+         * =========================================================
+         * Crew has no account
+         */
+        if (errorCode === "CREW_MOBILIZATION_ERR_005") {
+          const crewErrors: FormikErrors<FormValuesCrew>[] = [];
+
+          values.crews.forEach((_, index) => {
+            crewErrors[index] = {
+              employeeCardId: "Thuyền viên chưa có tài khoản",
+            };
+          });
+
+          setErrors({
+            crews: crewErrors,
+          });
+
+          toast.error("Có thuyền viên chưa có tài khoản");
+
+          return;
+        }
+
+        /**
+         * =========================================================
+         * CREW_MOBILIZATION_ERR_006
+         * =========================================================
+         * Contract not active
+         */
+        if (errorCode === "CREW_MOBILIZATION_ERR_006") {
+          setFieldError("partnerName", "Hợp đồng chưa hoạt động");
+
+          toast.error("Hợp đồng chưa ở trạng thái hoạt động");
+
+          return;
+        }
+
+        /**
+         * =========================================================
+         * CREW_MOBILIZATION_ERR_007
+         * =========================================================
+         * Contract not found
+         */
+        if (errorCode === "CREW_MOBILIZATION_ERR_007") {
+          setFieldError("partnerName", "Không tìm thấy hợp đồng");
+
+          toast.error("Không tìm thấy hợp đồng");
+
           return;
         }
       }
+
       toast.error("Tạo điều động thất bại, thử lại sau");
     }
   };
@@ -409,11 +574,13 @@ export default function MobiliaztionFormPage() {
           name: "",
           renderCell: ({ row }) => {
             const { values, setFieldValue } = useFormikContext<FormValues>();
+
             return (
               <Button
                 color="error"
                 onClick={() => {
                   const newRows = values.crews.filter((r) => r.id !== row.id);
+
                   setFieldValue("crews", newRows, true);
                 }}
               >
@@ -430,6 +597,7 @@ export default function MobiliaztionFormPage() {
     if (contract) {
       return mapContractToFormValues(BASE_FORM_VALUES, contract);
     }
+
     return BASE_FORM_VALUES;
   }, [contract]);
 
@@ -453,7 +621,6 @@ export default function MobiliaztionFormPage() {
       }) => {
         return (
           <Box component="form" onSubmit={handleSubmit} m={2}>
-            {/* ================= HEADER ================= */}
             <SectionWrapper
               sx={{
                 position: "sticky",
@@ -526,7 +693,11 @@ export default function MobiliaztionFormPage() {
                   <Button
                     size="small"
                     endIcon={
-                      <ArrowForwardIosRoundedIcon sx={{ fontSize: 12 }} />
+                      <ArrowForwardIosRoundedIcon
+                        sx={{
+                          fontSize: 12,
+                        }}
+                      />
                     }
                     sx={{
                       ml: "auto",
@@ -559,7 +730,6 @@ export default function MobiliaztionFormPage() {
               </Button>
             </SectionWrapper>
 
-            {/* ================= THÔNG TIN CHUNG ================= */}
             <SectionWrapper title="Thông tin chung">
               <Grid container spacing={2}>
                 <Grid size={5}>
@@ -592,7 +762,6 @@ export default function MobiliaztionFormPage() {
               </Grid>
             </SectionWrapper>
 
-            {/* ================= LỊCH TRÌNH ================= */}
             <SectionWrapper title="Thời gian điều động">
               <Grid container spacing={2}>
                 <Grid size={6}>
@@ -602,6 +771,7 @@ export default function MobiliaztionFormPage() {
                     label="Thời gian bắt đầu công việc"
                     onChange={(e) => {
                       const val = e.target.value as any;
+
                       setValues((prev) => {
                         return {
                           ...prev,
@@ -617,6 +787,7 @@ export default function MobiliaztionFormPage() {
                     }}
                   />
                 </Grid>
+
                 <Grid size={6}>
                   <InfoTextFieldFormik
                     name="endDate"
@@ -624,6 +795,7 @@ export default function MobiliaztionFormPage() {
                     label="Thời gian kết thúc công việc"
                     onChange={(e) => {
                       const val = e.target.value as any;
+
                       setValues((prev) => {
                         return {
                           ...prev,
@@ -639,7 +811,7 @@ export default function MobiliaztionFormPage() {
                 </Grid>
               </Grid>
             </SectionWrapper>
-            {/* ================= THÔNG TIN TÀU ================= */}
+
             <SectionWrapper title="Thông tin tàu">
               <Box display="flex" justifyContent="center" mb={2}>
                 <ImageUploadFieldFormik
@@ -678,7 +850,6 @@ export default function MobiliaztionFormPage() {
               </Grid>
             </SectionWrapper>
 
-            {/* ================= CREW ================= */}
             <SectionWrapper>
               <BaseEditableDataGrid<FormValuesCrew>
                 columns={columns}
@@ -694,8 +865,8 @@ export default function MobiliaztionFormPage() {
                             id: crypto.randomUUID(),
                             startDate: values.startDate,
                             endDate: values.endDate,
-                            startDateManual: false,
-                            endDateManual: false,
+                            isStartManual: false,
+                            isEndManual: false,
                           },
                           ...values.crews,
                         ],
@@ -707,6 +878,7 @@ export default function MobiliaztionFormPage() {
                 getCellError={useCallback<GetCellError<FormValuesCrew>>(
                   ({ rowIdx, column }) => {
                     const colKey = column.key;
+
                     return (errors.crews as any)?.[rowIdx]?.[colKey];
                   },
                   [errors.crews],
@@ -722,3 +894,727 @@ export default function MobiliaztionFormPage() {
     </Formik>
   );
 }
+// import { useMemo, useState, useCallback } from "react";
+// import {
+//   PageTitle,
+//   SectionWrapper,
+//   InfoTextFieldFormik,
+//   ImageUploadFieldFormik,
+//   NationalityTextField,
+//   BaseEditableDataGrid,
+//   SearchBar,
+//   InfoTextField,
+//   ViewTextField,
+// } from "@components/common";
+// import { Grid, Box, Button, CircularProgress } from "@mui/material";
+// import SaveIcon from "@mui/icons-material/Save";
+// import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+// import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+
+// import Color from "@constants/Color";
+// import { Formik, FormikErrors, FormikHelpers, useFormikContext } from "formik";
+// import { useNavigate, useSearchParams } from "react-router";
+// import { createMobilization } from "@/services/mobilization.service";
+// import { FORM_SCHEMA, FormValues, FormValuesCrew } from "./schema";
+// import {
+//   mapToFormValues as mapContractToFormValues,
+//   mapValuesToRequestBody,
+// } from "./mapper";
+// import toast from "react-hot-toast";
+// import { BASE_FORM_VALUES } from "./initial";
+// import {
+//   BaseEditableDataGridColumn,
+//   BaseEditableDataGridRenderEditCellProps,
+// } from "@/components/common/datagrid/BaseEditableDataGrid";
+// import BaseEditableDataGridToolbar from "@/components/common/datagrid/components/BaseEditableDataGridToolbar";
+// import { useCrewProfiles } from "@/queries/crew-profile.query";
+// import { CrewProfile } from "@/types/api/crew-profile";
+// import { GetCellError } from "@/components/common/datagrid/shared/error-store";
+// import { useContract } from "@/queries/contract.query";
+// import { CrewSupplyContract } from "@/types/api/contract.api";
+// import UploadStrategy from "@/constants/UploadStrategy";
+// import cloudinaryUpload from "@/services/cloudinary.service";
+// import { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
+// import { ErrorResponse } from "@/types/api/shared/base.api";
+
+// const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
+//   const initials = opt.fullName?.charAt(0)?.toUpperCase() ?? "?";
+
+//   const birth = opt.birthDate ? new Date(opt.birthDate) : null;
+//   const age = birth ? new Date().getFullYear() - birth.getFullYear() : null;
+
+//   return (
+//     <Box
+//       sx={{
+//         display: "flex",
+//         alignItems: "center",
+//         gap: 1.5,
+//         px: 1.5,
+//         py: 1,
+//         borderRadius: 2,
+//         cursor: "pointer",
+//         transition: "all 0.18s ease",
+
+//         bgcolor: selected ? "primary.50" : "transparent",
+
+//         "&:hover": {
+//           bgcolor: selected ? "primary.50" : "action.hover",
+//         },
+//       }}
+//     >
+//       {/* Avatar */}
+//       <Box
+//         sx={{
+//           width: 36,
+//           height: 36,
+//           borderRadius: "50%",
+//           background: "linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)",
+//           color: "#fff",
+//           display: "flex",
+//           alignItems: "center",
+//           justifyContent: "center",
+//           fontWeight: 600,
+//           fontSize: 13,
+//           flexShrink: 0,
+//         }}
+//       >
+//         {initials}
+//       </Box>
+
+//       {/* Content */}
+//       <Box sx={{ flex: 1, minWidth: 0 }}>
+//         {/* Row 1 */}
+//         <Box
+//           sx={{
+//             display: "flex",
+//             alignItems: "center",
+//             gap: 1,
+//             minWidth: 0,
+//           }}
+//         >
+//           {/* Name */}
+//           <Box
+//             sx={{
+//               fontWeight: 600,
+//               fontSize: 13.5,
+//               whiteSpace: "nowrap",
+//               overflow: "hidden",
+//               textOverflow: "ellipsis",
+//             }}
+//           >
+//             {opt.fullName}
+//           </Box>
+
+//           {/* ID badge */}
+//           <Box
+//             sx={{
+//               fontSize: 10.5,
+//               px: 0.7,
+//               py: 0.2,
+//               borderRadius: 1,
+//               bgcolor: "grey.100",
+//               color: "text.secondary",
+//               fontWeight: 500,
+//               flexShrink: 0,
+//             }}
+//           >
+//             {opt.employeeCardId}
+//           </Box>
+//         </Box>
+
+//         {/* Row 2 */}
+//         <Box
+//           sx={{
+//             display: "flex",
+//             alignItems: "center",
+//             gap: 0.8,
+//             fontSize: 12,
+//             color: "text.secondary",
+//             mt: 0.2,
+//             flexWrap: "wrap",
+//           }}
+//         >
+//           {/* Role */}
+//           {opt.professionalPosition && (
+//             <Box sx={{ whiteSpace: "nowrap" }}>{opt.professionalPosition}</Box>
+//           )}
+
+//           {/* Divider dot */}
+//           {(opt.professionalPosition || age) && (
+//             <Box sx={{ opacity: 0.4 }}>•</Box>
+//           )}
+
+//           {/* Age */}
+//           {age && age > 0 && <Box>{age} tuổi</Box>}
+
+//           {/* Insurance badges */}
+//           {(opt.socialInsuranceCode || opt.accidentInsuranceCode) && (
+//             <>
+//               <Box sx={{ opacity: 0.4 }}>•</Box>
+
+//               <Box sx={{ display: "flex", gap: 0.5 }}>
+//                 {opt.socialInsuranceCode && (
+//                   <Box
+//                     sx={{
+//                       px: 0.6,
+//                       py: 0.1,
+//                       borderRadius: 1,
+//                       bgcolor: "success.lighter",
+//                       color: "success.dark",
+//                       fontSize: 9,
+//                       fontWeight: 600,
+//                     }}
+//                   >
+//                     BHXH
+//                   </Box>
+//                 )}
+
+//                 {opt.accidentInsuranceCode && (
+//                   <Box
+//                     sx={{
+//                       px: 0.6,
+//                       py: 0.1,
+//                       borderRadius: 1,
+//                       bgcolor: "warning.lighter",
+//                       color: "warning.dark",
+//                       fontSize: 9,
+//                       fontWeight: 600,
+//                     }}
+//                   >
+//                     BHTN
+//                   </Box>
+//                 )}
+//               </Box>
+//             </>
+//           )}
+//         </Box>
+//       </Box>
+
+//       {/* Selected indicator */}
+//       {selected && (
+//         <Box
+//           sx={{
+//             width: 8,
+//             height: 8,
+//             borderRadius: "50%",
+//             bgcolor: "primary.main",
+//             flexShrink: 0,
+//             boxShadow: "0 0 0 2px rgba(25,118,210,0.2)",
+//           }}
+//         />
+//       )}
+//     </Box>
+//   );
+// };
+
+// function CrewSearchEditCell({
+//   row,
+//   column,
+//   onRowChange,
+// }: BaseEditableDataGridRenderEditCellProps<FormValuesCrew>) {
+//   const key = column.key as keyof FormValuesCrew;
+
+//   const [keyword, setKeyword] = useState("");
+
+//   const { data: { content: crewProfiles = [] } = {}, isLoading: isSearching } =
+//     useCrewProfiles({
+//       page: 0,
+//       pageSize: 10,
+//       filter: {
+//         keyword,
+//         workStatus: "AVAILABLE",
+//       },
+//     });
+
+//   const handleSelect = (opt: CrewProfile) => {
+//     onRowChange(
+//       {
+//         ...row,
+//         employeeCardId: opt.employeeCardId,
+//         fullName: opt.fullName,
+//         rankOnBoard: opt.professionalPosition,
+//       },
+//       true,
+//     );
+//   };
+
+//   return (
+//     <SearchBar
+//       onSearch={(value) => {
+//         setKeyword(value);
+//       }}
+//       dropdownItems={crewProfiles}
+//       loading={isSearching}
+//       autoFocus
+//       dropdownEnabled
+//       renderDropdownItem={renderCrewOption}
+//       onChange={(_, value: string) => {
+//         onRowChange({ ...row, [key]: value });
+//       }}
+//       onDropdownItemSeletected={handleSelect}
+//       sx={{
+//         height: "100%",
+//         width: "100%",
+//       }}
+//     />
+//   );
+// }
+
+// function renderSearchEditCell(
+//   props: BaseEditableDataGridRenderEditCellProps<FormValuesCrew>,
+// ) {
+//   return <CrewSearchEditCell {...props} />;
+// }
+
+// function renderDateCell<R, SR>({
+//   row,
+//   column,
+//   onRowChange,
+// }: BaseEditableDataGridRenderEditCellProps<R, SR>) {
+//   const key = column.key as keyof R;
+
+//   return (
+//     <InfoTextField
+//       value={(row[key] ?? "") as string}
+//       type={column.type}
+//       onChange={(e) => {
+//         onRowChange({
+//           ...row,
+//           [key]: e.target.value,
+//           [key === "startDate" ? "isStartManual" : "isEndManual"]: true,
+//         });
+//       }}
+//       sx={{
+//         height: "100%",
+//         width: "100%",
+//       }}
+//     />
+//   );
+// }
+
+// function useMobilizationFormPageParams(): { contractId?: string } {
+//   const [searchParams] = useSearchParams();
+//   const contractId = searchParams.get("contractId") || undefined;
+
+//   return { contractId };
+// }
+
+// export default function MobiliaztionFormPage() {
+//   const navigate = useNavigate();
+
+//   const { contractId } = useMobilizationFormPageParams();
+//   const { data: contract } = useContract<CrewSupplyContract>(contractId!);
+
+//   const handleFormSubmission = async (
+//     values: FormValues,
+//     { resetForm, setFieldError, setErrors }: FormikHelpers<FormValues>,
+//   ) => {
+//     try {
+//       let shipImageAssetId = null;
+//       if (values.shipInfo.image instanceof File) {
+//         const shipImage = await cloudinaryUpload(
+//           values.shipInfo.image,
+//           UploadStrategy.SHIP_IMAGE,
+//         );
+//         shipImageAssetId = shipImage.assetId;
+//       }
+
+//       const newMobilization = await createMobilization(
+//         mapValuesToRequestBody(values, contractId!, shipImageAssetId),
+//       );
+
+//       resetForm();
+//       navigate(`/mobilizations/${newMobilization.id}`);
+//     } catch (err) {
+//       if (
+//         err instanceof AxiosError &&
+//         err.status === HttpStatusCode.BadRequest
+//       ) {
+//         const response = err.response as AxiosResponse<ErrorResponse>;
+//         if (response.data.errorCode === "CREW_MOBILIZATION_ERR_001") {
+//           const conflicts = response.data.data as {
+//             employeeCardId: string;
+//           }[];
+
+//           const conflictMap = new Map(
+//             conflicts.map((c) => [c.employeeCardId, c]),
+//           );
+
+//           const crewErrors: FormikErrors<FormValuesCrew>[] = [];
+
+//           values.crews.forEach((crew, index) => {
+//             const conflict = conflictMap.get(crew.employeeCardId);
+
+//             if (!conflict) {
+//               return;
+//             }
+
+//             crewErrors[index] = {
+//               employeeCardId: "Thuyền viên bận vào thời gian điều động",
+//             };
+//           });
+
+//           setErrors({
+//             crews: crewErrors,
+//           });
+
+//           toast.error("Có điều động bị trùng");
+//           return;
+//         }
+//       }
+//       toast.error("Tạo điều động thất bại, thử lại sau");
+//     }
+//   };
+
+//   const columns: BaseEditableDataGridColumn<FormValuesCrew>[] = useMemo(
+//     () =>
+//       [
+//         {
+//           key: "employeeCardId",
+//           name: "Số thẻ nhân viên",
+//           renderEditCell: renderSearchEditCell,
+//         },
+//         {
+//           key: "fullName",
+//           name: "Họ tên",
+//           editable: false,
+//         },
+//         {
+//           key: "rankOnBoard",
+//           name: "Chức danh",
+//         },
+//         {
+//           key: "startDate",
+//           name: "Ngày bắt đầu",
+//           type: "datetime",
+//           renderEditCell: renderDateCell,
+//         },
+//         {
+//           key: "endDate",
+//           name: "Ngày kết thúc",
+//           type: "datetime",
+//           renderEditCell: renderDateCell,
+//         },
+//         {
+//           key: "remark",
+//           name: "Ghi chú",
+//         },
+//         {
+//           key: "__action__",
+//           width: 70,
+//           name: "",
+//           renderCell: ({ row }) => {
+//             const { values, setFieldValue } = useFormikContext<FormValues>();
+//             return (
+//               <Button
+//                 color="error"
+//                 onClick={() => {
+//                   const newRows = values.crews.filter((r) => r.id !== row.id);
+//                   setFieldValue("crews", newRows, true);
+//                 }}
+//               >
+//                 Xoá
+//               </Button>
+//             );
+//           },
+//         },
+//       ] as BaseEditableDataGridColumn<FormValuesCrew>[],
+//     [],
+//   );
+
+//   const initialValues = useMemo(() => {
+//     if (contract) {
+//       return mapContractToFormValues(BASE_FORM_VALUES, contract);
+//     }
+//     return BASE_FORM_VALUES;
+//   }, [contract]);
+
+//   return (
+//     <Formik
+//       initialValues={initialValues}
+//       enableReinitialize
+//       validationSchema={FORM_SCHEMA}
+//       validateOnChange={false}
+//       validateOnBlur
+//       onSubmit={handleFormSubmission}
+//     >
+//       {({
+//         values,
+//         errors,
+//         handleSubmit,
+//         dirty,
+//         isSubmitting,
+//         setFieldValue,
+//         setValues,
+//       }) => {
+//         return (
+//           <Box component="form" onSubmit={handleSubmit} m={2}>
+//             {/* ================= HEADER ================= */}
+//             <SectionWrapper
+//               sx={{
+//                 position: "sticky",
+//                 top: 0,
+//                 zIndex: 10,
+//                 display: "flex",
+//                 justifyContent: "space-between",
+//                 alignItems: "center",
+//                 mb: 2,
+//               }}
+//             >
+//               <PageTitle title="TẠO ĐIỀU ĐỘNG" subtitle="Tạo điều động mới" />
+
+//               {contractId && (
+//                 <Box
+//                   sx={{
+//                     display: "flex",
+//                     alignItems: "center",
+//                     gap: 1.5,
+//                     px: 2,
+//                     py: 1.2,
+//                     borderRadius: 3,
+//                     bgcolor: "rgba(255, 215, 0, 0.08)",
+//                     border: "1px solid rgba(255, 215, 0, 0.25)",
+//                     backdropFilter: "blur(8px)",
+//                   }}
+//                 >
+//                   <Box
+//                     sx={{
+//                       width: 40,
+//                       height: 40,
+//                       borderRadius: 2,
+//                       bgcolor: Color.PrimaryGold,
+//                       color: Color.PrimaryBlack,
+//                       display: "flex",
+//                       alignItems: "center",
+//                       justifyContent: "center",
+//                       boxShadow: 2,
+//                     }}
+//                   >
+//                     <DescriptionOutlinedIcon fontSize="small" />
+//                   </Box>
+
+//                   <Box>
+//                     <Box
+//                       sx={{
+//                         fontSize: 11,
+//                         color: "text.secondary",
+//                         fontWeight: 600,
+//                         textTransform: "uppercase",
+//                         letterSpacing: 0.5,
+//                       }}
+//                     >
+//                       Hợp đồng liên kết
+//                     </Box>
+
+//                     <Box
+//                       sx={{
+//                         display: "flex",
+//                         alignItems: "center",
+//                         gap: 0.8,
+//                         fontWeight: 700,
+//                         fontSize: 14,
+//                       }}
+//                     >
+//                       {contractId ?? "Không có"}
+//                     </Box>
+//                   </Box>
+
+//                   <Button
+//                     size="small"
+//                     endIcon={
+//                       <ArrowForwardIosRoundedIcon sx={{ fontSize: 12 }} />
+//                     }
+//                     sx={{
+//                       ml: "auto",
+//                       textTransform: "none",
+//                       fontWeight: 600,
+//                       borderRadius: 2,
+//                     }}
+//                     onClick={() => navigate(`/contracts/${contractId}`)}
+//                   >
+//                     Xem hợp đồng
+//                   </Button>
+//                 </Box>
+//               )}
+
+//               <Button
+//                 type="submit"
+//                 variant="contained"
+//                 disabled={!dirty || isSubmitting}
+//                 sx={{
+//                   minWidth: 140,
+//                   fontWeight: 700,
+//                   bgcolor: Color.PrimaryGold,
+//                   color: Color.PrimaryBlack,
+//                 }}
+//                 startIcon={
+//                   isSubmitting ? <CircularProgress size={20} /> : <SaveIcon />
+//                 }
+//               >
+//                 Tạo
+//               </Button>
+//             </SectionWrapper>
+
+//             {/* ================= THÔNG TIN CHUNG ================= */}
+//             <SectionWrapper title="Thông tin chung">
+//               <Grid container spacing={2}>
+//                 <Grid size={5}>
+//                   <InfoTextFieldFormik
+//                     name="partnerName"
+//                     label="Điều động đến công ty"
+//                   />
+//                 </Grid>
+
+//                 <Grid size={4}>
+//                   <InfoTextFieldFormik
+//                     name="partnerEmail"
+//                     label="Email công ty"
+//                   />
+//                 </Grid>
+
+//                 <Grid size={3}>
+//                   <InfoTextFieldFormik
+//                     name="partnerPhone"
+//                     label="SĐT công ty"
+//                   />
+//                 </Grid>
+
+//                 <Grid size={3}>
+//                   <InfoTextFieldFormik
+//                     name="partnerAddress"
+//                     label="Địa chỉ công ty"
+//                   />
+//                 </Grid>
+//               </Grid>
+//             </SectionWrapper>
+
+//             {/* ================= LỊCH TRÌNH ================= */}
+//             <SectionWrapper title="Thời gian điều động">
+//               <Grid container spacing={2}>
+//                 <Grid size={6}>
+//                   <InfoTextFieldFormik
+//                     name="startDate"
+//                     type="datetime-local"
+//                     label="Thời gian bắt đầu công việc"
+//                     onChange={(e) => {
+//                       const val = e.target.value as any;
+//                       setValues((prev) => {
+//                         return {
+//                           ...prev,
+//                           startDate: val,
+//                           crews: prev.crews.map((crew) => ({
+//                             ...crew,
+//                             startDate: crew.isStartManual
+//                               ? crew.startDate
+//                               : val,
+//                           })),
+//                         };
+//                       });
+//                     }}
+//                   />
+//                 </Grid>
+//                 <Grid size={6}>
+//                   <InfoTextFieldFormik
+//                     name="endDate"
+//                     type="datetime-local"
+//                     label="Thời gian kết thúc công việc"
+//                     onChange={(e) => {
+//                       const val = e.target.value as any;
+//                       setValues((prev) => {
+//                         return {
+//                           ...prev,
+//                           endDate: val,
+//                           crews: prev.crews.map((crew) => ({
+//                             ...crew,
+//                             endDate: crew.isEndManual ? crew.endDate : val,
+//                           })),
+//                         };
+//                       });
+//                     }}
+//                   />
+//                 </Grid>
+//               </Grid>
+//             </SectionWrapper>
+//             {/* ================= THÔNG TIN TÀU ================= */}
+//             <SectionWrapper title="Thông tin tàu">
+//               <Box display="flex" justifyContent="center" mb={2}>
+//                 <ImageUploadFieldFormik
+//                   name="shipInfo.image"
+//                   width={300}
+//                   height={180}
+//                 />
+//               </Box>
+
+//               <Grid container spacing={2}>
+//                 <Grid size={2}>
+//                   <ViewTextField
+//                     value={contract?.shipInfo?.imoNumber}
+//                     label="IMO"
+//                   />
+//                 </Grid>
+
+//                 <Grid size={4}>
+//                   <InfoTextFieldFormik name="shipInfo.name" label="Tên tàu" />
+//                 </Grid>
+
+//                 <Grid size={2}>
+//                   <NationalityTextField
+//                     component={InfoTextFieldFormik}
+//                     name="shipInfo.countryISO"
+//                     label="Quốc tịch"
+//                   />
+//                 </Grid>
+
+//                 <Grid size={4}>
+//                   <InfoTextFieldFormik
+//                     name="shipInfo.shipType"
+//                     label="Loại tàu"
+//                   />
+//                 </Grid>
+//               </Grid>
+//             </SectionWrapper>
+
+//             {/* ================= CREW ================= */}
+//             <SectionWrapper>
+//               <BaseEditableDataGrid<FormValuesCrew>
+//                 columns={columns}
+//                 rows={values.crews}
+//                 toolbar={
+//                   <BaseEditableDataGridToolbar
+//                     newRowDisabled={isSubmitting}
+//                     onNewRowClick={() => {
+//                       setFieldValue(
+//                         "crews",
+//                         [
+//                           {
+//                             id: crypto.randomUUID(),
+//                             startDate: values.startDate,
+//                             endDate: values.endDate,
+//                             startDateManual: false,
+//                             endDateManual: false,
+//                           },
+//                           ...values.crews,
+//                         ],
+//                         true,
+//                       );
+//                     }}
+//                   />
+//                 }
+//                 getCellError={useCallback<GetCellError<FormValuesCrew>>(
+//                   ({ rowIdx, column }) => {
+//                     const colKey = column.key;
+//                     return (errors.crews as any)?.[rowIdx]?.[colKey];
+//                   },
+//                   [errors.crews],
+//                 )}
+//                 onRowsChange={(newRows) => {
+//                   setFieldValue("crews", newRows, true);
+//                 }}
+//               />
+//             </SectionWrapper>
+//           </Box>
+//         );
+//       }}
+//     </Formik>
+//   );
+// }
