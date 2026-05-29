@@ -5,18 +5,13 @@ import { CenterCircularProgress, SearchBar } from "@/components/common";
 
 import { useContractTemplates } from "@/queries/contract-template.query";
 
-import { ContractType } from "@/types/api/contract.api";
 import { ContractTemplate } from "@/types/api/contract-template.api";
-
+import { ContractTemplateEnumType } from "@/constants/ContractTemplateType";
 export type TemplateContractListProps = BoxProps & {
-  type?: ContractType;
-
+  type?: ContractTemplateEnumType;
   render: (template: ContractTemplate, index: number) => React.ReactNode;
-
   pageSize?: number;
-
   emptyText?: string;
-
   ref?: any;
 };
 

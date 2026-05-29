@@ -3,10 +3,10 @@ import { Typography, IconButton } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import TemplateContractList from "./TemplateContractList";
 import TemplateContractCard from "./TemplateContractCard";
-import { ContractType } from "@/types/api/contract.api";
+import { ContractTemplateEnumType } from "@/constants/ContractTemplateType";
 
 export type TemplateDialogProps = DialogProps & {
-  type?: ContractType;
+  type?: ContractTemplateEnumType;
   initialData: (() => any) | any;
   title: string;
   render?: (item: any) => React.ReactNode;

@@ -39,6 +39,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { LaborContract, NewLaborContract } from "@/types/api/contract.api";
 import { useFormIdentifider } from "../hooks/useFormIdentifier";
+import ContractTemplateType from "@/constants/ContractTemplateType";
 
 export interface CrewContractFormParams {
   candidateId?: string;
@@ -191,8 +192,12 @@ const CrewContractFormPage = () => {
             >
               <PageTitle
                 mb={2}
-                title="TẠO HỢP ĐỒNG THUYỀN VIÊN"
-                subtitle="Tạo và lưu hợp đồng mới vào hệ thống"
+                title={isEdit ? "CẬP NHẬT HỢP ĐỒNG" : "TẠO HỢP ĐỒNG"}
+                subtitle={
+                  isEdit
+                    ? "Cập nhật thông tin hợp đồng lao động thuyền viên"
+                    : "Tạo hợp đồng lao động thuyền viên"
+                }
               />
 
               <Box sx={{ display: "flex", gap: 1 }}>
@@ -504,7 +509,7 @@ const CrewContractFormPage = () => {
             </SectionWrapper>
 
             <TemplateDialog
-              type="LABOR_CONTRACT"
+              type={ContractTemplateType.LABOR_CONTRACT}
               open={openTemplateDialog}
               onClose={() => setOpenTemplateDialog(false)}
               title="Chọn template hợp đồng"
