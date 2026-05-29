@@ -3,6 +3,7 @@ import {
   fetchMobilizations,
   fetchSpecificMobilization,
   exportMobilizationExcel,
+  fetchMyMobilizations,
 } from "@/services/mobilization.service";
 import {
   FetchMobilizationSchedulesParams,
@@ -12,26 +13,52 @@ import { PageableResponse } from "@/types/api/shared/base.api";
 
 export const MobilizationQueryKey = {
   ALL: ["mobilizations"],
-  LIST: ({ page, pageSize, filter }: FetchMobilizationSchedulesParams) => [
-    ...MobilizationQueryKey.ALL,
-    "list",
-    page,
-    pageSize,
-    filter,
-  ],
-  DETAIL: (id: string) => [...MobilizationQueryKey.ALL, "detail", id],
+  LIST: ({ page, pageSize, sort, filter }: FetchMobilizationSchedulesParams) =>
+    [
+      ...MobilizationQueryKey.ALL,
+      "list",
+      page,
+      pageSize,
+      sort,
+      filter,
+    ] as const,
+  DETAIL: (id: string) => [...MobilizationQueryKey.ALL, "detail", id] as const,
 };
 
 export const useMobilizations = (
-  { page, pageSize, filter }: FetchMobilizationSchedulesParams,
-  options?: UseQueryOptions<PageableResponse<MobilizationSchedule>>,
+  { page, pageSize, sort, filter }: FetchMobilizationSchedulesParams,
+  options?: Omit<
+    UseQueryOptions<PageableResponse<MobilizationSchedule>>,
+    "queryFn" | "queryKey"
+  >,
 ) => {
   return useQuery({
     ...options,
-    queryKey: MobilizationQueryKey.LIST({ page, pageSize, filter }),
+    queryKey: MobilizationQueryKey.LIST({ page, pageSize, filter, sort }),
     queryFn: () =>
       fetchMobilizations({
         page,
+        sort,
+        pageSize,
+        filter,
+      }),
+  });
+};
+
+export const useMyMobilizations = (
+  { page, pageSize, sort, filter }: FetchMobilizationSchedulesParams,
+  options?: Omit<
+    UseQueryOptions<PageableResponse<MobilizationSchedule>>,
+    "queryFn" | "queryKey"
+  >,
+) => {
+  return useQuery({
+    ...options,
+    queryKey: MobilizationQueryKey.LIST({ page, pageSize, sort, filter }),
+    queryFn: () =>
+      fetchMyMobilizations({
+        page,
+        sort,
         pageSize,
         filter,
       }),

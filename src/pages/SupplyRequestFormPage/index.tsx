@@ -74,7 +74,7 @@ export default function SupplyRequestFormPage() {
           sx={{ m: { xs: 2, md: 3 } }}
         >
           {/* ===== HEADER ===== */}
-          <Box
+          <SectionWrapper
             sx={{
               display: "flex",
               flexDirection: { xs: "column", sm: "row" },
@@ -129,7 +129,7 @@ export default function SupplyRequestFormPage() {
                 </Stack>
               )}
             </Button>
-          </Box>
+          </SectionWrapper>
 
           {/* ===== SECTION: COMPANY INFO ===== */}
           <SectionWrapper title="Thông tin công ty">

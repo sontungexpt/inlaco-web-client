@@ -8,21 +8,45 @@ import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 
 import Color from "@constants/Color";
 import { useNavigate } from "react-router";
-import { useMobilizations } from "@/queries/mobilization.query";
+import {
+  useMobilizations,
+  useMyMobilizations,
+} from "@/queries/mobilization.query";
 import BaseDataGrid from "@/components/common/datagrid/BaseDataGrid";
 import { MobilizationSchedule } from "@/types/api/mobilization.api";
 import { BaseDataGridFooter } from "@/components/common/datagrid/components";
+import { useAuthContext } from "@/contexts/auth.context";
+import UserRole from "@/constants/UserRole";
 
 const MobilizationPage = ({ pageSize = 10 }) => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
+  const { includesRole } = useAuthContext();
+  const isAdmin = includesRole(UserRole.ADMIN);
 
-  const { data: { content: mobilizations = [], totalPages } = {}, isLoading } =
-    useMobilizations({
+  const adminQuery = useMobilizations(
+    {
       page: page,
       pageSize: pageSize,
       filter: {},
-    });
+    },
+    {
+      enabled: isAdmin,
+    },
+  );
+  const myQuery = useMyMobilizations(
+    {
+      page: page,
+      pageSize: pageSize,
+      filter: {},
+    },
+    {
+      enabled: !isAdmin,
+    },
+  );
+  const activeQuery = isAdmin ? adminQuery : myQuery;
+  const { data: { content: mobilizations = [], totalPages } = {}, isLoading } =
+    activeQuery;
 
   const columns: Column<MobilizationSchedule>[] = useMemo(
     () =>
