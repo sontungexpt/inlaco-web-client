@@ -34,6 +34,7 @@ import {
   NewCrewSupplyContract,
 } from "@/types/api/contract.api";
 import { useFormIdentifider } from "../hooks/useFormIdentifier";
+import ContractTemplateType from "@/constants/ContractTemplateType";
 
 export type SypplyContractFormParams = {
   contractId?: string;
@@ -94,12 +95,12 @@ const SupplyContractFormPage = () => {
     return createSupplyContract(
       supplyRequestId as string,
       mapValuesToNewSupplyContract(values, {
-        contractFileId: contractFileResult.assetId,
-        shipImageId: shipImageResult.assetId,
+        contractFileId: contractFileResult?.assetId,
+        shipImageId: shipImageResult?.assetId,
         attachmentFileIds: attachmentResults?.map((file) => file.assetId),
       }),
-      contractFileResult.asset_id,
-      shipImageResult.asset_id,
+      contractFileResult?.asset_id,
+      shipImageResult?.asset_id,
     );
   };
 
@@ -154,6 +155,7 @@ const SupplyContractFormPage = () => {
           ? "Thêm phụ lục thất bại"
           : "Cập nhật hợp đồng thất bại"
         : "Tạo hợp đồng thất bại";
+      console.error(err);
       toast.error(msg);
     }
   };
@@ -404,6 +406,7 @@ const SupplyContractFormPage = () => {
             <TemplateDialog
               open={openTemplateDialog}
               onClose={() => setOpenTemplateDialog(false)}
+              type={ContractTemplateType.SUPPLY_CONTRACT}
               title="Chọn template hợp đồng"
               initialData={() => ({
                 title: values.title,

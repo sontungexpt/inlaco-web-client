@@ -39,6 +39,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { LaborContract, NewLaborContract } from "@/types/api/contract.api";
 import { useFormIdentifider } from "../hooks/useFormIdentifier";
+import ContractTemplateType from "@/constants/ContractTemplateType";
 
 export interface CrewContractFormParams {
   candidateId?: string;
@@ -508,7 +509,7 @@ const CrewContractFormPage = () => {
             </SectionWrapper>
 
             <TemplateDialog
-              type="LABOR_CONTRACT"
+              type={ContractTemplateType.LABOR_CONTRACT}
               open={openTemplateDialog}
               onClose={() => setOpenTemplateDialog(false)}
               title="Chọn template hợp đồng"
