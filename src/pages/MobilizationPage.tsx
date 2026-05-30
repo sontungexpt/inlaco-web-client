@@ -45,6 +45,7 @@ const MobilizationPage = ({ pageSize = 10 }) => {
     },
   );
   const activeQuery = isAdmin ? adminQuery : myQuery;
+
   const { data: { content: mobilizations = [], totalPages } = {}, isLoading } =
     activeQuery;
 
@@ -112,35 +113,41 @@ const MobilizationPage = ({ pageSize = 10 }) => {
       <SectionWrapper>
         <PageTitle
           title="LỊCH ĐIỀU ĐỘNG"
-          subtitle="Thông tin các điều động đã tạo"
+          subtitle={
+            isAdmin
+              ? "Thông tin các điều động đã tạo"
+              : "Các điều động của công ty sở hữu"
+          }
         />
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
-            alignItems: { xs: "stretch", sm: "center" },
-            mt: 2,
-            width: "100%",
-          }}
-        >
-          <Button
-            variant="contained"
+        {isAdmin && (
+          <Box
             sx={{
-              backgroundColor: Color.PrimaryGold,
-              color: Color.PrimaryBlack,
-              borderRadius: 2,
-              alignSelf: { xs: "stretch", sm: "flex-start" },
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              alignItems: { xs: "stretch", sm: "center" },
+              mt: 2,
+              width: "100%",
             }}
-            startIcon={<AddCircleRoundedIcon />}
-            onClick={() =>
-              navigate(
-                `/contracts?type=SUPPLY_CONTRACT&status=SIGNED_OR_ACTIVE&lockedStatus=true`,
-              )
-            }
           >
-            Tạo điều động
-          </Button>
-        </Box>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: Color.PrimaryGold,
+                color: Color.PrimaryBlack,
+                borderRadius: 2,
+                alignSelf: { xs: "stretch", sm: "flex-start" },
+              }}
+              startIcon={<AddCircleRoundedIcon />}
+              onClick={() =>
+                navigate(
+                  `/contracts?type=SUPPLY_CONTRACT&status=SIGNED_OR_ACTIVE&lockedStatus=true`,
+                )
+              }
+            >
+              Tạo điều động
+            </Button>
+          </Box>
+        )}
       </SectionWrapper>
       <BaseDataGrid<MobilizationSchedule>
         rowKeyGetter={(row) => row.id}

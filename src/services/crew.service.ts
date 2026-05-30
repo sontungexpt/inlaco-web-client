@@ -20,6 +20,24 @@ export const fetchCrewProfiles = async ({
   return response.data;
 };
 
+export const fetchMyMobilizedCrewProfiles = async ({
+  page,
+  pageSize,
+  filter,
+}: CrewProfileFetchParams): Promise<PageableResponse<CrewProfile>> => {
+  const response = await privateRequest.get(
+    CrewProfileEndpoint.GET_ALL_MY_MOBILIZED_CREWS,
+    {
+      params: {
+        page,
+        size: pageSize,
+        ...flattenFilter(filter),
+      },
+    },
+  );
+  return response.data;
+};
+
 export const fetchMyCrewProfile = async () => {
   const response = await privateRequest.get<CrewProfile>(
     CrewProfileEndpoint.CURRENT_PROFILE,

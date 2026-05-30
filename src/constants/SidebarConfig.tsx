@@ -73,7 +73,9 @@ export const Permission = {
   },
 
   ADMIN_OR_USER: {
-    anyOf: [UserRole.ADMIN, UserRole.USER],
+    predicate: ({ includesRole }) =>
+      includesRole(UserRole.ADMIN) ||
+      (includesRole(UserRole.USER) && !includesRole(UserRole.SAILOR)),
   },
 
   ADMIN_OR_SAILOR: {
@@ -159,7 +161,7 @@ const SidebarConfig: SidebarSection[] = [
 
         icon: <PeopleOutlinedIcon />,
 
-        access: Permission.ADMIN_ONLY,
+        access: Permission.ADMIN_OR_USER,
       },
 
       {

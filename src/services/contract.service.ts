@@ -11,6 +11,7 @@ import {
   NewCrewSupplyContract,
   NewLaborContract,
 } from "@/types/api/contract.api";
+import { PageableResponse } from "@/types/api/shared/base.api";
 
 export const activeContract = async (contractId: string) => {
   const response = await privateRequest.post(
@@ -34,6 +35,27 @@ export const fetchContracts = async ({
       },
     },
   );
+  return response.data;
+};
+
+export const fetchMyContracts = async <C extends BaseContract = BaseContract>({
+  page,
+  pageSize,
+  sort,
+  filter,
+}: FetchContractParams): Promise<PageableResponse<C>> => {
+  const response = await privateRequest.get<PageableResponse<C>>(
+    ContractEndpoint.GET_MY_CONTRATS,
+    {
+      params: {
+        page,
+        size: pageSize,
+        sort,
+        ...flattenFilter(filter),
+      },
+    },
+  );
+
   return response.data;
 };
 

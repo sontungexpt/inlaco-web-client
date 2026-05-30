@@ -13,6 +13,8 @@ import {
   ContractType,
   FilterOptions,
 } from "@/types/api/contract.api";
+import { useAuthContext } from "@/contexts/auth.context";
+import UserRole from "@/constants/UserRole";
 
 type ContractStatus = "SIGNED" | "PENDING" | "ACTIVE" | "SIGNED_OR_ACTIVE";
 
@@ -69,6 +71,8 @@ export default function ContractPage({ pageSize = 20 }) {
     status: initialStatus,
     lockedStatus,
   } = useContractPageParams();
+  const { includesRole } = useAuthContext();
+  const isAdmin = includesRole(UserRole.ADMIN);
 
   const [status, setStatus] = useState<ContractStatus>(initialStatus);
 
@@ -84,6 +88,7 @@ export default function ContractPage({ pageSize = 20 }) {
         keyword: query,
         type: contractType,
       },
+      mine: !isAdmin,
     });
 
   const onContractDetailClick = (id: string) => {

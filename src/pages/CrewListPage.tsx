@@ -5,17 +5,22 @@ import { Box } from "@mui/material";
 import { useNavigate } from "react-router";
 
 import Color from "@constants/Color";
-import { useCrewProfiles } from "@/queries/crew-profile.query";
+import {
+  useCrewProfiles,
+  useMyMobilizedCrewProfiles,
+} from "@/queries/crew-profile.query";
 import BaseDataGrid, {
   BaseDataGridColumn,
 } from "@/components/common/datagrid/BaseDataGrid";
 
-import { CrewProfile } from "@/types/api/crew-profile";
+import { CrewProfile, CrewProfileFetchParams } from "@/types/api/crew-profile";
 
 import {
   BaseDataGridBar,
   BaseDataGridFooter,
 } from "@/components/common/datagrid/components";
+import UserRole from "@/constants/UserRole";
+import { useAuthContext } from "@/contexts/auth.context";
 
 export default function CrewListPage({ pageSize = 10 }) {
   const navigate = useNavigate();
@@ -24,15 +29,36 @@ export default function CrewListPage({ pageSize = 10 }) {
   const [page, setPage] = useState(0);
   const OFFICIAL_TAB_INDEX = 0;
 
+  const { includesRole } = useAuthContext();
+  const isAdmin = includesRole(UserRole.ADMIN);
+
+  const baseQueryOptions = {
+    page: page,
+    pageSize: pageSize,
+    filter: {
+      keyword: searchQuery,
+      official,
+    },
+  } as CrewProfileFetchParams;
+
+  const adminQuery = useCrewProfiles({
+    ...baseQueryOptions,
+    enabled: isAdmin,
+  });
+
+  const myQuery = useMyMobilizedCrewProfiles({
+    ...baseQueryOptions,
+    filter: {
+      ...baseQueryOptions.filter,
+      official: true,
+    },
+    enabled: !isAdmin,
+  });
+
+  const activeQuery = isAdmin ? adminQuery : myQuery;
+
   const { data: { content: crewProfiles = [], totalPages } = {}, isLoading } =
-    useCrewProfiles({
-      page: page,
-      pageSize: pageSize,
-      filter: {
-        keyword: searchQuery,
-        official,
-      },
-    });
+    activeQuery;
 
   const handleTabChange = useCallback(
     (event: React.SyntheticEvent, newValue: number) => {
@@ -84,19 +110,31 @@ export default function CrewListPage({ pageSize = 10 }) {
         title="THÔNG TIN THUYỀN VIÊN"
         subtitle="Danh sách Thuyền viên công ty"
       />
-      <BaseTabBar
-        tabs={[
-          { label: "Thuyền viên chính thức" },
-          { label: "Thuyền viên chưa chính thức" },
-        ]}
-        variant="fullWidth"
-        onChange={handleTabChange}
-        color={Color.SecondaryBlue}
-        sx={{
-          backgroundColor: "inherit",
-          marginTop: 4,
-        }}
-      />
+      {isAdmin ? (
+        <BaseTabBar
+          tabs={[
+            { label: "Thuyền viên chính thức" },
+            { label: "Thuyền viên chưa chính thức" },
+          ]}
+          variant="fullWidth"
+          onChange={handleTabChange}
+          color={Color.SecondaryBlue}
+          sx={{
+            backgroundColor: "inherit",
+            marginTop: 4,
+          }}
+        />
+      ) : (
+        <BaseTabBar
+          tabs={[{ label: "Thuyền viên chính thức" }]}
+          variant="fullWidth"
+          color={Color.SecondaryBlue}
+          sx={{
+            backgroundColor: "inherit",
+            marginTop: 4,
+          }}
+        />
+      )}
       <BaseDataGrid
         globalTooltip="Click hai lần để xem chi tiết"
         onCellDoubleClick={({ row }) => {
