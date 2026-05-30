@@ -1,7 +1,7 @@
 import { Box, Stack, StackProps, Typography } from "@mui/material";
 import { resolveComponent } from "@/utils/component";
 import { dateToLocaleString, LocaleType } from "@/utils/converter";
-import { ReactNode } from "react";
+import { ElementType, ReactNode } from "react";
 
 const formatDisplayValue = (value: unknown, type?: string | LocaleType) => {
   if (!value) return "--";
@@ -25,7 +25,7 @@ export type InfoItemProps = StackProps & {
   onClick?: () => void;
   highlight?: boolean;
   bold?: boolean;
-  icon?: string;
+  icon?: ReactNode;
   iconColor?: string;
 };
 

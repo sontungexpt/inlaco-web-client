@@ -39,30 +39,70 @@ import { enrollCourse, cancelCourse } from "@/services/course.service";
 import toast from "react-hot-toast";
 
 /* ================= Utils ================= */
-const formatDate = (value) => (value ? dateToLocaleString(value) : "--");
+const formatDate = (value: any) => (value ? dateToLocaleString(value) : "--");
 
 /* ================= Status Chip ================= */
-const StatusChip = ({ course }) => {
-  if (course.canceled)
-    return <Chip icon={<CancelRounded />} label="Đã hủy" color="error" />;
-  if (course.forciblyFinished)
-    return (
-      <Chip
-        icon={<CheckCircleRounded />}
-        label="Kết thúc cưỡng chế"
-        color="warning"
-      />
-    );
-  if (course.enrolled)
-    return (
-      <Chip
-        icon={<HourglassBottomRounded />}
-        label="Đang tham gia"
-        color="info"
-      />
-    );
+type EnrollmentStatus = "CANCELLED" | "ENROLLED" | "FORCIBLY_FINISHED";
 
-  return <Chip label="Chưa đăng ký" />;
+const STATUS_CONFIG: Record<
+  EnrollmentStatus,
+  {
+    label: string;
+    color: "error" | "warning" | "info";
+    icon: React.ReactElement;
+  }
+> = {
+  CANCELLED: {
+    label: "Đã hủy",
+    color: "error",
+    icon: <CancelRounded fontSize="small" />,
+  },
+
+  FORCIBLY_FINISHED: {
+    label: "Kết thúc cưỡng chế",
+    color: "warning",
+    icon: <CheckCircleRounded fontSize="small" />,
+  },
+
+  ENROLLED: {
+    label: "Đang tham gia",
+    color: "info",
+    icon: <HourglassBottomRounded fontSize="small" />,
+  },
+};
+
+export const StatusChip = ({ status }: { status?: EnrollmentStatus }) => {
+  const config = status ? STATUS_CONFIG[status] : null;
+
+  if (!config) {
+    return (
+      <Chip
+        size="small"
+        label="Chưa đăng ký"
+        variant="outlined"
+        sx={{
+          fontWeight: 600,
+        }}
+      />
+    );
+  }
+
+  return (
+    <Chip
+      size="small"
+      variant="filled"
+      icon={config.icon}
+      label={config.label}
+      color={config.color}
+      sx={{
+        fontWeight: 600,
+        borderRadius: 2,
+        "& .MuiChip-icon": {
+          ml: 0.5,
+        },
+      }}
+    />
+  );
 };
 
 /* ================= Main Page ================= */
@@ -141,11 +181,21 @@ export default function CourseDetailPage() {
         flexWrap="wrap"
         gap={2}
       >
-        {!isAdmin && <StatusChip course={course} />}
+        {!isAdmin && (
+          <StatusChip
+            status={
+              course.forciblyFinished
+                ? "FORCIBLY_FINISHED"
+                : userCourseState.enrolled
+                  ? "ENROLLED"
+                  : "CANCELLED"
+            }
+          />
+        )}
 
         <Box display="flex" gap={2}>
           {/* ===== USER REGISTER ===== */}
-          {!isAdmin && !course.enrolled && (
+          {!isAdmin && !userCourseState.enrolled && (
             <Button
               variant="contained"
               onClick={handleEnroll}
@@ -200,7 +250,7 @@ export default function CourseDetailPage() {
         <Card>
           <CardContent>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <InfoItem
                   icon={<SchoolRounded color="primary" />}
                   label="Tên khóa học"
@@ -208,7 +258,7 @@ export default function CourseDetailPage() {
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid size={{ xs: 12, md: 3 }}>
                 <InfoItem
                   icon={<CalendarMonthRounded color="primary" />}
                   label="Ngày bắt đầu"
@@ -216,7 +266,7 @@ export default function CourseDetailPage() {
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid size={{ xs: 12, md: 3 }}>
                 <InfoItem
                   icon={<CalendarMonthRounded color="primary" />}
                   label="Ngày kết thúc"
@@ -224,11 +274,11 @@ export default function CourseDetailPage() {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Divider />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <InfoItem
                   icon={<DescriptionRounded color="primary" />}
                   label="Mô tả"
@@ -245,7 +295,7 @@ export default function CourseDetailPage() {
         <Card>
           <CardContent>
             <Grid container spacing={3} alignItems="center">
-              <Grid item xs={12} md={3} textAlign="center">
+              <Grid size={{ xs: 12, md: 3 }} textAlign="center">
                 {course.trainingProviderLogo && (
                   <CloudinaryImage
                     publicId={course.trainingProviderLogo.publicId}
@@ -259,9 +309,9 @@ export default function CourseDetailPage() {
                 )}
               </Grid>
 
-              <Grid item xs={12} md={9}>
+              <Grid size={{ xs: 12, md: 9 }}>
                 <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <InfoItem
                       icon={<SchoolRounded color="primary" />}
                       label="Đơn vị đào tạo"
@@ -269,7 +319,7 @@ export default function CourseDetailPage() {
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={6}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <InfoItem
                       icon={<PersonRounded color="primary" />}
                       label="Giảng viên"

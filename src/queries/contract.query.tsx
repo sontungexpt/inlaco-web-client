@@ -13,6 +13,7 @@ import {
   createLaborContract,
   createSupplyContract,
   editContract,
+  fetchMyContracts,
 } from "@/services/contract.service";
 import {
   BaseContract,
@@ -52,10 +53,16 @@ export function useContracts({
   page = 0,
   pageSize = 12,
   filter,
-}: FetchContractParams) {
+  mine,
+}: FetchContractParams & { mine?: boolean }) {
   return useQuery<PageableResponse<BaseContract>, ErrorResponse>({
-    queryKey: ContractQueryKey.LIST({ page, pageSize, filter }),
-    queryFn: () => fetchContracts({ page, pageSize, filter }),
+    queryKey: [...ContractQueryKey.LIST({ page, pageSize, filter }), mine],
+    queryFn: () => {
+      if (mine) {
+        return fetchMyContracts({ page, pageSize, filter });
+      }
+      return fetchContracts({ page, pageSize, filter });
+    },
     staleTime: 1000 * 60 * 4, // cache 4 min
   });
 }

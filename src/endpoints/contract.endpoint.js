@@ -1,5 +1,6 @@
 const ContractEndpoint = {
   GET_ALL_CONTRACTS: "/v1/contracts",
+  GET_MY_CONTRATS: "/v1/contracts/me",
   GET_CONTRACT_BY_ID: (id) => `/v1/contracts/${id}`,
   GET_CONTRACT_BY_APPLICATION_ID: (id) => `/v1/contracts/applications/${id}`,
   GET_CONTRACT_OLD_VERSIONS: (id) => `/v1/contracts/${id}/old-versions`,

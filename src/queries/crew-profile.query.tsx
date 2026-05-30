@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   fetchCrewProfiles,
   fetchMyCrewProfile,
+  fetchMyMobilizedCrewProfiles,
   fetchSpecificCrewProfile,
 } from "@/services/crew.service";
 import { CrewProfileFetchParams } from "@/types/api/crew-profile";
@@ -24,11 +25,27 @@ export function useCrewProfiles({
   page = 0,
   pageSize = 12,
   filter,
-}: CrewProfileFetchParams) {
+  enabled,
+}: CrewProfileFetchParams & { enabled?: boolean }) {
   return useQuery({
     queryKey: CrewQueryKey.LIST({ page, pageSize, filter }),
     queryFn: () => fetchCrewProfiles({ page, pageSize, filter }),
     staleTime: 1000 * 60,
+    enabled,
+  });
+}
+
+export function useMyMobilizedCrewProfiles({
+  page = 0,
+  pageSize = 12,
+  filter,
+  enabled,
+}: CrewProfileFetchParams & { enabled?: boolean }) {
+  return useQuery({
+    queryKey: CrewQueryKey.LIST({ page, pageSize, filter }),
+    queryFn: () => fetchMyMobilizedCrewProfiles({ page, pageSize, filter }),
+    staleTime: 1000 * 60,
+    enabled,
   });
 }
 

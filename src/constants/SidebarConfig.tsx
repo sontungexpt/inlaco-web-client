@@ -159,7 +159,7 @@ const SidebarConfig: SidebarSection[] = [
 
         icon: <PeopleOutlinedIcon />,
 
-        access: Permission.ADMIN_ONLY,
+        access: Permission.ADMIN_OR_USER,
       },
 
       {

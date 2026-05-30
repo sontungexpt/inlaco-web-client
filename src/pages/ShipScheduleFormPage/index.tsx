@@ -34,9 +34,12 @@ import {
 
 import BaseEditableDataGridToolbar from "@/components/common/datagrid/components/BaseEditableDataGridToolbar";
 
-import { useCrewProfiles } from "@/queries/crew-profile.query";
+import {
+  useCrewProfiles,
+  useMyMobilizedCrewProfiles,
+} from "@/queries/crew-profile.query";
 
-import { CrewProfile } from "@/types/api/crew-profile";
+import { CrewProfile, CrewProfileFetchParams } from "@/types/api/crew-profile";
 
 import { createShipSchedule } from "@/services/ship-schedule.service";
 
@@ -48,6 +51,9 @@ import { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
 
 import { ErrorResponse } from "@/types/api/shared/base.api";
 import { GetCellError } from "@/components/common/datagrid/shared/error-store";
+import { useAuthContext } from "@/contexts/auth.context";
+import UserRole from "@/constants/UserRole";
+import { useMobilizations } from "@/queries/mobilization.query";
 
 const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
   const initials = opt.fullName?.charAt(0)?.toUpperCase() ?? "?";
@@ -214,18 +220,31 @@ function CrewSearchEditCell({
   onRowChange,
 }: BaseEditableDataGridRenderEditCellProps<FormValuesCrew>) {
   const key = column.key as keyof FormValuesCrew;
-
   const [keyword, setKeyword] = useState("");
+  const { includesRole } = useAuthContext();
+  const isAdmin = includesRole(UserRole.ADMIN);
 
-  const { data: { content: crewProfiles = [] } = {}, isLoading } =
-    useCrewProfiles({
-      page: 0,
-      pageSize: 10,
-      filter: {
-        keyword,
-        workStatus: "AVAILABLE",
-      },
-    });
+  const baseQueryOptions = {
+    page: 0,
+    pageSize: 10,
+    filter: {
+      keyword,
+      workStatus: "AVAILABLE",
+    },
+  } as CrewProfileFetchParams;
+
+  const adminQuery = useCrewProfiles({
+    ...baseQueryOptions,
+    enabled: isAdmin,
+  });
+
+  const myQuery = useMyMobilizedCrewProfiles({
+    ...baseQueryOptions,
+    enabled: !isAdmin,
+  });
+
+  const activeQuery = isAdmin ? adminQuery : myQuery;
+  const { data: { content: crewProfiles = [] } = {}, isLoading } = activeQuery;
 
   const { values } = useFormikContext<FormValues>();
 
