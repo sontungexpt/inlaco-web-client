@@ -396,7 +396,14 @@ export default function ShipScheduleFormPage() {
       validationSchema={FORM_SCHEMA}
       onSubmit={handleSubmitForm}
     >
-      {({ values, handleSubmit, setFieldValue, dirty, isSubmitting }) => {
+      {({
+        values,
+        handleSubmit,
+        errors,
+        setFieldValue,
+        dirty,
+        isSubmitting,
+      }) => {
         return (
           <Box
             component="form"
@@ -591,6 +598,12 @@ export default function ShipScheduleFormPage() {
                 columns={columns}
                 toolbar={
                   <BaseEditableDataGridToolbar
+                    error={typeof errors.crews === "string"}
+                    helperText={
+                      typeof errors.crews === "string"
+                        ? errors.crews
+                        : undefined
+                    }
                     onNewRowClick={() => {
                       setFieldValue(
                         "crews",
