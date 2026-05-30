@@ -5,7 +5,6 @@ import {
   dateAfter,
   requiredVnPhoneNumber,
   requiredEmail,
-  requiredFile,
   optionalFile,
   optionalString,
 } from "@/utils/validation/yupHelpers";
