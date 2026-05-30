@@ -287,7 +287,7 @@ export default function ShipScheduleDetailPage() {
           <QuickCard
             icon={<AccessTimeRoundedIcon />}
             title="QR Rotation"
-            value="20s"
+            value="Mỗi 5 phút"
           />
         </Grid>
       </Grid>

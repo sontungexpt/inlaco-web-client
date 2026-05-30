@@ -53,7 +53,6 @@ import { ErrorResponse } from "@/types/api/shared/base.api";
 import { GetCellError } from "@/components/common/datagrid/shared/error-store";
 import { useAuthContext } from "@/contexts/auth.context";
 import UserRole from "@/constants/UserRole";
-import { useMobilizations } from "@/queries/mobilization.query";
 
 const renderCrewOption = (opt: CrewProfile, selected?: boolean) => {
   const initials = opt.fullName?.charAt(0)?.toUpperCase() ?? "?";
@@ -364,132 +363,264 @@ export default function ShipScheduleFormPage() {
 
         const errorCode = response?.data?.errorCode;
 
-        /**
-         * =========================================================
-         * SHIP_SCHEDULE_ERR_001
-         * =========================================================
-         * IMO required
-         */
-        if (
-          err.status === HttpStatusCode.BadRequest &&
-          errorCode === "SHIP_SCHEDULE_ERR_001"
-        ) {
-          setFieldError("shipInfo.imoNumber", "IMO tàu là bắt buộc");
-
-          toast.error("Vui lòng nhập IMO tàu");
-
-          return;
-        }
-
-        /**
-         * =========================================================
-         * SHIP_SCHEDULE_ERR_002
-         * =========================================================
-         * Ship not found in active contracts
-         */
-        if (
-          err.status === HttpStatusCode.NotFound &&
-          errorCode === "SHIP_SCHEDULE_ERR_002"
-        ) {
-          setFieldError(
-            "shipInfo.imoNumber",
-            "Không tìm thấy tàu trong hợp đồng đang hoạt động",
-          );
-
-          toast.error("Tàu chưa tồn tại trong hợp đồng đang hoạt động");
-
-          return;
-        }
-
-        /**
-         * =========================================================
-         * SHIP_SCHEDULE_ERR_003
-         * =========================================================
-         * Ship not authorized for user
-         */
-        if (
-          err.status === HttpStatusCode.Forbidden &&
-          errorCode === "SHIP_SCHEDULE_ERR_003"
-        ) {
-          setFieldError(
-            "shipInfo.imoNumber",
-            "Bạn không có quyền tạo lịch cho tàu này",
-          );
-
-          toast.error("Bạn không có quyền với tàu này");
-
-          return;
-        }
-
-        /**
-         * =========================================================
-         * SHIP_SCHEDULE_ERR_004
-         * =========================================================
-         * Crew profile not found
-         */
-        if (
-          err.status === HttpStatusCode.NotFound &&
-          errorCode === "SHIP_SCHEDULE_ERR_004"
-        ) {
-          const employeeCardIds = (response.data.data as string[]) || [];
-
-          const employeeCardIdSet = new Set(employeeCardIds);
-
+        const buildCrewErrors = (
+          predicate: (employeeCardId: string) => string | undefined,
+        ) => {
           const crewErrors: FormikErrors<FormValuesCrew>[] = [];
 
           values.crews.forEach((crew, index) => {
-            if (employeeCardIdSet.has(crew.employeeCardId)) {
+            const message = predicate(crew.employeeCardId);
+
+            if (message) {
               crewErrors[index] = {
-                employeeCardId: "Không tìm thấy hồ sơ thuyền viên",
+                employeeCardId: message,
               };
             }
           });
 
+          return crewErrors;
+        };
+
+        switch (errorCode) {
           /**
-           * fallback nếu backend không trả data
+           * SHIP_SCHEDULE_ERR_001
            */
-          if (employeeCardIds.length === 0) {
-            values.crews.forEach((_, index) => {
-              crewErrors[index] = {
-                employeeCardId: "Không tìm thấy hồ sơ thuyền viên",
-              };
+          case "SHIP_SCHEDULE_ERR_001":
+            setFieldError("shipInfo.imoNumber", "IMO tàu là bắt buộc");
+
+            toast.error("Vui lòng nhập IMO tàu");
+            return;
+
+          /**
+           * SHIP_SCHEDULE_ERR_002
+           */
+          case "SHIP_SCHEDULE_ERR_002":
+            setFieldError(
+              "shipInfo.imoNumber",
+              "Không tìm thấy tàu trong hợp đồng đang hoạt động",
+            );
+
+            toast.error("Không tìm thấy tàu trong hợp đồng");
+            return;
+
+          /**
+           * SHIP_SCHEDULE_ERR_003
+           */
+          case "SHIP_SCHEDULE_ERR_003":
+            setFieldError(
+              "shipInfo.imoNumber",
+              "Bạn không có quyền với tàu này",
+            );
+
+            toast.error("Bạn không có quyền với tàu này");
+            return;
+
+          /**
+           * SHIP_SCHEDULE_ERR_004
+           */
+          case "SHIP_SCHEDULE_ERR_004": {
+            const employeeCardIds =
+              (response.data.data as string[] | undefined) ?? [];
+
+            const employeeCardIdSet = new Set(employeeCardIds);
+
+            const crewErrors: FormikErrors<FormValuesCrew>[] = [];
+
+            values.crews.forEach((crew, index) => {
+              if (
+                employeeCardIds.length === 0 ||
+                employeeCardIdSet.has(crew.employeeCardId)
+              ) {
+                crewErrors[index] = {
+                  employeeCardId: "Không tìm thấy hồ sơ thuyền viên",
+                };
+              }
             });
+
+            setErrors({
+              crews: crewErrors,
+            });
+
+            toast.error("Có thuyền viên không tồn tại");
+
+            return;
           }
 
-          setErrors({
-            crews: crewErrors,
-          });
+          /**
+           * SHIP_SCHEDULE_ERR_005
+           */
+          case "SHIP_SCHEDULE_ERR_005": {
+            const crewErrors = buildCrewErrors(
+              () => "Thuyền viên chưa có tài khoản",
+            );
 
-          toast.error("Có thuyền viên không tồn tại");
+            setErrors({
+              crews: crewErrors,
+            });
 
-          return;
-        }
+            toast.error("Có thuyền viên chưa có tài khoản");
 
-        /**
-         * =========================================================
-         * SHIP_SCHEDULE_ERR_005
-         * =========================================================
-         * Crew member has no account
-         */
-        if (
-          err.status === HttpStatusCode.BadRequest &&
-          errorCode === "SHIP_SCHEDULE_ERR_005"
-        ) {
-          const crewErrors: FormikErrors<FormValuesCrew>[] = [];
+            return;
+          }
 
-          values.crews.forEach((_, index) => {
-            crewErrors[index] = {
-              employeeCardId: "Thuyền viên chưa có tài khoản",
-            };
-          });
+          /**
+           * SHIP_SCHEDULE_ERR_006
+           * INVALID_ASSIGNMENT_DATE
+           */
+          case "SHIP_SCHEDULE_ERR_006": {
+            const crewErrors: FormikErrors<FormValuesCrew>[] = [];
 
-          setErrors({
-            crews: crewErrors,
-          });
+            values.crews.forEach((_, index) => {
+              crewErrors[index] = {
+                boardingTime: "Thời gian không hợp lệ",
+                disembarkTime: "Thời gian không hợp lệ",
+              };
+            });
 
-          toast.error("Có thuyền viên chưa có tài khoản");
+            setErrors({
+              crews: crewErrors,
+            });
 
-          return;
+            toast.error("Ngày bắt đầu phải trước ngày kết thúc");
+
+            return;
+          }
+
+          /**
+           * SHIP_SCHEDULE_ERR_007
+           * ASSIGNMENT_EMPTY
+           */
+          case "SHIP_SCHEDULE_ERR_007":
+            setFieldError("crews", "Danh sách thuyền viên không được để trống");
+
+            toast.error("Vui lòng thêm thuyền viên");
+
+            return;
+
+          /**
+           * SHIP_SCHEDULE_ERR_008
+           * ASSIGNMENT_INVALID_RANGE
+           */
+          case "SHIP_SCHEDULE_ERR_008":
+            toast.error("Khoảng thời gian phân công không hợp lệ");
+
+            return;
+
+          /**
+           * SHIP_SCHEDULE_ERR_009
+           * CREW_ALREADY_ASSIGNED
+           */
+          case "SHIP_SCHEDULE_ERR_009": {
+            const conflicts = (response.data.data as any[]) ?? [];
+
+            const conflictIds = new Set(conflicts.map((x) => x.employeeCardId));
+
+            const crewErrors = buildCrewErrors((employeeCardId) =>
+              conflictIds.has(employeeCardId)
+                ? "Thuyền viên đã được phân công"
+                : undefined,
+            );
+
+            setErrors({
+              crews: crewErrors,
+            });
+
+            toast.error("Có thuyền viên đã được phân công");
+
+            return;
+          }
+
+          /**
+           * SHIP_SCHEDULE_ERR_010
+           * CREW_ASSIGNMENT_OVERLAP
+           */
+          case "SHIP_SCHEDULE_ERR_010": {
+            const conflicts = (response.data.data as any[]) ?? [];
+
+            const conflictMap = new Map(
+              conflicts.map((x) => [
+                x.employeeCardId,
+                `Trùng lịch từ ${new Date(
+                  x.startDate,
+                ).toLocaleDateString()} đến ${new Date(
+                  x.endDate,
+                ).toLocaleDateString()}`,
+              ]),
+            );
+
+            const crewErrors = buildCrewErrors((employeeCardId) =>
+              conflictMap.get(employeeCardId),
+            );
+
+            setErrors({
+              crews: crewErrors,
+            });
+
+            toast.error("Có thuyền viên bị trùng lịch");
+
+            return;
+          }
+
+          /**
+           * SHIP_SCHEDULE_ERR_011
+           * CREW_CONFLICT_WITH_SHIP_SCHEDULE
+           */
+          case "SHIP_SCHEDULE_ERR_011": {
+            const conflicts = (response.data.data as any[]) ?? [];
+
+            const conflictIds = new Set(conflicts.map((x) => x.employeeCardId));
+
+            const crewErrors = buildCrewErrors((employeeCardId) =>
+              conflictIds.has(employeeCardId)
+                ? "Thuyền viên đang thuộc lịch tàu khác"
+                : undefined,
+            );
+
+            setErrors({
+              crews: crewErrors,
+            });
+
+            toast.error("Có thuyền viên đang thuộc lịch tàu khác");
+
+            return;
+          }
+
+          /**
+           * SHIP_SCHEDULE_ERR_012
+           */
+          case "SHIP_SCHEDULE_ERR_012":
+            toast.error("Không tìm thấy lịch tàu");
+            return;
+
+          /**
+           * SHIP_SCHEDULE_ERR_013
+           */
+          case "SHIP_SCHEDULE_ERR_013":
+            toast.error("Trạng thái lịch tàu không hợp lệ");
+            return;
+
+          /**
+           * SHIP_SCHEDULE_ERR_014
+           */
+          case "SHIP_SCHEDULE_ERR_014":
+            toast.error("Bạn không có quyền tạo lịch tàu");
+            return;
+
+          /**
+           * SHIP_SCHEDULE_ERR_015
+           */
+          case "SHIP_SCHEDULE_ERR_015":
+            setFieldError(
+              "shipInfo.imoNumber",
+              "Không có hợp đồng hiệu lực cho tàu này",
+            );
+
+            toast.error("Không có hợp đồng hiệu lực cho tàu này");
+
+            return;
+
+          default:
+            break;
         }
       }
 
