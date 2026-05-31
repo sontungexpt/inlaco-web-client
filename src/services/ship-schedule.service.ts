@@ -1,9 +1,8 @@
 import { ShipScheduleEndpoint } from "@/endpoints/ship-schedule.endpoint";
-import { PageableResponse, PageParams } from "@/types/api/shared/base.api";
+import { PageableResponse } from "@/types/api/shared/base.api";
 import {
   CreateShipScheduleRequest,
   ShipScheduleDetail,
-  ShipScheduleFilter,
   ShipSchedulePageParams,
   ShipScheduleResponse,
 } from "@/types/api/ship-schedule.api";
@@ -15,6 +14,26 @@ export async function createShipSchedule(body: CreateShipScheduleRequest) {
     ShipScheduleEndpoint.CREATE_SCHEDULE,
     body,
   );
+
+  return response.data;
+}
+
+export async function getMyShipSchedules({
+  page,
+  pageSize,
+  sort,
+  filter,
+}: ShipSchedulePageParams) {
+  const response = await privateRequest.get<
+    PageableResponse<ShipScheduleResponse>
+  >(ShipScheduleEndpoint.GET_MY_SCHEDULES, {
+    params: {
+      page: page,
+      size: pageSize,
+      sort: sort,
+      ...flattenFilter(filter),
+    },
+  });
 
   return response.data;
 }

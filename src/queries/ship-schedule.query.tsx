@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import {
+  getMyShipSchedules,
   getShipScheduleDetail,
   getShipSchedules,
 } from "@/services/ship-schedule.service";
@@ -23,16 +24,25 @@ export function useShipSchedules({
   page,
   pageSize,
   filter,
-}: ShipSchedulePageParams) {
+  mine,
+}: ShipSchedulePageParams & { mine?: boolean }) {
   return useQuery({
-    queryKey: ShipScheduleQueryKey.LIST({ page, pageSize, filter }),
+    queryKey: [...ShipScheduleQueryKey.LIST({ page, pageSize, filter }), mine],
 
-    queryFn: () =>
-      getShipSchedules({
+    queryFn: () => {
+      if (mine) {
+        return getMyShipSchedules({
+          page,
+          pageSize,
+          filter,
+        });
+      }
+      return getShipSchedules({
         page,
         pageSize,
         filter,
-      }),
+      });
+    },
   });
 }
 

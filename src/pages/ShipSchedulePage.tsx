@@ -21,6 +21,8 @@ import {
   ShipScheduleResponse,
 } from "@/types/api/ship-schedule.api";
 import { useShipSchedules } from "@/queries/ship-schedule.query";
+import { useAuthContext } from "@/contexts/auth.context";
+import UserRole from "@/constants/UserRole";
 
 const statusColorMap: Record<
   ScheduleStatus,
@@ -45,12 +47,15 @@ const ShipSchedulePage = ({ pageSize = 10 }) => {
   const navigate = useNavigate();
 
   const [page, setPage] = useState(0);
+  const { includesRole } = useAuthContext();
+  const isAdmin = includesRole(UserRole.ADMIN);
 
   const { data: { content: schedules = [], totalPages = 0 } = {}, isLoading } =
     useShipSchedules({
       page,
       pageSize,
       filter: {},
+      mine: !isAdmin,
     });
 
   const columns: Column<ShipScheduleResponse>[] = useMemo(
