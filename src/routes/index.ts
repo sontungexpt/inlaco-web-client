@@ -24,13 +24,13 @@ export const AppRoutes = [
 
   {
     path: RoutePath.Crew.Root,
-    roles: ADMIN_SAILOR,
     children: [
       {
         index: true,
         element: lazy(() => import("@/pages/CrewListPage")),
       },
       {
+        roles: ADMIN_SAILOR,
         path: "add/:candidateID",
         element: lazy(() => import("@pages/CrewProfileFormPage")),
       },

@@ -93,17 +93,18 @@ export default function MobilizationDetail() {
 
         {isAdmin && (
           <Stack mt={2} direction={{ xs: "column", sm: "row" }} spacing={2}>
-            <Button
-              variant="contained"
-              startIcon={<EditIcon />}
-              sx={{
-                backgroundColor: Color.PrimaryGold,
-                color: Color.PrimaryBlack,
-              }}
-              onClick={() => navigate(`/mobilizations/form?id=${id}`)}
-            >
-              Chỉnh sửa
-            </Button>
+            {/* NOTE: Unimplemented yet */}
+            {/* <Button */}
+            {/*   variant="contained" */}
+            {/*   startIcon={<EditIcon />} */}
+            {/*   sx={{ */}
+            {/*     backgroundColor: Color.PrimaryGold, */}
+            {/*     color: Color.PrimaryBlack, */}
+            {/*   }} */}
+            {/*   onClick={() => navigate(`/mobilizations/form?id=${id}`)} */}
+            {/* > */}
+            {/*   Chỉnh sửa */}
+            {/* </Button> */}
 
             <Button
               onClick={handleExportExcel}

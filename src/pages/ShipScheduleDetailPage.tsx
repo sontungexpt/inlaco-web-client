@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
 import {
@@ -25,14 +25,23 @@ import {
   InfoItem,
   QuickCard,
   BaseDataGrid,
+  BaseTabBar,
 } from "@/components/common";
 
 import { useShipScheduleDetail } from "@/queries/ship-schedule.query";
+import Color from "@/constants/Color";
+
+const CREW_TABS = {
+  INFO: 0,
+  ATTENDANCE: 1,
+};
 
 export default function ShipScheduleDetailPage() {
   const { id } = useParams();
 
   const navigate = useNavigate();
+
+  const [tab, setTab] = useState(CREW_TABS.INFO);
 
   const { data: shipSchedule, isLoading } = useShipScheduleDetail(id);
 
@@ -337,6 +346,21 @@ export default function ShipScheduleDetailPage() {
 
       {/* ================= CREW ================= */}
       <SectionWrapper title="Danh sách thuyền viên">
+        <BaseTabBar
+          tabs={[
+            {
+              value: CREW_TABS.INFO,
+              label: "Thông tin thuyền viên",
+            },
+            {
+              value: CREW_TABS.ATTENDANCE,
+              label: "Trạng thái điểm danh",
+            },
+          ]}
+          value={tab}
+          onChange={(e, tab) => setTab(tab)}
+          color={Color.SecondaryBlue}
+        />
         <BaseDataGrid
           loading={isLoading}
           rows={shipSchedule?.crews || []}
