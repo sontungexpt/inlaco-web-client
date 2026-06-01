@@ -619,6 +619,24 @@ export default function ShipScheduleFormPage() {
 
             return;
 
+          case "SHIP_SCHEDULE_ERR_016": {
+            const overlapSchedule = response.data.data as any;
+
+            toast.error(
+              `Lịch tàu bị trùng với lịch từ ${new Date(
+                overlapSchedule.departureTime,
+              ).toLocaleString()} đến ${new Date(
+                overlapSchedule.arrivalTime,
+              ).toLocaleString()}`,
+            );
+
+            setFieldError("departureTime", "Trùng lịch với lịch tàu khác");
+
+            setFieldError("arrivalTime", "Trùng lịch với lịch tàu khác");
+
+            return;
+          }
+
           default:
             break;
         }

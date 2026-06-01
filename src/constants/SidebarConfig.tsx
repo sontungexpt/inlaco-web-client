@@ -184,15 +184,15 @@ const SidebarConfig: SidebarSection[] = [
         access: Permission.ADMIN_OR_SAILOR,
       },
 
-      {
-        title: "Lịch tàu cá nhân",
+      // {
+      //   title: "Lịch tàu cá nhân",
 
-        to: "/crew-schedule",
+      //   to: "/crew-schedule",
 
-        icon: <DirectionsBoatOutlinedIcon />,
+      //   icon: <DirectionsBoatOutlinedIcon />,
 
-        access: Permission.SAILOR_BUT_NOT_ADMIN,
-      },
+      //   access: Permission.SAILOR_BUT_NOT_ADMIN,
+      // },
     ],
   },
 
