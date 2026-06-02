@@ -30,7 +30,6 @@ const CrewContractDetailPage = () => {
     isLoading,
     refetch,
   } = useCrewContractDetail();
-  console.debug(contract);
 
   const { mutate: signContract, isPending: isApproving } = useSignContract();
 
@@ -53,7 +52,6 @@ const CrewContractDetailPage = () => {
     typeof contract.version === "number"
       ? contract.version
       : contract.version?.num || 0;
-  console.debug(version);
 
   return (
     <ContractDetailLayout

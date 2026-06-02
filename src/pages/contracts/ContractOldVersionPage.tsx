@@ -17,7 +17,6 @@ const useContractOldVersionsPageParams = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const currentVersionParam = searchParams.get("currentVersion");
-  console.log("currentVersionParam", currentVersionParam);
   const currentVersion = currentVersionParam
     ? parseInt(currentVersionParam, 10)
     : undefined;
