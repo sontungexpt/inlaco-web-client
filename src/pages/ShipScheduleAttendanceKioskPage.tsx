@@ -29,6 +29,7 @@ import type { CheckType, AttendanceMethod } from "@/types/api/attendance.api";
 
 import { ImageAssets } from "@/constants/Asset";
 import AppProperty from "@/config/app.config";
+import { getCurrentLocation } from "@/utils/location";
 
 export const useShipScheduleAttendanceKioskPageParams = (): {
   type: CheckType;
@@ -76,6 +77,10 @@ export default function ShipScheduleAttendanceKioskPage() {
 
   const logoTapTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const [locationState, setLocationState] = useState<
+    "checking" | "granted" | "prompt" | "denied"
+  >("checking");
+
   // ================= QR SIZE =================
   const qrSize = useMemo(() => {
     const sizeFromHeight = window.innerHeight * 0.4;
@@ -83,6 +88,41 @@ export default function ShipScheduleAttendanceKioskPage() {
     const sizeFromWidth = window.innerWidth * 0.38;
 
     return Math.min(sizeFromHeight, sizeFromWidth, 420);
+  }, []);
+
+  const requestLocationPermission = async () => {
+    try {
+      await getCurrentLocation();
+
+      setLocationState("granted");
+    } catch {
+      const permission = await navigator.permissions.query({
+        name: "geolocation",
+      });
+
+      setLocationState(permission.state);
+    }
+  };
+
+  useEffect(() => {
+    const checkPermission = async () => {
+      if (!navigator.permissions) {
+        setLocationState("prompt");
+        return;
+      }
+
+      const permission = await navigator.permissions.query({
+        name: "geolocation",
+      });
+
+      setLocationState(permission.state);
+
+      permission.onchange = () => {
+        setLocationState(permission.state);
+      };
+    };
+
+    checkPermission();
   }, []);
 
   // ================= CLOCK =================
@@ -111,9 +151,14 @@ export default function ShipScheduleAttendanceKioskPage() {
   const generateNewQr = async () => {
     if (!id) return;
 
+    const { locationString } = await getCurrentLocation();
+
+    console.debug("Generate QR Code -> Location", locationString);
+
     const data = await generateQrCode({
       shipScheduleId: id,
       checkType,
+      location: locationString,
     });
 
     setQrToken(data.token);
@@ -227,6 +272,43 @@ export default function ShipScheduleAttendanceKioskPage() {
   const progressValue = (countdown / AppProperty.QR_REFRESH_SECONDS) * 100;
 
   const modeColor = checkType === "IN" ? "#22c55e" : "#ef4444";
+
+  if (locationState === "checking") {
+    return <div>Checking location...</div>;
+  }
+
+  if (locationState !== "granted") {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          height: "100vh",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          gap: 2,
+          background: `
+            radial-gradient(circle at top left, rgba(59,130,246,0.22), transparent 28%),
+            radial-gradient(circle at top right, rgba(168,85,247,0.18), transparent 30%),
+            radial-gradient(circle at bottom, rgba(34,197,94,0.12), transparent 35%),
+            linear-gradient(180deg, #020617 0%, #0f172a 100%)
+          `,
+        }}
+      >
+        <Typography variant="h5">Location Permission Required</Typography>
+
+        <Button variant="contained" onClick={requestLocationPermission}>
+          Grant Location Permission
+        </Button>
+
+        {locationState === "denied" && (
+          <Typography color="error">
+            Permission was blocked in browser settings.
+          </Typography>
+        )}
+      </Box>
+    );
+  }
 
   return (
     <>

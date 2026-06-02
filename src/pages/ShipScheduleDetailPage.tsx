@@ -30,6 +30,8 @@ import {
 
 import { useShipScheduleDetail } from "@/queries/ship-schedule.query";
 import Color from "@/constants/Color";
+import { useAuthContext } from "@/contexts/auth.context";
+import UserRole from "@/constants/UserRole";
 
 const CREW_TABS = {
   INFO: 0,
@@ -38,6 +40,8 @@ const CREW_TABS = {
 
 export default function ShipScheduleDetailPage() {
   const { id } = useParams();
+  const { includesRole } = useAuthContext();
+  const isSailor = includesRole(UserRole.SAILOR);
 
   const navigate = useNavigate();
 
@@ -205,63 +209,65 @@ export default function ShipScheduleDetailPage() {
             </Box>
 
             {/* ================= RIGHT ================= */}
-            <Stack
-              spacing={2}
-              width={{ xs: "100%", lg: 340 }}
-              justifyContent="center"
-            >
-              <Button
-                fullWidth
-                size="large"
-                variant="contained"
-                startIcon={<LoginRoundedIcon />}
-                onClick={() => openKiosk("IN")}
-                sx={{
-                  py: 1.8,
-                  borderRadius: 4,
-                  fontWeight: 800,
-                  fontSize: 16,
-
-                  background:
-                    "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)",
-
-                  boxShadow: "0 12px 30px rgba(34,197,94,0.25)",
-
-                  "&:hover": {
-                    background:
-                      "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
-                  },
-                }}
+            {!isSailor && (
+              <Stack
+                spacing={2}
+                width={{ xs: "100%", lg: 340 }}
+                justifyContent="center"
               >
-                OPEN CHECK-IN KIOSK
-              </Button>
+                <Button
+                  fullWidth
+                  size="large"
+                  variant="contained"
+                  startIcon={<LoginRoundedIcon />}
+                  onClick={() => openKiosk("IN")}
+                  sx={{
+                    py: 1.8,
+                    borderRadius: 4,
+                    fontWeight: 800,
+                    fontSize: 16,
 
-              <Button
-                fullWidth
-                size="large"
-                variant="contained"
-                startIcon={<LogoutRoundedIcon />}
-                onClick={() => openKiosk("OUT")}
-                sx={{
-                  py: 1.8,
-                  borderRadius: 4,
-                  fontWeight: 800,
-                  fontSize: 16,
-
-                  background:
-                    "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
-
-                  boxShadow: "0 12px 30px rgba(239,68,68,0.25)",
-
-                  "&:hover": {
                     background:
-                      "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)",
-                  },
-                }}
-              >
-                OPEN CHECK-OUT KIOSK
-              </Button>
-            </Stack>
+                      "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)",
+
+                    boxShadow: "0 12px 30px rgba(34,197,94,0.25)",
+
+                    "&:hover": {
+                      background:
+                        "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
+                    },
+                  }}
+                >
+                  OPEN CHECK-IN KIOSK
+                </Button>
+
+                <Button
+                  fullWidth
+                  size="large"
+                  variant="contained"
+                  startIcon={<LogoutRoundedIcon />}
+                  onClick={() => openKiosk("OUT")}
+                  sx={{
+                    py: 1.8,
+                    borderRadius: 4,
+                    fontWeight: 800,
+                    fontSize: 16,
+
+                    background:
+                      "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+
+                    boxShadow: "0 12px 30px rgba(239,68,68,0.25)",
+
+                    "&:hover": {
+                      background:
+                        "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)",
+                    },
+                  }}
+                >
+                  OPEN CHECK-OUT KIOSK
+                </Button>
+              </Stack>
+            )}
           </Stack>
         </Box>
       </Paper>
