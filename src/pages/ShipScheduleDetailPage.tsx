@@ -32,6 +32,7 @@ import { useShipScheduleDetail } from "@/queries/ship-schedule.query";
 import Color from "@/constants/Color";
 import { useAuthContext } from "@/contexts/auth.context";
 import UserRole from "@/constants/UserRole";
+import { useAttendanceLogs } from "@/queries/attendance.query";
 
 const CREW_TABS = {
   INFO: 0,
@@ -47,11 +48,49 @@ export default function ShipScheduleDetailPage() {
 
   const [tab, setTab] = useState(CREW_TABS.INFO);
 
-  const { data: shipSchedule, isLoading } = useShipScheduleDetail(id);
+  const { data: shipSchedule, isLoading: isShipScheduleLoading } =
+    useShipScheduleDetail(id);
+
+  const {
+    data: { content: attendanceLogs = [] } = {},
+    isLoading: isLoadingLogs,
+  } = useAttendanceLogs({
+    shipScheduleId: id!,
+    enabled: tab === CREW_TABS.ATTENDANCE,
+  });
+
+  const attendanceColumns = useMemo(() => {
+    return [
+      {
+        key: "checkType",
+        name: "Loại",
+      },
+      {
+        key: "crewEmployeeCardId",
+        name: "Mã thẻ",
+      },
+      {
+        key: "crewName",
+        name: "Họ tên",
+      },
+      {
+        key: "crewRankOnBoard",
+        name: "Chức danh",
+      },
+      {
+        key: "location",
+        name: "Vị trí",
+      },
+      {
+        key: "note",
+        name: "Ghi chú",
+      },
+    ];
+  }, []);
 
   // ================= CREW TABLE =================
-  const columns = useMemo(
-    () => [
+  const crewsColumns = useMemo(() => {
+    return [
       {
         key: "employeeCardId",
         name: "Mã thẻ",
@@ -72,9 +111,8 @@ export default function ShipScheduleDetailPage() {
         key: "gender",
         name: "Giới tính",
       },
-    ],
-    [],
-  );
+    ];
+  }, []);
 
   // ================= OPEN KIOSK =================
   const openKiosk = (type: "IN" | "OUT") => {
@@ -351,7 +389,7 @@ export default function ShipScheduleDetailPage() {
       <Divider sx={{ my: 3 }} />
 
       {/* ================= CREW ================= */}
-      <SectionWrapper title="Danh sách thuyền viên">
+      <SectionWrapper>
         <BaseTabBar
           tabs={[
             {
@@ -363,19 +401,35 @@ export default function ShipScheduleDetailPage() {
               label: "Trạng thái điểm danh",
             },
           ]}
+          singleTab={isSailor}
           value={tab}
           onChange={(e, tab) => setTab(tab)}
           color={Color.SecondaryBlue}
         />
-        <BaseDataGrid
-          loading={isLoading}
-          rows={shipSchedule?.crews || []}
-          columns={columns}
-          globalTooltip="Double click để xem hồ sơ"
-          onCellDoubleClick={({ row }) => {
-            navigate(`/crews/${row.profileId}`);
-          }}
-        />
+
+        {tab === CREW_TABS.INFO && (
+          <BaseDataGrid
+            loading={isShipScheduleLoading}
+            rows={shipSchedule?.crews || []}
+            columns={crewsColumns}
+            globalTooltip="Double click để xem hồ sơ"
+            onCellDoubleClick={({ row }) => {
+              navigate(`/crews/${row.profileId}/profile`);
+            }}
+          />
+        )}
+
+        {tab === CREW_TABS.ATTENDANCE && (
+          <BaseDataGrid
+            loading={isLoadingLogs}
+            rows={attendanceLogs || []}
+            columns={attendanceColumns}
+            globalTooltip="Double click để xem hồ sơ"
+            onCellDoubleClick={({ row }) => {
+              navigate(`/crews/${row.crewProfileId}/profile`);
+            }}
+          />
+        )}
       </SectionWrapper>
     </Box>
   );
