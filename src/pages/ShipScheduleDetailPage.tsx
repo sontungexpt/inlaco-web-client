@@ -60,6 +60,8 @@ export default function ShipScheduleDetailPage() {
     } = {},
     isLoading: isLoadingLogs,
   } = useAttendanceLogs({
+    page: attendancePage,
+    pageSize: 10,
     shipScheduleId: id!,
     enabled: tab === CREW_TABS.ATTENDANCE,
   });
