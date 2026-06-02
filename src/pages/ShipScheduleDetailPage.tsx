@@ -33,6 +33,7 @@ import Color from "@/constants/Color";
 import { useAuthContext } from "@/contexts/auth.context";
 import UserRole from "@/constants/UserRole";
 import { useAttendanceLogs } from "@/queries/attendance.query";
+import { BaseDataGridFooter } from "@/components/common/datagrid/components";
 
 const CREW_TABS = {
   INFO: 0,
@@ -47,14 +48,20 @@ export default function ShipScheduleDetailPage() {
   const navigate = useNavigate();
 
   const [tab, setTab] = useState(CREW_TABS.INFO);
+  const [attendancePage, setAttendancePage] = useState(0);
 
   const { data: shipSchedule, isLoading: isShipScheduleLoading } =
     useShipScheduleDetail(id);
 
   const {
-    data: { content: attendanceLogs = [] } = {},
+    data: {
+      content: attendanceLogs = [],
+      totalPages: totalAttendanceLogs = 0,
+    } = {},
     isLoading: isLoadingLogs,
   } = useAttendanceLogs({
+    page: attendancePage,
+    pageSize: 10,
     shipScheduleId: id!,
     enabled: tab === CREW_TABS.ATTENDANCE,
   });
@@ -428,6 +435,15 @@ export default function ShipScheduleDetailPage() {
             onCellDoubleClick={({ row }) => {
               navigate(`/crews/${row.crewProfileId}/profile`);
             }}
+            footer={
+              <BaseDataGridFooter
+                pagination={{
+                  page: attendancePage + 1,
+                  count: totalAttendanceLogs,
+                  onChange: (_, page) => setAttendancePage(page - 1),
+                }}
+              />
+            }
           />
         )}
       </SectionWrapper>
