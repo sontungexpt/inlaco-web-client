@@ -36,16 +36,22 @@ export const ContractQueryKey = {
     pageSize,
     filter,
   ],
-  DETAIL: (id: string) => [...ContractQueryKey.ALL, "detail", id],
+  DETAIL: (id: string, version?: number) => [
+    ...ContractQueryKey.ALL,
+    "detail",
+    id,
+    version,
+  ],
   APPLICATION: (applicationId: string) => [
     ...ContractQueryKey.ALL,
     "application-contract",
     applicationId,
   ],
-  OLD_VERSIONS: (contractId: string) => [
+  OLD_VERSIONS: (contractId: string, currentVersion?: number) => [
     ...ContractQueryKey.ALL,
     "old-versions",
     contractId,
+    currentVersion,
   ],
 };
 
@@ -75,7 +81,7 @@ export function useContract<T extends BaseContract = BaseContract>(
   return useQuery<T, AxiosError<ErrorResponse>>({
     ...options,
     enabled: !!id,
-    queryKey: ContractQueryKey.DETAIL(id as string),
+    queryKey: ContractQueryKey.DETAIL(id as string, version),
     queryFn: () => fetchUniqueContract<T>(id as string, version),
     staleTime: 1000 * 60 * 4,
   });
@@ -83,12 +89,13 @@ export function useContract<T extends BaseContract = BaseContract>(
 
 export const useContractOldVersions = <T extends BaseContract = BaseContract>(
   contractId: string,
+  currentVersion?: number,
   options = {},
 ) => {
   return useQuery<T[], AxiosError<ErrorResponse>>({
     ...options,
-    queryKey: ContractQueryKey.OLD_VERSIONS(contractId),
-    queryFn: () => getContractVersions<T>(contractId),
+    queryKey: ContractQueryKey.OLD_VERSIONS(contractId, currentVersion),
+    queryFn: () => getContractVersions<T>(contractId, currentVersion),
     enabled: !!contractId, // Only fetch if contractID is provided
   });
 };

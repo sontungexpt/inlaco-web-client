@@ -73,6 +73,7 @@ export interface BaseContract {
   attachments?: Asset[];
   customAttributes: DynamicAttribute[];
   version: number;
+  hasNewerVersion: boolean;
   status: ContractStatus;
   activationDate?: string;
   expiredDate?: string;

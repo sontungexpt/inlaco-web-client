@@ -160,7 +160,9 @@ const SupplyContractDetailPage = () => {
                   },
                 }}
                 onClick={() =>
-                  navigate(`/contracts/${contract.id}/old-versions`)
+                  navigate(
+                    `/contracts/${contract.id}/old-versions?currentVersion=${version}`,
+                  )
                 }
               >
                 Xem các phiên bản cũ
