@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, useSearchParams } from "react-router";
 import {
   Box,
   Button,
@@ -13,8 +13,22 @@ import Color from "@constants/Color";
 import CenterCircularProgress from "@/components/common/CenterCircularProgress";
 import { useContractOldVersions } from "@/queries/contract.query";
 
-const ContractOldVersionPage = () => {
+const useContractOldVersionsPageParams = () => {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const currentVersionParam = searchParams.get("currentVersion");
+  const currentVersion = currentVersionParam
+    ? parseInt(currentVersionParam, 10)
+    : undefined;
+
+  return {
+    id,
+    currentVersion,
+  };
+};
+
+const ContractOldVersionPage = () => {
+  const { id, currentVersion } = useContractOldVersionsPageParams();
   const navigate = useNavigate();
 
   const {
@@ -23,7 +37,7 @@ const ContractOldVersionPage = () => {
     isError,
     error,
     refetch,
-  } = useContractOldVersions(id as string);
+  } = useContractOldVersions(id as string, currentVersion);
 
   if (isLoading) return <CenterCircularProgress />;
 

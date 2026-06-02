@@ -64,15 +64,17 @@ const CrewContractDetailPage = () => {
           <SectionWrapper
             sx={{ display: "flex", gap: 2, justifyContent: "center" }}
           >
-            <Button
-              color="warning"
-              variant="contained"
-              onClick={() =>
-                navigate(`/contracts/form/${contract.id}?type=LABOR_CONTRACT`)
-              }
-            >
-              {contract.freezed ? "Thêm phụ lục" : "Sửa hợp đồng"}
-            </Button>
+            {!contract.hasNewerVersion && (
+              <Button
+                color="warning"
+                variant="contained"
+                onClick={() =>
+                  navigate(`/contracts/form/${contract.id}?type=LABOR_CONTRACT`)
+                }
+              >
+                {contract.freezed ? "Thêm phụ lục" : "Sửa hợp đồng"}
+              </Button>
+            )}
 
             {!contract.signed && (
               <ConfirmButton
@@ -181,7 +183,9 @@ const CrewContractDetailPage = () => {
                   },
                 }}
                 onClick={() =>
-                  navigate(`/crew-contracts/${contract.id}/old-versions`)
+                  navigate(
+                    `/contracts/${contract.id}/old-versions?currentVersion=${version}`,
+                  )
                 }
               >
                 Xem các phiên bản cũ

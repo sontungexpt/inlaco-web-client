@@ -140,9 +140,15 @@ export const getContractVersions = async <
   T extends BaseContract = BaseContract,
 >(
   contractId: string,
+  currentVersion?: number,
 ) => {
   const response = await privateRequest.get<T[]>(
     ContractEndpoint.GET_CONTRACT_OLD_VERSIONS(contractId),
+    {
+      params: {
+        currentVersion: currentVersion,
+      },
+    },
   );
   return response.data;
 };
