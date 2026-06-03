@@ -7,7 +7,6 @@
 ## Reference
 
 - [INLACO Crew Management Backend](https://github.com/sontungexpt/inlaco-crewmgr-service)
-- [Complete Document](https://uithcm-my.sharepoint.com/personal/21522638_ms_uit_edu_vn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2F21522638%5Fms%5Fuit%5Fedu%5Fvn%2FDocuments%2FDA2%20%2D%20INLACO%20CREW%2FDA2%5F21522638%5FNguyenPhuThinh%5F21522772%5FTranVoSonTung%5FSE122%2EP11%2EPMCL%2Epdf&parent=%2Fpersonal%2F21522638%5Fms%5Fuit%5Fedu%5Fvn%2FDocuments%2FDA2%20%2D%20INLACO%20CREW&ga=1)
 
 ## Demo:
 
