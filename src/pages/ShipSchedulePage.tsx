@@ -49,6 +49,7 @@ const ShipSchedulePage = ({ pageSize = 10 }) => {
   const [page, setPage] = useState(0);
   const { includesRole } = useAuthContext();
   const isAdmin = includesRole(UserRole.ADMIN);
+  const isSailor = includesRole(UserRole.SAILOR);
 
   const { data: { content: schedules = [], totalPages = 0 } = {}, isLoading } =
     useShipSchedules({
@@ -142,27 +143,29 @@ const ShipSchedulePage = ({ pageSize = 10 }) => {
       <SectionWrapper>
         <PageTitle title="LỊCH TRÌNH TÀU" subtitle="Danh sách lịch trình tàu" />
 
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            mt: 2,
-            width: "100%",
-          }}
-        >
-          <Button
-            variant="contained"
-            startIcon={<AddCircleRoundedIcon />}
+        {!isSailor && (
+          <Box
             sx={{
-              backgroundColor: Color.PrimaryGold,
-              color: Color.PrimaryBlack,
-              borderRadius: 2,
+              display: "flex",
+              flexDirection: "row",
+              mt: 2,
+              width: "100%",
             }}
-            onClick={() => navigate("/ship-schedules/form")}
           >
-            Tạo lịch tàu
-          </Button>
-        </Box>
+            <Button
+              variant="contained"
+              startIcon={<AddCircleRoundedIcon />}
+              sx={{
+                backgroundColor: Color.PrimaryGold,
+                color: Color.PrimaryBlack,
+                borderRadius: 2,
+              }}
+              onClick={() => navigate("/ship-schedules/form")}
+            >
+              Tạo lịch tàu
+            </Button>
+          </Box>
+        )}
       </SectionWrapper>
 
       <BaseDataGrid<ShipScheduleResponse>
