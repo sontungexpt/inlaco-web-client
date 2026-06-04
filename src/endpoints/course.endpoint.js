@@ -4,7 +4,7 @@ const CourseEndpoint = {
   GET_COURSE_DETAIL: (id) => `/v1/courses/${id}`,
 
   CREATE_COURSE: "/v1/courses",
-  CANCLE_COURSE: (id) => `/v1/courses/force_cancel/${id}`,
+  CANCLE_COURSE: (id) => `/v1/courses/force-cancel/${id}`,
   CANCEL_REGISTRATION: (id) => `/v1/courses/registration/cancellation/${id}`,
 
   ENROLL_COURSE: (id) => `/v1/courses/registration/${id}`,
