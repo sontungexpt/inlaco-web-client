@@ -73,7 +73,6 @@ export const AppRoutes = [
 
   {
     path: "/mobilizations",
-    roles: ADMIN_SAILOR,
     children: [
       {
         index: true,
@@ -81,6 +80,7 @@ export const AppRoutes = [
       },
       {
         path: "form",
+        roles: [UserRole.ADMIN],
         element: lazy(() => import("@/pages/MobilizationFormPage")),
       },
 

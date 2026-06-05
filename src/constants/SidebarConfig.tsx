@@ -181,7 +181,7 @@ const SidebarConfig: SidebarSection[] = [
 
         icon: <DirectionsBoatOutlinedIcon />,
 
-        access: Permission.ADMIN_OR_SAILOR,
+        access: Permission.ALL,
       },
 
       // {
@@ -261,7 +261,7 @@ const SidebarConfig: SidebarSection[] = [
 
         icon: <HowToRegOutlinedIcon />,
 
-        access: Permission.ADMIN_OR_USER,
+        access: Permission.ALL,
       },
 
       {
