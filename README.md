@@ -9,26 +9,34 @@
 - [INLACO Crew Management Backend](https://github.com/sontungexpt/inlaco-crewmgr-service)
 
 ## Demo:
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/3a948b91-9345-47d6-8581-1358746aa8c9" />
 
-<img width="1170" height="518" alt="image" src="https://github.com/user-attachments/assets/3899b02a-13e9-4690-beb6-d4065348a117" />
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/211de527-92da-457d-b886-054e291ebd26" />
 
-<img width="1161" height="519" alt="image" src="https://github.com/user-attachments/assets/88b25aa9-b4dc-43df-b8b8-f2614da00d3c" />
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/6ebb0461-9570-4e39-9c19-6182e235d8b8" />
 
-<img width="1285" height="587" alt="image" src="https://github.com/user-attachments/assets/62330603-d08e-4ae6-b173-208dd789a704" />
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/0421cb72-4a52-4231-ab03-a54e9e3e81f1" />
 
-<img width="1394" height="648" alt="image" src="https://github.com/user-attachments/assets/28d401de-7bf9-4467-abcb-b82cce32b325" />
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/4afc2536-96ac-4816-838c-adab12e57dfc" />
 
-<img width="1401" height="626" alt="image" src="https://github.com/user-attachments/assets/835e4f5c-0ca6-4efb-9225-b9a7b219f5f1" />
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/2c0fd041-93d9-48a4-9d23-040bc545cf74" />
 
-<img width="1370" height="613" alt="image" src="https://github.com/user-attachments/assets/48ec8cb3-05b7-4e47-8c26-501cb9ebc469" />
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/aa36d000-24c9-4a1c-b1e9-afeb15df0453" />
 
-<img width="1373" height="628" alt="image" src="https://github.com/user-attachments/assets/03cc5333-04e0-48fc-9844-fb40b94a1bc5" />
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/1cd295d3-a21e-4606-8b27-8b5ffe9ee354" />
 
-<img width="1405" height="631" alt="image" src="https://github.com/user-attachments/assets/1dad1824-2129-4a16-bb86-a21114114543" />
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/7a342d18-7063-4a1f-924b-3da010e465d1" />
 
-<img width="1400" height="620" alt="image" src="https://github.com/user-attachments/assets/0e353031-b6e2-402f-852f-c006ac1e2ad2" />
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/7b940038-8763-4933-8fb9-91cac8f84ee4" />
 
-<img width="1402" height="634" alt="image" src="https://github.com/user-attachments/assets/45f57b40-eee5-4ff0-858b-2697c3fd4c89" />
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/7abea5c1-bb43-4bf0-93e0-a7e8ad873f44" />
+
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/e660ba85-d111-4f2e-b5fc-6a87d386647b" />
+
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/ee33c8e1-cb41-4241-9b14-c4341823ff15" />
+
+<img width="1896" height="870" alt="image" src="https://github.com/user-attachments/assets/994dab81-48aa-4ee9-a9d5-c9a0b996fa30" />
+
 
 ## Prerequisites
 
