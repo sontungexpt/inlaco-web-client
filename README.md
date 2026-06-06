@@ -79,11 +79,11 @@ npm start
 
 ### 4. Access Application
 
-The application will automatically open in your default browser at: http://localhost:3000
+The application will automatically open in your default browser at: http://localhost:5173
 
 ### Available Scripts
 
-Runs the app in development mode. Open http://localhost:3000 to view it in your browser.
+Runs the app in development mode. Open http://localhost:5173 to view it in your browser.
 
 ```bash
 npm start
@@ -100,5 +100,3 @@ Builds the app for production to the build folder.
 ```
 npm run build
 ```
-
-## Demo
